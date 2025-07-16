@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a77fafcc6bd2ee94ebe9ac341b986e7a, type: 3}
+  m_Name: GreenAnimalAnim
+  m_EditorClassIdentifier: 
+  SpriteAnimations:
+  - Name: Walk
+    FPS: 10
+    Frames:
+    - {fileID: -1712749363, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -1712749363, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -703281213, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    SpriteAnimationType: 0
+  - Name: AttackTransition
+    FPS: 8
+    Frames:
+    - {fileID: -2005218141, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -2005218141, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    SpriteAnimationType: 1
+  - Name: Attacking
+    FPS: 10
+    Frames:
+    - {fileID: 1135821679, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1187232006, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 452415010, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -25001355, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    SpriteAnimationType: 0
+  - Name: Aquire
+    FPS: 8
+    Frames:
+    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    SpriteAnimationType: 1
+  - Name: Jump
+    FPS: 8
+    Frames:
+    - {fileID: -2005218141, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    SpriteAnimationType: 1
