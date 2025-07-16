@@ -34,12 +34,12 @@ namespace Health
             }
         }
 
-        private void Start()
+        protected void Start()
         {
             _resetManager?.Register(this);
         }
 
-        private void OnDestroy()
+        protected void OnDestroy()
         {
             _resetManager?.Unregister(this);
         }

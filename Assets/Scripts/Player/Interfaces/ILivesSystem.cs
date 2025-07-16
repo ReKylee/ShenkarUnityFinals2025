@@ -10,6 +10,5 @@ namespace Player.Interfaces
         int CurrentLives { get; }
         int MaxLives { get; }
         event Action<int, int> OnLivesChanged;
-        void Reset();
     }
 }

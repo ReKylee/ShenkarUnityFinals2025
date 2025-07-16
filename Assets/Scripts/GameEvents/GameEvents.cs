@@ -61,4 +61,9 @@ namespace GameEvents
         public string FailureReason;
         public float Timestamp;
     }
+
+    public struct GameOverEvent
+    {
+        public float Timestamp;
+    }
 }

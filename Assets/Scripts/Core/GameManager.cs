@@ -2,6 +2,7 @@
 using GameEvents;
 using GameEvents.Interfaces;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VContainer;
 
 namespace Core
@@ -12,6 +13,7 @@ namespace Core
         [Header("Game Settings")]
         [SerializeField] private string currentLevelName = "Level_01";
         [SerializeField] private bool autoStartGame = true;
+        [SerializeField] private float respawnDelay = 2f;
         
         private GameState _currentState = GameState.MainMenu;
         private float _levelStartTime;
@@ -22,7 +24,7 @@ namespace Core
         public GameState CurrentState => _currentState;
         public bool IsPlaying => _currentState == GameState.Playing;
         public bool IsPaused => _currentState == GameState.Paused;
-        public bool HasEnded => _currentState == GameState.GameOver || _currentState == GameState.Victory;
+        public bool HasEnded => _currentState is GameState.GameOver or GameState.Victory;
         #endregion
 
         #region VContainer Injection
@@ -36,10 +38,20 @@ namespace Core
         #region Unity Lifecycle
         private void Start()
         {
+            // Subscribe to player death and game over events
+            _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
+            _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
+            
             if (autoStartGame)
             {
                 StartGame();
             }
+        }
+
+        private void OnDestroy()
+        {
+            _eventBus?.Unsubscribe<PlayerDeathEvent>(OnPlayerDied);
+            _eventBus?.Unsubscribe<GameOverEvent>(OnGameOver);
         }
         #endregion
 
@@ -110,6 +122,53 @@ namespace Core
             ChangeState(GameState.Restarting);
             Invoke(nameof(DelayedRestart), 1f);
         }
+
+        public void HandlePlayerDeath()
+        {
+            if (_currentState != GameState.Playing)
+                return;
+
+            ChangeState(GameState.GameOver);
+            
+            _eventBus?.Publish(new PlayerDeathEvent
+            {
+                Timestamp = Time.time,
+                DeathPosition = Vector3.zero // Will be set by PlayerHealthController
+            });
+
+            // Restart the level after a delay (Adventure Island 3 style)
+            Invoke(nameof(RestartLevel), respawnDelay);
+        }
+        #endregion
+
+        #region Event Handlers
+        private void OnPlayerDied(PlayerDeathEvent deathEvent)
+        {
+            if (_currentState != GameState.Playing)
+                return;
+
+            // Player died - LivesManager handles life loss
+            // Just restart the level after a delay
+            ChangeState(GameState.GameOver);
+            Invoke(nameof(RestartLevel), respawnDelay);
+        }
+
+        private void OnGameOver(GameOverEvent gameOverEvent)
+        {
+            // All lives lost - true game over
+            ChangeState(GameState.GameOver);
+            
+            _eventBus?.Publish(new LevelFailedEvent
+            {
+                LevelName = currentLevelName,
+                FailureReason = "All lives lost",
+                Timestamp = Time.time
+            });
+
+            // Here you could show game over screen, return to main menu, etc.
+            // For now, restart after longer delay
+            Invoke(nameof(RestartToMainMenu), respawnDelay * 2f);
+        }
         #endregion
 
         #region Private Methods
@@ -132,6 +191,20 @@ namespace Core
         private void DelayedRestart()
         {
             StartGame();
+        }
+
+        private void RestartLevel()
+        {
+            // Simple scene reload - everything resets automatically
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        private void RestartToMainMenu()
+        {
+            // Reset the static lives counter for true restart
+            LivesManager.ResetStatic();
+            // Could load main menu scene here instead
+            RestartLevel();
         }
         #endregion
     }
