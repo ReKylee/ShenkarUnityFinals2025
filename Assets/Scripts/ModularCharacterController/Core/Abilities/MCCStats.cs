@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ModularCharacterController.Core.Abilities;
 using UnityEngine;
 
 namespace ModularCharacterController.Core.Abilities

@@ -25,12 +25,11 @@ namespace ModularCharacterController.Core.Components
 
         internal Rigidbody2D Rigidbody;
 
-        public InputContext CurrentInput { get; private set; }
+        private InputContext CurrentInput { get; set; }
 
         public MccStats Stats { get; private set; }
 
-        // public bool IsGrounded => _groundCheck?.IsGrounded ?? false;
-        private bool IsGrounded => _groundCheck.IsGrounded;
+        private bool IsGrounded => _groundCheck?.IsGrounded ?? false;
 
         public MccGroundCheck.SlopeType GroundType =>
             _groundCheck?.CurrentSlope ?? MccGroundCheck.SlopeType.None;

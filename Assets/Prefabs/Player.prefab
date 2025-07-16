@@ -14,12 +14,15 @@ GameObject:
   - component: {fileID: 4509492725762489347}
   - component: {fileID: 5348771050836992238}
   - component: {fileID: 1709817759299275656}
-  - component: {fileID: 3077431087410073718}
   - component: {fileID: 3213497405300871309}
   - component: {fileID: 6806085336056450057}
+  - component: {fileID: 6384095184324434777}
+  - component: {fileID: 279962894031721775}
   - component: {fileID: 8779933863594023466}
   - component: {fileID: 644453172252926475}
   - component: {fileID: 8366726474898352353}
+  - component: {fileID: 3959446506065792497}
+  - component: {fileID: 3392466676958509593}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -188,23 +191,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canCollectPowerUps: 1
---- !u!114 &3077431087410073718
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3926891512402252426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f9672d33e614da5b8247f75916659d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHp: 3
-  maxLives: 3
-  healthView: {fileID: 0}
-  livesView: {fileID: 0}
-  createModelOnAwake: 1
 --- !u!114 &3213497405300871309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,6 +218,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3235fd23caa74797a5526571a4a05f2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6384095184324434777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926891512402252426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9672d33e614da5b8247f75916659d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 16
+  maxLives: 3
+  healthView: {fileID: 0}
+  livesView: {fileID: 0}
+--- !u!114 &279962894031721775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926891512402252426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6e40dfe1e9246c1933102b7e09cd062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthController: {fileID: 6384095184324434777}
+  damageInterval: 0.05
 --- !u!114 &8779933863594023466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,6 +287,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882c547d7da387d4db4fe81ebb334bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3959446506065792497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926891512402252426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3cb8003aa6d01e42aaf9cfa3cce91cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  groundCheckOffset: {x: 0, y: -1}
+  groundCheckSize: {x: 0.7, y: 0.2}
+  drawGizmos: 1
+  slopeThreshold: 10
+  deepSlopeThreshold: 35
+--- !u!114 &3392466676958509593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926891512402252426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa636e63f4e5097458cbc37a8cc75f1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseStats: {fileID: 11400000, guid: 04a28ba00a6144d4c9c8eac58736b7ab, type: 2}
+  currentCopyAbility: {fileID: 11400000, guid: 93d3dd7efcee3664b82913cdc905ad48, type: 2}
 --- !u!1 &5139845219191842715
 GameObject:
   m_ObjectHideFlags: 0

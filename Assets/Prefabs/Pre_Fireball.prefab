@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7344749491402581461}
   - component: {fileID: 3128399289799986672}
-  - component: {fileID: 7808401953511510970}
+  - component: {fileID: 6423930980938059560}
   - component: {fileID: -3460905289729604622}
   - component: {fileID: 1440673935502952221}
   - component: {fileID: 8441927413991358612}
@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -6607481912129624618, guid: 18039b66ad8e04c45a3b2d1f9eb60753, type: 3}
+  m_Sprite: {fileID: 1635488330, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -92,28 +92,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &7808401953511510970
-Animator:
-  serializedVersion: 7
+--- !u!114 &6423930980938059560
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 460594579410848658}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7dd783186d8119c4f81f94f12acb324a, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d4337bea670e194ca021e2a54e31bf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playAutomatically: 1
+  _spriteAnimationObject: {fileID: 11400000, guid: b03f46f933a100f4c97e0c277a1cee09, type: 2}
+  _spriteRenderer: {fileID: 3128399289799986672}
 --- !u!50 &-3460905289729604622
 Rigidbody2D:
   serializedVersion: 5
@@ -171,12 +164,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.15
+  m_Radius: 0.34375
 --- !u!114 &8441927413991358612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,7 +184,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: {x: 12, y: 0}
   destroyTime: 5
-  direction: 0
 --- !u!114 &3420668176969805233
 MonoBehaviour:
   m_ObjectHideFlags: 0

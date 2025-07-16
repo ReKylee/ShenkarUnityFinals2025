@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c4a758ce4ffad242ac2d6cce395af37, type: 3}
+  m_Script: {fileID: 11500000, guid: 09f7762ca142e944e93a1b5a54eaa5d2, type: 3}
   m_Name: DefaultStats
   m_EditorClassIdentifier: 
   walkSpeed: 4
@@ -18,13 +18,13 @@ MonoBehaviour:
   groundDeceleration: 70
   airAcceleration: 25
   airDeceleration: 10
-  jumpVelocity: 10
+  jumpVelocity: 14
   jumpReleaseVelocityMultiplier: 0.5
   maxFallSpeed: 15
   coyoteTime: 0.08
   jumpBufferTime: 0.1
-  flapImpulse: 8
-  floatDescentSpeed: 0.9
+  flapImpulse: 5.5
+  floatDescentSpeed: 1
   gravityScale: 2.8
   attackDamage: 10
   attackRange: 0.5

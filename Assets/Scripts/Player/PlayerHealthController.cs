@@ -11,20 +11,16 @@ namespace Player
 {
     public class PlayerHealthController : MonoBehaviour, IFullHealthSystem, ILivesSystem, IResettable
     {
-        [SerializeField] private int maxHp = 3;
+        [SerializeField] private int maxHp = 16;
         [SerializeField] private int maxLives = 3;
-        [SerializeField] private SliderHealthView healthView;
+        [SerializeField] private BarsHealthView healthView;
         [SerializeField] private TextHealthView livesView;
 
-        [SerializeField] private bool createModelOnAwake = true;
         private PlayerLivesModel _model;
 
         private void Awake()
         {
-            if (createModelOnAwake)
-            {
                 InitializeDefaultModel();
-            }
         }
 
         private void Start()
@@ -102,15 +98,7 @@ namespace Player
             _model = new PlayerLivesModel(maxLives, maxHp);
             ConnectViewsToModel();
         }
-
-        /// <summary>
-        ///     Set a custom lives model implementation (for dependency injection)
-        /// </summary>
-        public void SetLivesModel(PlayerLivesModel model)
-        {
-            _model = model ?? throw new ArgumentNullException(nameof(model));
-            ConnectViewsToModel();
-        }
+        
 
         private void ConnectViewsToModel()
         {

@@ -53,11 +53,9 @@ namespace ModularCharacterController.Core.Abilities.Modules
                 _facingDirection = newFacingDirection;
             }
 
-            // Update running state
-            _isRunning = hasMovementInput && (isRunInput || _isRunning);
 
             // Cache speed and acceleration values based on current state
-            float targetSpeed = _isRunning ? stats.runSpeed : stats.walkSpeed;
+            float targetSpeed = stats.walkSpeed;
             float acceleration = isGrounded ? stats.groundAcceleration : stats.airAcceleration;
             float deceleration = isGrounded ? stats.groundDeceleration : stats.airDeceleration;
 
