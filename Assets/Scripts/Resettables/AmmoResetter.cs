@@ -1,5 +1,5 @@
 ﻿using Interfaces.Resettable;
-using Managers;
+using Managers.Interfaces;
 using Weapons.Interfaces;
 
 namespace Resettables
@@ -8,19 +8,24 @@ namespace Resettables
     {
         private readonly IAmmoWeapon _ammoWeapon;
         private readonly int _initialAmmo;
-        public AmmoResetter(IAmmoWeapon weapon)
+        private readonly IResetManager _resetManager;
+
+        public AmmoResetter(IAmmoWeapon weapon, IResetManager resetManager)
         {
             _ammoWeapon = weapon;
+            _resetManager = resetManager;
             _initialAmmo = _ammoWeapon?.CurrentAmmo ?? 0;
-            ResetManager.Instance?.Register(this);
+            _resetManager?.Register(this);
         }
+
         public void ResetState()
         {
             _ammoWeapon?.SetAmmo(_initialAmmo);
         }
+
         public void Dispose()
         {
-            ResetManager.Instance?.Unregister(this);
+            _resetManager?.Unregister(this);
         }
     }
 }

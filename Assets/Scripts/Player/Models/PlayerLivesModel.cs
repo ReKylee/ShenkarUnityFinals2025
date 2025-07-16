@@ -15,7 +15,7 @@ namespace Player
             CurrentLives = maxLives;
             _healthModel = new HealthModel(hpPerLife, hpPerLife);
             _healthModel.OnHealthChanged += HealthChanged;
-            _healthModel.OnEmpty += LoseLife;
+            _healthModel.OnLivesEmpty += LoseLife;
 
         }
         public int CurrentLives { get; private set; }
@@ -26,7 +26,7 @@ namespace Player
         public void Damage(int amount) => _healthModel.Damage(amount);
 
         public event Action<int, int> OnHealthChanged;
-        public event Action OnEmpty;
+        public event Action OnLivesEmpty;
 
         public void Heal(int amount) => _healthModel.Heal(amount);
 
@@ -34,7 +34,7 @@ namespace Player
         public void Dispose()
         {
             _healthModel.OnHealthChanged -= HealthChanged;
-            _healthModel.OnEmpty -= LoseLife;
+            _healthModel.OnLivesEmpty -= LoseLife;
         }
         private void HealthChanged(int hp, int maxHp) => OnHealthChanged?.Invoke(hp, maxHp);
         public event Action<int, int> OnLivesChanged;
@@ -49,8 +49,7 @@ namespace Player
                 OnHealthChanged?.Invoke(CurrentHp, MaxHp);
                 return;
             }
-
-            OnEmpty?.Invoke();
+            OnLivesEmpty?.Invoke();
         }
 
         public void Reset()

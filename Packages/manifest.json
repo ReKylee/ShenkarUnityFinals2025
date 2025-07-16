@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.16.9",
     "com.gabrielbigardi.spriteanimator": "https://github.com/GabrielBigardi/2D-Sprite-Animator.git",
     "com.singularitygroup.hotreload": "git+https://gitlab.hotreload.net/root/hot-reload-releases.git",
     "com.unity.ai.navigation": "2.0.7",

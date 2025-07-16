@@ -1,7 +1,9 @@
 using System;
+using Managers.Interfaces;
 using Projectiles;
 using Resettables;
 using UnityEngine;
+using VContainer;
 using Weapons.Interfaces;
 
 namespace Weapons.Models
@@ -14,9 +16,18 @@ namespace Weapons.Models
         [SerializeField] private float cooldownTime = 0.5f;
         [SerializeField] private int defaultAmmo;
         [SerializeField] private AxePool axePool;
+        
         private AmmoResetter _ammoResetter;
-
+        private IResetManager _resetManager;
         private float _nextFireTime;
+
+        #region VContainer Injection
+        [Inject]
+        public void Construct(IResetManager resetManager)
+        {
+            _resetManager = resetManager;
+        }
+        #endregion
 
         private void Awake()
         {
@@ -25,7 +36,8 @@ namespace Weapons.Models
 
         private void Start()
         {
-            _ammoResetter = new AmmoResetter(this);
+            // Create AmmoResetter with injected IResetManager
+            _ammoResetter = new AmmoResetter(this, _resetManager);
         }
 
         private void OnDestroy()

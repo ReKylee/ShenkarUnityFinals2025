@@ -1,5 +1,5 @@
 ﻿using Interfaces.Resettable;
-using Managers;
+using Managers.Interfaces;
 using Weapons.Interfaces;
 
 namespace Resettables
@@ -7,18 +7,23 @@ namespace Resettables
     public class UsableWeaponResetter : IResettable
     {
         private readonly IUseableWeapon _usableWeapon;
-        public UsableWeaponResetter(IUseableWeapon weapon)
+        private readonly IResetManager _resetManager;
+
+        public UsableWeaponResetter(IUseableWeapon weapon, IResetManager resetManager)
         {
             _usableWeapon = weapon;
-            ResetManager.Instance?.Register(this);
+            _resetManager = resetManager;
+            _resetManager?.Register(this);
         }
+
         public void ResetState()
         {
             _usableWeapon?.UnEquip();
         }
+
         public void Dispose()
         {
-            ResetManager.Instance?.Unregister(this);
+            _resetManager?.Unregister(this);
         }
     }
 }

@@ -9,11 +9,11 @@ namespace Enemy
         private void Start()
         {
             _simpleHealthController = GetComponent<IHealthEvents>();
-            _simpleHealthController.OnEmpty += HandleDeath;
+            _simpleHealthController.OnLivesEmpty += HandleDeath;
         }
         private void OnDisable()
         {
-            _simpleHealthController.OnEmpty -= HandleDeath;
+            _simpleHealthController.OnLivesEmpty -= HandleDeath;
         }
 
         private void HandleDeath()

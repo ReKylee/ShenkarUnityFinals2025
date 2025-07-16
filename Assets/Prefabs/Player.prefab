@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 4509492725762489347}
   - component: {fileID: 5348771050836992238}
   - component: {fileID: 1709817759299275656}
-  - component: {fileID: 3213497405300871309}
   - component: {fileID: 6806085336056450057}
   - component: {fileID: 6384095184324434777}
   - component: {fileID: 279962894031721775}
@@ -191,21 +190,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canCollectPowerUps: 1
---- !u!114 &3213497405300871309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3926891512402252426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3fa23f738ddb4b758c3c67fa927ce8cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onDeath:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &6806085336056450057
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,6 +1,8 @@
+using Managers.Interfaces;
 using Projectiles;
 using Resettables;
 using UnityEngine;
+using VContainer;
 using Weapons.Interfaces;
 
 namespace Weapons.Models
@@ -11,12 +13,29 @@ namespace Weapons.Models
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.3f;
         [SerializeField] private FireballPool fireballPool;
+        
         private bool _isEquipped;
         private float _nextFireTime;
         private UsableWeaponResetter _resetter;
+        private IResetManager _resetManager;
+
+        #region VContainer Injection
+        [Inject]
+        public void Construct(IResetManager resetManager)
+        {
+            _resetManager = resetManager;
+        }
+        #endregion
+
         private void Start()
         {
-            _resetter = new UsableWeaponResetter(this);
+            // Create UsableWeaponResetter with injected IResetManager
+            _resetter = new UsableWeaponResetter(this, _resetManager);
+        }
+
+        private void OnDestroy()
+        {
+            _resetter?.Dispose();
         }
 
         public void Shoot()

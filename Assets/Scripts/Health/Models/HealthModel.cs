@@ -14,7 +14,7 @@ namespace Health.Models
         public int CurrentHp { get; private set; }
         public int MaxHp { get; }
         public event Action<int, int> OnHealthChanged;
-        public event Action OnEmpty;
+        public event Action OnLivesEmpty;
 
         public void SetHp(int hp)
         {
@@ -53,7 +53,7 @@ namespace Health.Models
 
                 if (CurrentHp <= 0)
                 {
-                    OnEmpty?.Invoke();
+                    OnLivesEmpty?.Invoke();
                 }
             }
         }

@@ -8,6 +8,6 @@ namespace Health.Interfaces
     public interface IHealthEvents
     {
         event Action<int, int> OnHealthChanged;
-        event Action OnEmpty;
+        event Action OnLivesEmpty;
     }
 }

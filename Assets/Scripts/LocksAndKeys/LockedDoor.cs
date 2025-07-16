@@ -1,21 +1,31 @@
 ﻿using Collectables.Keys;
 using Interfaces.Resettable;
-using Managers;
+using Managers.Interfaces;
 using UnityEngine;
 using UnityEngine.Events;
+using VContainer;
 
 namespace LocksAndKeys
 {
     public class LockedDoor : BaseLock, IResettable
     {
         [SerializeField] private UnityEvent doorOpened;
+        private IResetManager _resetManager;
+
+        [Inject]
+        public void Construct(IResetManager resetManager)
+        {
+            _resetManager = resetManager;
+        }
+
         private void Start()
         {
-            ResetManager.Instance?.Register(this);
+            _resetManager?.Register(this);
         }
+
         private void OnDestroy()
         {
-            ResetManager.Instance?.Unregister(this);
+            _resetManager?.Unregister(this);
         }
 
         private void OnTriggerEnter2D(Collider2D col)
@@ -37,6 +47,7 @@ namespace LocksAndKeys
 
         }
         public void ResetState() => SetUnlocked(false);
+        
         protected override void OnUnlocked()
         {
             Debug.Log($"Unlocked: {gameObject.name}");

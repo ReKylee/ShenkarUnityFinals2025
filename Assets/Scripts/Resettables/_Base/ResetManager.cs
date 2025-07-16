@@ -1,28 +1,13 @@
 ﻿using System.Collections.Generic;
 using Interfaces.Resettable;
+using Managers.Interfaces;
 using UnityEngine;
 
 namespace Managers
 {
-
-    public class ResetManager : MonoBehaviour
+    public class ResetManager : MonoBehaviour, IResetManager
     {
         private readonly List<IResettable> _resettables = new();
-
-        public static ResetManager Instance { get; private set; }
-
-        private void Awake()
-        {
-
-            if (Instance != null && Instance != this)
-            {
-                Destroy(this);
-            }
-            else
-            {
-                Instance = this;
-            }
-        }
 
         public void Register(IResettable resettable)
         {
@@ -44,5 +29,4 @@ namespace Managers
             }
         }
     }
-
 }
