@@ -120,7 +120,6 @@ namespace Core
         #region Event Handlers
         private void OnPlayerDied(PlayerDeathEvent deathEvent)
         {
-            Debug.Log("GameDataCoordinator: Player died, delegating to GameFlowController");
             _gameFlowController?.HandlePlayerDeath();
             _autoSaveService?.RequestSave();
         }

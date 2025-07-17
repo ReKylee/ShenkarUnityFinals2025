@@ -302,7 +302,9 @@ GameObject:
   - component: {fileID: 5618698531668652424}
   - component: {fileID: 3880546536829734273}
   - component: {fileID: 3354482609634551655}
+  - component: {fileID: 4855835521647181485}
   - component: {fileID: 5372833804394028595}
+  - component: {fileID: 6944014089907720284}
   m_Layer: 6
   m_Name: Weapons
   m_TagString: Untagged
@@ -355,10 +357,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   axe: {fileID: 460594579410848658, guid: 4ab8b6dd74ca8374588c1806bdf74e28, type: 3}
   spawnPoint: {fileID: 8740184567830207716}
-  maxAmmo: 3
   cooldownTime: 0.5
-  defaultAmmo: 0
   axePool: {fileID: 0}
+--- !u!114 &4855835521647181485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5139845219191842715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54950873360f4fe79ed2e4fb751d42f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boomerang: {fileID: 0}
+  spawnPoint: {fileID: 0}
+  cooldownTime: 0.3
+  boomerangPool: {fileID: 0}
 --- !u!114 &5372833804394028595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,10 +390,27 @@ MonoBehaviour:
   weaponMappings:
   - weaponName: Axe
     weaponComponent: {fileID: 3354482609634551655}
+    weaponType: 0
     actionName: Attack
   - weaponName: Fireball
     weaponComponent: {fileID: 3880546536829734273}
+    weaponType: 0
     actionName: Attack
+--- !u!114 &6944014089907720284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5139845219191842715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01bc17a5e2c46e09bf9102bf484c5d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axeWeapon: {fileID: 3354482609634551655}
+  boomerangWeapon: {fileID: 4855835521647181485}
+  fireballWeapon: {fileID: 3880546536829734273}
 --- !u!1 &7092180714870588923
 GameObject:
   m_ObjectHideFlags: 0

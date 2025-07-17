@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
+using Core.Data;
 using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using VContainer;
 using Weapons.Interfaces;
+using Weapons.Models;
+using Weapons.Services;
 
 namespace Weapons.Controllers
 {
     /// <summary>
-    ///     Controller for managing multiple weapons following the MVC pattern
+    /// Controller for managing weapon input following the MVC pattern
+    /// Works with WeaponManagerService to handle weapon switching logic
     /// </summary>
     public class WeaponController : MonoBehaviour
     {
@@ -16,15 +21,24 @@ namespace Weapons.Controllers
 
         // Input system reference
         private InputSystem_Actions _inputActions;
+        private WeaponManagerService _weaponManager;
+
 
         private void Awake()
         {
             _inputActions = new InputSystem_Actions();
+            _weaponManager = GetComponent<WeaponManagerService>();
 
             foreach (WeaponMapping mapping in weaponMappings)
             {
-                mapping.Initialize(_inputActions);
+                mapping.Initialize(_inputActions, _weaponManager);
             }
+        }
+
+        private void Start()
+        {
+            // Refresh all weapon unlock statuses after data service is available
+            RefreshAllWeaponUnlockStatus();
         }
 
         private void OnEnable()
@@ -49,12 +63,39 @@ namespace Weapons.Controllers
             _inputActions.Disable();
         }
 
+        /// <summary>
+        /// Refresh unlock status for all weapons (call when power-ups are unlocked)
+        /// </summary>
+        public void RefreshAllWeaponUnlockStatus()
+        {
+            foreach (WeaponMapping mapping in weaponMappings)
+            {
+                mapping.RefreshUnlockStatus();
+            }
+        }
+
+        /// <summary>
+        /// Get weapon status for UI display
+        /// </summary>
+        public WeaponStatus GetWeaponStatus(string weaponName)
+        {
+            foreach (WeaponMapping mapping in weaponMappings)
+            {
+                if (mapping.weaponName == weaponName)
+                {
+                    return mapping.GetWeaponStatus();
+                }
+            }
+            return new WeaponStatus();
+        }
+
         [Serializable]
         public class WeaponMapping
         {
-            [Header("Weapon Info")] public string weaponName;
-
+            [Header("Weapon Info")] 
+            public string weaponName;
             public MonoBehaviour weaponComponent;
+            public WeaponType weaponType;
 
             [Header("Input Configuration")]
             [Tooltip("The full action path from the Input Actions asset (e.g., 'Player/Fire')")]
@@ -62,13 +103,16 @@ namespace Weapons.Controllers
             private string actionName;
 
             private InputAction _action;
+            private WeaponManagerService _weaponManager;
 
             // Property for easy access to the weapon component as IWeapon
             public IWeapon WeaponComponent => weaponComponent as IWeapon;
 
-            // Initialize with the input actions instance
-            public void Initialize(InputSystem_Actions inputActions)
+            // Initialize with the input actions instance and weapon manager
+            public void Initialize(InputSystem_Actions inputActions, WeaponManagerService weaponManager)
             {
+                _weaponManager = weaponManager;
+                
                 if (!weaponComponent)
                 {
                     Debug.LogError($"Weapon component is null for weapon '{weaponName}'.");
@@ -109,11 +153,74 @@ namespace Weapons.Controllers
                 }
             }
 
-            // Handle the action event
+            // Handle input action performed
             private void OnActionPerformed(InputAction.CallbackContext context)
             {
-                WeaponComponent?.Shoot();
+                // Only shoot if this weapon is currently active
+                if (_weaponManager != null && _weaponManager.ActiveWeapon == weaponType)
+                {
+                    WeaponComponent?.Shoot();
+                }
+            }
+
+            // Refresh the unlock status of this weapon
+            public void RefreshUnlockStatus()
+            {
+                if (weaponComponent is AxeWeapon axeWeapon)
+                {
+                    axeWeapon.RefreshUnlockStatus();
+                }
+                else if (weaponComponent is BoomerangWeapon boomerangWeapon)
+                {
+                    boomerangWeapon.RefreshUnlockStatus();
+                }
+                else if (weaponComponent is FireballWeapon fireballWeapon)
+                {
+                    fireballWeapon.RefreshUnlockStatus();
+                }
+            }
+
+            // Get weapon status for UI
+            public WeaponStatus GetWeaponStatus()
+            {
+                var status = new WeaponStatus
+                {
+                    weaponName = weaponName,
+                    isUnlocked = false,
+                    isEquipped = false,
+                    currentAmmo = 0,
+                    maxAmmo = 0
+                };
+
+                if (weaponComponent is AxeWeapon axeWeapon)
+                {
+                    status.isUnlocked = axeWeapon.IsUnlocked;
+                    status.isEquipped = axeWeapon.IsEquipped;
+                }
+                else if (weaponComponent is BoomerangWeapon boomerangWeapon)
+                {
+                    status.isUnlocked = boomerangWeapon.IsUnlocked;
+                    status.currentAmmo = boomerangWeapon.CurrentAmmo;
+                    status.maxAmmo = boomerangWeapon.MaxAmmo;
+                }
+                else if (weaponComponent is FireballWeapon fireballWeapon)
+                {
+                    status.isUnlocked = fireballWeapon.IsUnlocked;
+                    status.isEquipped = fireballWeapon.IsEquipped;
+                }
+
+                return status;
             }
         }
+    }
+
+    [Serializable]
+    public struct WeaponStatus
+    {
+        public string weaponName;
+        public bool isUnlocked;
+        public bool isEquipped;
+        public int currentAmmo;
+        public int maxAmmo;
     }
 }

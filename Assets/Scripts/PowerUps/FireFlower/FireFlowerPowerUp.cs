@@ -1,6 +1,6 @@
 using PowerUps._Base;
 using UnityEngine;
-using Weapons.Models;
+using Weapons.Services;
 
 namespace PowerUps.FireFlower
 {
@@ -8,9 +8,9 @@ namespace PowerUps.FireFlower
     {
         public void ApplyPowerUp(GameObject player)
         {
-            Debug.Log("ApplyPowerUp Fire Flower");
-            FireballWeapon fireballWeapon = player?.GetComponentInChildren<FireballWeapon>();
-            fireballWeapon?.Equip();
+            Debug.Log("ApplyPowerUp Fire Flower - Switching to temporary Fireball weapon");
+            WeaponManagerService weaponManager = player?.GetComponentInChildren<WeaponManagerService>();
+            weaponManager?.SwitchToTemporaryWeapon();
         }
     }
 }

@@ -22,7 +22,6 @@ namespace Projectiles
         }
         private void OnTakeFromPool(GameObject laser)
         {
-            Debug.Log("Laser taken from pool.");
             laser.SetActive(true);
         }
 
@@ -37,7 +36,6 @@ namespace Projectiles
         }
         private GameObject CreateNewFireballForPool()
         {
-            Debug.Log("Pool is creating a new laser using the Director/Builder.");
             GameObject newLaser = Instantiate(fireballPrefab, transform);
             // Give the projectile a reference to the pool so it can return itself.
             if (newLaser.TryGetComponent(out BaseProjectile projectile))

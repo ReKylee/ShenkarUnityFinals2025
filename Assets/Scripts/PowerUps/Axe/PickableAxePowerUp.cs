@@ -1,6 +1,6 @@
 using PowerUps._Base;
 using UnityEngine;
-using Weapons.Models;
+using Weapons.Services;
 
 namespace PowerUps.Axe
 {
@@ -8,9 +8,9 @@ namespace PowerUps.Axe
     {
         public void ApplyPowerUp(GameObject player)
         {
-            Debug.Log("ApplyPowerUp Fire Flower");
-            AxeWeapon axeWeapon = player?.GetComponentInChildren<AxeWeapon>();
-            axeWeapon?.Reload();
+            Debug.Log("ApplyPowerUp Axe - Switching to Axe weapon");
+            WeaponManagerService weaponManager = player?.GetComponentInChildren<WeaponManagerService>();
+            weaponManager?.SwitchToPrimaryWeapon(WeaponType.Axe);
         }
     }
 }

@@ -40,13 +40,10 @@ namespace Core.Lives
             if (_currentLives <= 0) return;
             
             _currentLives--;
-            Debug.Log($"LivesService: Lives decreased to {_currentLives}");
-            
             NotifyLivesChanged();
 
             if (_currentLives <= 0)
             {
-                Debug.Log("LivesService: No lives remaining");
                 OnAllLivesLost?.Invoke();
             }
         }

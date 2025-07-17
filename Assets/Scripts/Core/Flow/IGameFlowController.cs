@@ -32,14 +32,15 @@ namespace Core.Flow
 
         public void HandlePlayerDeath()
         {
+            // Always lose a life when player dies
             _livesService.LoseLife();
             
-            // If player still has lives, trigger level restart
-            if (_livesService.CurrentLives > 0)
-            {
-                _gameEventPublisher.PublishLevelFailed(_currentLevelName, "Player died");
-            }
-            // If no lives left, OnAllLivesLost event will handle game over
+            // Always publish level failed when player dies (regardless of lives remaining)
+            // GameManager will handle the restart, and lives system will handle game over separately
+            _gameEventPublisher.PublishLevelFailed(_currentLevelName, "Player died");
+            
+            // Note: If this was the last life, LivesService will trigger OnAllLivesLost event
+            // which will call HandleAllLivesLost() -> HandleGameOver() -> PublishGameOver()
         }
 
         public void HandleLevelCompletion(float completionTime)

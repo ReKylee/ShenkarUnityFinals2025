@@ -54,8 +54,6 @@ namespace Player
 
         private void HandleHealthEmpty()
         {
-            Debug.Log("PlayerHealthController: Health reached zero, publishing PlayerDeathEvent");
-            
             _eventBus?.Publish(new PlayerDeathEvent
             {
                 Timestamp = Time.time,

@@ -69,8 +69,6 @@ namespace Core
             _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
             // Subscribe to level failed events (when player dies but has lives remaining)
             _eventBus?.Subscribe<LevelFailedEvent>(OnLevelFailed);
-            // Subscribe to player death events to handle respawn/restart
-            _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDeath);
         }
         #endregion
 
@@ -198,13 +196,16 @@ namespace Core
         {
             if (!_isInitialized) return;
             
-            // Handle level failure (e.g., player death) but allow for restarts if lives remain
-            // This could simply be a state change, or you could add more logic here
+            Debug.Log($"GameManager: Level failed - {levelFailedEvent.FailureReason}");
+            
+            // Handle level failure - restart the level after delay
             if (_currentState == GameState.Playing)
             {
-                // If we have a respawn system, we might want to respawn the player here
-                // For now, let's just change the state to GameOver which will trigger a restart
                 ChangeState(GameState.GameOver);
+                
+                // Restart the level after a delay
+                Debug.Log($"GameManager: Scheduling level restart in {respawnDelay} seconds");
+                Invoke(nameof(RestartLevel), respawnDelay);
             }
         }
 
@@ -212,7 +213,17 @@ namespace Core
         {
             if (!_isInitialized || _eventBus == null) return;
             
+            Debug.Log($"GameManager: OnPlayerDeath received - Current State: {_currentState}");
+            
+            // Only handle if we're currently playing
+            if (_currentState != GameState.Playing)
+            {
+                Debug.Log($"GameManager: Ignoring player death - not in Playing state (current: {_currentState})");
+                return;
+            }
+            
             // Handle player death - restart level after delay
+            Debug.Log($"GameManager: Processing player death, changing to GameOver and scheduling restart in {respawnDelay} seconds");
             ChangeState(GameState.GameOver);
             
             // Restart the level after a delay
@@ -246,6 +257,7 @@ namespace Core
 
         private void RestartLevel()
         {
+            Debug.Log("GameManager: RestartLevel called - Reloading scene");
             // Simple scene reload - everything resets automatically
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
