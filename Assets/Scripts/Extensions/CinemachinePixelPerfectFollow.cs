@@ -29,18 +29,28 @@ namespace Unity.Cinemachine
             CinemachineVirtualCameraBase vcam,
             CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
         {
-            // We only run this logic after the camera's position has been set by the Body component (e.g., Transposer).
+            // We only run this logic after the camera's position has been set by the Body component.
             if (stage == CinemachineCore.Stage.Body)
             {
-                // We need a Follow target to work with.
-                if (vcam.Follow != null)
+                // Intelligently determine the primary target for positional snapping.
+                // We prioritize the Follow target, but fall back to the LookAt target.
+                // This makes the script work for both Transposer and Composer setups.
+                Transform target = vcam.Follow;
+                if (!target)
                 {
-                    // Get the camera's calculated position from the Transposer.
+                    target = vcam.LookAt;
+                }
+
+                // If we have a valid target, perform the snapping logic.
+                if (target)
+                {
+                    // Get the camera's calculated position from the pipeline.
                     Vector3 cameraPos = state.RawPosition;
 
                     // --- STEP 1: Correct for Target's Sub-Pixel Movement ---
-                    // This ensures the camera is aiming at a stable, pixel-aligned point.
-                    Vector3 targetPos = vcam.Follow.position;
+                    // This ensures the camera is aiming at a stable, pixel-aligned point,
+                    // even if the target is moving via physics (e.g., Rigidbody).
+                    Vector3 targetPos = target.position;
                     Vector3 snappedTargetPos = SnapToPixelGrid(targetPos);
                     Vector3 correction = snappedTargetPos - targetPos;
                     Vector3 correctedCameraPos = cameraPos + correction;
