@@ -21,6 +21,10 @@ namespace Core.DI
         {
             // Register Core Services
             builder.Register<IEventBus, EventBus>(Lifetime.Singleton);
+            
+            // Register EventBus as IEventPublisher as well (since EventBus implements IEventPublisher)
+            builder.Register<IEventPublisher>(resolver => resolver.Resolve<IEventBus>(), Lifetime.Singleton);
+            
             builder.Register<IGameDataRepository, JsonGameDataRepository>(Lifetime.Singleton);
             builder.Register<IGameDataService, GameDataService>(Lifetime.Singleton);
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
@@ -41,17 +45,16 @@ namespace Core.DI
                     currentLevelName), 
                 Lifetime.Singleton);
             
-            // Enable auto-injection for all MonoBehaviour components with [Inject] methods
-            builder.RegisterEntryPoint<GameManager>();
-            builder.RegisterEntryPoint<GameDataCoordinator>();
-            
+            // Register MonoBehaviour components in the scene for injection
+            builder.RegisterComponentInHierarchy<GameManager>();
+            builder.RegisterComponentInHierarchy<GameDataCoordinator>();
         }
         
         protected override void Awake()
         {
             base.Awake();
             
-            // Configure auto-save settings
+            // Configure auto-save settings after container is built
             var autoSaveService = Container.Resolve<IAutoSaveService>();
             autoSaveService.SaveInterval = autoSaveInterval;
             autoSaveService.IsEnabled = true;

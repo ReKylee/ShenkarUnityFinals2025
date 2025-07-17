@@ -16,6 +16,7 @@ namespace Core
         private GameState _currentState = GameState.MainMenu;
         private float _levelStartTime;
         private IEventBus _eventBus;
+        private bool _isInitialized = false;
         #endregion
 
         #region Properties
@@ -30,16 +31,21 @@ namespace Core
         public void Construct(IEventBus eventBus)
         {
             _eventBus = eventBus;
+            _isInitialized = true;
+            
+            // Initialize after dependency injection
+            Initialize();
         }
         #endregion
 
         #region Unity Lifecycle
         private void Start()
         {
-            // Subscribe to game over events (when all lives are lost)
-            _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
-            // Subscribe to level failed events (when player dies but has lives remaining)
-            _eventBus?.Subscribe<LevelFailedEvent>(OnLevelFailed);
+            // If not yet initialized (dependencies not injected), wait
+            if (!_isInitialized)
+            {
+                return;
+            }
             
             if (autoStartGame)
             {
@@ -49,14 +55,28 @@ namespace Core
 
         private void OnDestroy()
         {
-            _eventBus?.Unsubscribe<GameOverEvent>(OnGameOver);
-            _eventBus?.Unsubscribe<LevelFailedEvent>(OnLevelFailed);
+            if (!_isInitialized || _eventBus == null) return;
+            
+            _eventBus.Unsubscribe<GameOverEvent>(OnGameOver);
+            _eventBus.Unsubscribe<LevelFailedEvent>(OnLevelFailed);
+        }
+        #endregion
+
+        #region Initialization
+        private void Initialize()
+        {
+            // Subscribe to game over events (when all lives are lost)
+            _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
+            // Subscribe to level failed events (when player dies but has lives remaining)
+            _eventBus?.Subscribe<LevelFailedEvent>(OnLevelFailed);
         }
         #endregion
 
         #region Public API
         public void StartGame()
         {
+            if (!_isInitialized || _eventBus == null) return;
+            
             if (_currentState != GameState.MainMenu && _currentState != GameState.Restarting)
                 return;
 
@@ -72,6 +92,8 @@ namespace Core
 
         public void PauseGame()
         {
+            if (!_isInitialized) return;
+            
             if (_currentState != GameState.Playing)
                 return;
 
@@ -80,6 +102,8 @@ namespace Core
 
         public void ResumeGame()
         {
+            if (!_isInitialized) return;
+            
             if (_currentState != GameState.Paused)
                 return;
 
@@ -88,6 +112,8 @@ namespace Core
 
         public void CompleteLevel()
         {
+            if (!_isInitialized || _eventBus == null) return;
+            
             if (_currentState != GameState.Playing)
                 return;
 
@@ -103,6 +129,8 @@ namespace Core
 
         public void FailLevel(string reason = "Player died")
         {
+            if (!_isInitialized || _eventBus == null) return;
+            
             if (_currentState != GameState.Playing)
                 return;
 
@@ -118,18 +146,22 @@ namespace Core
 
         public void RestartGame()
         {
+            if (!_isInitialized) return;
+            
             ChangeState(GameState.Restarting);
             Invoke(nameof(DelayedRestart), 1f);
         }
 
         public void HandlePlayerDeath()
         {
+            if (!_isInitialized || _eventBus == null) return;
+            
             if (_currentState != GameState.Playing)
                 return;
 
             ChangeState(GameState.GameOver);
             
-            _eventBus?.Publish(new PlayerDeathEvent
+            _eventBus.Publish(new PlayerDeathEvent
             {
                 Timestamp = Time.time,
                 DeathPosition = Vector3.zero // Will be set by PlayerHealthController
@@ -143,10 +175,12 @@ namespace Core
         #region Event Handlers
         private void OnGameOver(GameOverEvent gameOverEvent)
         {
+            if (!_isInitialized || _eventBus == null) return;
+            
             // All lives lost - true game over
             ChangeState(GameState.GameOver);
             
-            _eventBus?.Publish(new LevelFailedEvent
+            _eventBus.Publish(new LevelFailedEvent
             {
                 LevelName = currentLevelName,
                 FailureReason = "All lives lost",
@@ -160,6 +194,8 @@ namespace Core
 
         private void OnLevelFailed(LevelFailedEvent levelFailedEvent)
         {
+            if (!_isInitialized) return;
+            
             // Handle level failure (e.g., player death) but allow for restarts if lives remain
             // This could simply be a state change, or you could add more logic here
             if (_currentState == GameState.Playing)
@@ -174,6 +210,8 @@ namespace Core
         #region Private Methods
         private void ChangeState(GameState newState)
         {
+            if (!_isInitialized || _eventBus == null) return;
+            
             if (_currentState == newState)
                 return;
 
@@ -208,6 +246,9 @@ namespace Core
 
         private void DelayedGameOverReset()
         {
+            // Find the GameDataCoordinator and reset it
+            var gameDataCoordinator = FindAnyObjectByType<GameDataCoordinator>();
+            gameDataCoordinator?.ResetAllData();
             
             // Could load main menu scene here instead
             RestartLevel();

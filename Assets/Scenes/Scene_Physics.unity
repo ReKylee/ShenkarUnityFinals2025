@@ -5340,15 +5340,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 889944512}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 532f3cbc196d4ca6870c5cda922cd2b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 8daf2654f2c04a1db27c485c9a2ffa34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  gameManager: {fileID: 509635061}
-  gameDataCoordinator: {fileID: 1652499664}
+  maxLives: 3
+  currentLevelName: Level_01
+  autoSaveInterval: 30
 --- !u!1 &904920108
 GameObject:
   m_ObjectHideFlags: 0
@@ -29990,7 +29991,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: decb673581d64d1889a3725d8d3cc9db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultLives: 3
 --- !u!1 &1669617871
 GameObject:
   m_ObjectHideFlags: 0
