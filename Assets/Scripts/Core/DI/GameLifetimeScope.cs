@@ -53,7 +53,7 @@ namespace Core.DI
             builder.RegisterComponentInHierarchy<GameDataCoordinator>();
             builder.RegisterComponentInHierarchy<Weapons.Models.AxeWeapon>();
             builder.RegisterComponentInHierarchy<Weapons.Models.FireballWeapon>();
-            builder.RegisterComponentInHierarchy<Weapons.Controllers.WeaponController>();
+            builder.RegisterComponentInHierarchy<Weapons.Services.WeaponManagerService>();
             builder.RegisterComponentInHierarchy<Player.PlayerHealthController>();
             builder.RegisterComponentInHierarchy<Collectables.Coin.CoinController>();
 

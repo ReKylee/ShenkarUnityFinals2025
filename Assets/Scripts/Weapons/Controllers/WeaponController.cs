@@ -35,11 +35,7 @@ namespace Weapons.Controllers
             }
         }
 
-        private void Start()
-        {
-            // Refresh all weapon unlock statuses after data service is available
-            RefreshAllWeaponUnlockStatus();
-        }
+      
 
         private void OnEnable()
         {
@@ -63,16 +59,6 @@ namespace Weapons.Controllers
             _inputActions.Disable();
         }
 
-        /// <summary>
-        /// Refresh unlock status for all weapons (call when power-ups are unlocked)
-        /// </summary>
-        public void RefreshAllWeaponUnlockStatus()
-        {
-            foreach (WeaponMapping mapping in weaponMappings)
-            {
-                mapping.RefreshUnlockStatus();
-            }
-        }
 
         /// <summary>
         /// Get weapon status for UI display
@@ -156,29 +142,18 @@ namespace Weapons.Controllers
             // Handle input action performed
             private void OnActionPerformed(InputAction.CallbackContext context)
             {
-                // Only shoot if this weapon is currently active
-                if (_weaponManager != null && _weaponManager.ActiveWeapon == weaponType)
+                // Only shoot if this weapon is currently active according to the weapon manager
+                if (_weaponManager && _weaponManager.ActiveWeapon == weaponType)
                 {
                     WeaponComponent?.Shoot();
                 }
+                else
+                {
+                    Debug.Log($"WeaponController: {weaponName} is not the active weapon (Active: {_weaponManager?.ActiveWeapon}, This: {weaponType})");
+                }
             }
 
-            // Refresh the unlock status of this weapon
-            public void RefreshUnlockStatus()
-            {
-                if (weaponComponent is AxeWeapon axeWeapon)
-                {
-                    axeWeapon.RefreshUnlockStatus();
-                }
-                else if (weaponComponent is BoomerangWeapon boomerangWeapon)
-                {
-                    boomerangWeapon.RefreshUnlockStatus();
-                }
-                else if (weaponComponent is FireballWeapon fireballWeapon)
-                {
-                    fireballWeapon.RefreshUnlockStatus();
-                }
-            }
+            
 
             // Get weapon status for UI
             public WeaponStatus GetWeaponStatus()
@@ -186,7 +161,7 @@ namespace Weapons.Controllers
                 var status = new WeaponStatus
                 {
                     weaponName = weaponName,
-                    isUnlocked = false,
+                    isUnlocked = true, // Always unlocked
                     isEquipped = false,
                     currentAmmo = 0,
                     maxAmmo = 0
@@ -194,18 +169,16 @@ namespace Weapons.Controllers
 
                 if (weaponComponent is AxeWeapon axeWeapon)
                 {
-                    status.isUnlocked = axeWeapon.IsUnlocked;
                     status.isEquipped = axeWeapon.IsEquipped;
                 }
                 else if (weaponComponent is BoomerangWeapon boomerangWeapon)
                 {
-                    status.isUnlocked = boomerangWeapon.IsUnlocked;
                     status.currentAmmo = boomerangWeapon.CurrentAmmo;
                     status.maxAmmo = boomerangWeapon.MaxAmmo;
+                    status.isEquipped = true; // Boomerang is always "equipped" when active
                 }
                 else if (weaponComponent is FireballWeapon fireballWeapon)
                 {
-                    status.isUnlocked = fireballWeapon.IsUnlocked;
                     status.isEquipped = fireballWeapon.IsEquipped;
                 }
 

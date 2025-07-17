@@ -44,7 +44,7 @@ namespace Projectiles.Core
                 Debug.LogWarning(
                     $"Projectile '{gameObject.name}' does not have a pool to return to. Destroying instead.");
 
-                DestroyImmediate(gameObject);
+                Destroy(gameObject);
             }
         }
     }

@@ -1,8 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using Weapons.Models;
-using VContainer;
-using Core.Data;
 
 namespace Weapons.Services
 {
@@ -16,6 +14,7 @@ namespace Weapons.Services
 
     /// <summary>
     /// Service that manages weapon switching logic according to Adventure Island 3 mechanics
+    /// All weapons are always available - power-ups just switch between them
     /// </summary>
     public class WeaponManagerService : MonoBehaviour
     {
@@ -28,18 +27,8 @@ namespace Weapons.Services
         private WeaponType _activeWeapon = WeaponType.None;
         private bool _isUsingTemporaryWeapon = false;
 
-        private IGameDataService _gameDataService;
-
         public event Action<WeaponType> OnWeaponChanged;
         public event Action<WeaponType> OnPrimaryWeaponChanged;
-
-        #region VContainer Injection
-        [Inject]
-        public void Construct(IGameDataService gameDataService)
-        {
-            _gameDataService = gameDataService;
-        }
-        #endregion
 
         private void Start()
         {
@@ -146,7 +135,7 @@ namespace Weapons.Services
             switch (weaponType)
             {
                 case WeaponType.Axe:
-                    if (axeWeapon != null)
+                    if (axeWeapon)
                     {
                         axeWeapon.Equip();
                         Debug.Log("WeaponManagerService: Equipped Axe weapon");
@@ -154,13 +143,12 @@ namespace Weapons.Services
                     break;
 
                 case WeaponType.Boomerang:
-                    // Boomerang uses IAmmoWeapon, so we don't equip/unequip it directly
-                    // It's always "available" when unlocked
+                    // Boomerang doesn't have equip/unequip - it's active when selected
                     Debug.Log("WeaponManagerService: Switched to Boomerang weapon");
                     break;
 
                 case WeaponType.Fireball:
-                    if (fireballWeapon != null)
+                    if (fireballWeapon)
                     {
                         fireballWeapon.Equip();
                         Debug.Log("WeaponManagerService: Equipped Fireball weapon");
@@ -201,22 +189,6 @@ namespace Weapons.Services
             axeWeapon?.UnEquip();
             fireballWeapon?.UnEquip();
             // Boomerang doesn't need unequipping
-        }
-
-        /// <summary>
-        /// Check if a weapon type is currently unlocked
-        /// </summary>
-        public bool IsWeaponUnlocked(WeaponType weaponType)
-        {
-            if (_gameDataService == null) return false;
-
-            return weaponType switch
-            {
-                WeaponType.Axe => _gameDataService.HasPowerUp("axe"),
-                WeaponType.Boomerang => _gameDataService.HasPowerUp("boomerang"),
-                WeaponType.Fireball => _gameDataService.HasPowerUp("fireball"),
-                _ => false
-            };
         }
 
         /// <summary>

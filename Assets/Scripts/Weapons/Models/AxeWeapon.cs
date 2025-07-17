@@ -15,60 +15,14 @@ namespace Weapons.Models
         [SerializeField] private AxePool axePool;
         
         private float _nextFireTime;
-        private IGameDataService _gameDataService;
-        private bool _isUnlocked;
         private bool _isEquipped;
 
-        #region VContainer Injection
-        [Inject]
-        public void Construct(IGameDataService gameDataService)
-        {
-            Debug.Log("AxeWeapon: VContainer injection successful!");
-            _gameDataService = gameDataService;
-        }
-        #endregion
-
-        private void Start()
-        {
-            Debug.Log($"AxeWeapon: Start - GameDataService is {(_gameDataService != null ? "available" : "NULL")}");
-            UpdateUnlockStatus();
-            // AxeWeapon starts equipped when unlocked
-            if (_isUnlocked)
-            {
-                Equip();
-            }
-        }
-
-        private void UpdateUnlockStatus()
-        {
-            bool wasUnlocked = _isUnlocked;
-            _isUnlocked = _gameDataService?.HasPowerUp("axe") == true;
-            Debug.Log($"AxeWeapon: UpdateUnlockStatus - GameDataService: {_gameDataService != null}, HasPowerUp result: {_isUnlocked}");
-            
-            if (wasUnlocked != _isUnlocked)
-            {
-                Debug.Log($"AxeWeapon: Unlock status changed from {wasUnlocked} to {_isUnlocked}");
-            }
-        }
-
-        public bool IsUnlocked => _isUnlocked;
         public bool IsEquipped => _isEquipped;
 
         public void Shoot()
         {
-            Debug.Log($"AxeWeapon: Shoot called - Unlocked: {_isUnlocked}, Equipped: {_isEquipped}, Cooldown ready: {Time.time >= _nextFireTime}");
+            Debug.Log($"AxeWeapon: Shoot called - Equipped: {_isEquipped}, Cooldown ready: {Time.time >= _nextFireTime}");
             
-            // Check if power-up is unlocked first
-            if (!_isUnlocked)
-            {
-                UpdateUnlockStatus(); // Check again in case it was unlocked during gameplay
-                if (!_isUnlocked) 
-                {
-                    Debug.Log("AxeWeapon: Cannot shoot - weapon not unlocked");
-                    return;
-                }
-            }
-
             // Check if weapon is equipped
             if (!_isEquipped)
             {
@@ -111,12 +65,6 @@ namespace Weapons.Models
 
         public void Equip()
         {
-            if (!_isUnlocked)
-            {
-                UpdateUnlockStatus();
-                if (!_isUnlocked) return;
-            }
-            
             _isEquipped = true;
             Debug.Log("AxeWeapon: Equipped");
         }
@@ -125,22 +73,6 @@ namespace Weapons.Models
         {
             _isEquipped = false;
             Debug.Log("AxeWeapon: Unequipped");
-        }
-
-        // Public method for WeaponController to check if weapon should be available
-        public void RefreshUnlockStatus()
-        {
-            UpdateUnlockStatus();
-            
-            // Auto-equip when unlocked
-            if (_isUnlocked && !_isEquipped)
-            {
-                Equip();
-            }
-            else if (!_isUnlocked && _isEquipped)
-            {
-                UnEquip();
-            }
         }
     }
 }

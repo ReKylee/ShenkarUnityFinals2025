@@ -7,31 +7,46 @@ namespace Projectiles
 {
     public class ProjectileBoomerang : BaseProjectile
     {
-        [SerializeField] private float returnDelay = 1.5f; // Time before boomerang starts returning
-        [SerializeField] private float returnSpeed = 15f; // Speed when returning to player
-        [SerializeField] private float rotationSpeed = 720f; // Degrees per second rotation
+        [SerializeField] private float totalFlightTime = 1f;
+        [SerializeField] private AnimationCurve trajectoryXCurve = AnimationCurve.Linear(0, 0, 1, 0);
+        [SerializeField] private AnimationCurve trajectoryYCurve = AnimationCurve.Linear(0, 0, 1, 0);
         
         [NonSerialized] public float Direction;
         [NonSerialized] public Transform PlayerTransform;
         
         public event Action OnBoomerangReturned;
         
-        private bool _isReturning;
-        private Coroutine _returnCoroutine;
+        private float _flightTimer;
+        private bool _isFlying;
+        private Vector3 _startPosition; // Fixed start position
 
         private void Update()
         {
-            // Rotate the boomerang continuously
-            transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
             
-            // Handle returning logic
-            if (_isReturning && PlayerTransform != null)
+            if (_isFlying && PlayerTransform)
             {
-                Vector3 directionToPlayer = (PlayerTransform.position - transform.position).normalized;
-                Rb.linearVelocity = directionToPlayer * returnSpeed;
+                _flightTimer += Time.deltaTime;
+                float progress = _flightTimer / totalFlightTime;
                 
-                // Check if close enough to player to "catch" the boomerang
-                if (Vector3.Distance(transform.position, PlayerTransform.position) < 1f)
+                if (progress >= 1f)
+                {
+                    OnBoomerangReturned?.Invoke();
+                    ReturnToPool();
+                    return;
+                }
+                
+                // Calculate curve offsets
+                float xOffset = trajectoryXCurve.Evaluate(progress) * speed.x * Direction;
+                float yOffset = trajectoryYCurve.Evaluate(progress) * speed.y;
+                
+                // Blend the base position from start to current player position
+                Vector3 basePosition = Vector3.Lerp(_startPosition, PlayerTransform.position, progress);
+                Vector3 curvePosition = basePosition + new Vector3(xOffset, yOffset, 0);
+                
+                transform.position = curvePosition;
+                
+                // Check if close to player (especially near the end)
+                if (progress > 0.7f && Vector3.Distance(transform.position, PlayerTransform.position) < 1.5f)
                 {
                     OnBoomerangReturned?.Invoke();
                     ReturnToPool();
@@ -41,67 +56,25 @@ namespace Projectiles
 
         protected override void Move()
         {
-            _isReturning = false;
+            _startPosition = transform.position; 
+            _flightTimer = 0f;
+            _isFlying = true;
             transform.localScale = new Vector3(Direction, 1, 1);
-            Rb.AddForce(new Vector2(speed.x * Direction, speed.y), ForceMode2D.Impulse);
-            
-            // Start the return timer
-            _returnCoroutine = StartCoroutine(StartReturning());
-        }
-
-        private IEnumerator StartReturning()
-        {
-            yield return new WaitForSeconds(returnDelay);
-            _isReturning = true;
-            Debug.Log("Boomerang starting to return to player");
         }
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            // Don't return to pool on collision with player while returning
-            if (other.gameObject.CompareTag("Player"))
+            if (other.gameObject.CompareTag("Player") && _flightTimer > 0.5f)
             {
-                if (_isReturning)
-                {
-                    OnBoomerangReturned?.Invoke();
-                    ReturnToPool();
-                }
-                return;
-            }
-            
-            // For other collisions, start returning immediately
-            if (!_isReturning)
-            {
-                if (_returnCoroutine != null)
-                {
-                    StopCoroutine(_returnCoroutine);
-                }
-                _isReturning = true;
-                Debug.Log($"Boomerang hit {other.gameObject.name}, starting return");
-            }
-        }
-
-        private void OnBecameInvisible()
-        {
-            // Only return to pool if we've been invisible for a while and not returning
-            if (!_isReturning)
-            {
+                OnBoomerangReturned?.Invoke();
                 ReturnToPool();
             }
         }
 
         private void OnEnable()
         {
-            _isReturning = false;
-        }
-
-        private void OnDisable()
-        {
-            if (_returnCoroutine != null)
-            {
-                StopCoroutine(_returnCoroutine);
-                _returnCoroutine = null;
-            }
+            _isFlying = false;
+            _flightTimer = 0f;
         }
     }
 }

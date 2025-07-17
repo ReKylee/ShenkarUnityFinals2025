@@ -371,10 +371,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54950873360f4fe79ed2e4fb751d42f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boomerang: {fileID: 0}
-  spawnPoint: {fileID: 0}
+  boomerang: {fileID: 2685813220447095671, guid: 21d2b53bc3e8a8d4eb3cdb06c74f0012, type: 3}
+  spawnPoint: {fileID: 8740184567830207716}
   cooldownTime: 0.3
-  boomerangPool: {fileID: 0}
 --- !u!114 &5372833804394028595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,11 +389,15 @@ MonoBehaviour:
   weaponMappings:
   - weaponName: Axe
     weaponComponent: {fileID: 3354482609634551655}
-    weaponType: 0
+    weaponType: 1
     actionName: Attack
   - weaponName: Fireball
     weaponComponent: {fileID: 3880546536829734273}
-    weaponType: 0
+    weaponType: 3
+    actionName: Attack
+  - weaponName: Boomerang
+    weaponComponent: {fileID: 4855835521647181485}
+    weaponType: 2
     actionName: Attack
 --- !u!114 &6944014089907720284
 MonoBehaviour:

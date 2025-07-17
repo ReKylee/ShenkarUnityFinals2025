@@ -1,8 +1,6 @@
 ﻿using System;
-using Core.Data;
 using Projectiles;
 using UnityEngine;
-using VContainer;
 using Weapons.Interfaces;
 
 namespace Weapons.Models
@@ -14,8 +12,6 @@ namespace Weapons.Models
         [SerializeField] private float cooldownTime = 0.3f;
         
         private float _nextFireTime;
-        private IGameDataService _gameDataService;
-        private bool _isUnlocked;
         private Transform _playerTransform;
         private GameObject _activeBoomerang; // Track the single active boomerang
         
@@ -23,41 +19,16 @@ namespace Weapons.Models
         public int CurrentAmmo { get; private set; } = 1;
         public int MaxAmmo => 1;
         public bool HasAmmo => CurrentAmmo > 0;
-        public bool IsUnlocked => _isUnlocked;
 
         public event Action<int> OnAmmoChanged;
 
-        #region VContainer Injection
-        [Inject]
-        public void Construct(IGameDataService gameDataService)
-        {
-            Debug.Log("BoomerangWeapon: VContainer injection successful!");
-            _gameDataService = gameDataService;
-        }
-        #endregion
-
         private void Start()
         {
-            Debug.Log($"BoomerangWeapon: Start - GameDataService is {(_gameDataService != null ? "available" : "NULL")}");
-            UpdateUnlockStatus();
-            
             // Find player transform for boomerang returning
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player != null)
             {
                 _playerTransform = player.transform;
-            }
-        }
-
-        private void UpdateUnlockStatus()
-        {
-            bool wasUnlocked = _isUnlocked;
-            _isUnlocked = _gameDataService?.HasPowerUp("boomerang") == true;
-            Debug.Log($"BoomerangWeapon: UpdateUnlockStatus - GameDataService: {_gameDataService != null}, HasPowerUp result: {_isUnlocked}");
-            
-            if (wasUnlocked != _isUnlocked)
-            {
-                Debug.Log($"BoomerangWeapon: Unlock status changed from {wasUnlocked} to {_isUnlocked}");
             }
         }
 
@@ -75,19 +46,8 @@ namespace Weapons.Models
 
         public void Shoot()
         {
-            Debug.Log($"BoomerangWeapon: Shoot called - Unlocked: {_isUnlocked}, HasAmmo: {HasAmmo}, Cooldown ready: {Time.time >= _nextFireTime}");
+            Debug.Log($"BoomerangWeapon: Shoot called - HasAmmo: {HasAmmo}, Cooldown ready: {Time.time >= _nextFireTime}");
             
-            // Check if power-up is unlocked first
-            if (!_isUnlocked)
-            {
-                UpdateUnlockStatus(); // Check again in case it was unlocked during gameplay
-                if (!_isUnlocked) 
-                {
-                    Debug.Log("BoomerangWeapon: Cannot shoot - weapon not unlocked");
-                    return;
-                }
-            }
-
             // Check cooldown
             if (Time.time < _nextFireTime)
             {
@@ -160,12 +120,6 @@ namespace Weapons.Models
             // Boomerang doesn't use traditional reload - ammo is restored when it returns
             // But we can implement this for manual reload if needed
             SetAmmo(1);
-        }
-
-        // Public method for WeaponController to check if weapon should be available
-        public void RefreshUnlockStatus()
-        {
-            UpdateUnlockStatus();
         }
 
         private void OnDestroy()
