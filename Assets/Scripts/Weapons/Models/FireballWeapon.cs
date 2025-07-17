@@ -1,5 +1,5 @@
 using System;
-using Core;
+using Core.Data;
 using Projectiles;
 using UnityEngine;
 using VContainer;
@@ -16,20 +16,20 @@ namespace Weapons.Models
         
         private bool _isEquipped;
         private float _nextFireTime;
-        private PersistentDataManager _persistentData;
+        private IGameDataService _gameDataService;
 
         #region VContainer Injection
         [Inject]
-        public void Construct(PersistentDataManager persistentData)
+        public void Construct(IGameDataService gameDataService)
         {
-            _persistentData = persistentData;
+            _gameDataService = gameDataService;
         }
         #endregion
 
         private void Start()
         {
             // Check if fireball power-up is unlocked
-            if (!_persistentData?.HasPowerUp("fireball") == true)
+            if (!_gameDataService?.HasPowerUp("fireball") == true)
             {
                 gameObject.SetActive(false);
             }
@@ -38,7 +38,7 @@ namespace Weapons.Models
         public void Shoot()
         {
             // Check if power-up is unlocked
-            if (!_persistentData?.HasPowerUp("fireball") == true)
+            if (!_gameDataService?.HasPowerUp("fireball") == true)
                 return;
 
             // Check cooldown

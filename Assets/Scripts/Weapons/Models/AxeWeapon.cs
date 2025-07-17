@@ -1,5 +1,5 @@
 using System;
-using Core;
+using Core.Data;
 using Projectiles;
 using UnityEngine;
 using VContainer;
@@ -17,13 +17,13 @@ namespace Weapons.Models
         [SerializeField] private AxePool axePool;
         
         private float _nextFireTime;
-        private PersistentDataManager _persistentData;
+        private IGameDataService _gameDataService;
 
         #region VContainer Injection
         [Inject]
-        public void Construct(PersistentDataManager persistentData)
+        public void Construct(IGameDataService gameDataService)
         {
-            _persistentData = persistentData;
+            _gameDataService = gameDataService;
         }
         #endregion
 
@@ -35,7 +35,7 @@ namespace Weapons.Models
         private void Start()
         {
             // Check if axe power-up is unlocked
-            if (!_persistentData?.HasPowerUp("axe") == true)
+            if (!_gameDataService?.HasPowerUp("axe") == true)
             {
                 gameObject.SetActive(false);
             }
@@ -61,7 +61,7 @@ namespace Weapons.Models
         public void Shoot()
         {
             // Check if power-up is unlocked
-            if (!_persistentData?.HasPowerUp("axe") == true)
+            if (!_gameDataService?.HasPowerUp("axe") == true)
                 return;
 
             // Check cooldown

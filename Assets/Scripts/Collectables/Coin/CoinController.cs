@@ -1,4 +1,4 @@
-﻿using Core;
+﻿using Core.Data;
 using UnityEngine;
 using VContainer;
 
@@ -7,22 +7,22 @@ namespace Collectables.Coin
     public class CoinController : MonoBehaviour
     {
         [SerializeField] private CoinView view;
-        private PersistentDataManager _persistentData;
+        private IGameDataService _gameDataService;
 
         #region VContainer Injection
         [Inject]
-        public void Construct(PersistentDataManager persistentData)
+        public void Construct(IGameDataService gameDataService)
         {
-            _persistentData = persistentData;
+            _gameDataService = gameDataService;
         }
         #endregion
 
         private void Start()
         {
-            // Update view with current coin count from persistent data
-            if (view && _persistentData is not null)
+            // Update view with current coin count from game data service
+            if (view && _gameDataService != null)
             {
-                view.UpdateCountDisplay(_persistentData.Data.coins);
+                view.UpdateCountDisplay(_gameDataService.CurrentData.coins);
             }
         }
 
@@ -38,13 +38,14 @@ namespace Collectables.Coin
 
         private void HandleCoinCollected()
         {
-            // Add coin to persistent data
-            _persistentData?.AddCoins(1);
-            
-            // Update view
-            if (view is not null && _persistentData is not null)
+            // Add coin through game data service
+            if (_gameDataService != null)
             {
-                view.UpdateCountDisplay(_persistentData.Data.coins);
+                int newCoinCount = _gameDataService.CurrentData.coins + 1;
+                _gameDataService.UpdateCoins(newCoinCount);
+                
+                // Update view
+                view?.UpdateCountDisplay(newCoinCount);
             }
         }
     }

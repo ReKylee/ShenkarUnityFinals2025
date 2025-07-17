@@ -208,9 +208,6 @@ namespace Core
 
         private void DelayedGameOverReset()
         {
-            // Find the PersistentDataManager and reset it
-            var persistentData = FindAnyObjectByType<PersistentDataManager>();
-            persistentData?.ResetAllData();
             
             // Could load main menu scene here instead
             RestartLevel();

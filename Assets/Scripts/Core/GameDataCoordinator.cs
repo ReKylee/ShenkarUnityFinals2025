@@ -99,7 +99,7 @@ namespace Core
             _gameDataService.UpdateLives(currentLives);
         }
 
-        private void OnGameDataChanged(GameData newData)
+        private void OnGameDataChanged(Data.GameData gameData)
         {
             _autoSaveService.RequestSave();
         }
