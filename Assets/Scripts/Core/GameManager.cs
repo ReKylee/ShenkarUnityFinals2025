@@ -69,6 +69,8 @@ namespace Core
             _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
             // Subscribe to level failed events (when player dies but has lives remaining)
             _eventBus?.Subscribe<LevelFailedEvent>(OnLevelFailed);
+            // Subscribe to player death events to handle respawn/restart
+            _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDeath);
         }
         #endregion
 
@@ -204,6 +206,17 @@ namespace Core
                 // For now, let's just change the state to GameOver which will trigger a restart
                 ChangeState(GameState.GameOver);
             }
+        }
+
+        private void OnPlayerDeath(PlayerDeathEvent playerDeathEvent)
+        {
+            if (!_isInitialized || _eventBus == null) return;
+            
+            // Handle player death - restart level after delay
+            ChangeState(GameState.GameOver);
+            
+            // Restart the level after a delay
+            Invoke(nameof(RestartLevel), respawnDelay);
         }
         #endregion
 
