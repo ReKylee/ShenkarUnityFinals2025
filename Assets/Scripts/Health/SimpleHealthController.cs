@@ -2,29 +2,19 @@
 using Health.Interfaces;
 using Health.Models;
 using Health.Views;
-using Interfaces.Resettable;
-using Managers.Interfaces;
 using UnityEngine;
 using VContainer;
 
 namespace Health
 {
-    public class SimpleHealthController : MonoBehaviour, IFullHealthSystem, IResettable
+    public class SimpleHealthController : MonoBehaviour, IFullHealthSystem
     {
         [SerializeField] private int maxHp = 3;
         [SerializeField] private TextHealthView healthView;
         [SerializeField] private bool createModelOnAwake = true;
 
         private IFullHealthSystem _model;
-        private IResetManager _resetManager;
-
-        #region VContainer Injection
-        [Inject]
-        public void Construct(IResetManager resetManager)
-        {
-            _resetManager = resetManager;
-        }
-        #endregion
+       
 
         private void Awake()
         {
@@ -33,17 +23,8 @@ namespace Health
                 InitializeDefaultModel();
             }
         }
-
-        protected void Start()
-        {
-            _resetManager?.Register(this);
-        }
-
-        protected void OnDestroy()
-        {
-            _resetManager?.Unregister(this);
-        }
-
+        
+  
         public int MaxHp => _model?.MaxHp ?? maxHp;
         public int CurrentHp => _model?.CurrentHp ?? 0;
 

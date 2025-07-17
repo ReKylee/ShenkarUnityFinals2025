@@ -1,6 +1,6 @@
-using Managers.Interfaces;
+using System;
+using Core;
 using Projectiles;
-using Resettables;
 using UnityEngine;
 using VContainer;
 using Weapons.Interfaces;
@@ -16,30 +16,31 @@ namespace Weapons.Models
         
         private bool _isEquipped;
         private float _nextFireTime;
-        private UsableWeaponResetter _resetter;
-        private IResetManager _resetManager;
+        private PersistentDataManager _persistentData;
 
         #region VContainer Injection
         [Inject]
-        public void Construct(IResetManager resetManager)
+        public void Construct(PersistentDataManager persistentData)
         {
-            _resetManager = resetManager;
+            _persistentData = persistentData;
         }
         #endregion
 
         private void Start()
         {
-            // Create UsableWeaponResetter with injected IResetManager
-            _resetter = new UsableWeaponResetter(this, _resetManager);
-        }
-
-        private void OnDestroy()
-        {
-            _resetter?.Dispose();
+            // Check if fireball power-up is unlocked
+            if (!_persistentData?.HasPowerUp("fireball") == true)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         public void Shoot()
         {
+            // Check if power-up is unlocked
+            if (!_persistentData?.HasPowerUp("fireball") == true)
+                return;
+
             // Check cooldown
             if (Time.time < _nextFireTime)
                 return;

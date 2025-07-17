@@ -1,9 +1,6 @@
-﻿using System;
-using GameEvents;
+﻿using GameEvents;
 using GameEvents.Interfaces;
 using Health;
-using Health.Interfaces;
-using Health.Views;
 using UnityEngine;
 using VContainer;
 
@@ -25,20 +22,18 @@ namespace Player
 
         #region Unity Lifecycle
 
-        protected new void Start()
+        protected void Start()
         {
-            base.Start(); // Initialize the base SimpleHealthController
 
             // Subscribe to events after base initialization
             OnHealthChanged += HandleHealthChanged;
             OnLivesEmpty += HandleHealthEmpty;
         }
 
-        protected new void OnDestroy()
+        protected void OnDestroy()
         {
             OnHealthChanged -= HandleHealthChanged;
             OnLivesEmpty -= HandleHealthEmpty;
-            base.OnDestroy();
         }
 
         #endregion

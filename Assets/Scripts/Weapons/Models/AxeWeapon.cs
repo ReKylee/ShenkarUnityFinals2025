@@ -1,7 +1,6 @@
 using System;
-using Managers.Interfaces;
+using Core;
 using Projectiles;
-using Resettables;
 using UnityEngine;
 using VContainer;
 using Weapons.Interfaces;
@@ -17,15 +16,14 @@ namespace Weapons.Models
         [SerializeField] private int defaultAmmo;
         [SerializeField] private AxePool axePool;
         
-        private AmmoResetter _ammoResetter;
-        private IResetManager _resetManager;
         private float _nextFireTime;
+        private PersistentDataManager _persistentData;
 
         #region VContainer Injection
         [Inject]
-        public void Construct(IResetManager resetManager)
+        public void Construct(PersistentDataManager persistentData)
         {
-            _resetManager = resetManager;
+            _persistentData = persistentData;
         }
         #endregion
 
@@ -36,13 +34,11 @@ namespace Weapons.Models
 
         private void Start()
         {
-            // Create AmmoResetter with injected IResetManager
-            _ammoResetter = new AmmoResetter(this, _resetManager);
-        }
-
-        private void OnDestroy()
-        {
-            _ammoResetter?.Dispose();
+            // Check if axe power-up is unlocked
+            if (!_persistentData?.HasPowerUp("axe") == true)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         public int CurrentAmmo { get; private set; }
@@ -64,6 +60,10 @@ namespace Weapons.Models
 
         public void Shoot()
         {
+            // Check if power-up is unlocked
+            if (!_persistentData?.HasPowerUp("axe") == true)
+                return;
+
             // Check cooldown
             if (Time.time < _nextFireTime)
                 return;
@@ -90,7 +90,6 @@ namespace Weapons.Models
                 // Set cooldown
                 _nextFireTime = Time.time + cooldownTime;
             }
-
         }
 
         // IAmmoWeapon implementation - Reload now adds ammo in specific increments

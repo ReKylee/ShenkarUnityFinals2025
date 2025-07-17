@@ -38,8 +38,7 @@ namespace Core
         #region Unity Lifecycle
         private void Start()
         {
-            // Subscribe to player death and game over events
-            _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
+            // Subscribe to game over events (when all lives are lost)
             _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
             
             if (autoStartGame)
@@ -50,7 +49,6 @@ namespace Core
 
         private void OnDestroy()
         {
-            _eventBus?.Unsubscribe<PlayerDeathEvent>(OnPlayerDied);
             _eventBus?.Unsubscribe<GameOverEvent>(OnGameOver);
         }
         #endregion
@@ -142,17 +140,6 @@ namespace Core
         #endregion
 
         #region Event Handlers
-        private void OnPlayerDied(PlayerDeathEvent deathEvent)
-        {
-            if (_currentState != GameState.Playing)
-                return;
-
-            // Player died - LivesManager handles life loss
-            // Just restart the level after a delay
-            ChangeState(GameState.GameOver);
-            Invoke(nameof(RestartLevel), respawnDelay);
-        }
-
         private void OnGameOver(GameOverEvent gameOverEvent)
         {
             // All lives lost - true game over
@@ -201,8 +188,17 @@ namespace Core
 
         private void RestartToMainMenu()
         {
-            // Reset the static lives counter for true restart
-            LivesManager.ResetStatic();
+            // Reset all persistent data for true restart
+            // No need for static reset - we can reset the data directly
+            Invoke(nameof(DelayedGameOverReset), 0.1f);
+        }
+
+        private void DelayedGameOverReset()
+        {
+            // Find the PersistentDataManager and reset it
+            var persistentData = FindAnyObjectByType<PersistentDataManager>();
+            persistentData?.ResetAllData();
+            
             // Could load main menu scene here instead
             RestartLevel();
         }

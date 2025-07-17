@@ -1,8 +1,6 @@
 ﻿using Core;
 using GameEvents;
 using GameEvents.Interfaces;
-using Managers;
-using Managers.Interfaces;
 using Player;
 using UnityEngine;
 using VContainer;
@@ -14,7 +12,7 @@ namespace DI
     {
         [Header("Game Components")]
         [SerializeField] private GameManager gameManager;
-        [SerializeField] private ResetManager resetManager;
+        [SerializeField] private PersistentDataManager persistentDataManager;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -25,8 +23,8 @@ namespace DI
             if (gameManager)
                 builder.RegisterComponent(gameManager);
                 
-            if (resetManager)
-                builder.RegisterComponent(resetManager).As<IResetManager>();
+            if (persistentDataManager)
+                builder.RegisterComponent(persistentDataManager);
         }
     }
 }
