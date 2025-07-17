@@ -10,10 +10,8 @@ namespace TMPExtensions
         private static readonly int ShadowHorStrength = Shader.PropertyToID("_ShadowHorStrength");
         private static readonly int ShadowVerStrength = Shader.PropertyToID("_ShadowVerStrength");
 
-        [Range(0f, 1f)]
-        public float shadowHorStrength = 1f;
-        [Range(0f, 1f)]
-        public float shadowVerStrength = 1f;
+        [Range(0f, 1f)] public float shadowHorStrength = 1f;
+        [Range(0f, 1f)] public float shadowVerStrength = 1f;
 
         private TMP_Text _tmpText;
 
@@ -25,6 +23,7 @@ namespace TMPExtensions
         {
             if (!_tmpText)
                 _tmpText = GetComponent<TMP_Text>();
+
             if (!_tmpText)
                 return;
 
@@ -36,6 +35,7 @@ namespace TMPExtensions
 
             // Mark graphic as dirty to refresh mesh/material
             _tmpText.SetAllDirty();
+           
         }
     }
 }

@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 12718223}
   - component: {fileID: 12718225}
   - component: {fileID: 12718224}
+  - component: {fileID: 12718226}
   m_Layer: 5
   m_Name: Txt_Score
   m_TagString: Untagged
@@ -266,9 +267,9 @@ MonoBehaviour:
   m_text: 000000
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b1e46137d69677b40b7e16436727d4e9, type: 2}
-  m_sharedMaterial: {fileID: 5021949268534619601, guid: b1e46137d69677b40b7e16436727d4e9, type: 2}
+  m_sharedMaterial: {fileID: 1631469907}
   m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
+  m_fontMaterial: {fileID: 1631469907}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
@@ -342,6 +343,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 12718222}
   m_CullTransparentMesh: 1
+--- !u!114 &12718226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 12718222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 849ecffa93b14d9881cdf1a5533a749f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shadowHorStrength: 1
+  shadowVerStrength: 1
 --- !u!1 &25531562
 GameObject:
   m_ObjectHideFlags: 0
@@ -29622,6 +29637,7 @@ GameObject:
   - component: {fileID: 1608028243}
   - component: {fileID: 1608028242}
   - component: {fileID: 1608028244}
+  - component: {fileID: 1608028245}
   m_Layer: 5
   m_Name: Txt_Lives
   m_TagString: Untagged
@@ -29646,7 +29662,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 6, y: 0}
-  m_SizeDelta: {x: -11, y: 0}
+  m_SizeDelta: {x: -12, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1608028242
 MonoBehaviour:
@@ -29671,9 +29687,9 @@ MonoBehaviour:
   m_text: 03
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b1e46137d69677b40b7e16436727d4e9, type: 2}
-  m_sharedMaterial: {fileID: 5021949268534619601, guid: b1e46137d69677b40b7e16436727d4e9, type: 2}
+  m_sharedMaterial: {fileID: 1871894722}
   m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
+  m_fontMaterial: {fileID: 1871894722}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
@@ -29760,6 +29776,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 1608028242}
+--- !u!114 &1608028245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608028240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 849ecffa93b14d9881cdf1a5533a749f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shadowHorStrength: 1
+  shadowVerStrength: 1
 --- !u!1001 &1608411593
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30046,6 +30076,41 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!21 &1631469907
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Super Mario Bros Material (Instance)
+  m_Shader: {fileID: 4800000, guid: cfa2a8654a194c2b8bae127de37884e7, type: 3}
+  m_Parent: {fileID: 2100000, guid: ad31bd912bc77a6449cbae978d3df9c0, type: 2}
+  m_ModifiedSerializedProperties: 4
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 7584670304542866162, guid: b1e46137d69677b40b7e16436727d4e9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ShadowHorStrength: 1
+    - _ShadowVerStrength: 1
+    m_Colors:
+    - _ShadowOffset: {r: 1, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &1648970897
 GameObject:
   m_ObjectHideFlags: 0
@@ -30775,6 +30840,41 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5592594574291024354, guid: ab419e5e6025bac4690e06c8abfdcaad, type: 3}
   m_PrefabInstance: {fileID: 1816338434}
   m_PrefabAsset: {fileID: 0}
+--- !u!21 &1871894722
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Super Mario Bros Material (Instance)
+  m_Shader: {fileID: 4800000, guid: cfa2a8654a194c2b8bae127de37884e7, type: 3}
+  m_Parent: {fileID: 2100000, guid: ad31bd912bc77a6449cbae978d3df9c0, type: 2}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 7584670304542866162, guid: b1e46137d69677b40b7e16436727d4e9, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ShadowHorStrength: 1
+    - _ShadowVerStrength: 1
+    m_Colors:
+    - _ShadowOffset: {r: 1, g: 1, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &1887416125
 GameObject:
   m_ObjectHideFlags: 0

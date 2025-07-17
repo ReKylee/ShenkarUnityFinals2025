@@ -88,11 +88,14 @@ Shader "TMPExtensions/BitmapShadow"
                 float  verticalEdges = max(alphaL, alphaR);
                 float  horizontalEdges = max(alphaU, alphaD);
 
-                // Compute separate shadow UVs for horizontal and vertical edge shadows
-                float2 uvHor = floor((IN.uv + float2(_ShadowOffset.x, 0) * _MainTex_TexelSize.xy) * res + 0.5) / res;
-                float2 uvVer = floor((IN.uv + float2(0, _ShadowOffset.y) * _MainTex_TexelSize.xy) * res + 0.5) / res;
+                // Compute snapped face UV and constant UV offset in atlas space
+                float2 faceUV = floor(IN.uv * res + 0.5) / res;
+                float2 offsetUV = _ShadowOffset.xy * _MainTex_TexelSize.xy;
+                // Apply offset to snapped UV for shadow sampling
+                float2 uvHor = faceUV + float2(offsetUV.x, 0);
+                float2 uvVer = faceUV + float2(0, offsetUV.y);
 
-                // Sample shadow contributions
+                // Sample shadow contributions (always offset from snapped faceUV)
                 float shadowAlphaHor = verticalEdges * tex2D(_MainTex, uvHor).a * _ShadowHorStrength;
                 float shadowAlphaVer = horizontalEdges * tex2D(_MainTex, uvVer).a * _ShadowVerStrength;
                 float shadowAlpha = max(shadowAlphaHor, shadowAlphaVer);
