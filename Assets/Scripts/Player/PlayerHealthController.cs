@@ -1,5 +1,4 @@
-﻿using GameEvents;
-using GameEvents.Interfaces;
+﻿using Core.Events;
 using Health;
 using UnityEngine;
 using VContainer;
@@ -8,8 +7,9 @@ namespace Player
 {
     public class PlayerHealthController : SimpleHealthController
     {
+        [SerializeField] private BarsHealthView healthView;
         private IEventBus _eventBus;
-
+        
         #region VContainer Injection
 
         [Inject]
@@ -24,7 +24,7 @@ namespace Player
 
         protected void Start()
         {
-
+            healthView.UpdateDisplay(CurrentHp, MaxHp);
             // Subscribe to events after base initialization
             OnHealthChanged += HandleHealthChanged;
             OnLivesEmpty += HandleHealthEmpty;
@@ -42,6 +42,7 @@ namespace Player
 
         private void HandleHealthChanged(int hp, int maxHp)
         {
+            healthView.UpdateDisplay(CurrentHp, MaxHp);
             _eventBus?.Publish(new PlayerHealthChangedEvent
             {
                 CurrentHp = hp,
@@ -53,6 +54,8 @@ namespace Player
 
         private void HandleHealthEmpty()
         {
+            Debug.Log("PlayerHealthController: Health reached zero, publishing PlayerDeathEvent");
+            
             _eventBus?.Publish(new PlayerDeathEvent
             {
                 Timestamp = Time.time,

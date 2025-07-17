@@ -2850,50 +2850,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &262081331
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 262081332}
-  - component: {fileID: 262081333}
-  m_Layer: 0
-  m_Name: SC_ResetManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &262081332
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262081331}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 359280866}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &262081333
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 262081331}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a728eb7dcb1047628e7ce1e3ab178300, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &268953431
 GameObject:
   m_ObjectHideFlags: 0
@@ -3185,9 +3141,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 904920109}
-  - {fileID: 262081332}
   - {fileID: 889944513}
   - {fileID: 509635060}
+  - {fileID: 1652499663}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &407960829
@@ -3761,6 +3717,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentLevelName: Level_01
   autoStartGame: 1
+  respawnDelay: 0.5
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -5217,7 +5174,6 @@ GameObject:
   - component: {fileID: 875829238}
   - component: {fileID: 875829240}
   - component: {fileID: 875829239}
-  - component: {fileID: 875829241}
   m_Layer: 5
   m_Name: Txt_EndGame
   m_TagString: Untagged
@@ -5343,19 +5299,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 875829237}
   m_CullTransparentMesh: 1
---- !u!114 &875829241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 875829237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86ea786b5d0c439e9a5e0a15f0ea13fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  activeOnReset: 0
 --- !u!1 &889944512
 GameObject:
   m_ObjectHideFlags: 0
@@ -5405,7 +5348,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   gameManager: {fileID: 509635061}
-  playerHealthController: {fileID: 0}
+  persistentDataManager: {fileID: 1652499664}
 --- !u!1 &904920108
 GameObject:
   m_ObjectHideFlags: 0
@@ -30003,6 +29946,53 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1652499662
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1652499663}
+  - component: {fileID: 1652499664}
+  m_Layer: 0
+  m_Name: PersistanceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1652499663
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652499662}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 359280866}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1652499664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652499662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e09d429d93c74337aa336b0fd3867004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultLives: 3
+  autoSave: 1
+  autoSaveInterval: 30
 --- !u!1 &1669617871
 GameObject:
   m_ObjectHideFlags: 0
@@ -31879,10 +31869,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1887416126}
     m_Modifications:
-    - target: {fileID: 279962894031721775, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2729735502043410532, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
       propertyPath: laserPoolManager
       value: 

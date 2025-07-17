@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
-using GameEvents;
-using GameEvents.Interfaces;
+using Core.Events;
 using UnityEngine;
 using VContainer;
 
@@ -99,6 +98,7 @@ namespace Core
         #region Event Handlers
         private void OnPlayerDied(PlayerDeathEvent deathEvent)
         {
+            Debug.Log("PersistentDataManager: Received PlayerDeathEvent, calling LoseLife()");
             LoseLife();
             if (autoSave) SaveData(); // Save immediately on important events
         }
@@ -116,9 +116,13 @@ namespace Core
         #region Public API - Lives
         public void LoseLife()
         {
+            Debug.Log($"PersistentDataManager: LoseLife() called. Current lives: {_gameData.lives}");
+            
             if (_gameData.lives <= 0) return;
             
             _gameData.lives--;
+            
+            Debug.Log($"PersistentDataManager: Lives decreased to {_gameData.lives}");
             
             _eventBus?.Publish(new PlayerLivesChangedEvent
             {
@@ -129,8 +133,20 @@ namespace Core
 
             if (_gameData.lives <= 0)
             {
+                Debug.Log("PersistentDataManager: No lives remaining, publishing GameOverEvent");
                 _eventBus?.Publish(new GameOverEvent
                 {
+                    Timestamp = Time.time
+                });
+            }
+            else
+            {
+                Debug.Log("PersistentDataManager: Lives remaining, publishing LevelFailedEvent for restart");
+                // Publish level failed event so GameManager can handle the restart
+                _eventBus?.Publish(new LevelFailedEvent
+                {
+                    LevelName = _gameData.currentLevel,
+                    FailureReason = "Player died",
                     Timestamp = Time.time
                 });
             }

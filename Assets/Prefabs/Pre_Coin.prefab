@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 8719194995362216341}
   - component: {fileID: 4989041325157719820}
   - component: {fileID: 7212900565669822871}
-  - component: {fileID: 8285837267380633874}
   m_Layer: 8
   m_Name: Pre_Coin
   m_TagString: Untagged
@@ -161,16 +160,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d60cb0d7b10d7094aad524a542a7dda3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8285837267380633874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2303736705558524048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86ea786b5d0c439e9a5e0a15f0ea13fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  activeOnReset: 1

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6599342503957296432}
   - component: {fileID: 2744869299825136038}
   - component: {fileID: 4509492725762489347}
-  - component: {fileID: 5348771050836992238}
   - component: {fileID: 1709817759299275656}
   - component: {fileID: 6806085336056450057}
   - component: {fileID: 6384095184324434777}
@@ -165,18 +164,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 2}
   m_Direction: 0
---- !u!114 &5348771050836992238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3926891512402252426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae141b0bb24f4c22ba142ecbe22efe40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1709817759299275656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,9 +202,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp: 16
-  maxLives: 3
   healthView: {fileID: 0}
-  livesView: {fileID: 0}
 --- !u!114 &279962894031721775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,7 +216,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthController: {fileID: 6384095184324434777}
-  damageInterval: 0.05
+  damageInterval: 3
+  startDamageOnStart: 1
 --- !u!114 &8779933863594023466
 MonoBehaviour:
   m_ObjectHideFlags: 0

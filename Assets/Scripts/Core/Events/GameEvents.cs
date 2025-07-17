@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace GameEvents
+namespace Core.Events
 {
     public enum GameState
     {

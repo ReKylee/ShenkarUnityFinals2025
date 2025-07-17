@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using GameEvents.Interfaces;
 using UnityEngine;
 
-namespace GameEvents
+namespace Core.Events
 {
     public class EventBus : IEventBus
     {

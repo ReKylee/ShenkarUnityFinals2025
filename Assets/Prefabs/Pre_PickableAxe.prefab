@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6779767512894945724}
   - component: {fileID: 8715833454463179326}
   - component: {fileID: 4708072068877636155}
-  - component: {fileID: 9206506369917037690}
   - component: {fileID: 8281147695693779005}
   m_Layer: 8
   m_Name: Pre_PickableAxe
@@ -102,19 +101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83fcd8c3ecda4f329cd26e9c2a081793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &9206506369917037690
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8532893176065156476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86ea786b5d0c439e9a5e0a15f0ea13fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  activeOnReset: 1
 --- !u!58 &8281147695693779005
 CircleCollider2D:
   m_ObjectHideFlags: 0

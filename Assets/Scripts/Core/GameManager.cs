@@ -1,6 +1,4 @@
-﻿using System;
-using GameEvents;
-using GameEvents.Interfaces;
+﻿using Core.Events;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
@@ -40,6 +38,8 @@ namespace Core
         {
             // Subscribe to game over events (when all lives are lost)
             _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
+            // Subscribe to level failed events (when player dies but has lives remaining)
+            _eventBus?.Subscribe<LevelFailedEvent>(OnLevelFailed);
             
             if (autoStartGame)
             {
@@ -50,6 +50,7 @@ namespace Core
         private void OnDestroy()
         {
             _eventBus?.Unsubscribe<GameOverEvent>(OnGameOver);
+            _eventBus?.Unsubscribe<LevelFailedEvent>(OnLevelFailed);
         }
         #endregion
 
@@ -155,6 +156,18 @@ namespace Core
             // Here you could show game over screen, return to main menu, etc.
             // For now, restart after longer delay
             Invoke(nameof(RestartToMainMenu), respawnDelay * 2f);
+        }
+
+        private void OnLevelFailed(LevelFailedEvent levelFailedEvent)
+        {
+            // Handle level failure (e.g., player death) but allow for restarts if lives remain
+            // This could simply be a state change, or you could add more logic here
+            if (_currentState == GameState.Playing)
+            {
+                // If we have a respawn system, we might want to respawn the player here
+                // For now, let's just change the state to GameOver which will trigger a restart
+                ChangeState(GameState.GameOver);
+            }
         }
         #endregion
 

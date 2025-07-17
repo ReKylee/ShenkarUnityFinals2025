@@ -1,7 +1,7 @@
 ﻿using Core;
-using GameEvents;
-using GameEvents.Interfaces;
-using Player;
+using Core.Data;
+using Core.Events;
+using Core.Lives;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -12,19 +12,24 @@ namespace DI
     {
         [Header("Game Components")]
         [SerializeField] private GameManager gameManager;
-        [SerializeField] private PersistentDataManager persistentDataManager;
+        [SerializeField] private GameDataCoordinator gameDataCoordinator;
 
         protected override void Configure(IContainerBuilder builder)
         {
             // Register core systems as singletons
             builder.Register<EventBus>(Lifetime.Singleton).As<IEventBus>();
             
+            // Register SOLID-compliant data services
+            builder.Register<JsonGameDataRepository>(Lifetime.Singleton).As<IGameDataRepository>();
+            builder.Register<GameDataService>(Lifetime.Singleton).As<IGameDataService>();
+            builder.Register<LivesService>(Lifetime.Singleton).As<ILivesService>();
+            
             // Register managers
             if (gameManager)
                 builder.RegisterComponent(gameManager);
                 
-            if (persistentDataManager)
-                builder.RegisterComponent(persistentDataManager);
+            if (gameDataCoordinator)
+                builder.RegisterComponent(gameDataCoordinator);
         }
     }
 }

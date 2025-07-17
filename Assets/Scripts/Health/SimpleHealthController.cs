@@ -10,18 +10,13 @@ namespace Health
     public class SimpleHealthController : MonoBehaviour, IFullHealthSystem
     {
         [SerializeField] private int maxHp = 3;
-        [SerializeField] private TextHealthView healthView;
-        [SerializeField] private bool createModelOnAwake = true;
 
         private IFullHealthSystem _model;
        
 
         private void Awake()
         {
-            if (createModelOnAwake)
-            {
                 InitializeDefaultModel();
-            }
         }
         
   
@@ -65,10 +60,6 @@ namespace Health
         /// </summary>
         private void InitializeDefaultModel() => _model = new HealthModel(maxHp, maxHp);
 
-        /// <summary>
-        ///     Set a custom health model implementation (for dependency injection)
-        /// </summary>
-        public void SetHealthModel(IFullHealthSystem model) =>
-            _model = model ?? throw new ArgumentNullException(nameof(model));
+       
     }
 }

@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 7818152810527482500}
   - component: {fileID: 5075611672214000102}
   - component: {fileID: 364413600775854170}
-  - component: {fileID: 6649395392395164413}
   - component: {fileID: 8044948040430242548}
   m_Layer: 7
   m_Name: Pre_BuffMario
@@ -196,19 +195,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1
---- !u!114 &6649395392395164413
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5834558213719639574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86ea786b5d0c439e9a5e0a15f0ea13fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  activeOnReset: 1
 --- !u!114 &8044948040430242548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +208,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp: 3
+  healthView: {fileID: 0}
+  createModelOnAwake: 1
 --- !u!1 &9126669805728146567
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,3 +270,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireball: {fileID: 460594579410848658, guid: 749db9f6f469d3843a8558e628486c6e, type: 3}
+  spawnPoint: {fileID: 0}
+  cooldownTime: 0.3
+  fireballPool: {fileID: 0}

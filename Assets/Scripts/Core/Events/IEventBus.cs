@@ -1,12 +1,7 @@
 ﻿using System;
 
-namespace GameEvents.Interfaces
+namespace Core.Events
 {
-    public interface IEventPublisher
-    {
-        void Publish<T>(T eventData) where T : struct;
-    }
-
     public interface IEventSubscriber
     {
         void Subscribe<T>(Action<T> handler) where T : struct;

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6096276390306413699}
   - component: {fileID: 3931555604207513280}
   - component: {fileID: 3450815253933874589}
-  - component: {fileID: 7264406192165045812}
   - component: {fileID: 1981562619721637355}
   m_Layer: 8
   m_Name: Pre_Flower
@@ -125,19 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1d2cdfc8d5017f4e98b7b1a38a61a25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7264406192165045812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9045380075985753326}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86ea786b5d0c439e9a5e0a15f0ea13fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  activeOnReset: 1
 --- !u!58 &1981562619721637355
 CircleCollider2D:
   m_ObjectHideFlags: 0

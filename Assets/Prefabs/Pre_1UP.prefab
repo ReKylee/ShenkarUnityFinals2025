@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3314360422841426418}
   - component: {fileID: 7137332790041626739}
   - component: {fileID: 2276392633909381439}
-  - component: {fileID: 8291463533713756550}
   m_Layer: 8
   m_Name: Pre_1UP
   m_TagString: Untagged
@@ -139,16 +138,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healAmount: 1
---- !u!114 &8291463533713756550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3002121458190784755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86ea786b5d0c439e9a5e0a15f0ea13fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  activeOnReset: 1
