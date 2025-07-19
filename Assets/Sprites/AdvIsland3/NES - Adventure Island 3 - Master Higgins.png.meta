@@ -126,37 +126,15 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: NES - Adventure Island 3 - Master Higgins_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 548
-        width: 16
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 730d30ba848627300800000000000000
-      internalID: 248375590774886455
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: NES - Adventure Island 3 - Master Higgins_1
       rect:
         serializedVersion: 2
-        x: 18
-        y: 548
+        x: 19
+        y: 549
         width: 16
         height: 31
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.516129}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -173,12 +151,12 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_2
       rect:
         serializedVersion: 2
-        x: 36
-        y: 548
+        x: 37
+        y: 549
         width: 20
         height: 31
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.516129}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -195,8 +173,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_3
       rect:
         serializedVersion: 2
-        x: 58
-        y: 548
+        x: 59
+        y: 549
         width: 16
         height: 32
       alignment: 0
@@ -217,12 +195,12 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_4
       rect:
         serializedVersion: 2
-        x: 76
-        y: 548
+        x: 77
+        y: 549
         width: 16
         height: 31
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.516129}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -239,12 +217,12 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_5
       rect:
         serializedVersion: 2
-        x: 94
-        y: 548
+        x: 95
+        y: 549
         width: 19
         height: 31
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.5263158, y: 0.516129}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -261,8 +239,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_6
       rect:
         serializedVersion: 2
-        x: 115
-        y: 549
+        x: 116
+        y: 550
         width: 28
         height: 30
       alignment: 0
@@ -283,8 +261,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_7
       rect:
         serializedVersion: 2
-        x: 145
-        y: 548
+        x: 146
+        y: 549
         width: 20
         height: 32
       alignment: 0
@@ -305,12 +283,12 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_8
       rect:
         serializedVersion: 2
-        x: 184
+        x: 185
         y: 564
         width: 16
         height: 15
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.4666667}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -327,12 +305,12 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_9
       rect:
         serializedVersion: 2
-        x: 232
+        x: 217
         y: 565
         width: 16
         height: 15
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0.5, y: 0.4666667}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -349,8 +327,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_10
       rect:
         serializedVersion: 2
-        x: 256
-        y: 568
+        x: 257
+        y: 569
         width: 7
         height: 12
       alignment: 0
@@ -371,8 +349,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_11
       rect:
         serializedVersion: 2
-        x: 272
-        y: 556
+        x: 273
+        y: 557
         width: 8
         height: 16
       alignment: 0
@@ -393,8 +371,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_12
       rect:
         serializedVersion: 2
-        x: 288
-        y: 564
+        x: 289
+        y: 565
         width: 8
         height: 8
       alignment: 0
@@ -415,8 +393,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_13
       rect:
         serializedVersion: 2
-        x: 200
-        y: 548
+        x: 185
+        y: 550
         width: 16
         height: 13
       alignment: 0
@@ -437,8 +415,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_14
       rect:
         serializedVersion: 2
-        x: 232
-        y: 551
+        x: 201
+        y: 547
         width: 16
         height: 13
       alignment: 0
@@ -459,10 +437,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_15
       rect:
         serializedVersion: 2
-        x: 0
-        y: 514
-        width: 19
-        height: 32
+        x: 233
+        y: 550
+        width: 16
+        height: 13
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -481,8 +459,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_16
       rect:
         serializedVersion: 2
-        x: 21
-        y: 514
+        x: 1
+        y: 515
         width: 19
         height: 32
       alignment: 0
@@ -503,8 +481,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_17
       rect:
         serializedVersion: 2
-        x: 42
-        y: 514
+        x: 22
+        y: 515
         width: 19
         height: 32
       alignment: 0
@@ -525,9 +503,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_18
       rect:
         serializedVersion: 2
-        x: 64
-        y: 514
-        width: 22
+        x: 43
+        y: 515
+        width: 19
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -547,10 +525,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_19
       rect:
         serializedVersion: 2
-        x: 88
-        y: 514
+        x: 65
+        y: 515
         width: 22
-        height: 31
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -569,10 +547,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_20
       rect:
         serializedVersion: 2
-        x: 112
-        y: 516
-        width: 23
-        height: 30
+        x: 89
+        y: 515
+        width: 22
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -591,8 +569,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_21
       rect:
         serializedVersion: 2
-        x: 137
-        y: 516
+        x: 113
+        y: 517
         width: 23
         height: 30
       alignment: 0
@@ -613,10 +591,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_22
       rect:
         serializedVersion: 2
-        x: 162
-        y: 507
-        width: 22
-        height: 41
+        x: 138
+        y: 517
+        width: 23
+        height: 30
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -635,10 +613,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_23
       rect:
         serializedVersion: 2
-        x: 186
-        y: 507
+        x: 163
+        y: 508
         width: 22
-        height: 31
+        height: 41
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -657,10 +635,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_24
       rect:
         serializedVersion: 2
-        x: 210
-        y: 516
-        width: 24
-        height: 24
+        x: 187
+        y: 508
+        width: 22
+        height: 31
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -679,9 +657,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_25
       rect:
         serializedVersion: 2
-        x: 236
-        y: 516
-        width: 22
+        x: 211
+        y: 517
+        width: 24
         height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -701,10 +679,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_26
       rect:
         serializedVersion: 2
-        x: 0
-        y: 486
-        width: 31
-        height: 21
+        x: 237
+        y: 517
+        width: 22
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -720,56 +698,12 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NES - Adventure Island 3 - Master Higgins_27
-      rect:
-        serializedVersion: 2
-        x: 11
-        y: 505
-        width: 12
-        height: 7
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 148bd36c62d3abc419dfc90410a2c0d7
-      internalID: -59417
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: NES - Adventure Island 3 - Master Higgins_28
-      rect:
-        serializedVersion: 2
-        x: 33
-        y: 486
-        width: 31
-        height: 20
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2065c982732a1c44a94a051aa41ff60f
-      internalID: -831710723
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: NES - Adventure Island 3 - Master Higgins_29
       rect:
         serializedVersion: 2
-        x: 66
-        y: 486
-        width: 30
+        x: 34
+        y: 487
+        width: 31
         height: 20
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -789,8 +723,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_30
       rect:
         serializedVersion: 2
-        x: 98
-        y: 486
+        x: 67
+        y: 487
         width: 30
         height: 20
       alignment: 0
@@ -811,10 +745,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_31
       rect:
         serializedVersion: 2
-        x: 226
-        y: 486
-        width: 13
-        height: 23
+        x: 99
+        y: 487
+        width: 30
+        height: 20
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -833,10 +767,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_32
       rect:
         serializedVersion: 2
-        x: 242
-        y: 486
-        width: 12
-        height: 22
+        x: 227
+        y: 487
+        width: 13
+        height: 23
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -855,10 +789,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_33
       rect:
         serializedVersion: 2
-        x: 256
-        y: 486
-        width: 24
-        height: 28
+        x: 243
+        y: 487
+        width: 12
+        height: 22
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -877,10 +811,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_34
       rect:
         serializedVersion: 2
-        x: 281
-        y: 485
-        width: 22
-        height: 29
+        x: 257
+        y: 487
+        width: 24
+        height: 28
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -899,10 +833,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_35
       rect:
         serializedVersion: 2
-        x: 0
-        y: 445
-        width: 26
-        height: 38
+        x: 282
+        y: 486
+        width: 22
+        height: 29
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -921,8 +855,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_36
       rect:
         serializedVersion: 2
-        x: 28
-        y: 445
+        x: 1
+        y: 446
         width: 26
         height: 38
       alignment: 0
@@ -943,10 +877,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_37
       rect:
         serializedVersion: 2
-        x: 56
-        y: 445
-        width: 32
-        height: 37
+        x: 29
+        y: 446
+        width: 26
+        height: 38
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -965,8 +899,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_38
       rect:
         serializedVersion: 2
-        x: 89
-        y: 445
+        x: 57
+        y: 446
         width: 32
         height: 37
       alignment: 0
@@ -987,10 +921,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_39
       rect:
         serializedVersion: 2
-        x: 123
-        y: 445
-        width: 24
-        height: 39
+        x: 90
+        y: 446
+        width: 32
+        height: 37
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1009,8 +943,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_40
       rect:
         serializedVersion: 2
-        x: 149
-        y: 445
+        x: 124
+        y: 446
         width: 24
         height: 39
       alignment: 0
@@ -1031,10 +965,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_41
       rect:
         serializedVersion: 2
-        x: 175
-        y: 445
-        width: 26
-        height: 38
+        x: 150
+        y: 446
+        width: 24
+        height: 39
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1053,9 +987,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_42
       rect:
         serializedVersion: 2
-        x: 203
-        y: 445
-        width: 28
+        x: 176
+        y: 446
+        width: 26
         height: 38
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1075,10 +1009,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_43
       rect:
         serializedVersion: 2
-        x: 233
-        y: 445
-        width: 23
-        height: 39
+        x: 204
+        y: 446
+        width: 28
+        height: 38
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1097,10 +1031,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_44
       rect:
         serializedVersion: 2
-        x: 264
-        y: 442
-        width: 25
-        height: 10
+        x: 234
+        y: 446
+        width: 23
+        height: 39
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1119,10 +1053,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_45
       rect:
         serializedVersion: 2
-        x: 0
-        y: 404
-        width: 26
-        height: 39
+        x: 265
+        y: 443
+        width: 25
+        height: 10
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1141,8 +1075,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_46
       rect:
         serializedVersion: 2
-        x: 28
-        y: 404
+        x: 1
+        y: 405
         width: 26
         height: 39
       alignment: 0
@@ -1163,9 +1097,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_47
       rect:
         serializedVersion: 2
-        x: 56
-        y: 404
-        width: 31
+        x: 29
+        y: 405
+        width: 26
         height: 39
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1185,8 +1119,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_48
       rect:
         serializedVersion: 2
-        x: 89
-        y: 404
+        x: 57
+        y: 405
         width: 31
         height: 39
       alignment: 0
@@ -1207,10 +1141,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_49
       rect:
         serializedVersion: 2
-        x: 128
-        y: 404
-        width: 24
-        height: 12
+        x: 90
+        y: 405
+        width: 31
+        height: 39
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1229,10 +1163,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_50
       rect:
         serializedVersion: 2
-        x: 168
-        y: 413
-        width: 16
-        height: 14
+        x: 129
+        y: 405
+        width: 24
+        height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1251,10 +1185,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_51
       rect:
         serializedVersion: 2
-        x: 194
-        y: 408
-        width: 28
-        height: 24
+        x: 169
+        y: 414
+        width: 16
+        height: 14
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1273,10 +1207,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_52
       rect:
         serializedVersion: 2
-        x: 234
-        y: 413
-        width: 11
-        height: 14
+        x: 195
+        y: 409
+        width: 28
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1295,10 +1229,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_53
       rect:
         serializedVersion: 2
-        x: 0
-        y: 352
-        width: 28
-        height: 46
+        x: 235
+        y: 414
+        width: 11
+        height: 14
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1317,10 +1251,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_54
       rect:
         serializedVersion: 2
-        x: 30
-        y: 352
-        width: 27
-        height: 47
+        x: 1
+        y: 353
+        width: 28
+        height: 46
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1339,10 +1273,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_55
       rect:
         serializedVersion: 2
-        x: 59
-        y: 352
-        width: 28
-        height: 46
+        x: 31
+        y: 353
+        width: 27
+        height: 47
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1361,10 +1295,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_56
       rect:
         serializedVersion: 2
-        x: 89
-        y: 352
+        x: 60
+        y: 353
         width: 28
-        height: 50
+        height: 46
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1383,10 +1317,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_57
       rect:
         serializedVersion: 2
-        x: 119
-        y: 352
-        width: 29
-        height: 47
+        x: 90
+        y: 353
+        width: 28
+        height: 50
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1405,10 +1339,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_58
       rect:
         serializedVersion: 2
-        x: 154
-        y: 356
-        width: 14
-        height: 15
+        x: 120
+        y: 353
+        width: 29
+        height: 47
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1427,10 +1361,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_59
       rect:
         serializedVersion: 2
-        x: 176
-        y: 358
-        width: 8
-        height: 11
+        x: 155
+        y: 357
+        width: 14
+        height: 15
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1449,10 +1383,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_60
       rect:
         serializedVersion: 2
-        x: 186
-        y: 355
-        width: 31
-        height: 43
+        x: 177
+        y: 359
+        width: 8
+        height: 11
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1471,10 +1405,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_61
       rect:
         serializedVersion: 2
-        x: 219
-        y: 355
-        width: 30
-        height: 44
+        x: 187
+        y: 356
+        width: 31
+        height: 43
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1493,10 +1427,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_62
       rect:
         serializedVersion: 2
-        x: 251
-        y: 355
-        width: 32
-        height: 43
+        x: 220
+        y: 356
+        width: 30
+        height: 44
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1515,10 +1449,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_63
       rect:
         serializedVersion: 2
-        x: 285
-        y: 355
-        width: 31
-        height: 44
+        x: 252
+        y: 356
+        width: 32
+        height: 43
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1537,10 +1471,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_64
       rect:
         serializedVersion: 2
-        x: 0
-        y: 300
-        width: 28
-        height: 46
+        x: 286
+        y: 356
+        width: 31
+        height: 44
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1559,10 +1493,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_65
       rect:
         serializedVersion: 2
-        x: 30
-        y: 300
-        width: 27
-        height: 47
+        x: 1
+        y: 301
+        width: 28
+        height: 46
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1581,10 +1515,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_66
       rect:
         serializedVersion: 2
-        x: 59
-        y: 300
-        width: 28
-        height: 46
+        x: 31
+        y: 301
+        width: 27
+        height: 47
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1603,10 +1537,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_67
       rect:
         serializedVersion: 2
-        x: 89
-        y: 300
+        x: 60
+        y: 301
         width: 28
-        height: 50
+        height: 46
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1625,10 +1559,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_68
       rect:
         serializedVersion: 2
-        x: 119
-        y: 300
-        width: 40
-        height: 45
+        x: 90
+        y: 301
+        width: 28
+        height: 50
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1647,10 +1581,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_69
       rect:
         serializedVersion: 2
-        x: 160
-        y: 305
-        width: 32
-        height: 19
+        x: 120
+        y: 301
+        width: 40
+        height: 45
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1669,10 +1603,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_70
       rect:
         serializedVersion: 2
-        x: 0
-        y: 252
-        width: 33
-        height: 39
+        x: 161
+        y: 306
+        width: 16
+        height: 19
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1691,10 +1625,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_71
       rect:
         serializedVersion: 2
-        x: 35
-        y: 252
-        width: 32
-        height: 40
+        x: 1
+        y: 253
+        width: 33
+        height: 39
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1713,10 +1647,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_72
       rect:
         serializedVersion: 2
-        x: 69
-        y: 252
+        x: 36
+        y: 253
         width: 32
-        height: 39
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1735,10 +1669,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_73
       rect:
         serializedVersion: 2
-        x: 103
-        y: 252
-        width: 31
-        height: 46
+        x: 70
+        y: 253
+        width: 32
+        height: 39
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1757,10 +1691,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_74
       rect:
         serializedVersion: 2
-        x: 136
-        y: 252
-        width: 32
-        height: 42
+        x: 104
+        y: 253
+        width: 31
+        height: 46
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1779,10 +1713,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_75
       rect:
         serializedVersion: 2
-        x: 174
-        y: 252
-        width: 29
-        height: 47
+        x: 137
+        y: 253
+        width: 32
+        height: 42
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1801,10 +1735,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_76
       rect:
         serializedVersion: 2
-        x: 208
+        x: 175
         y: 253
-        width: 31
-        height: 46
+        width: 29
+        height: 47
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1823,10 +1757,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_77
       rect:
         serializedVersion: 2
-        x: 241
-        y: 259
-        width: 32
-        height: 40
+        x: 209
+        y: 254
+        width: 31
+        height: 46
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1845,10 +1779,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_78
       rect:
         serializedVersion: 2
-        x: 0
-        y: 202
-        width: 30
-        height: 47
+        x: 242
+        y: 260
+        width: 32
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1867,10 +1801,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_79
       rect:
         serializedVersion: 2
-        x: 32
-        y: 204
-        width: 32
-        height: 46
+        x: 1
+        y: 203
+        width: 30
+        height: 47
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1889,10 +1823,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_80
       rect:
         serializedVersion: 2
-        x: 66
-        y: 213
+        x: 33
+        y: 205
         width: 32
-        height: 29
+        height: 46
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1911,8 +1845,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_81
       rect:
         serializedVersion: 2
-        x: 100
-        y: 213
+        x: 67
+        y: 214
         width: 32
         height: 29
       alignment: 0
@@ -1933,10 +1867,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_82
       rect:
         serializedVersion: 2
-        x: 134
-        y: 200
+        x: 101
+        y: 214
         width: 32
-        height: 42
+        height: 29
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1955,10 +1889,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_83
       rect:
         serializedVersion: 2
-        x: 176
-        y: 212
-        width: 8
-        height: 9
+        x: 135
+        y: 201
+        width: 32
+        height: 42
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1977,10 +1911,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_84
       rect:
         serializedVersion: 2
-        x: 0
-        y: 154
-        width: 36
-        height: 44
+        x: 177
+        y: 213
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1999,10 +1933,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_85
       rect:
         serializedVersion: 2
-        x: 38
-        y: 154
+        x: 1
+        y: 155
         width: 36
-        height: 45
+        height: 44
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2021,10 +1955,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_86
       rect:
         serializedVersion: 2
-        x: 76
-        y: 154
-        width: 37
-        height: 44
+        x: 39
+        y: 155
+        width: 36
+        height: 45
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2043,10 +1977,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_87
       rect:
         serializedVersion: 2
-        x: 115
-        y: 154
-        width: 36
-        height: 37
+        x: 77
+        y: 155
+        width: 37
+        height: 44
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2065,10 +1999,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_88
       rect:
         serializedVersion: 2
-        x: 153
-        y: 154
-        width: 26
-        height: 26
+        x: 116
+        y: 155
+        width: 36
+        height: 37
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2087,10 +2021,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_89
       rect:
         serializedVersion: 2
-        x: 181
-        y: 148
-        width: 32
-        height: 32
+        x: 154
+        y: 155
+        width: 26
+        height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2109,10 +2043,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_90
       rect:
         serializedVersion: 2
-        x: 215
-        y: 154
-        width: 26
-        height: 26
+        x: 182
+        y: 149
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2131,10 +2065,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_91
       rect:
         serializedVersion: 2
-        x: 243
-        y: 154
-        width: 32
-        height: 32
+        x: 216
+        y: 155
+        width: 26
+        height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2153,10 +2087,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_92
       rect:
         serializedVersion: 2
-        x: 0
-        y: 112
-        width: 30
-        height: 28
+        x: 244
+        y: 155
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2175,10 +2109,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_93
       rect:
         serializedVersion: 2
-        x: 32
-        y: 112
+        x: 1
+        y: 113
         width: 30
-        height: 27
+        height: 28
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2197,10 +2131,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_94
       rect:
         serializedVersion: 2
-        x: 65
-        y: 134
-        width: 13
-        height: 12
+        x: 33
+        y: 113
+        width: 30
+        height: 27
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2219,10 +2153,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_95
       rect:
         serializedVersion: 2
-        x: 80
-        y: 112
-        width: 16
-        height: 32
+        x: 66
+        y: 135
+        width: 13
+        height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2241,8 +2175,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_96
       rect:
         serializedVersion: 2
-        x: 98
-        y: 112
+        x: 81
+        y: 113
         width: 16
         height: 32
       alignment: 0
@@ -2263,10 +2197,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_97
       rect:
         serializedVersion: 2
-        x: 128
-        y: 107
-        width: 26
-        height: 28
+        x: 99
+        y: 113
+        width: 16
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2285,10 +2219,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_98
       rect:
         serializedVersion: 2
-        x: 156
-        y: 107
-        width: 27
-        height: 27
+        x: 129
+        y: 108
+        width: 26
+        height: 28
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2307,10 +2241,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_99
       rect:
         serializedVersion: 2
-        x: 185
-        y: 107
+        x: 157
+        y: 108
         width: 27
-        height: 40
+        height: 27
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2329,10 +2263,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_100
       rect:
         serializedVersion: 2
-        x: 214
-        y: 107
+        x: 186
+        y: 108
         width: 27
-        height: 39
+        height: 40
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2351,8 +2285,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_101
       rect:
         serializedVersion: 2
-        x: 243
-        y: 107
+        x: 215
+        y: 108
         width: 27
         height: 39
       alignment: 0
@@ -2373,10 +2307,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_102
       rect:
         serializedVersion: 2
-        x: 0
-        y: 68
-        width: 24
-        height: 27
+        x: 244
+        y: 108
+        width: 27
+        height: 39
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2395,10 +2329,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_103
       rect:
         serializedVersion: 2
-        x: 26
-        y: 68
-        width: 31
-        height: 26
+        x: 1
+        y: 69
+        width: 24
+        height: 27
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2417,9 +2351,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_104
       rect:
         serializedVersion: 2
-        x: 59
-        y: 68
-        width: 24
+        x: 27
+        y: 69
+        width: 31
         height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -2439,9 +2373,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_105
       rect:
         serializedVersion: 2
-        x: 85
-        y: 68
-        width: 31
+        x: 60
+        y: 69
+        width: 24
         height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -2461,10 +2395,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_106
       rect:
         serializedVersion: 2
-        x: 118
-        y: 68
-        width: 29
-        height: 37
+        x: 86
+        y: 69
+        width: 31
+        height: 26
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2483,10 +2417,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_107
       rect:
         serializedVersion: 2
-        x: 149
-        y: 68
-        width: 46
-        height: 34
+        x: 119
+        y: 69
+        width: 29
+        height: 37
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2505,8 +2439,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_108
       rect:
         serializedVersion: 2
-        x: 197
-        y: 68
+        x: 150
+        y: 69
         width: 46
         height: 34
       alignment: 0
@@ -2527,10 +2461,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_109
       rect:
         serializedVersion: 2
-        x: 245
-        y: 55
+        x: 198
+        y: 69
         width: 46
-        height: 47
+        height: 34
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2549,10 +2483,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_110
       rect:
         serializedVersion: 2
-        x: 0
-        y: 34
-        width: 33
-        height: 32
+        x: 246
+        y: 56
+        width: 46
+        height: 47
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2571,8 +2505,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_111
       rect:
         serializedVersion: 2
-        x: 35
-        y: 34
+        x: 1
+        y: 35
         width: 33
         height: 32
       alignment: 0
@@ -2593,9 +2527,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_112
       rect:
         serializedVersion: 2
-        x: 70
-        y: 34
-        width: 30
+        x: 36
+        y: 35
+        width: 33
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -2615,8 +2549,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_113
       rect:
         serializedVersion: 2
-        x: 102
-        y: 34
+        x: 71
+        y: 35
         width: 30
         height: 32
       alignment: 0
@@ -2637,9 +2571,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_114
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 31
+        x: 103
+        y: 35
+        width: 30
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -2659,9 +2593,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_115
       rect:
         serializedVersion: 2
-        x: 33
-        y: 0
-        width: 32
+        x: 1
+        y: 1
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -2681,9 +2615,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_116
       rect:
         serializedVersion: 2
-        x: 67
-        y: 0
-        width: 33
+        x: 34
+        y: 1
+        width: 32
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -2703,8 +2637,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_117
       rect:
         serializedVersion: 2
-        x: 102
-        y: 0
+        x: 68
+        y: 1
         width: 33
         height: 32
       alignment: 0
@@ -2725,9 +2659,9 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_118
       rect:
         serializedVersion: 2
-        x: 137
-        y: 0
-        width: 36
+        x: 103
+        y: 1
+        width: 33
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -2747,8 +2681,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_119
       rect:
         serializedVersion: 2
-        x: 175
-        y: 0
+        x: 138
+        y: 1
         width: 36
         height: 32
       alignment: 0
@@ -2769,10 +2703,10 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_120
       rect:
         serializedVersion: 2
-        x: 200
-        y: 564
-        width: 16
-        height: 15
+        x: 176
+        y: 1
+        width: 36
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2788,13 +2722,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: NES - Adventure Island 3 - Master Higgins_121
+      name: NES - Adventure Island 3 - Master Higgins_0
       rect:
         serializedVersion: 2
-        x: 216
-        y: 565
+        x: 1
+        y: 549
         width: 16
-        height: 15
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2803,7 +2737,51 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 89ced900987f5e14597f285a40b2a305
+      spriteID: 720864dbf19f048438a9069f8f2ec485
+      internalID: -889070893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Master Higgins_27
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 487
+        width: 31
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee54f2db169e6dd468a24624891554e8
+      internalID: -59417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Master Higgins_121
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 564
+        width: 16
+        height: 15
+      alignment: 9
+      pivot: {x: 0.5, y: 0.4666667}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df9cc32cf7251034bb5bbc2014cdb489
       internalID: 550614604
       vertices: []
       indices: 
@@ -2813,19 +2791,19 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_122
       rect:
         serializedVersion: 2
-        x: 184
-        y: 551
+        x: 233
+        y: 565
         width: 16
-        height: 13
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        height: 15
+      alignment: 9
+      pivot: {x: 0.5, y: 0.4666667}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f25f93334c240c149bc1bdf95f552e19
+      spriteID: d100b76c7def4af4d9e0ba4f0fa7e71b
       internalID: 1060450863
       vertices: []
       indices: 
@@ -2835,8 +2813,8 @@ TextureImporter:
       name: NES - Adventure Island 3 - Master Higgins_123
       rect:
         serializedVersion: 2
-        x: 216
-        y: 548
+        x: 217
+        y: 547
         width: 16
         height: 13
       alignment: 0
@@ -2847,8 +2825,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0e6ba6444d90ef641b58e221fd156fc4
+      spriteID: 04341e89ca88ba34ab86ab9544985417
       internalID: 620900558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Master Higgins_28
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 306
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 876f5142a7c72344ab802125a1adb5a7
+      internalID: -831710723
       vertices: []
       indices: 
       edges: []
@@ -2871,7 +2871,7 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      NES - Adventure Island 3 - Master Higgins_0: 248375590774886455
+      NES - Adventure Island 3 - Master Higgins_0: -889070893
       NES - Adventure Island 3 - Master Higgins_1: 1773726258
       NES - Adventure Island 3 - Master Higgins_10: -1531131257
       NES - Adventure Island 3 - Master Higgins_100: -1876938561

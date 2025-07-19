@@ -18,8 +18,14 @@ namespace Editor
         // This method draws the UI for the editor window.
         void OnGUI()
         {
-            GUILayout.Label("Snap All Scene Objects to Grid", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("This tool will iterate through every object in the active scene and snap its position to the pixel grid defined by the PPU value below. This is a destructive action, but it is undoable.", MessageType.Info);
+            GUILayout.Label("Scene Snapping Tools", EditorStyles.boldLabel);
+
+            // Scene Objects Section
+            GUILayout.Space(10);
+            GUILayout.Label("Snap Scene Objects", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "This tool will iterate through every object in the active scene and snap its position to the pixel grid defined by the PPU value below. This is a destructive action, but it is undoable.",
+                MessageType.Info);
 
             // Create a field for the user to input the Pixels Per Unit value.
             _pixelsPerUnit = EditorGUILayout.FloatField("Pixels Per Unit (PPU)", _pixelsPerUnit);
@@ -42,6 +48,21 @@ namespace Editor
                     // Show an error if the PPU is not a valid number.
                     EditorUtility.DisplayDialog("Invalid PPU", "Pixels Per Unit must be greater than 0.", "OK");
                 }
+            }
+
+            // Sprite Pivots Section
+            GUILayout.Space(20);
+            GUILayout.Label("Snap Sprite Pivots", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Select sprite textures in the Project window, then click the button below to snap all sprite pivots to the nearest integer values.",
+                MessageType.Info);
+
+            // Change button color for sprite pivot snapping
+            GUI.backgroundColor = new Color(0.8f, 0.8f, 1f);
+
+            if (GUILayout.Button("Snap Selected Sprite Pivots"))
+            {
+                SnapSpritePivots();
             }
 
             // Reset the color to default.
@@ -80,7 +101,82 @@ namespace Editor
             Debug.Log($"Successfully snapped {snappedObjectCount} objects in the scene.");
 
             // Show a popup to the user confirming the action is complete.
-            EditorUtility.DisplayDialog("Snapping Complete", $"Snapped {snappedObjectCount} objects to the grid.", "OK");
+            EditorUtility.DisplayDialog("Snapping Complete", $"Snapped {snappedObjectCount} objects to the grid.",
+                "OK");
+        }
+
+        private void SnapSpritePivots()
+        {
+            // Get all selected textures
+            var selectedObjects = Selection.objects;
+            int processedSprites = 0;
+
+            foreach (Object obj in selectedObjects)
+            {
+                if (obj is Texture2D texture)
+                {
+                    string path = AssetDatabase.GetAssetPath(texture);
+                    TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+
+                    if (importer && importer.textureType == TextureImporterType.Sprite)
+                    {
+                        // Handle sprite sheet with multiple sprites
+                        if (importer.spriteImportMode == SpriteImportMode.Multiple)
+                        {
+                            var factory = new UnityEditor.U2D.Sprites.SpriteDataProviderFactories();
+                            factory.Init();
+                            var dataProvider = factory.GetSpriteEditorDataProviderFromObject(importer);
+                            dataProvider.InitSpriteEditorDataProvider();
+
+                            var spriteRects = dataProvider.GetSpriteRects();
+
+                            for (int i = 0; i < spriteRects.Length; i++)
+                            {
+                                var spriteRect = spriteRects[i];
+                                Vector2 pivot = spriteRect.pivot;
+                                spriteRect.pivot = new Vector2(
+                                    Mathf.Round(pivot.x),
+                                    Mathf.Round(pivot.y)
+                                );
+
+                                spriteRects[i] = spriteRect;
+                                processedSprites++;
+                            }
+
+                            dataProvider.SetSpriteRects(spriteRects);
+                            dataProvider.Apply();
+                        }
+                        // Handle single sprite
+                        else if (importer.spriteImportMode == SpriteImportMode.Single)
+                        {
+                            Vector2 pivot = importer.spritePivot;
+                            importer.spritePivot = new Vector2(
+                                Mathf.Round(pivot.x),
+                                Mathf.Round(pivot.y)
+                            );
+
+                            processedSprites++;
+                        }
+
+                        AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+                        Debug.Log($"Snapped pivots for: {texture.name}");
+                    }
+                }
+            }
+
+            AssetDatabase.Refresh();
+
+            if (processedSprites > 0)
+            {
+                Debug.Log($"Pivot snapping complete! Processed {processedSprites} sprites.");
+                EditorUtility.DisplayDialog("Pivot Snapping Complete",
+                    $"Successfully snapped pivots for {processedSprites} sprites.", "OK");
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("No Sprites Selected",
+                    "Please select sprite textures in the Project window before running this tool.", "OK");
+            }
         }
 
         /// <summary>

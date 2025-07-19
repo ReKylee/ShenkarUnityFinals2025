@@ -16,7 +16,7 @@ MonoBehaviour:
   - Name: Idle
     FPS: 8
     Frames:
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -889070893, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 1773726258, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0
   - Name: Walking

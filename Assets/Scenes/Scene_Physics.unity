@@ -32382,10 +32382,14 @@ PrefabInstance:
     - target: {fileID: 6599342503957296432, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+      objectReference: {fileID: 1773726258, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - target: {fileID: 6599342503957296432, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
       propertyPath: m_DrawMode
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6599342503957296432, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6599342503957296432, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
       propertyPath: m_WasSpriteAssigned
