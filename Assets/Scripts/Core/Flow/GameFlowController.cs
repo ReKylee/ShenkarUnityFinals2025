@@ -1,5 +1,6 @@
 ﻿using Core.Events;
 using UnityEngine;
+using VContainer;
 
 namespace Core.Flow
 {
@@ -7,7 +8,8 @@ namespace Core.Flow
     {
         private readonly IEventBus _eventBus;
         private string _currentLevelName = "Unknown"; 
-
+        
+        [Inject]
         public GameFlowController(IEventBus eventBus)
         {
             _eventBus = eventBus;

@@ -1,4 +1,5 @@
 ﻿using System;
+using VContainer;
 
 namespace Core.Data
 {
@@ -10,6 +11,7 @@ namespace Core.Data
         public GameData CurrentData => _currentData;
         public event Action<GameData> OnDataChanged;
 
+        [Inject]
         public GameDataService(IGameDataRepository repository)
         {
             _repository = repository;
