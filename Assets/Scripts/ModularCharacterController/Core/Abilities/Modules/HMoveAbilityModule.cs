@@ -6,6 +6,7 @@ namespace ModularCharacterController.Core.Abilities.Modules
     /// <summary>
     ///     Basic walk ability - the default movement ability for Kirby
     ///     Handles horizontal movement with acceleration/deceleration for a responsive feel
+    ///     Supports pixel-perfect movement for 2D pixel art games
     /// </summary>
     public class HMoveAbilityModule : AbilityModuleBase, IMovementAbilityModule
     {
@@ -14,6 +15,17 @@ namespace ModularCharacterController.Core.Abilities.Modules
         private const float SPEED_MULTIPLIER = 1.1f;
         private const float WALL_CAST_HEIGHT_MULTIPLIER = 0.7f;
         private const float WALL_CAST_DISTANCE = 0.01f;
+
+        [Header("Pixel Perfect Settings")]
+        [Tooltip("Enable pixel-perfect movement to eliminate sub-pixel jitter")]
+        public bool enablePixelPerfectMovement = false;
+
+        [Tooltip("Pixels per unit - must match your sprite's PPU and Pixel Perfect Camera settings")]
+        [Range(1f, 1000f)]
+        public float pixelsPerUnit = 100f;
+
+        [Tooltip("Minimum movement threshold for pixel snapping")]
+        public float pixelSnapThreshold = 0.001f;
 
         // Cached ground layer mask to avoid repeated GetMask calls
         private static int? _groundLayerMask;
@@ -85,10 +97,38 @@ namespace ModularCharacterController.Core.Abilities.Modules
             float maxHorizontalSpeed = targetSpeed * SPEED_MULTIPLIER;
             currentVelocity.x = Mathf.Clamp(currentVelocity.x, -maxHorizontalSpeed, maxHorizontalSpeed);
 
+            // Apply pixel-perfect snapping if enabled
+            if (enablePixelPerfectMovement)
+            {
+                currentVelocity.x = SnapToPixelGrid(currentVelocity.x);
+            }
 
             return currentVelocity;
         }
 
+        /// <summary>
+        /// Snaps a velocity value to the pixel grid to ensure pixel-perfect movement
+        /// </summary>
+        /// <param name="velocity">The velocity to snap</param>
+        /// <returns>Pixel-aligned velocity</returns>
+        private float SnapToPixelGrid(float velocity)
+        {
+            if (pixelsPerUnit <= 0) return velocity;
+
+            // Calculate pixel size in world units
+            float pixelSize = 1.0f / pixelsPerUnit;
+
+            // Snap velocity to ensure movement increments align with pixel boundaries
+            float snappedVelocity = Mathf.Round(velocity / pixelSize) * pixelSize;
+
+            // Apply threshold to prevent micro-movements
+            if (Mathf.Abs(snappedVelocity) < pixelSnapThreshold)
+            {
+                snappedVelocity = 0f;
+            }
+
+            return snappedVelocity;
+        }
 
         private bool IsWallBlocking(int direction)
         {

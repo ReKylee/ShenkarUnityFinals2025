@@ -16,3 +16,6 @@ MonoBehaviour:
   allowMultipleInstances: 1
   abilityID: walkabilitymodule_for_normal
   displayName: WalkAbilityModule_For_Normal
+  enablePixelPerfectMovement: 1
+  pixelsPerUnit: 16
+  pixelSnapThreshold: 0.001
