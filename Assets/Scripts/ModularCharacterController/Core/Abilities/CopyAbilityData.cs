@@ -18,14 +18,6 @@ namespace ModularCharacterController.Core.Abilities
             InvalidAbility
         }
 
-        public enum AbilityType
-        {
-            Melee,
-            Projectile,
-            Transformation,
-            Utility,
-            Special
-        }
 
         [Header("Contained Abilities")] public List<AbilityModuleBase> abilities = new();
 
@@ -36,7 +28,6 @@ namespace ModularCharacterController.Core.Abilities
         [Header("Ability Capabilities")] [Header("Stat Modifiers")] [SerializeField]
         private List<StatModifier> statModifiers = new();
 
-        [Header("Ability Specifics")] public AbilityType abilityType = AbilityType.Melee;
 
 
         private void OnEnable()

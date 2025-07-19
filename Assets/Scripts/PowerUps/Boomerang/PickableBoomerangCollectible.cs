@@ -5,7 +5,7 @@ namespace PowerUps.Boomerang
 {
     public class PickableBoomerangCollectible : PowerUpCollectibleBase
     {
-        public override IPowerUp CreatePowerUp()
+        protected override IPowerUp CreatePowerUp()
         {
             return new PickableBoomerangPowerUp();
         }

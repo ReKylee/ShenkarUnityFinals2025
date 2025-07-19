@@ -8,6 +8,6 @@ namespace PowerUps.OneUp
     {
         [SerializeField] private int healAmount = 1;
 
-        public override IPowerUp CreatePowerUp() => new OneUpPowerUp(healAmount);
+        protected override IPowerUp CreatePowerUp() => new OneUpPowerUp(healAmount);
     }
 }

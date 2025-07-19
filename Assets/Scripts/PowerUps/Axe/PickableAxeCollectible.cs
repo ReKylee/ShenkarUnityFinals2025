@@ -6,6 +6,6 @@ namespace PowerUps.Axe
     public class PickableAxeCollectible : PowerUpCollectibleBase
     {
 
-        public override IPowerUp CreatePowerUp() => new PickableAxePowerUp();
+        protected override IPowerUp CreatePowerUp() => new PickableAxePowerUp();
     }
 }

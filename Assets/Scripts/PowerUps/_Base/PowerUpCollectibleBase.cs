@@ -5,7 +5,7 @@ namespace PowerUps._Base
 {
     public abstract class PowerUpCollectibleBase : CollectibleBase
     {
-        public abstract IPowerUp CreatePowerUp();
+        protected abstract IPowerUp CreatePowerUp();
         public override void OnCollect(GameObject collector)
         {
             IPowerUpCollector powerUpCollector = collector.GetComponent<IPowerUpCollector>();
