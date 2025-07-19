@@ -130,6 +130,8 @@ GameObject:
   - component: {fileID: 1769666}
   - component: {fileID: 1769668}
   - component: {fileID: 1769667}
+  - component: {fileID: 1769669}
+  - component: {fileID: 1769670}
   m_Layer: 5
   m_Name: Txt_Lives
   m_TagString: Untagged
@@ -255,6 +257,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1769665}
   m_CullTransparentMesh: 1
+--- !u!114 &1769669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f3c8d85ce14a2384111ccca2ca3210, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 1769667}
+--- !u!114 &1769670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24264110d93a4d448d320e2b5d66a5e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  livesView: {fileID: 1769669}
 --- !u!1 &8103577
 GameObject:
   m_ObjectHideFlags: 0
@@ -5747,8 +5775,6 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  currentLevelName: Level_01
-  autoSaveInterval: 30
 --- !u!1 &904920108
 GameObject:
   m_ObjectHideFlags: 0
@@ -32120,7 +32146,7 @@ MonoBehaviour:
   m_RefResolutionX: 256
   m_RefResolutionY: 240
   m_CropFrame: 3
-  m_GridSnapping: 2
+  m_GridSnapping: 1
   m_FilterMode: 0
   m_UpscaleRT: 0
   m_PixelSnapping: 0
@@ -32341,6 +32367,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1887416126}
     m_Modifications:
+    - target: {fileID: 2349411308332496979, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
+      propertyPath: healthView
+      value: 
+      objectReference: {fileID: 1769669}
     - target: {fileID: 2729735502043410532, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
       propertyPath: laserPoolManager
       value: 
@@ -32526,10 +32556,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6599342503957296432, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
-      propertyPath: m_SortingOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6599342503957296432, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
@@ -32561,6 +32587,7 @@ PrefabInstance:
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
+    - {fileID: 2349411308332496979, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -32945,7 +32972,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7282089671764377105, guid: 8ab95268c2a21c34889c6d2b81e7f2d7, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7282089671764377105, guid: 8ab95268c2a21c34889c6d2b81e7f2d7, type: 3}
       propertyPath: m_AnchorMax.y
@@ -32953,7 +32980,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7282089671764377105, guid: 8ab95268c2a21c34889c6d2b81e7f2d7, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7282089671764377105, guid: 8ab95268c2a21c34889c6d2b81e7f2d7, type: 3}
       propertyPath: m_AnchorMin.y
@@ -32997,7 +33024,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7282089671764377105, guid: 8ab95268c2a21c34889c6d2b81e7f2d7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 7282089671764377105, guid: 8ab95268c2a21c34889c6d2b81e7f2d7, type: 3}
       propertyPath: m_AnchoredPosition.y

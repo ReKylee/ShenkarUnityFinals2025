@@ -126,10 +126,15 @@ namespace Core
             _gameDataService?.UpdateBestTime(levelEvent.CompletionTime);
             _autoSaveService?.RequestSave();
         }
-
+        private void OnLevelStarted(LevelStartedEvent levelEvent)
+        {
+            _gameDataService?.UpdateCurrentLevel(levelEvent.LevelName);
+        }
         private void OnLivesChanged(PlayerLivesChangedEvent livesEvent)
         {
+            Debug.Log($"[GameDataCoordinator] Received PlayerLivesChangedEvent: CurrentLives={livesEvent.CurrentLives}");
             _gameDataService?.UpdateLives(livesEvent.CurrentLives);
+            Debug.Log($"[GameDataCoordinator] Updated GameData lives to: {_gameDataService?.CurrentData.lives}");
         }
 
         private void OnGameDataChanged(GameData newData)
@@ -155,21 +160,6 @@ namespace Core
 
             int newCoins = _gameDataService.CurrentData.coins + coinCount;
             _gameDataService.UpdateCoins(newCoins);
-        }
-
-        public void UnlockPowerUp(string powerUpName)
-        {
-            if (!_isInitialized || _gameDataService == null) return;
-
-            _gameDataService.UpdatePowerUp(powerUpName, true);
-            _autoSaveService?.RequestSave();
-        }
-
-        public bool HasPowerUp(string powerUpName)
-        {
-            if (!_isInitialized || _gameDataService == null) return false;
-
-            return _gameDataService.HasPowerUp(powerUpName);
         }
 
         public GameData GetCurrentData()

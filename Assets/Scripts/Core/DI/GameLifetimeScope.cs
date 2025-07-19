@@ -3,6 +3,7 @@ using Core.Data;
 using Core.Events;
 using Core.Flow;
 using Core.Services;
+using Player.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -11,10 +12,6 @@ namespace Core.DI
 {
     public class GameLifetimeScope : LifetimeScope
     {
-        [Header("Game Settings")] 
-        [SerializeField] private string currentLevelName = "Level_01";
-        [SerializeField] private float autoSaveInterval = 30f;
-
         protected override void Configure(IContainerBuilder builder)
         {
             // Register Core Services
@@ -27,16 +24,15 @@ namespace Core.DI
             builder.Register<IGameDataService, GameDataService>(Lifetime.Singleton);
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
 
-            // Register Game Event Publisher
-            builder.Register<IGameEventPublisher, GameEventPublisher>(Lifetime.Singleton);
+            // Register Player Services 
+            builder.Register<IPlayerLivesService>(resolver
+                => new PlayerLivesService(
+                    resolver.Resolve<IGameDataService>(),
+                    resolver.Resolve<IEventBus>()
+                ), Lifetime.Singleton);
 
-
-            // Register Game Flow Controller with level name parameter
-            builder.Register<IGameFlowController>(resolver =>
-                    new GameFlowController(
-                        resolver.Resolve<IGameEventPublisher>(),
-                        currentLevelName),
-                Lifetime.Singleton);
+            // Register Game Flow Controller 
+            builder.Register<IGameFlowController, GameFlowController>(Lifetime.Singleton);
 
             // Register MonoBehaviour components in the scene for injection
             builder.RegisterComponentInHierarchy<GameManager>();
@@ -45,7 +41,7 @@ namespace Core.DI
             builder.RegisterComponentInHierarchy<Weapons.Models.FireballWeapon>();
             builder.RegisterComponentInHierarchy<Weapons.Services.WeaponManagerService>();
             builder.RegisterComponentInHierarchy<Player.PlayerHealthController>();
-            builder.RegisterComponentInHierarchy<Player.PlayerLivesController>();
+            builder.RegisterComponentInHierarchy<Player.UI.PlayerLivesUIController>();
             builder.RegisterComponentInHierarchy<Collectables.Coin.CoinController>();
 
         }
@@ -54,9 +50,10 @@ namespace Core.DI
         {
             base.Awake();
 
-            // Configure auto-save settings after container is built
+            // Configure auto-save settings from GameData (if you add autoSaveInterval to GameData)
+            // Or remove this entirely if GameManager handles it6
             var autoSaveService = Container.Resolve<IAutoSaveService>();
-            autoSaveService.SaveInterval = autoSaveInterval;
+            autoSaveService.SaveInterval = 30f; 
             autoSaveService.IsEnabled = true;
         }
     }

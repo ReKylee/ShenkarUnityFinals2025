@@ -10,11 +10,10 @@ namespace Core.Events
 
         public void Publish<T>(T eventData) where T : struct
         {
-            var eventType = typeof(T);
-            if (!_eventHandlers.ContainsKey(eventType))
+            Type eventType = typeof(T);
+            if (!_eventHandlers.TryGetValue(eventType, out var handlers))
                 return;
 
-            var handlers = _eventHandlers[eventType];
             for (int i = handlers.Count - 1; i >= 0; i--)
             {
                 try

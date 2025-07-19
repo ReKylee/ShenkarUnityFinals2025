@@ -1,6 +1,5 @@
 ﻿using Core.Events;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using VContainer;
 
 namespace Core
@@ -9,21 +8,17 @@ namespace Core
     {
         #region Fields
         [Header("Game Settings")]
-        [SerializeField] private string currentLevelName = "Level_01";
         [SerializeField] private bool autoStartGame = true;
-        [SerializeField] private float respawnDelay = 2f;
+        [SerializeField] private float restartDelay = 2f;
         
         private GameState _currentState = GameState.MainMenu;
         private float _levelStartTime;
         private IEventBus _eventBus;
-        private bool _isInitialized = false;
         #endregion
 
         #region Properties
         public GameState CurrentState => _currentState;
         public bool IsPlaying => _currentState == GameState.Playing;
-        public bool IsPaused => _currentState == GameState.Paused;
-        public bool HasEnded => _currentState is GameState.GameOver or GameState.Victory;
         #endregion
 
         #region VContainer Injection
@@ -31,22 +26,13 @@ namespace Core
         public void Construct(IEventBus eventBus)
         {
             _eventBus = eventBus;
-            _isInitialized = true;
-            
-            // Initialize after dependency injection
-            Initialize();
+            SubscribeToEvents();
         }
         #endregion
 
         #region Unity Lifecycle
         private void Start()
         {
-            // If not yet initialized (dependencies not injected), wait
-            if (!_isInitialized)
-            {
-                return;
-            }
-            
             if (autoStartGame)
             {
                 StartGame();
@@ -55,229 +41,105 @@ namespace Core
 
         private void OnDestroy()
         {
-            if (!_isInitialized || _eventBus == null) return;
-            
-            _eventBus.Unsubscribe<GameOverEvent>(OnGameOver);
-            _eventBus.Unsubscribe<LevelFailedEvent>(OnLevelFailed);
-        }
-        #endregion
-
-        #region Initialization
-        private void Initialize()
-        {
-            // Subscribe to game over events (when all lives are lost)
-            _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
-            // Subscribe to level failed events (when player dies but has lives remaining)
-            _eventBus?.Subscribe<LevelFailedEvent>(OnLevelFailed);
+            UnsubscribeFromEvents();
         }
         #endregion
 
         #region Public API
         public void StartGame()
         {
-            if (!_isInitialized || _eventBus == null) return;
-            
-            if (_currentState != GameState.MainMenu && _currentState != GameState.Restarting)
-                return;
-
             ChangeState(GameState.Playing);
             _levelStartTime = Time.time;
             
-            _eventBus.Publish(new LevelStartedEvent
+            _eventBus?.Publish(new LevelStartedEvent
             {
-                LevelName = currentLevelName,
+                LevelName = GetCurrentLevelName(),
                 Timestamp = Time.time
             });
         }
 
         public void PauseGame()
         {
-            if (!_isInitialized) return;
-            
-            if (_currentState != GameState.Playing)
-                return;
-
-            ChangeState(GameState.Paused);
+            if (_currentState == GameState.Playing)
+                ChangeState(GameState.Paused);
         }
 
         public void ResumeGame()
         {
-            if (!_isInitialized) return;
-            
-            if (_currentState != GameState.Paused)
-                return;
-
-            ChangeState(GameState.Playing);
+            if (_currentState == GameState.Paused)
+                ChangeState(GameState.Playing);
         }
 
-        public void CompleteLevel()
+        public void RestartLevel()
         {
-            if (!_isInitialized || _eventBus == null) return;
-            
-            if (_currentState != GameState.Playing)
-                return;
-
-            ChangeState(GameState.Victory);
-            
-            _eventBus.Publish(new LevelCompletedEvent
-            {
-                LevelName = currentLevelName,
-                CompletionTime = Time.time - _levelStartTime,
-                Timestamp = Time.time
-            });
-        }
-
-        public void FailLevel(string reason = "Player died")
-        {
-            if (!_isInitialized || _eventBus == null) return;
-            
-            if (_currentState != GameState.Playing)
-                return;
-
-            ChangeState(GameState.GameOver);
-            
-            _eventBus.Publish(new LevelFailedEvent
-            {
-                LevelName = currentLevelName,
-                FailureReason = reason,
-                Timestamp = Time.time
-            });
-        }
-
-        public void RestartGame()
-        {
-            if (!_isInitialized) return;
-            
-            ChangeState(GameState.Restarting);
-            Invoke(nameof(DelayedRestart), 1f);
-        }
-
-        public void HandlePlayerDeath()
-        {
-            if (!_isInitialized || _eventBus == null) return;
-            
-            if (_currentState != GameState.Playing)
-                return;
-
-            ChangeState(GameState.GameOver);
-            
-            _eventBus.Publish(new PlayerDeathEvent
-            {
-                Timestamp = Time.time,
-                DeathPosition = Vector3.zero // Will be set by PlayerHealthController
-            });
-
-            // Restart the level after a delay (Adventure Island 3 style)
-            Invoke(nameof(RestartLevel), respawnDelay);
+            Debug.Log("GameManager: RestartLevel called - Reloading scene");
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+            );
         }
         #endregion
 
         #region Event Handlers
+        private void SubscribeToEvents()
+        {
+            _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
+            _eventBus?.Subscribe<LevelFailedEvent>(OnLevelFailed);
+            _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
+        }
+
+        private void UnsubscribeFromEvents()
+        {
+            _eventBus?.Unsubscribe<GameOverEvent>(OnGameOver);
+            _eventBus?.Unsubscribe<LevelFailedEvent>(OnLevelFailed);
+            _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
+        }
+
         private void OnGameOver(GameOverEvent gameOverEvent)
         {
-            if (!_isInitialized || _eventBus == null) return;
-            
-            // All lives lost - true game over
+            Debug.Log("GameManager: Game Over - All lives lost");
             ChangeState(GameState.GameOver);
-            
-            _eventBus.Publish(new LevelFailedEvent
-            {
-                LevelName = currentLevelName,
-                FailureReason = "All lives lost",
-                Timestamp = Time.time
-            });
-
-            // Here you could show game over screen, return to main menu, etc.
-            // For now, restart after longer delay
-            Invoke(nameof(RestartToMainMenu), respawnDelay * 2f);
+            Invoke(nameof(RestartLevel), restartDelay * 2f);
         }
 
-        private void OnLevelFailed(LevelFailedEvent levelFailedEvent)
+        private void OnLevelFailed(LevelFailedEvent levelEvent)
         {
-            if (!_isInitialized) return;
-            
-            Debug.Log($"GameManager: Level failed - {levelFailedEvent.FailureReason}");
-            
-            // Handle level failure - restart the level after delay
-            if (_currentState == GameState.Playing)
-            {
-                ChangeState(GameState.GameOver);
-                
-                // Restart the level after a delay
-                Debug.Log($"GameManager: Scheduling level restart in {respawnDelay} seconds");
-                Invoke(nameof(RestartLevel), respawnDelay);
-            }
-        }
-
-        private void OnPlayerDeath(PlayerDeathEvent playerDeathEvent)
-        {
-            if (!_isInitialized || _eventBus == null) return;
-            
-            Debug.Log($"GameManager: OnPlayerDeath received - Current State: {_currentState}");
-            
-            // Only handle if we're currently playing
-            if (_currentState != GameState.Playing)
-            {
-                Debug.Log($"GameManager: Ignoring player death - not in Playing state (current: {_currentState})");
-                return;
-            }
-            
-            // Handle player death - restart level after delay
-            Debug.Log($"GameManager: Processing player death, changing to GameOver and scheduling restart in {respawnDelay} seconds");
+            Debug.Log("GameManager: Level failed - Player died");
             ChangeState(GameState.GameOver);
             
-            // Restart the level after a delay
-            Invoke(nameof(RestartLevel), respawnDelay);
+            Debug.Log($"GameManager: Scheduling level restart in {restartDelay} seconds");
+            Invoke(nameof(RestartLevel), restartDelay);
+        }
+
+        private void OnLevelCompleted(LevelCompletedEvent levelEvent)
+        {
+            Debug.Log($"GameManager: Level completed in {levelEvent.CompletionTime:F2} seconds");
+            ChangeState(GameState.Victory);
+            // Handle level completion (next level, victory screen, etc.)
         }
         #endregion
 
         #region Private Methods
         private void ChangeState(GameState newState)
         {
-            if (!_isInitialized || _eventBus == null) return;
+            if (_currentState == newState) return;
             
-            if (_currentState == newState)
-                return;
-
-            var previousState = _currentState;
+            Debug.Log($"GameManager: State changed from {_currentState} to {newState}");
             _currentState = newState;
-            
-            _eventBus.Publish(new GameStateChangedEvent
-            {
-                PreviousState = previousState,
-                NewState = newState,
-                Timestamp = Time.time
-            });
         }
 
-        private void DelayedRestart()
+        private string GetCurrentLevelName()
         {
-            StartGame();
-        }
-
-        private void RestartLevel()
-        {
-            Debug.Log("GameManager: RestartLevel called - Reloading scene");
-            // Simple scene reload - everything resets automatically
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-
-        private void RestartToMainMenu()
-        {
-            // Reset all persistent data for true restart
-            // No need for static reset - we can reset the data directly
-            Invoke(nameof(DelayedGameOverReset), 0.1f);
-        }
-
-        private void DelayedGameOverReset()
-        {
-            // Find the GameDataCoordinator and reset it
-            var gameDataCoordinator = FindAnyObjectByType<GameDataCoordinator>();
-            gameDataCoordinator?.ResetAllData();
-            
-            // Could load main menu scene here instead
-            RestartLevel();
+            return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         }
         #endregion
+    }
+
+    public enum GameState
+    {
+        MainMenu,
+        Playing,
+        Paused,
+        GameOver,
+        Victory
     }
 }

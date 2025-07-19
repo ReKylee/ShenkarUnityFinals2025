@@ -162,7 +162,7 @@ namespace Weapons.Services
             switch (weaponType)
             {
                 case WeaponType.Axe:
-                    if (axeWeapon != null)
+                    if (axeWeapon)
                     {
                         axeWeapon.UnEquip();
                         Debug.Log("WeaponManagerService: Unequipped Axe weapon");
@@ -175,7 +175,7 @@ namespace Weapons.Services
                     break;
 
                 case WeaponType.Fireball:
-                    if (fireballWeapon != null)
+                    if (fireballWeapon)
                     {
                         fireballWeapon.UnEquip();
                         Debug.Log("WeaponManagerService: Unequipped Fireball weapon");
