@@ -29,7 +29,6 @@ namespace ModularCharacterController.Core.Abilities
         private List<StatModifier> statModifiers = new();
 
 
-
         private void OnEnable()
         {
             if (string.IsNullOrEmpty(abilityName))

@@ -1,18 +1,21 @@
 ﻿using Core.Data;
 using Core.Events;
-using Core.Flow;
 using Core.Services;
 using UnityEngine;
 using VContainer;
 
 namespace Core
 {
+    /// <summary>
+    /// Coordinates between game events and data storage.
+    /// Responsible only for translating events into data updates and managing save operations.
+    /// </summary>
     public class GameDataCoordinator : MonoBehaviour
     {
+        [SerializeField] private float autoSaveInterval = 30;
         private IGameDataService _gameDataService;
         private IEventBus _eventBus;
         private IAutoSaveService _autoSaveService;
-        private IGameFlowController _gameFlowController;
         private bool _isInitialized = false;
 
         #region VContainer Injection
@@ -21,14 +24,13 @@ namespace Core
         public void Construct(
             IGameDataService gameDataService,
             IEventBus eventBus,
-            IAutoSaveService autoSaveService,
-            IGameFlowController gameFlowController)
+            IAutoSaveService autoSaveService)
         {
             _gameDataService = gameDataService;
             _eventBus = eventBus;
             _autoSaveService = autoSaveService;
-            _gameFlowController = gameFlowController;
             _isInitialized = true;
+            
 
             // Initialize after dependencies are injected
             Initialize();
@@ -63,7 +65,9 @@ namespace Core
             {
                 _eventBus.Unsubscribe<PlayerDeathEvent>(OnPlayerDied);
                 _eventBus.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
+                _eventBus.Unsubscribe<LevelStartedEvent>(OnLevelStarted);
                 _eventBus.Unsubscribe<PlayerLivesChangedEvent>(OnLivesChanged);
+                _eventBus.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
             }
 
 
@@ -97,18 +101,22 @@ namespace Core
 
         private void Initialize()
         {
-            // Subscribe to events
-            _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
-            _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
-            _eventBus?.Subscribe<PlayerLivesChangedEvent>(OnLivesChanged);
+            // Subscribe to events - only subscribe to events that affect game data
+            _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted); // For best time tracking
+            _eventBus?.Subscribe<LevelStartedEvent>(OnLevelStarted);     // For current level tracking
+            _eventBus?.Subscribe<PlayerLivesChangedEvent>(OnLivesChanged); // For lives tracking
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged); // For game state changes
 
+            _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
 
             if (_gameDataService != null)
                 _gameDataService.OnDataChanged += OnGameDataChanged;
 
             if (_autoSaveService != null)
+            {
                 _autoSaveService.OnSaveRequested += SaveData;
-
+                _autoSaveService.SaveInterval = autoSaveInterval;
+            }
         }
 
         #endregion
@@ -117,7 +125,6 @@ namespace Core
 
         private void OnPlayerDied(PlayerDeathEvent deathEvent)
         {
-            _gameFlowController?.HandlePlayerDeath();
             _autoSaveService?.RequestSave();
         }
 
@@ -125,6 +132,15 @@ namespace Core
         {
             _gameDataService?.UpdateBestTime(levelEvent.CompletionTime);
             _autoSaveService?.RequestSave();
+        }
+
+        private void OnGameStateChanged(GameStateChangedEvent stateEvent)
+        {
+            // Handle data operations based on state changes
+            if (stateEvent.NewState == GameState.Victory || stateEvent.NewState == GameState.GameOver)
+            {
+                _autoSaveService?.ForceSave();
+            }
         }
         private void OnLevelStarted(LevelStartedEvent levelEvent)
         {

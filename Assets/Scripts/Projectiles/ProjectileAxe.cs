@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using GabrielBigardi.SpriteAnimator;
 using Projectiles.Core;
 using UnityEngine;
 
@@ -18,11 +16,12 @@ namespace Projectiles
         {
             if (other.gameObject.CompareTag("Player"))
                 return;
+
             ReturnToPool();
             Debug.Log($"Axe hit {other.gameObject.name}.");
         }
 
-        
+
         protected override void Move()
         {
             transform.localScale = new Vector3(Direction, 1, 1);

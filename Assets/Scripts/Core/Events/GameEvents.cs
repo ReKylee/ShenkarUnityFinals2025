@@ -35,34 +35,42 @@ namespace Core.Events
         public float Timestamp;
     }
 
-    public struct PlayerDeathEvent
+    // Base event structure for consistency
+    public interface IGameEvent
     {
-        public float Timestamp;
+        float Timestamp { get; }
+    }
+
+    public struct PlayerDeathEvent : IGameEvent
+    {
+        public float Timestamp { get; set; }
         public Vector3 DeathPosition;
     }
 
-    public struct LevelStartedEvent
+    public struct LevelStartedEvent : IGameEvent
     {
+        public float Timestamp { get; set; }
         public string LevelName;
-        public float Timestamp;
     }
 
-    public struct LevelCompletedEvent
+    public struct LevelCompletedEvent : IGameEvent
     {
+        public float Timestamp { get; set; }
         public string LevelName;
         public float CompletionTime;
-        public float Timestamp;
     }
 
-    public struct LevelFailedEvent
+    public struct LevelFailedEvent : IGameEvent
     {
+        public float Timestamp { get; set; }
         public string LevelName;
         public string FailureReason;
-        public float Timestamp;
     }
 
-    public struct GameOverEvent
+    // Redundant with GameStateChangedEvent when NewState = GameState.GameOver
+    // But keeping for backward compatibility
+    public struct GameOverEvent : IGameEvent
     {
-        public float Timestamp;
+        public float Timestamp { get; set; }
     }
 }

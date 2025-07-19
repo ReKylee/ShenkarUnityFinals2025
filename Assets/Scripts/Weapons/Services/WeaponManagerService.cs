@@ -1,4 +1,5 @@
 ﻿using System;
+using InputSystem;
 using UnityEngine;
 using Weapons.Models;
 
@@ -18,8 +19,9 @@ namespace Weapons.Services
     /// </summary>
     public class WeaponManagerService : MonoBehaviour
     {
-        [Header("Weapon References")]
-        [SerializeField] private AxeWeapon axeWeapon;
+        [Header("Weapon References")] [SerializeField]
+        private AxeWeapon axeWeapon;
+
         [SerializeField] private BoomerangWeapon boomerangWeapon;
         [SerializeField] private FireballWeapon fireballWeapon;
 
@@ -27,11 +29,10 @@ namespace Weapons.Services
         private WeaponType _activeWeapon = WeaponType.None;
         private bool _isUsingTemporaryWeapon = false;
 
-        [Header("Attack Settings")]
-        [SerializeField] public bool canAttack = true;
+        [Header("Attack Settings")] [SerializeField]
+        public bool canAttack = true;
 
-        
-        
+
         public event Action<WeaponType> OnWeaponChanged;
         public event Action<WeaponType> OnPrimaryWeaponChanged;
 
@@ -50,6 +51,7 @@ namespace Weapons.Services
         public WeaponType ActiveWeapon => _activeWeapon;
         public bool IsUsingTemporaryWeapon => _isUsingTemporaryWeapon;
 
+
         /// <summary>
         /// Switch to a new primary weapon (Axe or Boomerang)
         /// </summary>
@@ -57,7 +59,9 @@ namespace Weapons.Services
         {
             if (weaponType != WeaponType.Axe && weaponType != WeaponType.Boomerang)
             {
-                Debug.LogWarning($"WeaponManagerService: Cannot set {weaponType} as primary weapon. Only Axe and Boomerang are allowed.");
+                Debug.LogWarning(
+                    $"WeaponManagerService: Cannot set {weaponType} as primary weapon. Only Axe and Boomerang are allowed.");
+
                 return;
             }
 
@@ -112,7 +116,7 @@ namespace Weapons.Services
             }
 
             // Unequip fireball weapon
-            UnequipWeapon(WeaponType.Fireball);
+            UnequipWeapon(_activeWeapon);
 
             _isUsingTemporaryWeapon = false;
 
@@ -135,10 +139,8 @@ namespace Weapons.Services
             switch (weaponType)
             {
                 case WeaponType.Axe:
-                    if (axeWeapon)
-                    {
-                        axeWeapon.Equip();
-                    }
+                    axeWeapon?.Equip();
+
                     break;
 
                 case WeaponType.Boomerang:
@@ -146,10 +148,8 @@ namespace Weapons.Services
                     break;
 
                 case WeaponType.Fireball:
-                    if (fireballWeapon)
-                    {
-                        fireballWeapon.Equip();
-                    }
+                    fireballWeapon?.Equip();
+
                     break;
             }
         }
@@ -159,10 +159,7 @@ namespace Weapons.Services
             switch (weaponType)
             {
                 case WeaponType.Axe:
-                    if (axeWeapon)
-                    {
-                        axeWeapon.UnEquip();
-                    }
+                    axeWeapon?.UnEquip();
                     break;
 
                 case WeaponType.Boomerang:
@@ -170,10 +167,7 @@ namespace Weapons.Services
                     break;
 
                 case WeaponType.Fireball:
-                    if (fireballWeapon)
-                    {
-                        fireballWeapon.UnEquip();
-                    }
+                    fireballWeapon?.UnEquip();
                     break;
             }
         }

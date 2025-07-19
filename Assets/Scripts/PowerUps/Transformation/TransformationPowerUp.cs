@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using GabrielBigardi.SpriteAnimator;
-using ModularCharacterController.Core;
 using PowerUps._Base;
 using UnityEngine;
-using Weapons.Controllers;
 using Weapons.Services;
+using Player;
 
 namespace PowerUps.Transformation
 {
@@ -23,47 +22,38 @@ namespace PowerUps.Transformation
         }
         public void ApplyPowerUp(GameObject player)
         {
-            MonoBehaviour playerBehaviour = player.GetComponent<MonoBehaviour>();
-            SpriteAnimator spriteAnimator = player.GetComponent<SpriteAnimator>();
-            SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
-            WeaponManagerService weaponManager = player.GetComponentInChildren<WeaponManagerService>();
-            if (playerBehaviour)
-            {
-                playerBehaviour.StartCoroutine(ApplyPowerUpCoroutine(weaponManager, spriteAnimator, spriteRenderer));
+            if (!TryGetRequiredComponents(player, out PlayerAnimationController playerAnimationController,
+                    out WeaponManagerService weaponManager, out PlayerHealthController playerHealthController))
+                return;
 
-            }
+            // Activate one hit shield
+            playerHealthController.ActivateShield();
 
-        }
-        private IEnumerator ApplyPowerUpCoroutine(WeaponManagerService weaponManager, SpriteAnimator spriteAnimator,
-            SpriteRenderer spriteRenderer)
-        {
-            if (!spriteAnimator || !spriteRenderer || !weaponManager) yield break;
-
+            // Stop attacking during transformation
             weaponManager.canAttack = false;
-
-            spriteAnimator.Pause();
-            Sprite originalSprite = spriteRenderer.sprite;
-            WaitForSeconds shortWait = new(0.1f);
-
-            // Flash animation sequence
-            const int flashCount = 6;
-            for (int i = 0; i < flashCount; i++)
+            
+            // Play Transformation Effect
+            void OnTransComplete()
             {
-                spriteRenderer.sprite = _transitionTexture;
-                yield return shortWait;
-                spriteRenderer.sprite = originalSprite;
-                yield return shortWait;
+                weaponManager.canAttack = true;
+                weaponManager.SwitchToTemporaryWeapon(_transformationWeapon);
             }
 
-            // Complete transformation
-            spriteRenderer.sprite = _transitionTexture;
-            spriteAnimator.ChangeAnimationObject(_animationObject);
-            spriteAnimator.Play("Walk");
-
-            weaponManager.SwitchToTemporaryWeapon(_transformationWeapon);
-
-            weaponManager.canAttack = true;
-
+            playerAnimationController.PlayTransformationEffect(
+                _transitionTexture,
+                _animationObject,
+                OnTransComplete);
         }
+
+        private bool TryGetRequiredComponents(GameObject player, out PlayerAnimationController animationController,
+            out WeaponManagerService weaponManager, out PlayerHealthController healthController)
+        {
+            animationController = player.GetComponent<PlayerAnimationController>();
+            weaponManager = player.GetComponentInChildren<WeaponManagerService>();
+            healthController = player.GetComponent<PlayerHealthController>();
+
+            return animationController && weaponManager && healthController;
+        }
+
     }
 }

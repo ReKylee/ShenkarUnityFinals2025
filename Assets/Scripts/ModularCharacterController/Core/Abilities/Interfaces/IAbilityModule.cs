@@ -1,5 +1,3 @@
-using ModularCharacterController.Core.Components;
-
 namespace ModularCharacterController.Core.Abilities.Interfaces
 {
     /// <summary>

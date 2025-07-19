@@ -1,18 +1,21 @@
 ﻿using Core.Events;
 using Health;
+using Health.Components;
+using Health.Interfaces;
 using Player.Services;
 using UnityEngine;
 using VContainer;
 
 namespace Player
 {
-    public class PlayerHealthController : SimpleHealthController
+    public class PlayerHealthController : SimpleHealthController, IBypassableDamageable
     {
         [SerializeField] private BarsHealthView healthView;
-        
+
         private IEventBus _eventBus;
         private IPlayerLivesService _livesService;
-        
+        private IDamageShield _damageShield;
+
         #region VContainer Injection
 
         [Inject]
@@ -28,8 +31,9 @@ namespace Player
 
         protected void Start()
         {
+            _damageShield = GetComponent<IDamageShield>();
             healthView.UpdateDisplay(CurrentHp, MaxHp);
-            
+
             // Subscribe to events after base initialization
             OnHealthChanged += HandleHealthChanged;
             OnLivesEmpty += HandleHealthEmpty;
@@ -63,10 +67,12 @@ namespace Player
             if (_livesService.TryUseLife())
             {
                 ResetState();
-                Debug.Log($"[PlayerHealthController] Used a life, restored health. Lives remaining: {_livesService.CurrentLives}");
+                Debug.Log(
+                    $"[PlayerHealthController] Used a life, restored health. Lives remaining: {_livesService.CurrentLives}");
+
                 return;
             }
-            
+
             // Out of lives - publish death event
             _eventBus?.Publish(new PlayerDeathEvent
             {
@@ -76,5 +82,36 @@ namespace Player
         }
 
         #endregion
+
+        #region Transformation Handling
+
+        public void ActivateShield() => _damageShield.Activate();
+        public void DeactivateShield() => _damageShield.Deactivate();
+        
+        #endregion
+
+        #region Damage Handling
+
+        public new void Damage(int amount)
+        {
+            if (_damageShield.TryAbsorbDamage(amount))
+            {
+                Debug.Log("[PlayerHealthController] Transformation absorbed damage!");
+                return;
+            }
+
+            base.Damage(amount);
+        }
+
+        /// <summary>
+        /// Damage that bypasses transformation shield (used by continuous damage, etc.)
+        /// </summary>
+        public void DamageBypass(int amount)
+        {
+            base.Damage(amount);
+        }
+
+        #endregion
+
     }
 }

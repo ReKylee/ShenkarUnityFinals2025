@@ -1,4 +1,3 @@
-using System;
 using Projectiles;
 using UnityEngine;
 using Weapons.Interfaces;
@@ -11,16 +10,15 @@ namespace Weapons.Models
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.3f;
         [SerializeField] private FireballPool fireballPool;
-        
-        private bool _isEquipped;
+
         private float _nextFireTime;
 
-        public bool IsEquipped => _isEquipped;
+        public bool IsEquipped { get; private set; }
 
         public void Shoot()
         {
             // Check if weapon is equipped
-            if (!_isEquipped)
+            if (!IsEquipped)
                 return;
 
             // Check cooldown
@@ -50,12 +48,12 @@ namespace Weapons.Models
 
         public void Equip()
         {
-            _isEquipped = true;
+            IsEquipped = true;
         }
 
         public void UnEquip()
         {
-            _isEquipped = false;
+            IsEquipped = false;
         }
     }
 }

@@ -26,10 +26,7 @@ namespace LocksAndKeys
             isUnlocked = unlocked;
         }
 
-        protected virtual bool IsCorrectKey(IKey key)
-        {
-            return key.KeyId == requiredKeyId;
-        }
+        protected virtual bool IsCorrectKey(IKey key) => key.KeyId == requiredKeyId;
 
         protected virtual void OnLocked()
         {

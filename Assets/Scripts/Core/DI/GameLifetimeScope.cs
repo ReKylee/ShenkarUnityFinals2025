@@ -1,6 +1,5 @@
 ﻿using Core.Data;
 using Core.Events;
-using Core.Flow;
 using Core.Services;
 using Player.Services;
 using VContainer;
@@ -29,11 +28,8 @@ namespace Core.DI
                     resolver.Resolve<IEventBus>()
                 ), Lifetime.Singleton);
 
-            // Register Game Flow Controller 
-            builder.Register<IGameFlowController, GameFlowController>(Lifetime.Singleton);
-
             // Register MonoBehaviour components in the scene for injection
-            builder.RegisterComponentInHierarchy<GameManager>();
+            builder.RegisterComponentInHierarchy<GameFlowManager>();
             builder.RegisterComponentInHierarchy<GameDataCoordinator>();
             builder.RegisterComponentInHierarchy<Weapons.Models.AxeWeapon>();
             builder.RegisterComponentInHierarchy<Weapons.Models.FireballWeapon>();
@@ -48,8 +44,6 @@ namespace Core.DI
         {
             base.Awake();
 
-            // Configure auto-save settings from GameData (if you add autoSaveInterval to GameData)
-            // Or remove this entirely if GameManager handles it6
             var autoSaveService = Container.Resolve<IAutoSaveService>();
             autoSaveService.SaveInterval = 30f; 
             autoSaveService.IsEnabled = true;

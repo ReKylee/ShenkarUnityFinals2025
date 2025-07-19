@@ -8,14 +8,8 @@ namespace Player.UI
     public class PlayerLivesUIController : MonoBehaviour
     {
         [SerializeField] private TextHealthView livesView;
-        
-        private IPlayerLivesService _livesService;
 
-        [Inject]
-        public void Construct(IPlayerLivesService livesService)
-        {
-            _livesService = livesService;
-        }
+        private IPlayerLivesService _livesService;
 
         private void Start()
         {
@@ -32,6 +26,12 @@ namespace Player.UI
             {
                 _livesService.OnLivesChanged -= UpdateDisplay;
             }
+        }
+
+        [Inject]
+        public void Construct(IPlayerLivesService livesService)
+        {
+            _livesService = livesService;
         }
 
         private void UpdateDisplay(int lives)

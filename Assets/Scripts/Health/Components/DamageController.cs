@@ -1,7 +1,7 @@
 ﻿using Health.Interfaces;
 using UnityEngine;
 
-namespace Health
+namespace Health.Components
 {
     public class DamageController : MonoBehaviour
     {

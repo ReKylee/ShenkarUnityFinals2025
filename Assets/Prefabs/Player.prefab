@@ -12,12 +12,13 @@ GameObject:
   - component: {fileID: 6599342503957296432}
   - component: {fileID: 2744869299825136038}
   - component: {fileID: 4509492725762489347}
+  - component: {fileID: 1612075913069458391}
+  - component: {fileID: 644453172252926475}
   - component: {fileID: 1709817759299275656}
   - component: {fileID: 6806085336056450057}
   - component: {fileID: 6384095184324434777}
   - component: {fileID: 279962894031721775}
   - component: {fileID: 8779933863594023466}
-  - component: {fileID: 644453172252926475}
   - component: {fileID: 8366726474898352353}
   - component: {fileID: 3959446506065792497}
   - component: {fileID: 3392466676958509593}
@@ -164,6 +165,35 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 2}
   m_Direction: 0
+--- !u!114 &1612075913069458391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926891512402252426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f6792e3b5094917b6df68c23ccea7f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteAnimator: {fileID: 644453172252926475}
+  spriteRenderer: {fileID: 6599342503957296432}
+--- !u!114 &644453172252926475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926891512402252426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d4337bea670e194ca021e2a54e31bf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playAutomatically: 1
+  _spriteAnimationObject: {fileID: 11400000, guid: 92336ef92d5ea1e46a4b597de59ab5da, type: 2}
+  _spriteRenderer: {fileID: 6599342503957296432}
 --- !u!114 &1709817759299275656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,21 +260,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21f52027736242a4b4026739a57e132c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &644453172252926475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3926891512402252426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d4337bea670e194ca021e2a54e31bf8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playAutomatically: 1
-  _spriteAnimationObject: {fileID: 11400000, guid: 92336ef92d5ea1e46a4b597de59ab5da, type: 2}
-  _spriteRenderer: {fileID: 6599342503957296432}
 --- !u!114 &8366726474898352353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -414,6 +429,7 @@ MonoBehaviour:
   axeWeapon: {fileID: 3354482609634551655}
   boomerangWeapon: {fileID: 4855835521647181485}
   fireballWeapon: {fileID: 3880546536829734273}
+  canAttack: 1
 --- !u!1 &7092180714870588923
 GameObject:
   m_ObjectHideFlags: 0

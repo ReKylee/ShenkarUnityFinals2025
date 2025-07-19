@@ -1,11 +1,9 @@
 ﻿using System;
 using Health.Interfaces;
 using Health.Models;
-using Health.Views;
 using UnityEngine;
-using VContainer;
 
-namespace Health
+namespace Health.Components
 {
     public class SimpleHealthController : MonoBehaviour, IFullHealthSystem
     {
@@ -15,10 +13,10 @@ namespace Health
 
         private void Awake()
         {
-                InitializeDefaultModel();
+            InitializeDefaultModel();
         }
-        
-  
+
+
         public int MaxHp => _model?.MaxHp ?? maxHp;
         public int CurrentHp => _model?.CurrentHp ?? 0;
 
@@ -58,7 +56,5 @@ namespace Health
         ///     Initialize with a default HealthModel implementation
         /// </summary>
         private void InitializeDefaultModel() => _model = new HealthModel(maxHp, maxHp);
-
-       
     }
 }

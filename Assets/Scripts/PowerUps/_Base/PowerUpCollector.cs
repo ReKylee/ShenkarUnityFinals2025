@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using Core.Events;
+using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace PowerUps._Base
 {
@@ -20,5 +23,7 @@ namespace PowerUps._Base
                 powerUp.ApplyPowerUp(gameObject);
             }
         }
+
+    
     }
 }

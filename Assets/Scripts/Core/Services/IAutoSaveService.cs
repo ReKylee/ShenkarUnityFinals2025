@@ -17,8 +17,8 @@ namespace Core.Services
 
     public class AutoSaveService : IAutoSaveService
     {
-        private float _lastSaveTime;
         private bool _hasPendingSave;
+        private float _lastSaveTime;
 
         public bool IsEnabled { get; set; } = true;
         public float SaveInterval { get; set; } = 30f;
@@ -38,7 +38,7 @@ namespace Core.Services
         public void RequestSave()
         {
             if (!IsEnabled) return;
-            
+
             _hasPendingSave = false;
             _lastSaveTime = Time.time;
             OnSaveRequested?.Invoke();

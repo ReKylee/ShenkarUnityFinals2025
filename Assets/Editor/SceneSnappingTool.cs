@@ -1,5 +1,7 @@
 ﻿using UnityEditor;
+using UnityEditor.U2D.Sprites;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Editor
 {
@@ -7,16 +9,8 @@ namespace Editor
     {
         private float _pixelsPerUnit = 100f;
 
-        // Creates a new menu item under "Tools" to open this window.
-        [MenuItem("Tools/Scene Snapping Tool")]
-        public static void ShowWindow()
-        {
-            // Get existing open window or if none, make a new one.
-            GetWindow<SceneSnappingTool>("Scene Snapper");
-        }
-
         // This method draws the UI for the editor window.
-        void OnGUI()
+        private void OnGUI()
         {
             GUILayout.Label("Scene Snapping Tools", EditorStyles.boldLabel);
 
@@ -69,10 +63,18 @@ namespace Editor
             GUI.backgroundColor = Color.white;
         }
 
+        // Creates a new menu item under "Tools" to open this window.
+        [MenuItem("Tools/Scene Snapping Tool")]
+        public static void ShowWindow()
+        {
+            // Get existing open window or if none, make a new one.
+            GetWindow<SceneSnappingTool>("Scene Snapper");
+        }
+
         private void SnapAllObjects()
         {
             // Get all root GameObjects in the currently active scene.
-            GameObject[] rootObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+            var rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
             int snappedObjectCount = 0;
 
             // Register an undo operation for the entire scene snapping action.
@@ -123,16 +125,18 @@ namespace Editor
                         // Handle sprite sheet with multiple sprites
                         if (importer.spriteImportMode == SpriteImportMode.Multiple)
                         {
-                            var factory = new UnityEditor.U2D.Sprites.SpriteDataProviderFactories();
+                            SpriteDataProviderFactories factory = new();
                             factory.Init();
-                            var dataProvider = factory.GetSpriteEditorDataProviderFromObject(importer);
+                            ISpriteEditorDataProvider dataProvider =
+                                factory.GetSpriteEditorDataProviderFromObject(importer);
+
                             dataProvider.InitSpriteEditorDataProvider();
 
                             var spriteRects = dataProvider.GetSpriteRects();
 
                             for (int i = 0; i < spriteRects.Length; i++)
                             {
-                                var spriteRect = spriteRects[i];
+                                SpriteRect spriteRect = spriteRects[i];
 
                                 // Convert normalized pivot (0-1) to pixel coordinates
                                 float pixelPivotX = spriteRect.pivot.x * spriteRect.rect.width;
@@ -191,7 +195,7 @@ namespace Editor
         }
 
         /// <summary>
-        /// Snaps a given world position to the nearest pixel boundary based on the PPU setting.
+        ///     Snaps a given world position to the nearest pixel boundary based on the PPU setting.
         /// </summary>
         private Vector3 SnapToPixelGrid(Vector3 position)
         {

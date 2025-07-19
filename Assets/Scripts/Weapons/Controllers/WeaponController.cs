@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Core.Data;
 using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using VContainer;
 using Weapons.Interfaces;
 using Weapons.Models;
 using Weapons.Services;
@@ -12,8 +10,8 @@ using Weapons.Services;
 namespace Weapons.Controllers
 {
     /// <summary>
-    /// Controller for managing weapon input following the MVC pattern
-    /// Works with WeaponManagerService to handle weapon switching logic
+    ///     Controller for managing weapon input following the MVC pattern
+    ///     Works with WeaponManagerService to handle weapon switching logic
     /// </summary>
     public class WeaponController : MonoBehaviour
     {
@@ -34,7 +32,14 @@ namespace Weapons.Controllers
                 mapping.Initialize(_inputActions, _weaponManager);
             }
         }
-
+        private void Update()
+        {
+            // DEBUG
+            if (_inputActions.Player.Interact.IsPressed())
+            {
+                _weaponManager.RevertFromTemporaryWeapon();
+            }
+        }
 
         private void OnEnable()
         {
@@ -60,7 +65,7 @@ namespace Weapons.Controllers
 
 
         /// <summary>
-        /// Get weapon status for UI display
+        ///     Get weapon status for UI display
         /// </summary>
         public WeaponStatus GetWeaponStatus(string weaponName)
         {
@@ -157,7 +162,7 @@ namespace Weapons.Controllers
             // Get weapon status for UI
             public WeaponStatus GetWeaponStatus()
             {
-                var status = new WeaponStatus
+                WeaponStatus status = new()
                 {
                     weaponName = weaponName,
                     isUnlocked = true, // Always unlocked
