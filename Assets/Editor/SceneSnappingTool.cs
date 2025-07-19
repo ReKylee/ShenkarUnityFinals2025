@@ -133,10 +133,19 @@ namespace Editor
                             for (int i = 0; i < spriteRects.Length; i++)
                             {
                                 var spriteRect = spriteRects[i];
-                                Vector2 pivot = spriteRect.pivot;
+
+                                // Convert normalized pivot (0-1) to pixel coordinates
+                                float pixelPivotX = spriteRect.pivot.x * spriteRect.rect.width;
+                                float pixelPivotY = spriteRect.pivot.y * spriteRect.rect.height;
+
+                                // Snap to nearest integer
+                                float snappedPixelPivotX = Mathf.Round(pixelPivotX);
+                                float snappedPixelPivotY = Mathf.Round(pixelPivotY);
+
+                                // Convert back to normalized coordinates
                                 spriteRect.pivot = new Vector2(
-                                    Mathf.Round(pivot.x),
-                                    Mathf.Round(pivot.y)
+                                    snappedPixelPivotX / spriteRect.rect.width,
+                                    snappedPixelPivotY / spriteRect.rect.height
                                 );
 
                                 spriteRects[i] = spriteRect;
@@ -150,6 +159,8 @@ namespace Editor
                         else if (importer.spriteImportMode == SpriteImportMode.Single)
                         {
                             Vector2 pivot = importer.spritePivot;
+
+                            // For single sprites, spritePivot is already in pixel coordinates
                             importer.spritePivot = new Vector2(
                                 Mathf.Round(pivot.x),
                                 Mathf.Round(pivot.y)

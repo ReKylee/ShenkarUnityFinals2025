@@ -16,12 +16,12 @@ MonoBehaviour:
   - Name: Walk
     FPS: 10
     Frames:
-    - {fileID: 2021126062, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1477254743, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 1924017578, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 2021126062, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -1962465331, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1924017578, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0
-  - Name: Attacking
+  - Name: Jump
     FPS: 8
     Frames:
     - {fileID: 760516333, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
@@ -46,8 +46,8 @@ MonoBehaviour:
     - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: -1962465331, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 1
-  - Name: Jump
+  - Name: Attacking
     FPS: 8
     Frames:
-    - {fileID: 1477254743, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 719155381, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 1

@@ -16,8 +16,8 @@ MonoBehaviour:
   - Name: Spin
     FPS: 4
     Frames:
-    - {fileID: 1135327933, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 1060450863, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1310683816, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: -323462004, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1135327933, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 620900558, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0

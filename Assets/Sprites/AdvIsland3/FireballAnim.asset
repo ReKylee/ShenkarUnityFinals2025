@@ -16,6 +16,6 @@ MonoBehaviour:
   - Name: Fire
     FPS: 2
     Frames:
+    - {fileID: 664612160, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 1635488330, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -469469953, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0
