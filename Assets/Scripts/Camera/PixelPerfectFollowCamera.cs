@@ -11,44 +11,36 @@ namespace Extensions
     [ExecuteInEditMode]
     public class PixelPerfectFollowCamera : MonoBehaviour
     {
+        [Header("Target Settings")]
         [Tooltip("The target transform for the camera to follow.")]
         public Transform target;
 
         [Tooltip("The offset from the target's position.")]
         public Vector3 offset = new Vector3(0, 0, -10);
 
-        [Header("Axis Following")] [Tooltip("If true, the camera will follow the target on the X axis.")]
+        [Header("Follow Behavior")] 
+        [Tooltip("If true, the camera will follow the target on the X axis.")]
         public bool followX = true;
 
         [Tooltip("If true, the camera will follow the target on the Y axis.")]
         public bool followY = true;
 
         [Tooltip("If true, the camera will follow the target on the Z axis.")]
-        public bool followZ = false; // Usually false for 2D games
-
-        [Header("Dampening")] [Tooltip("If true, camera movement will be smoothed with dampening.")]
-        public bool useDampening = true;
-
-        [Tooltip("Dampening strength (higher values = smoother but slower movement).")] [Range(0.1f, 10f)]
-        public float dampeningStrength = 2f;
-
-        [Tooltip("Maximum camera movement speed in pixels per second.")] [Range(10f, 1000f)]
-        public float maxPixelSpeed = 300f;
-
-        [Header("World Bounds")]
-        [Tooltip("The collider that defines the world boundaries. Camera will not move outside these bounds.")]
-        public Collider2D worldBoundsCollider;
-
-        [Tooltip("If true, world bounds will be applied to camera movement.")]
-        public bool useWorldBounds = true;
+        public bool followZ;
 
         [Header("Pixel Perfect Settings")]
         [Tooltip("The number of pixels per unit. Must match your sprite and Pixel Perfect Camera settings.")]
         [Range(1, 256)]
         public float pixelsPerUnit = 100;
 
+        [Header("World Bounds")]
+        [Tooltip("If true, world bounds will be applied to camera movement.")]
+        public bool useWorldBounds = true;
+        
+        [Tooltip("The collider that defines the world boundaries. Camera will not move outside these bounds.")]
+        public Collider2D worldBoundsCollider;
+
         private Camera _cameraComponent;
-        private Vector2 _velocity = Vector2.zero;
 
         private void Awake()
         {
@@ -77,26 +69,6 @@ namespace Extensions
                 Vector2 constrainedPosition = ApplyWorldBounds(new Vector2(desiredX, desiredY));
                 desiredX = constrainedPosition.x;
                 desiredY = constrainedPosition.y;
-            }
-
-            // Apply dampening if enabled (only in play mode)
-            if (useDampening && Application.isPlaying)
-            {
-                // Convert pixel speed to world units per second based on PPU
-                float maxSpeed = maxPixelSpeed / pixelsPerUnit;
-
-                // Calculate smooth time based on PPU and dampening strength
-                // Higher PPU needs more smoothing to maintain pixel-perfect movement
-                float smoothTime = dampeningStrength * (pixelsPerUnit / 100f) * 0.02f;
-
-                // Apply dampening using SmoothDamp
-                Vector2 currentPos = new Vector2(newPosition.x, newPosition.y);
-                Vector2 targetPos = new Vector2(desiredX, desiredY);
-                Vector2 smoothedPos = Vector2.SmoothDamp(currentPos, targetPos, ref _velocity, smoothTime, maxSpeed,
-                    Time.deltaTime);
-
-                desiredX = smoothedPos.x;
-                desiredY = smoothedPos.y;
             }
 
             // Snap the desired position to the pixel grid
