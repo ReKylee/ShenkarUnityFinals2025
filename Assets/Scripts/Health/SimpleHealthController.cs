@@ -12,7 +12,6 @@ namespace Health
         [SerializeField] private int maxHp = 3;
 
         private IFullHealthSystem _model;
-       
 
         private void Awake()
         {

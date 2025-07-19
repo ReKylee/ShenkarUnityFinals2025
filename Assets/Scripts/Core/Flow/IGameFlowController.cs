@@ -1,5 +1,4 @@
 ﻿using Core.Events;
-using Core.Lives;
 using UnityEngine;
 
 namespace Core.Flow
@@ -13,27 +12,21 @@ namespace Core.Flow
 
     public class GameFlowController : IGameFlowController
     {
-        private readonly ILivesService _livesService;
         private readonly IGameEventPublisher _gameEventPublisher;
         private readonly string _currentLevelName;
 
         public GameFlowController(
-            ILivesService livesService, 
             IGameEventPublisher gameEventPublisher,
             string currentLevelName = "Level_01")
         {
-            _livesService = livesService;
             _gameEventPublisher = gameEventPublisher;
             _currentLevelName = currentLevelName;
             
             // Subscribe to lives events
-            _livesService.OnAllLivesLost += HandleAllLivesLost;
         }
 
         public void HandlePlayerDeath()
         {
-            // Always lose a life when player dies
-            _livesService.LoseLife();
             
             // Always publish level failed when player dies (regardless of lives remaining)
             // GameManager will handle the restart, and lives system will handle game over separately
@@ -58,9 +51,6 @@ namespace Core.Flow
             HandleGameOver();
         }
 
-        public void Dispose()
-        {
-            _livesService.OnAllLivesLost -= HandleAllLivesLost;
-        }
+       
     }
 }

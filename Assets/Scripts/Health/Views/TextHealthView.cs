@@ -10,7 +10,7 @@ namespace Health.Views
 
         public void UpdateDisplay(int currentHp, int maxHp)
         {
-            text.text = $"{currentHp}/{maxHp}";
+            text.text = $"{currentHp}";
         }
     }
 }

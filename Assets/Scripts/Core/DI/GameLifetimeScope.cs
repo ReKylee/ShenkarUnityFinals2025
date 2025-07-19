@@ -2,21 +2,16 @@
 using Core.Data;
 using Core.Events;
 using Core.Flow;
-using Core.Lives;
 using Core.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using Weapons.Controllers;
-using Weapons.Models;
 
 namespace Core.DI
 {
     public class GameLifetimeScope : LifetimeScope
     {
-        [Header("Game Settings")] [SerializeField]
-        private int maxLives = 3;
-
+        [Header("Game Settings")] 
         [SerializeField] private string currentLevelName = "Level_01";
         [SerializeField] private float autoSaveInterval = 30f;
 
@@ -35,15 +30,10 @@ namespace Core.DI
             // Register Game Event Publisher
             builder.Register<IGameEventPublisher, GameEventPublisher>(Lifetime.Singleton);
 
-            // Register Lives Service with max lives parameter
-            builder.Register<ILivesService>(resolver =>
-                    new LivesService(resolver.Resolve<IGameEventPublisher>(), maxLives),
-                Lifetime.Singleton);
 
             // Register Game Flow Controller with level name parameter
             builder.Register<IGameFlowController>(resolver =>
                     new GameFlowController(
-                        resolver.Resolve<ILivesService>(),
                         resolver.Resolve<IGameEventPublisher>(),
                         currentLevelName),
                 Lifetime.Singleton);
@@ -55,6 +45,7 @@ namespace Core.DI
             builder.RegisterComponentInHierarchy<Weapons.Models.FireballWeapon>();
             builder.RegisterComponentInHierarchy<Weapons.Services.WeaponManagerService>();
             builder.RegisterComponentInHierarchy<Player.PlayerHealthController>();
+            builder.RegisterComponentInHierarchy<Player.PlayerLivesController>();
             builder.RegisterComponentInHierarchy<Collectables.Coin.CoinController>();
 
         }
