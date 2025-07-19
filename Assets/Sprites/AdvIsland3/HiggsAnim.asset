@@ -19,7 +19,7 @@ MonoBehaviour:
     - {fileID: -889070893, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 1773726258, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0
-  - Name: Walking
+  - Name: Walk
     FPS: 8
     Frames:
     - {fileID: -1764474346, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}

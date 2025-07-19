@@ -2,6 +2,7 @@
 using Health;
 using Health.Components;
 using Health.Interfaces;
+using Player.Components;
 using Player.Services;
 using UnityEngine;
 using VContainer;

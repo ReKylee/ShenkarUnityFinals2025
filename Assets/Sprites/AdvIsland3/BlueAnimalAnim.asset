@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: BlueAnimalAnim
   m_EditorClassIdentifier: 
   SpriteAnimations:
+  - Name: Idle
+    FPS: 8
+    Frames:
+    - {fileID: 2021126062, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1924017578, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    SpriteAnimationType: 0
   - Name: Walk
     FPS: 10
     Frames:
@@ -29,22 +35,6 @@ MonoBehaviour:
     - {fileID: 760516333, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 760516333, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 760516333, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    SpriteAnimationType: 1
-  - Name: Aquire
-    FPS: 8
-    Frames:
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -1962465331, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -1962465331, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -1962465331, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -1962465331, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -1962465331, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -1962465331, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 1
   - Name: Attacking
     FPS: 8

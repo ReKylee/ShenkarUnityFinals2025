@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using GabrielBigardi.SpriteAnimator;
+﻿using GabrielBigardi.SpriteAnimator;
 using PowerUps._Base;
 using UnityEngine;
 using Weapons.Services;
-using Player;
+using Player.Components;
 
 namespace PowerUps.Transformation
 {
@@ -20,40 +19,13 @@ namespace PowerUps.Transformation
             _transitionTexture = transitionTexture;
             _transformationWeapon = transformationWeapon;
         }
+        
         public void ApplyPowerUp(GameObject player)
         {
-            if (!TryGetRequiredComponents(player, out PlayerAnimationController playerAnimationController,
-                    out WeaponManagerService weaponManager, out PlayerHealthController playerHealthController))
-                return;
-
-            // Activate one hit shield
-            playerHealthController.ActivateShield();
-
-            // Stop attacking during transformation
-            weaponManager.canAttack = false;
+            TransformationManager transformationManager = player.GetComponent<TransformationManager>();
             
-            // Play Transformation Effect
-            void OnTransComplete()
-            {
-                weaponManager.canAttack = true;
-                weaponManager.SwitchToTemporaryWeapon(_transformationWeapon);
-            }
-
-            playerAnimationController.PlayTransformationEffect(
-                _transitionTexture,
-                _animationObject,
-                OnTransComplete);
+            // Delegate all transformation logic to the manager
+            transformationManager?.ApplyTransformation(_animationObject, _transitionTexture, _transformationWeapon);
         }
-
-        private bool TryGetRequiredComponents(GameObject player, out PlayerAnimationController animationController,
-            out WeaponManagerService weaponManager, out PlayerHealthController healthController)
-        {
-            animationController = player.GetComponent<PlayerAnimationController>();
-            weaponManager = player.GetComponentInChildren<WeaponManagerService>();
-            healthController = player.GetComponent<PlayerHealthController>();
-
-            return animationController && weaponManager && healthController;
-        }
-
     }
 }

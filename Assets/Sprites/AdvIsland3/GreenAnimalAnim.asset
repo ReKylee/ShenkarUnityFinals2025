@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: GreenAnimalAnim
   m_EditorClassIdentifier: 
   SpriteAnimations:
+  - Name: Idle
+    FPS: 8
+    Frames:
+    - {fileID: -1712749363, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -703281213, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    SpriteAnimationType: 0
   - Name: Walk
     FPS: 10
     Frames:
@@ -35,24 +41,8 @@ MonoBehaviour:
     - {fileID: 452415010, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: -25001355, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0
-  - Name: Aquire
-    FPS: 8
-    Frames:
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: 248375590774886455, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    - {fileID: -518258441, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    SpriteAnimationType: 1
   - Name: Jump
     FPS: 8
     Frames:
-    - {fileID: -25001355, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -667408708, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 1

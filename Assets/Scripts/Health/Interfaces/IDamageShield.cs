@@ -1,31 +1,28 @@
-﻿namespace Health.Components
+﻿using System;
+
+namespace Player.Components
 {
-    /// <summary>
-    /// Interface for damage shields that can absorb hits
-    /// </summary>
     public interface IDamageShield
     {
         /// <summary>
-        /// Whether the shield is currently active
+        /// Event raised when the shield absorbs damage
         /// </summary>
+        event Action<int> OnDamageAbsorbed;
+
         bool IsActive { get; }
-        
         /// <summary>
-        /// Activate the shield
+        /// Activate the shield (called when entering transformation)
         /// </summary>
         void Activate();
-        
         /// <summary>
         /// Try to absorb damage with the shield
         /// </summary>
         /// <param name="amount">Damage amount</param>
         /// <returns>True if damage was absorbed, false if shield is inactive</returns>
         bool TryAbsorbDamage(int amount);
-        
         /// <summary>
-        /// Deactivate the shield
+        /// Manually deactivate the shield (e.g., when transformation ends)
         /// </summary>
         void Deactivate();
     }
 }
-
