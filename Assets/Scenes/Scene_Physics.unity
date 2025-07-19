@@ -31838,6 +31838,7 @@ GameObject:
   - component: {fileID: 2112735235}
   - component: {fileID: 2112735234}
   - component: {fileID: 2112735236}
+  - component: {fileID: 2112735237}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: Untagged
@@ -31854,7 +31855,7 @@ Transform:
   m_GameObject: {fileID: 2112735231}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.9375, y: 0.31250525, z: -10}
+  m_LocalPosition: {x: -5.9375, y: 0.3125, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -31979,6 +31980,26 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
+--- !u!114 &2112735237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112735231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b794491cb3354959996d186be1145be2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1188005389}
+  offset: {x: 2, y: 0, z: -10}
+  followX: 1
+  followY: 0
+  followZ: 0
+  worldBoundsCollider: {fileID: 1887416127}
+  useWorldBounds: 1
+  pixelsPerUnit: 16
 --- !u!1 &2134528400
 GameObject:
   m_ObjectHideFlags: 0
