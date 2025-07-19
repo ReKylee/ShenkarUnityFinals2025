@@ -35,7 +35,6 @@ namespace Weapons.Controllers
             }
         }
 
-      
 
         private void OnEnable()
         {
@@ -72,14 +71,14 @@ namespace Weapons.Controllers
                     return mapping.GetWeaponStatus();
                 }
             }
+
             return new WeaponStatus();
         }
 
         [Serializable]
         public class WeaponMapping
         {
-            [Header("Weapon Info")] 
-            public string weaponName;
+            [Header("Weapon Info")] public string weaponName;
             public MonoBehaviour weaponComponent;
             public WeaponType weaponType;
 
@@ -98,7 +97,7 @@ namespace Weapons.Controllers
             public void Initialize(InputSystem_Actions inputActions, WeaponManagerService weaponManager)
             {
                 _weaponManager = weaponManager;
-                
+
                 if (!weaponComponent)
                 {
                     Debug.LogError($"Weapon component is null for weapon '{weaponName}'.");
@@ -143,17 +142,17 @@ namespace Weapons.Controllers
             private void OnActionPerformed(InputAction.CallbackContext context)
             {
                 // Only shoot if this weapon is currently active according to the weapon manager
-                if (_weaponManager && _weaponManager.ActiveWeapon == weaponType)
+                if (_weaponManager is { canAttack: true } && _weaponManager.ActiveWeapon == weaponType)
                 {
                     WeaponComponent?.Shoot();
                 }
                 else
                 {
-                    Debug.Log($"WeaponController: {weaponName} is not the active weapon (Active: {_weaponManager?.ActiveWeapon}, This: {weaponType})");
+                    Debug.Log(
+                        $"WeaponController: {weaponName} is not the active weapon (Active: {_weaponManager?.ActiveWeapon}, This: {weaponType})");
                 }
             }
 
-            
 
             // Get weapon status for UI
             public WeaponStatus GetWeaponStatus()

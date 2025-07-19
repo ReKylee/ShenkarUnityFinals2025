@@ -1,6 +1,7 @@
 ﻿using GabrielBigardi.SpriteAnimator;
 using PowerUps._Base;
 using UnityEngine;
+using Weapons.Services;
 
 namespace PowerUps.Transformation
 {
@@ -8,6 +9,8 @@ namespace PowerUps.Transformation
     {
         [SerializeField] private SpriteAnimationObject animationObject;
         [SerializeField] private Sprite transitionTexture;
-        protected override IPowerUp CreatePowerUp() => new TransformationPowerUp(animationObject, transitionTexture);
+        [SerializeField] private WeaponType transformationWeapon = WeaponType.Fireball;
+
+        protected override IPowerUp CreatePowerUp() => new TransformationPowerUp(animationObject, transitionTexture, transformationWeapon);
     }
 }

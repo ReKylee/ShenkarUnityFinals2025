@@ -27,6 +27,11 @@ namespace Weapons.Services
         private WeaponType _activeWeapon = WeaponType.None;
         private bool _isUsingTemporaryWeapon = false;
 
+        [Header("Attack Settings")]
+        [SerializeField] public bool canAttack = true;
+
+        
+        
         public event Action<WeaponType> OnWeaponChanged;
         public event Action<WeaponType> OnPrimaryWeaponChanged;
 
@@ -76,9 +81,10 @@ namespace Weapons.Services
         }
 
         /// <summary>
-        /// Temporarily switch to Fireball weapon (overrides current weapon)
+        /// Temporarily switch to a specified weapon (overrides current weapon)
         /// </summary>
-        public void SwitchToTemporaryWeapon()
+        /// <param name="weaponType">The weapon type to switch to (defaults to Fireball if not specified)</param>
+        public void SwitchToTemporaryWeapon(WeaponType weaponType = WeaponType.Fireball)
         {
             // Unequip current active weapon
             if (_activeWeapon != WeaponType.None)
@@ -86,9 +92,9 @@ namespace Weapons.Services
                 UnequipWeapon(_activeWeapon);
             }
 
-            // Equip fireball weapon
-            EquipWeapon(WeaponType.Fireball);
-            _activeWeapon = WeaponType.Fireball;
+            // Equip the specified weapon
+            EquipWeapon(weaponType);
+            _activeWeapon = weaponType;
             _isUsingTemporaryWeapon = true;
 
             OnWeaponChanged?.Invoke(_activeWeapon);

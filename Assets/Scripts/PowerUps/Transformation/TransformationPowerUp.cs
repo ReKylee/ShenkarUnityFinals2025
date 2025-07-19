@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using GabrielBigardi.SpriteAnimator;
+using ModularCharacterController.Core;
 using PowerUps._Base;
 using UnityEngine;
+using Weapons.Controllers;
+using Weapons.Services;
 
 namespace PowerUps.Transformation
 {
@@ -9,41 +12,40 @@ namespace PowerUps.Transformation
     {
         private readonly SpriteAnimationObject _animationObject;
         private readonly Sprite _transitionTexture;
-        public TransformationPowerUp(SpriteAnimationObject animationObject, Sprite transitionTexture)
+        private readonly WeaponType _transformationWeapon;
+
+        public TransformationPowerUp(SpriteAnimationObject animationObject, Sprite transitionTexture,
+            WeaponType transformationWeapon = WeaponType.Fireball)
         {
             _animationObject = animationObject;
             _transitionTexture = transitionTexture;
+            _transformationWeapon = transformationWeapon;
         }
         public void ApplyPowerUp(GameObject player)
         {
             MonoBehaviour playerBehaviour = player.GetComponent<MonoBehaviour>();
             SpriteAnimator spriteAnimator = player.GetComponent<SpriteAnimator>();
             SpriteRenderer spriteRenderer = player.GetComponent<SpriteRenderer>();
+            WeaponManagerService weaponManager = player.GetComponentInChildren<WeaponManagerService>();
             if (playerBehaviour)
             {
-                playerBehaviour.StartCoroutine(ApplyPowerUpCoroutine(player, spriteAnimator, spriteRenderer));
+                playerBehaviour.StartCoroutine(ApplyPowerUpCoroutine(weaponManager, spriteAnimator, spriteRenderer));
+
             }
 
         }
-        private IEnumerator ApplyPowerUpCoroutine(GameObject player, SpriteAnimator spriteAnimator, SpriteRenderer spriteRenderer)
+        private IEnumerator ApplyPowerUpCoroutine(WeaponManagerService weaponManager, SpriteAnimator spriteAnimator,
+            SpriteRenderer spriteRenderer)
         {
-            if (!_animationObject || !_transitionTexture)
-            {
-                Debug.LogError("Animation object is null. Cannot apply transformation power-up.");
-                yield break;
-            }
+            if (!spriteAnimator || !spriteRenderer || !weaponManager) yield break;
 
-            // Cache component references
-            
-            if (!spriteAnimator || !spriteRenderer) yield break;
+            weaponManager.canAttack = false;
 
-            // Pause current animation
             spriteAnimator.Pause();
-
-            // Cache original sprite and wait times
             Sprite originalSprite = spriteRenderer.sprite;
-            WaitForSeconds shortWait = new WaitForSeconds(0.1f);
+            WaitForSeconds shortWait = new(0.1f);
 
+            // Flash animation sequence
             const int flashCount = 6;
             for (int i = 0; i < flashCount; i++)
             {
@@ -53,9 +55,15 @@ namespace PowerUps.Transformation
                 yield return shortWait;
             }
 
-            // Final transformation
+            // Complete transformation
             spriteRenderer.sprite = _transitionTexture;
             spriteAnimator.ChangeAnimationObject(_animationObject);
+            spriteAnimator.Play("Walk");
+
+            weaponManager.SwitchToTemporaryWeapon(_transformationWeapon);
+
+            weaponManager.canAttack = true;
+
         }
     }
 }
