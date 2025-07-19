@@ -10,7 +10,8 @@ namespace Health
 
         public void UpdateDisplay(int currentHp, int maxHp)
         {
-            bar.fillAmount = Mathf.Clamp01((float)currentHp / maxHp);
+            // Truncate the fill amount to 3 decimal places
+            bar.fillAmount = Mathf.Floor((float)currentHp / maxHp * 1000f) / 1000f;
         }
     }
 }
