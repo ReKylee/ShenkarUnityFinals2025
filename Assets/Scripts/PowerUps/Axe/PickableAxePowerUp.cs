@@ -8,7 +8,6 @@ namespace PowerUps.Axe
     {
         public void ApplyPowerUp(GameObject player)
         {
-            Debug.Log("ApplyPowerUp Axe - Switching to Axe weapon");
             WeaponManagerService weaponManager = player?.GetComponentInChildren<WeaponManagerService>();
             weaponManager?.SwitchToPrimaryWeapon(WeaponType.Axe);
         }

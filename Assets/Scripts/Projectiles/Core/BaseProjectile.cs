@@ -18,7 +18,6 @@ namespace Projectiles.Core
 
         public void Fire()
         {
-            Debug.Log("BaseProjectile: Firing projectile.");
             Move();
         }
 

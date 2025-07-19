@@ -56,8 +56,6 @@ namespace Weapons.Services
                 return;
             }
 
-            Debug.Log($"WeaponManagerService: Switching primary weapon from {_currentPrimaryWeapon} to {weaponType}");
-
             // Unequip current primary weapon if not using temporary weapon
             if (!_isUsingTemporaryWeapon && _currentPrimaryWeapon != WeaponType.None)
             {
@@ -82,8 +80,6 @@ namespace Weapons.Services
         /// </summary>
         public void SwitchToTemporaryWeapon()
         {
-            Debug.Log("WeaponManagerService: Switching to temporary Fireball weapon");
-
             // Unequip current active weapon
             if (_activeWeapon != WeaponType.None)
             {
@@ -108,8 +104,6 @@ namespace Weapons.Services
                 Debug.LogWarning("WeaponManagerService: Not currently using temporary weapon");
                 return;
             }
-
-            Debug.Log($"WeaponManagerService: Reverting from temporary weapon to primary weapon {_currentPrimaryWeapon}");
 
             // Unequip fireball weapon
             UnequipWeapon(WeaponType.Fireball);
@@ -138,20 +132,17 @@ namespace Weapons.Services
                     if (axeWeapon)
                     {
                         axeWeapon.Equip();
-                        Debug.Log("WeaponManagerService: Equipped Axe weapon");
                     }
                     break;
 
                 case WeaponType.Boomerang:
                     // Boomerang doesn't have equip/unequip - it's active when selected
-                    Debug.Log("WeaponManagerService: Switched to Boomerang weapon");
                     break;
 
                 case WeaponType.Fireball:
                     if (fireballWeapon)
                     {
                         fireballWeapon.Equip();
-                        Debug.Log("WeaponManagerService: Equipped Fireball weapon");
                     }
                     break;
             }
@@ -165,20 +156,17 @@ namespace Weapons.Services
                     if (axeWeapon)
                     {
                         axeWeapon.UnEquip();
-                        Debug.Log("WeaponManagerService: Unequipped Axe weapon");
                     }
                     break;
 
                 case WeaponType.Boomerang:
                     // Boomerang doesn't have equip/unequip, just not active
-                    Debug.Log("WeaponManagerService: Switched away from Boomerang weapon");
                     break;
 
                 case WeaponType.Fireball:
                     if (fireballWeapon)
                     {
                         fireballWeapon.UnEquip();
-                        Debug.Log("WeaponManagerService: Unequipped Fireball weapon");
                     }
                     break;
             }

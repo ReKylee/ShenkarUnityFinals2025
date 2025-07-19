@@ -65,11 +65,8 @@ namespace Weapons.Components
 
         private IEnumerator TemporaryWeaponCountdown()
         {
-            Debug.Log($"TemporaryWeaponHandler: Starting {fireballDuration}s countdown for Fireball weapon");
-            
             yield return new WaitForSeconds(fireballDuration);
             
-            Debug.Log("TemporaryWeaponHandler: Fireball duration expired, reverting to primary weapon");
             _weaponManager.RevertFromTemporaryWeapon();
             
             _temporaryWeaponCoroutine = null;

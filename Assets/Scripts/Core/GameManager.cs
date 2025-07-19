@@ -72,7 +72,6 @@ namespace Core
 
         public void RestartLevel()
         {
-            Debug.Log("GameManager: RestartLevel called - Reloading scene");
             UnityEngine.SceneManagement.SceneManager.LoadScene(
                 UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
             );
@@ -96,23 +95,19 @@ namespace Core
 
         private void OnGameOver(GameOverEvent gameOverEvent)
         {
-            Debug.Log("GameManager: Game Over - All lives lost");
             ChangeState(GameState.GameOver);
             Invoke(nameof(RestartLevel), restartDelay * 2f);
         }
 
         private void OnLevelFailed(LevelFailedEvent levelEvent)
         {
-            Debug.Log("GameManager: Level failed - Player died");
             ChangeState(GameState.GameOver);
             
-            Debug.Log($"GameManager: Scheduling level restart in {restartDelay} seconds");
             Invoke(nameof(RestartLevel), restartDelay);
         }
 
         private void OnLevelCompleted(LevelCompletedEvent levelEvent)
         {
-            Debug.Log($"GameManager: Level completed in {levelEvent.CompletionTime:F2} seconds");
             ChangeState(GameState.Victory);
             // Handle level completion (next level, victory screen, etc.)
         }
@@ -123,7 +118,6 @@ namespace Core
         {
             if (_currentState == newState) return;
             
-            Debug.Log($"GameManager: State changed from {_currentState} to {newState}");
             _currentState = newState;
         }
 

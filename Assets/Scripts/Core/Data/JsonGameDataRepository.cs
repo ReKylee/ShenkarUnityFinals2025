@@ -16,12 +16,10 @@ namespace Core.Data
                 {
                     string json = File.ReadAllText(SaveFilePath);
                     var data = JsonUtility.FromJson<GameData>(json);
-                    Debug.Log($"Game data loaded from: {SaveFilePath}");
                     return data;
                 }
                 else
                 {
-                    Debug.Log("No save file found, creating default data");
                     return CreateDefaultData();
                 }
             }
@@ -38,7 +36,6 @@ namespace Core.Data
             {
                 string json = JsonUtility.ToJson(data, true);
                 File.WriteAllText(SaveFilePath, json);
-                Debug.Log($"Game data saved to: {SaveFilePath}");
             }
             catch (Exception e)
             {
@@ -53,7 +50,6 @@ namespace Core.Data
                 if (File.Exists(SaveFilePath))
                 {
                     File.Delete(SaveFilePath);
-                    Debug.Log("Save file deleted");
                 }
             }
             catch (Exception e)

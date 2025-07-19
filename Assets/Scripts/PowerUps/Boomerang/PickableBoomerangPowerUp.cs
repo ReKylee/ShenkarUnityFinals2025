@@ -8,7 +8,6 @@ namespace PowerUps.Boomerang
     {
         public void ApplyPowerUp(GameObject player)
         {
-            Debug.Log("ApplyPowerUp Boomerang - Switching to Boomerang weapon");
             WeaponManagerService weaponManager = player?.GetComponentInChildren<WeaponManagerService>();
             weaponManager?.SwitchToPrimaryWeapon(WeaponType.Boomerang);
         }

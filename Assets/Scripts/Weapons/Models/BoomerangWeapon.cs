@@ -40,36 +40,29 @@ namespace Weapons.Models
             if (oldAmmo != CurrentAmmo)
             {
                 OnAmmoChanged?.Invoke(CurrentAmmo);
-                Debug.Log($"BoomerangWeapon: Ammo changed from {oldAmmo} to {CurrentAmmo}");
             }
         }
 
         public void Shoot()
         {
-            Debug.Log($"BoomerangWeapon: Shoot called - HasAmmo: {HasAmmo}, Cooldown ready: {Time.time >= _nextFireTime}");
-            
             // Check cooldown
             if (Time.time < _nextFireTime)
             {
-                Debug.Log("BoomerangWeapon: Cannot shoot - still on cooldown");
                 return;
             }
 
             // Check ammo and boomerang prefab
             if (!boomerang || !HasAmmo)
             {
-                Debug.Log($"BoomerangWeapon: Cannot shoot - Boomerang prefab: {boomerang != null}, HasAmmo: {HasAmmo}");
                 return;
             }
 
             // Check if there's already an active boomerang
             if (_activeBoomerang != null)
             {
-                Debug.Log("BoomerangWeapon: Cannot shoot - boomerang already active");
                 return;
             }
 
-            Debug.Log("BoomerangWeapon: Firing boomerang!");
             Vector3 spawnPosition = spawnPoint ? spawnPoint.position : transform.position;
             _activeBoomerang = Instantiate(boomerang, spawnPosition, Quaternion.identity);
 
@@ -97,8 +90,6 @@ namespace Weapons.Models
 
         private void OnBoomerangReturned()
         {
-            Debug.Log("BoomerangWeapon: Boomerang returned, restoring ammo");
-            
             // Clean up the active boomerang reference
             if (_activeBoomerang != null)
             {

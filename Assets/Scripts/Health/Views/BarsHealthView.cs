@@ -11,7 +11,6 @@ namespace Health
         public void UpdateDisplay(int currentHp, int maxHp)
         {
             bar.fillAmount = Mathf.Clamp01((float)currentHp / maxHp);
-            Debug.Log($"Health updated: {currentHp}/{maxHp}, Fill Amount: {bar.fillAmount}");
         }
     }
 }

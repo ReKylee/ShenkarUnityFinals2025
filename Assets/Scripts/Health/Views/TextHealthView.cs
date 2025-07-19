@@ -10,7 +10,7 @@ namespace Health.Views
 
         public void UpdateDisplay(int currentHp, int maxHp)
         {
-            text.text = $"{currentHp}";
+            text.text = $"{currentHp}".PadLeft(2, '0');
         }
     }
 }

@@ -21,30 +21,24 @@ namespace Weapons.Models
 
         public void Shoot()
         {
-            Debug.Log($"AxeWeapon: Shoot called - Equipped: {_isEquipped}, Cooldown ready: {Time.time >= _nextFireTime}");
-            
             // Check if weapon is equipped
             if (!_isEquipped)
             {
-                Debug.Log("AxeWeapon: Cannot shoot - weapon not equipped");
                 return;
             }
 
             // Check cooldown
             if (Time.time < _nextFireTime)
             {
-                Debug.Log("AxeWeapon: Cannot shoot - still on cooldown");
                 return;
             }
 
             // Check axe prefab
             if (!axe)
             {
-                Debug.Log($"AxeWeapon: Cannot shoot - Axe prefab is null");
                 return;
             }
 
-            Debug.Log("AxeWeapon: Firing axe!");
             GameObject curAxe = axePool.Get();
             Vector3 spawnPosition = spawnPoint ? spawnPoint.position : transform.position;
             curAxe.transform.position = spawnPosition;
@@ -66,13 +60,11 @@ namespace Weapons.Models
         public void Equip()
         {
             _isEquipped = true;
-            Debug.Log("AxeWeapon: Equipped");
         }
 
         public void UnEquip()
         {
             _isEquipped = false;
-            Debug.Log("AxeWeapon: Unequipped");
         }
     }
 }

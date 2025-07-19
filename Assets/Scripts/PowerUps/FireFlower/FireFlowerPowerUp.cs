@@ -8,7 +8,6 @@ namespace PowerUps.FireFlower
     {
         public void ApplyPowerUp(GameObject player)
         {
-            Debug.Log("ApplyPowerUp Fire Flower - Switching to temporary Fireball weapon");
             WeaponManagerService weaponManager = player?.GetComponentInChildren<WeaponManagerService>();
             weaponManager?.SwitchToTemporaryWeapon();
         }
