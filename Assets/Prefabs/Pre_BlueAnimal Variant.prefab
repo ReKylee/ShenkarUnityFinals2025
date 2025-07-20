@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: transitionTexture
       value: 
       objectReference: {fileID: 1924017578, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - target: {fileID: 2083410797885253288, guid: c529d3ca22e655d4c81db8c52244ac3a, type: 3}
+      propertyPath: transformationWeapon
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 2347624851827448677, guid: c529d3ca22e655d4c81db8c52244ac3a, type: 3}
       propertyPath: m_Name
       value: Pre_BlueAnimal Variant
