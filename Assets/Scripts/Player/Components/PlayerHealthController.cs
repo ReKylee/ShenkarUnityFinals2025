@@ -1,4 +1,5 @@
 ﻿using Core.Events;
+using Core;
 using Health;
 using Health.Components;
 using Health.Interfaces;
@@ -16,14 +17,16 @@ namespace Player
         private IEventBus _eventBus;
         private IPlayerLivesService _livesService;
         private IDamageShield _damageShield;
+        private GameFlowManager _gameFlowManager;
 
         #region VContainer Injection
 
         [Inject]
-        public void Construct(IEventBus eventBus, IPlayerLivesService livesService)
+        public void Construct(IEventBus eventBus, IPlayerLivesService livesService, GameFlowManager gameFlowManager)
         {
             _eventBus = eventBus;
             _livesService = livesService;
+            _gameFlowManager = gameFlowManager;
         }
 
         #endregion
@@ -74,12 +77,9 @@ namespace Player
                 return;
             }
 
-            // Out of lives - publish death event
-            _eventBus?.Publish(new PlayerDeathEvent
-            {
-                Timestamp = Time.time,
-                DeathPosition = transform.position
-            });
+            // Out of lives - use GameFlowManager to handle player death properly
+            // This will publish both PlayerDeathEvent and LevelFailedEvent, and trigger level restart
+            _gameFlowManager?.HandlePlayerDeath(transform.position);
         }
 
         #endregion

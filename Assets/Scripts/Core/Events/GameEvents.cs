@@ -60,12 +60,7 @@ namespace Core.Events
         public float CompletionTime;
     }
 
-    public struct LevelFailedEvent : IGameEvent
-    {
-        public float Timestamp { get; set; }
-        public string LevelName;
-        public string FailureReason;
-    }
+
 
     // Redundant with GameStateChangedEvent when NewState = GameState.GameOver
     // But keeping for backward compatibility

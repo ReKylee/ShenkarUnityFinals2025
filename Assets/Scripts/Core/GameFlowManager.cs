@@ -89,23 +89,21 @@ namespace Core
                 Timestamp = Time.time
             });
 
-            // The player's death is a level failure
-            _eventBus?.Publish(new LevelFailedEvent
-            {
-                LevelName = _currentLevelName,
-                FailureReason = "Player died",
-                Timestamp = Time.time
-            });
+            HandleLevelFailureInternal("Player died");
         }
 
-        public void HandleLevelFailure(string reason)
+
+        // Internal method to handle level failure without relying on events
+        private void HandleLevelFailureInternal(string reason)
         {
-            _eventBus?.Publish(new LevelFailedEvent
+            // Change state if we're not already in GameOver
+            if (_currentState != GameState.GameOver)
             {
-                LevelName = _currentLevelName,
-                FailureReason = reason,
-                Timestamp = Time.time
-            });
+                ChangeState(GameState.GameOver);
+            }
+
+            // Schedule the restart
+            Invoke(nameof(RestartLevel), restartDelay);
         }
 
         public void CompleteLevel(float completionTime)
@@ -132,14 +130,12 @@ namespace Core
             // GameOverEvent is now a redundant event - it's automatically published when state changes to GameOver
             // Keeping the subscription for backward compatibility or external sources of GameOverEvent
             _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
-            _eventBus?.Subscribe<LevelFailedEvent>(OnLevelFailed);
             _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
         }
 
         private void UnsubscribeFromEvents()
         {
             _eventBus?.Unsubscribe<GameOverEvent>(OnGameOver);
-            _eventBus?.Unsubscribe<LevelFailedEvent>(OnLevelFailed);
             _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
         }
 
@@ -149,17 +145,6 @@ namespace Core
             Invoke(nameof(RestartLevel), restartDelay * 2f);
         }
 
-        private void OnLevelFailed(LevelFailedEvent levelEvent)
-        {
-            // We only need to change state if we're not already in GameOver state
-            // This prevents redundant GameOver events when player death already caused level failure
-            if (_currentState != GameState.GameOver)
-            {
-                ChangeState(GameState.GameOver);
-            }
-
-            Invoke(nameof(RestartLevel), restartDelay);
-        }
 
         private void OnLevelCompleted(LevelCompletedEvent levelEvent)
         {
