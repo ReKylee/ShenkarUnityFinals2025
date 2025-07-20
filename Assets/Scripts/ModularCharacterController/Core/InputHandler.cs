@@ -32,7 +32,6 @@ namespace ModularCharacterController.Core
         // This guarantees FixedUpdate always has access to inputs, even if they were reset in Update
         private void FixedUpdate()
         {
-            _fixedUpdateInput.RunInput = _currentInput.RunInput;
             _fixedUpdateInput.WalkInput = _currentInput.WalkInput;
             _fixedUpdateInput.JumpPressed = _currentInput.JumpPressed;
             _fixedUpdateInput.JumpReleased = _currentInput.JumpReleased;
@@ -61,8 +60,6 @@ namespace ModularCharacterController.Core
             string[] labels =
             {
                 $"Walk Input: {_currentInput.WalkInput}",
-                $"Run Input: {_currentInput.RunInput}",
-                $"Crouch Pressed: {_currentInput.CrouchPressed}",
                 $"Jump Pressed: {_currentInput.JumpPressed}",
                 $"Jump Released: {_currentInput.JumpReleased}",
                 $"Jump Held: {_currentInput.JumpHeld}",
@@ -108,13 +105,9 @@ namespace ModularCharacterController.Core
 
         private void SetupEvents()
         {
-            _inputActions.Player.Run.performed += ctx => _currentInput.RunInput = ctx.ReadValue<float>();
-            _inputActions.Player.Run.canceled += _ => _currentInput.RunInput = 0f;
             _inputActions.Player.Walk.performed += ctx => _currentInput.WalkInput = ctx.ReadValue<float>();
             _inputActions.Player.Walk.canceled += _ => _currentInput.WalkInput = 0f;
 
-            _inputActions.Player.Crouch.performed += _ => _currentInput.CrouchPressed = true;
-            _inputActions.Player.Crouch.canceled += _ => _currentInput.CrouchPressed = false;
 
             _inputActions.Player.Jump.performed += _ =>
             {

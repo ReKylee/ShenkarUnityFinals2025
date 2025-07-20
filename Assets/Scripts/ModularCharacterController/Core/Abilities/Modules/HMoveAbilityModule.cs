@@ -46,28 +46,24 @@ namespace ModularCharacterController.Core.Abilities.Modules
             if (!stats) return currentVelocity;
 
             // Cache input values and calculate absolute values once
-            float runInput = inputContext.RunInput;
             float walkInput = inputContext.WalkInput;
-            float absRunInput = Mathf.Abs(runInput);
+            bool runInput = inputContext.AttackHeld;
             float absWalkInput = Mathf.Abs(walkInput);
 
             // Determine input types and movement input in one pass
-            bool isRunInput = absRunInput > MIN_INPUT_THRESHOLD;
-            float movementInput = isRunInput ? runInput : walkInput;
-            float absMovementInput = isRunInput ? absRunInput : absWalkInput;
-            bool hasMovementInput = absMovementInput > MIN_INPUT_THRESHOLD;
+            bool hasMovementInput = absWalkInput > MIN_INPUT_THRESHOLD;
 
             // Update facing direction and running state
             if (hasMovementInput)
             {
-                int newFacingDirection = movementInput > 0 ? 1 : -1;
+                int newFacingDirection = walkInput > 0 ? 1 : -1;
 
                 _facingDirection = newFacingDirection;
             }
 
 
             // Cache speed and acceleration values based on current state
-            float targetSpeed = stats.walkSpeed;
+            float targetSpeed = runInput ? stats.runSpeed : stats.walkSpeed;
             float acceleration = isGrounded ? stats.groundAcceleration : stats.airAcceleration;
             float deceleration = isGrounded ? stats.groundDeceleration : stats.airDeceleration;
 

@@ -12,8 +12,8 @@ namespace Weapons.Models
         [SerializeField] private float cooldownTime = 0.3f;
         
         private float _nextFireTime;
-        private Transform _playerTransform;
-        private GameObject _activeBoomerang; // Track the single active boomerang
+        private Transform _returnToTransform;
+        private GameObject _activeBoomerang; 
         
         // Boomerang always has max 1 ammo
         public int CurrentAmmo { get; private set; } = 1;
@@ -24,12 +24,7 @@ namespace Weapons.Models
 
         private void Start()
         {
-            // Find player transform for boomerang returning
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                _playerTransform = player.transform;
-            }
+            _returnToTransform = transform.parent;
         }
 
         public void SetAmmo(int ammo)
@@ -76,7 +71,7 @@ namespace Weapons.Models
                 // Set up boomerang properties
                 float direction = transform.parent?.localScale.x ?? 1;
                 scBoomerang.Direction = direction;
-                scBoomerang.PlayerTransform = _playerTransform;
+                scBoomerang.PlayerTransform = _returnToTransform;
                 
                 // Subscribe to return event to restore ammo
                 scBoomerang.OnBoomerangReturned += OnBoomerangReturned;
@@ -91,7 +86,7 @@ namespace Weapons.Models
         private void OnBoomerangReturned()
         {
             // Clean up the active boomerang reference
-            if (_activeBoomerang != null)
+            if (_activeBoomerang)
             {
                 // Unsubscribe from events before destroying
                 if (_activeBoomerang.TryGetComponent(out ProjectileBoomerang scBoomerang))
@@ -103,7 +98,7 @@ namespace Weapons.Models
                 _activeBoomerang = null;
             }
             
-            SetAmmo(1); // Restore the single ammo when boomerang returns
+            SetAmmo(1); 
         }
 
         public void Reload()

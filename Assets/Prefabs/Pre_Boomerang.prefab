@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: {x: 6, y: 2}
-  totalFlightTime: 0.7
+  totalFlightTime: 1.2
   trajectoryXCurve:
     serializedVersion: 2
     m_Curve:

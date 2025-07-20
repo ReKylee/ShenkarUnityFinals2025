@@ -32,14 +32,6 @@ namespace Weapons.Controllers
                 mapping.Initialize(_inputActions, _weaponManager);
             }
         }
-        private void Update()
-        {
-            // DEBUG
-            if (_inputActions.Player.Interact.IsPressed())
-            {
-                _weaponManager.RevertFromTemporaryWeapon();
-            }
-        }
 
         private void OnEnable()
         {

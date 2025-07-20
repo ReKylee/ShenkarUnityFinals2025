@@ -427,7 +427,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boomerang: {fileID: 2685813220447095671, guid: 21d2b53bc3e8a8d4eb3cdb06c74f0012, type: 3}
   spawnPoint: {fileID: 8740184567830207716}
-  cooldownTime: 0.3
+  cooldownTime: 0
 --- !u!114 &5372833804394028595
 MonoBehaviour:
   m_ObjectHideFlags: 0
