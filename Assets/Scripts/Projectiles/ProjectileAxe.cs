@@ -7,6 +7,7 @@ namespace Projectiles
     public class ProjectileAxe : BaseProjectile
     {
         [NonSerialized] public float Direction;
+        [NonSerialized] public float ThrowerVelocityX;
 
         private void OnBecameInvisible()
         {
@@ -24,8 +25,12 @@ namespace Projectiles
 
         protected override void Move()
         {
-            transform.localScale = new Vector3(Direction, 1, 1);
-            Rb.AddForce(new Vector2(speed.x * Direction, speed.y), ForceMode2D.Impulse);
+
+            // World-space velocity = player's current velocity + desired arc velocity
+            Vector2 worldVelocity =  new Vector2(speed.x * Direction + ThrowerVelocityX, speed.y);
+
+            // Cancel out thrower motion to isolate projectile speed
+            Rb.linearVelocity = worldVelocity;
         }
     }
 }

@@ -34,7 +34,14 @@ namespace Projectiles.Core
             if (Pool != null)
             {
                 Debug.Log($"Projectile '{gameObject.name}' returning to pool.");
+                
+                // Reset all physics properties
                 Rb.linearVelocity = Vector2.zero;
+                Rb.angularVelocity = 0f;
+                
+                // Reset any accumulated forces
+                Rb.totalForce = Vector2.zero;
+                Rb.totalTorque = 0f;
 
                 Pool.Release(gameObject);
             }

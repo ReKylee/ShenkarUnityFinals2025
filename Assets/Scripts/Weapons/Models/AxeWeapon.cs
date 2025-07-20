@@ -13,12 +13,16 @@ namespace Weapons.Models
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.5f;
         [SerializeField] private AxePool axePool;
-        
+
+        [NonSerialized] private Rigidbody2D _throwerRb;
         private float _nextFireTime;
         private bool _isEquipped;
 
         public bool IsEquipped => _isEquipped;
-
+        private void Awake()
+        {
+            _throwerRb = GetComponentInParent<Rigidbody2D>();
+        }
         public void Shoot()
         {
             // Check if weapon is equipped
@@ -50,6 +54,8 @@ namespace Weapons.Models
 
                 float direction = transform.parent?.localScale.x ?? 1;
                 scAxe.Direction = direction;
+                scAxe.ThrowerVelocityX = _throwerRb.linearVelocityX;
+                
                 scAxe.Fire();
 
                 // Set cooldown
