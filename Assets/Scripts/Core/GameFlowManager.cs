@@ -10,32 +10,41 @@ namespace Core
     /// </summary>
     public class GameFlowManager : MonoBehaviour
     {
+
         #region Fields
-        [Header("Game Settings")]
-        [SerializeField] private bool autoStartGame = true;
+
+        [Header("Game Settings")] [SerializeField]
+        private bool autoStartGame = true;
+
         [SerializeField] private float restartDelay = 2f;
 
         private GameState _currentState = GameState.MainMenu;
         private string _currentLevelName = "Unknown";
         private float _levelStartTime;
         private IEventBus _eventBus;
+
         #endregion
 
         #region Properties
+
         public GameState CurrentState => _currentState;
         public bool IsPlaying => _currentState == GameState.Playing;
+
         #endregion
 
         #region VContainer Injection
+
         [Inject]
         public void Construct(IEventBus eventBus)
         {
             _eventBus = eventBus;
             SubscribeToEvents();
         }
+
         #endregion
 
         #region Unity Lifecycle
+
         private void Start()
         {
             _currentLevelName = GetCurrentLevelName();
@@ -50,9 +59,11 @@ namespace Core
         {
             UnsubscribeFromEvents();
         }
+
         #endregion
 
         #region Public API - Game State Control
+
         public void StartGame()
         {
             ChangeState(GameState.Playing);
@@ -77,11 +88,14 @@ namespace Core
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
         #endregion
 
         #region Public API - Game Flow Control
+
         public void HandlePlayerDeath(Vector3 deathPosition)
         {
+
             // Publish player death event
             _eventBus?.Publish(new PlayerDeathEvent
             {
@@ -96,11 +110,9 @@ namespace Core
         // Internal method to handle level failure without relying on events
         private void HandleLevelFailureInternal(string reason)
         {
+
             // Change state if we're not already in GameOver
-            if (_currentState != GameState.GameOver)
-            {
-                ChangeState(GameState.GameOver);
-            }
+            ChangeState(GameState.GameOver);
 
             // Schedule the restart
             Invoke(nameof(RestartLevel), restartDelay);
@@ -122,9 +134,11 @@ namespace Core
         {
             ChangeState(GameState.GameOver);
         }
+
         #endregion
 
         #region Event Handlers
+
         private void SubscribeToEvents()
         {
             // GameOverEvent is now a redundant event - it's automatically published when state changes to GameOver
@@ -151,9 +165,11 @@ namespace Core
             ChangeState(GameState.Victory);
             // Load next level or show victory screen logic would go here
         }
+
         #endregion
 
         #region Private Methods
+
         private void ChangeState(GameState newState)
         {
             if (_currentState == newState) return;
@@ -189,6 +205,8 @@ namespace Core
                 Timestamp = Time.time
             });
         }
+
         #endregion
+
     }
 }

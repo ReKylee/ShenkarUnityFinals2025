@@ -21,6 +21,16 @@ namespace Player.Services
             _gameDataService = gameDataService;
             _eventBus = eventBus;
             _maxLives = _gameDataService.CurrentData.lives;
+
+            UnityEngine.Debug.Log("[PlayerLivesService] Initialized with max lives: " + _maxLives);
+            if (_gameDataService == null)
+            {
+                UnityEngine.Debug.LogError("[PlayerLivesService] _gameDataService is null.");
+            }
+            if (_eventBus == null)
+            {
+                UnityEngine.Debug.LogError("[PlayerLivesService] _eventBus is null.");
+            }
         }
 
         public bool TryUseLife()

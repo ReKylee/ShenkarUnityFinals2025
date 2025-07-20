@@ -116,6 +116,7 @@ namespace Core
             {
                 _autoSaveService.OnSaveRequested += SaveData;
                 _autoSaveService.SaveInterval = autoSaveInterval;
+                _autoSaveService.IsEnabled = true;
             }
         }
 

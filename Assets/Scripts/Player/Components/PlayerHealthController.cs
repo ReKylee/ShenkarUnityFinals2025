@@ -67,6 +67,19 @@ namespace Player
 
         private void HandleHealthEmpty()
         {
+            // Check for null dependencies
+            if (_livesService == null)
+            {
+                Debug.LogError("[PlayerHealthController] _livesService is null. Ensure it is properly injected.");
+                return;
+            }
+
+            if (!_gameFlowManager)
+            {
+                Debug.LogError("[PlayerHealthController] _gameFlowManager is null. Ensure it is properly injected.");
+                return;
+            }
+
             // Try to use a life through the service
             if (_livesService.TryUseLife())
             {
@@ -77,9 +90,7 @@ namespace Player
                 return;
             }
 
-            // Out of lives - use GameFlowManager to handle player death properly
-            // This will publish both PlayerDeathEvent and LevelFailedEvent, and trigger level restart
-            _gameFlowManager?.HandlePlayerDeath(transform.position);
+            _gameFlowManager.HandlePlayerDeath(transform.position);
         }
 
         #endregion

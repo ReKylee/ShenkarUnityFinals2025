@@ -4,13 +4,24 @@ using Core.Services;
 using Player.Services;
 using VContainer;
 using VContainer.Unity;
+using UnityEngine;
 
 namespace Core.DI
 {
     public class GameLifetimeScope : LifetimeScope
     {
+     
+
+        protected override void Awake()
+        {
+            Debug.Log("[GameLifetimeScope] Awake called.");
+            base.Awake();
+        }
+
         protected override void Configure(IContainerBuilder builder)
         {
+            Debug.Log("[GameLifetimeScope] Configuring DI container...");
+
             // Register Core Services
             builder.Register<IEventBus, EventBus>(Lifetime.Singleton);
 
@@ -21,7 +32,7 @@ namespace Core.DI
             builder.Register<IGameDataService, GameDataService>(Lifetime.Singleton);
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
 
-            // Register Player Services 
+            // Register Player Services
             builder.Register<IPlayerLivesService>(resolver
                 => new PlayerLivesService(
                     resolver.Resolve<IGameDataService>(),
@@ -38,15 +49,9 @@ namespace Core.DI
             builder.RegisterComponentInHierarchy<Player.UI.PlayerLivesUIController>();
             builder.RegisterComponentInHierarchy<Collectables.Coin.CoinController>();
 
+            Debug.Log("[GameLifetimeScope] DI container configured successfully.");
         }
 
-        protected override void Awake()
-        {
-            base.Awake();
-
-            var autoSaveService = Container.Resolve<IAutoSaveService>();
-            autoSaveService.SaveInterval = 30f; 
-            autoSaveService.IsEnabled = true;
-        }
+   
     }
 }

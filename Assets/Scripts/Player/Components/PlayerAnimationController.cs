@@ -37,9 +37,10 @@ namespace Player
             if (_inputHandler == null || _groundCheck == null) return;
 
             InputContext input = _inputHandler.CurrentInput;
-            if (input.WalkInput != 0)
+            // NOTE: I ADDED THIS
+            if (input.WalkInput != 0 && !Mathf.Approximately(Time.timeScale, 0) )
             {
-                transform.localScale = new Vector3(Mathf.Sign(input.WalkInput), 1, 1);
+                transform.localScale = new Vector3(input.WalkInput, 1, 1);
             }
 
             // Don't interrupt the Attacking animation if it's still playing
