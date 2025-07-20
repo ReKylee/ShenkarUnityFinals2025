@@ -1,7 +1,4 @@
-﻿using Core.Events;
-using UnityEngine;
-using VContainer;
-using VContainer.Unity;
+﻿using UnityEngine;
 
 namespace PowerUps._Base
 {
