@@ -32931,9 +32931,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: MovingPlatform
       objectReference: {fileID: 0}
+    - target: {fileID: 1089753706237988366, guid: 847f10acb7a397e4ba41840bc2114db8, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2465286036543276029, guid: 847f10acb7a397e4ba41840bc2114db8, type: 3}
       propertyPath: m_Layer
-      value: 8
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3978918636601893821, guid: 847f10acb7a397e4ba41840bc2114db8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -32957,7 +32961,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5195301549675070513, guid: 847f10acb7a397e4ba41840bc2114db8, type: 3}
       propertyPath: m_Layer
-      value: 8
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5484262810288066990, guid: 847f10acb7a397e4ba41840bc2114db8, type: 3}
       propertyPath: m_LocalPosition.x

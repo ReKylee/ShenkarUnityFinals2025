@@ -34,11 +34,11 @@ namespace Player
 
         private void Update()
         {
-            if (_inputHandler == null || _groundCheck == null) return;
+            if (!_inputHandler || !_groundCheck || Mathf.Approximately(Time.timeScale, 0)) return;
 
             InputContext input = _inputHandler.CurrentInput;
             // NOTE: I ADDED THIS
-            if (input.WalkInput != 0 && !Mathf.Approximately(Time.timeScale, 0) )
+            if (input.WalkInput != 0 )
             {
                 transform.localScale = new Vector3(input.WalkInput, 1, 1);
             }

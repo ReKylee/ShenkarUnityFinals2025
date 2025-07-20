@@ -9,9 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5468164087905511985}
-  - component: {fileID: 20229085086069903}
-  - component: {fileID: 4252008192189020639}
   - component: {fileID: 860934511962251613}
+  - component: {fileID: 20229085086069903}
+  - component: {fileID: 469673347381920035}
+  - component: {fileID: 7805418301004001878}
   m_Layer: 8
   m_Name: Pre_RedAnimal
   m_TagString: Untagged
@@ -34,6 +35,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &860934511962251613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7515139198067182813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95c9a1c0e6af4b7bb74d7cfd15095d9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationObject: {fileID: 11400000, guid: 9f13581186f93fd41b1cc33cbc6c1e17, type: 2}
+  transitionTexture: {fileID: -1881893663, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+  transformationWeapon: 3
 --- !u!212 &20229085086069903
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -78,7 +94,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1881893663, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+  m_Sprite: {fileID: 1863355073273294887, guid: 516accff2d6f9674b9a6826660913091, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -89,8 +105,35 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &4252008192189020639
-CircleCollider2D:
+--- !u!50 &469673347381920035
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7515139198067182813}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!70 &7805418301004001878
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -124,19 +167,5 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.37
---- !u!114 &860934511962251613
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7515139198067182813}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95c9a1c0e6af4b7bb74d7cfd15095d9b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animationObject: {fileID: 11400000, guid: 9f13581186f93fd41b1cc33cbc6c1e17, type: 2}
-  transitionTexture: {fileID: -1881893663, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-  transformationWeapon: 3
+  m_Size: {x: 1.375, y: 1}
+  m_Direction: 1
