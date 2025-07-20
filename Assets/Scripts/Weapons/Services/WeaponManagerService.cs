@@ -1,36 +1,26 @@
 ﻿using System;
-using InputSystem;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
-using Weapons.Models;
+using Weapons.Interfaces;
+using Weapons;
 
 namespace Weapons.Services
 {
-    public enum WeaponType
-    {
-        None,
-        Axe,
-        Boomerang,
-        Fireball
-    }
-
     /// <summary>
     /// Service that manages weapon switching logic according to Adventure Island 3 mechanics
     /// All weapons are always available - power-ups just switch between them
     /// </summary>
     public class WeaponManagerService : MonoBehaviour
     {
-        [Header("Weapon References")] [SerializeField]
-        private AxeWeapon axeWeapon;
+        private Dictionary<WeaponType, IWeapon> _weaponMap;
 
-        [SerializeField] private BoomerangWeapon boomerangWeapon;
-        [SerializeField] private FireballWeapon fireballWeapon;
-
-        private WeaponType _currentPrimaryWeapon = WeaponType.None;
-        private WeaponType _activeWeapon = WeaponType.None;
-        private bool _isUsingTemporaryWeapon = false;
+        private WeaponType _currentPrimaryWeapon;
+        private WeaponType _activeWeapon;
+        private bool _isUsingTemporaryWeapon;
 
         [Header("Attack Settings")] [SerializeField]
-        public bool canAttack = true;
+        public bool canAttack;
 
 
         public event Action<WeaponType> OnWeaponChanged;
@@ -38,11 +28,9 @@ namespace Weapons.Services
 
         private void Start()
         {
-            // Initialize weapon references if not set
-            if (!axeWeapon) axeWeapon = GetComponentInChildren<AxeWeapon>();
-            if (!boomerangWeapon) boomerangWeapon = GetComponentInChildren<BoomerangWeapon>();
-            if (!fireballWeapon) fireballWeapon = GetComponentInChildren<FireballWeapon>();
-
+            // Discover all weapon components and map by their WeaponType
+            var weapons = GetComponentsInChildren<MonoBehaviour>().OfType<IWeapon>();
+            _weaponMap = weapons.ToDictionary(w => w.WeaponType, w => w);
             // Start with no weapons equipped
             UnequipAllWeapons();
         }
@@ -136,47 +124,26 @@ namespace Weapons.Services
 
         private void EquipWeapon(WeaponType weaponType)
         {
-            switch (weaponType)
+            if (_weaponMap.TryGetValue(weaponType, out IWeapon weapon))
             {
-                case WeaponType.Axe:
-                    axeWeapon?.Equip();
-
-                    break;
-
-                case WeaponType.Boomerang:
-                    // Boomerang doesn't have equip/unequip - it's active when selected
-                    break;
-
-                case WeaponType.Fireball:
-                    fireballWeapon?.Equip();
-
-                    break;
+                if (weapon is IUseableWeapon useable)
+                    useable.Equip();
+                else if (weapon is IAmmoWeapon ammo)
+                    ammo.Reload();
             }
         }
 
         private void UnequipWeapon(WeaponType weaponType)
         {
-            switch (weaponType)
-            {
-                case WeaponType.Axe:
-                    axeWeapon?.UnEquip();
-                    break;
-
-                case WeaponType.Boomerang:
-                    // Boomerang doesn't have equip/unequip, just not active
-                    break;
-
-                case WeaponType.Fireball:
-                    fireballWeapon?.UnEquip();
-                    break;
-            }
+            if (_weaponMap.TryGetValue(weaponType, out IWeapon weapon) && weapon is IUseableWeapon useable)
+                useable.UnEquip();
         }
 
         private void UnequipAllWeapons()
         {
-            axeWeapon?.UnEquip();
-            fireballWeapon?.UnEquip();
-            // Boomerang doesn't need unequipping
+            foreach (IWeapon weapon in _weaponMap.Values)
+                if (weapon is IUseableWeapon useable)
+                    useable.UnEquip();
         }
 
         /// <summary>

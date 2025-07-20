@@ -3,6 +3,7 @@ using PowerUps._Base;
 using UnityEngine;
 using Weapons.Services;
 using Player.Components;
+using Weapons;
 
 namespace PowerUps.Transformation
 {
@@ -22,9 +23,8 @@ namespace PowerUps.Transformation
         
         public void ApplyPowerUp(GameObject player)
         {
-            TransformationManager transformationManager = player.GetComponent<TransformationManager>();
+            ITransformationCoordinator transformationManager = player.GetComponent<ITransformationCoordinator>();
             
-            // Delegate all transformation logic to the manager
             transformationManager?.ApplyTransformation(_animationObject, _transitionTexture, _transformationWeapon);
         }
     }

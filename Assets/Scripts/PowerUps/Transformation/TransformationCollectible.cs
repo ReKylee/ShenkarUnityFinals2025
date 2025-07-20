@@ -1,6 +1,7 @@
 ﻿using GabrielBigardi.SpriteAnimator;
 using PowerUps._Base;
 using UnityEngine;
+using Weapons;
 using Weapons.Services;
 
 namespace PowerUps.Transformation

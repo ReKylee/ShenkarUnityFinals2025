@@ -2,11 +2,13 @@
 using Projectiles;
 using UnityEngine;
 using Weapons.Interfaces;
+using Weapons;
 
 namespace Weapons.Models
 {
     public class BoomerangWeapon : MonoBehaviour, IAmmoWeapon
     {
+        public WeaponType WeaponType => WeaponType.Boomerang;
         [SerializeField] private GameObject boomerang;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.3f;

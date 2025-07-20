@@ -3,12 +3,14 @@ using Core.Data;
 using Projectiles;
 using UnityEngine;
 using VContainer;
+using Weapons;
 using Weapons.Interfaces;
 
 namespace Weapons.Models
 {
     public class AxeWeapon : MonoBehaviour, IUseableWeapon
     {
+        public WeaponType WeaponType => WeaponType.Axe;
         [SerializeField] private GameObject axe;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.5f;

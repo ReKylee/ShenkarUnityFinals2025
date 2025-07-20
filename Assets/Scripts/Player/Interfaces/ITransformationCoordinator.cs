@@ -1,5 +1,6 @@
 ﻿using GabrielBigardi.SpriteAnimator;
 using UnityEngine;
+using Weapons;
 using Weapons.Services;
 
 namespace Player.Components

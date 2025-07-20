@@ -1,12 +1,15 @@
 using Projectiles;
 using UnityEngine;
+using Weapons;
 using Weapons.Interfaces;
 
 namespace Weapons.Models
 {
     public class FireballWeapon : MonoBehaviour, IUseableWeapon
     {
-        [SerializeField] private GameObject fireball;
+        [SerializeField] private WeaponType weaponType = WeaponType.Fireball;
+        public WeaponType WeaponType => weaponType;
+        
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.3f;
         [SerializeField] private FireballPool fireballPool;
@@ -23,10 +26,6 @@ namespace Weapons.Models
 
             // Check cooldown
             if (Time.time < _nextFireTime)
-                return;
-
-            // Check fireball prefab
-            if (!fireball)
                 return;
 
             GameObject curFireball = fireballPool.Get();

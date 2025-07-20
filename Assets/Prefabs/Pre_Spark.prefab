@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: {x: 12, y: 0}
-  destroyTime: 1
+  destroyTime: 0.4
 --- !u!114 &3420668176969805233
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2,6 +2,7 @@
 using UnityEngine;
 using Weapons.Services;
 using GabrielBigardi.SpriteAnimator;
+using Weapons;
 
 namespace Player.Components
 {

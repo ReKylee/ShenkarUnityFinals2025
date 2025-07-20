@@ -32145,6 +32145,10 @@ PrefabInstance:
       propertyPath: healthView
       value: 
       objectReference: {fileID: 2016275902}
+    - target: {fileID: 6599342503957296432, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -889070893, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

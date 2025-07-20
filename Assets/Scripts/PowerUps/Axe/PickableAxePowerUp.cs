@@ -1,5 +1,6 @@
 using PowerUps._Base;
 using UnityEngine;
+using Weapons;
 using Weapons.Services;
 
 namespace PowerUps.Axe

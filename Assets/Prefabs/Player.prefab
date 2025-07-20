@@ -395,6 +395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 756e8507f1654e642a52f67cdd627b8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponType: 3
   fireball: {fileID: 460594579410848658, guid: 749db9f6f469d3843a8558e628486c6e, type: 3}
   spawnPoint: {fileID: 8740184567830207716}
   cooldownTime: 0.3
@@ -455,6 +456,10 @@ MonoBehaviour:
     weaponComponent: {fileID: 4855835521647181485}
     weaponType: 2
     actionName: Attack
+  - weaponName: Spark
+    weaponComponent: {fileID: 5692119513404325601}
+    weaponType: 4
+    actionName: Attack
 --- !u!114 &6944014089907720284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,9 +472,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01bc17a5e2c46e09bf9102bf484c5d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axeWeapon: {fileID: 3354482609634551655}
-  boomerangWeapon: {fileID: 4855835521647181485}
-  fireballWeapon: {fileID: 3880546536829734273}
   canAttack: 1
 --- !u!114 &5692119513404325601
 MonoBehaviour:
@@ -483,9 +485,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 756e8507f1654e642a52f67cdd627b8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponType: 4
   fireball: {fileID: 460594579410848658, guid: 6f68afa22ca752143aa01ee27050a07e, type: 3}
   spawnPoint: {fileID: 388501036162216537}
-  cooldownTime: 0.3
+  cooldownTime: 0.1
   fireballPool: {fileID: 0}
 --- !u!1 &5456921034032889372
 GameObject:
