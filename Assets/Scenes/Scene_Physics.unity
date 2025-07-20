@@ -32042,10 +32042,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pre_Goom
       objectReference: {fileID: 0}
-    - target: {fileID: 6152468042168506624, guid: f000ae7fd68e8f74e90e0f8d1c0eb34b, type: 3}
-      propertyPath: m_Layer
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 8294474843899935886, guid: f000ae7fd68e8f74e90e0f8d1c0eb34b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 73.9375
@@ -32348,10 +32344,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pre_BuffMario
       objectReference: {fileID: 0}
-    - target: {fileID: 5834558213719639574, guid: 36609d02b19b60a47a0881ef15c680dc, type: 3}
-      propertyPath: m_Layer
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 8827492384009733873, guid: 36609d02b19b60a47a0881ef15c680dc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 105.0625
@@ -32394,7 +32386,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9126669805728146567, guid: 36609d02b19b60a47a0881ef15c680dc, type: 3}
       propertyPath: m_Layer
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -32742,10 +32734,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: DisappearingFloor
       objectReference: {fileID: 0}
-    - target: {fileID: 6681509721582203408, guid: ca8e21790d4884e4b86627be3b21e664, type: 3}
-      propertyPath: m_Layer
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 6897368477440450691, guid: ca8e21790d4884e4b86627be3b21e664, type: 3}
       propertyPath: m_Size.x
       value: 2
@@ -32942,10 +32930,6 @@ PrefabInstance:
     - target: {fileID: 1089753706237988366, guid: 847f10acb7a397e4ba41840bc2114db8, type: 3}
       propertyPath: m_Name
       value: MovingPlatform
-      objectReference: {fileID: 0}
-    - target: {fileID: 1089753706237988366, guid: 847f10acb7a397e4ba41840bc2114db8, type: 3}
-      propertyPath: m_Layer
-      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2465286036543276029, guid: 847f10acb7a397e4ba41840bc2114db8, type: 3}
       propertyPath: m_Layer

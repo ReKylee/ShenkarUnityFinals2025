@@ -1,4 +1,7 @@
-﻿using GabrielBigardi.SpriteAnimator;
+﻿using System;
+using GabrielBigardi.SpriteAnimator;
+using ModularCharacterController.Core;
+using ModularCharacterController.Core.Components;
 using UnityEngine;
 
 namespace Player
@@ -8,22 +11,87 @@ namespace Player
     /// </summary>
     public class PlayerAnimationController : MonoBehaviour
     {
+        private InputHandler _inputHandler;
         private SpriteAnimator _spriteAnimator;
         private SpriteRenderer _spriteRenderer;
+        private MccGroundCheck _groundCheck;
         public SpriteAnimationObject OriginalAnimationObject { get; private set; }
-        public Sprite CurrentSprite {
+
+        public Sprite CurrentSprite
+        {
             get => _spriteRenderer.sprite;
             set => _spriteRenderer.sprite = value;
         }
-        
-        
+
         private void Awake()
         {
-           _spriteAnimator = GetComponent<SpriteAnimator>();
-           _spriteRenderer = GetComponent<SpriteRenderer>();
+            _inputHandler = GetComponent<InputHandler>();
+            _spriteAnimator = GetComponent<SpriteAnimator>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+            _groundCheck = GetComponent<MccGroundCheck>();
             OriginalAnimationObject = _spriteAnimator?.SpriteAnimationObject;
         }
-        
+
+        private void Update()
+        {
+            if (_inputHandler == null || _groundCheck == null) return;
+
+            InputContext input = _inputHandler.CurrentInput;
+            if (input.WalkInput != 0)
+            {
+                transform.localScale = new Vector3(Mathf.Sign(input.WalkInput), 1, 1);
+            }
+
+            // Don't interrupt the Attacking animation if it's still playing
+            if (_spriteAnimator.CurrentAnimation.Name == "Attacking" && !_spriteAnimator.AnimationCompleted)
+            {
+                return;
+            }
+
+            // Handle attack
+            if (input.AttackPressed)
+            {
+                _spriteAnimator.Play("Attacking");
+
+                _spriteAnimator.SetOnComplete(() =>
+                {
+                    if (_groundCheck.IsGrounded)
+                    {
+                        _spriteAnimator.Play("Idle");
+                    }
+                });
+
+                return;
+            }
+
+            // Jump animation
+            if (!_groundCheck.IsGrounded)
+            {
+                _spriteAnimator.PlayIfNotPlaying("Jump");
+
+                _spriteAnimator.SetOnComplete(() =>
+                {
+                    if (_groundCheck.IsGrounded)
+                    {
+                        _spriteAnimator.Play("Idle");
+                    }
+                });
+
+                return;
+            }
+
+            // Walk animation
+            if (input.WalkInput != 0)
+            {
+                _spriteAnimator.PlayIfNotPlaying("Walk");
+                return;
+            }
+
+            // Default to idle
+            _spriteAnimator.PlayIfNotPlaying("Idle");
+        }
+
+
         /// <summary>
         /// Change to a new animation object
         /// </summary>
@@ -31,7 +99,7 @@ namespace Player
         {
             _spriteAnimator?.ChangeAnimationObject(animationObject);
         }
-        
+
         /// <summary>
         /// Play a specific animation
         /// </summary>
@@ -39,9 +107,8 @@ namespace Player
         {
             _spriteAnimator?.Play(animationName);
         }
-        
-        
-        
+
+
         /// <summary>
         /// Pause animation playback
         /// </summary>
@@ -49,7 +116,7 @@ namespace Player
         {
             _spriteAnimator?.Pause();
         }
-        
+
         /// <summary>
         /// Resume animation playback
         /// </summary>

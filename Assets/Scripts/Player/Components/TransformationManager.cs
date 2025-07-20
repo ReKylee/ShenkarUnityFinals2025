@@ -64,11 +64,6 @@ namespace Player.Components
         {
             if (!ValidateDependencies()) return;
 
-            if (IsTransformed)
-            {
-                Debug.LogWarning("[TransformationManager] Already transformed");
-                return;
-            }
 
             // Set transformation state
             IsTransformed = true;

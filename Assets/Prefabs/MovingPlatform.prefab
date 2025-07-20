@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1580206767772060937}
   - component: {fileID: 5294761304532335546}
   - component: {fileID: 5149746678531526638}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: MovingPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 6200000, guid: 5c6e85e1131932c41a67c49f745a38af, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 7240263763678714440}
   - component: {fileID: 7982731618563780461}
   - component: {fileID: 3394367594213369623}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pre_Goom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
