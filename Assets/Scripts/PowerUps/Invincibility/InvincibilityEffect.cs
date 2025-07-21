@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using Health.Components;
+using Health.Interfaces;
 using UnityEngine;
 
 namespace PowerUps.Invincibility
 {
 
-    public class InvincibilityEffect : MonoBehaviour, Health.Interfaces.IInvincibilityDealer
+    public class InvincibilityEffect : MonoBehaviour, IInvincibilityDealer
     {
         [SerializeField] private GameObject effectObject;
         private PlayerDamageController _dc;
@@ -30,6 +31,6 @@ namespace PowerUps.Invincibility
             _dc.IsInvulnerable = false;
             effectObject?.SetActive(false);
         }
-        public int GetDamageAmount() => 1; // Damage amount when invincible impacts an enemy
+        public int GetDamageAmount() => _dc.IsInvulnerable ? 10 : 0;
     }
 }

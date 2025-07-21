@@ -30,7 +30,7 @@ namespace Health.Components
         {
             if (Damageable == null)
                 return;
-            if (!other.TryGetComponent<IDamageDealer>(out IDamageDealer dealer))
+            if (!other.TryGetComponent(out IDamageDealer dealer))
                 return;
             if (!ShouldProcessDealer(dealer))
                 return;
