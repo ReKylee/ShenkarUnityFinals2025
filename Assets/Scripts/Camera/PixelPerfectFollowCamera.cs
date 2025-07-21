@@ -11,15 +11,13 @@ namespace Extensions
     [ExecuteInEditMode]
     public class PixelPerfectFollowCamera : MonoBehaviour
     {
-        [Header("Target Settings")]
-        [Tooltip("The target transform for the camera to follow.")]
+        [Header("Target Settings")] [Tooltip("The target transform for the camera to follow.")]
         public Transform target;
 
         [Tooltip("The offset from the target's position.")]
         public Vector3 offset = new Vector3(0, 0, -10);
 
-        [Header("Follow Behavior")] 
-        [Tooltip("If true, the camera will follow the target on the X axis.")]
+        [Header("Follow Behavior")] [Tooltip("If true, the camera will follow the target on the X axis.")]
         public bool followX = true;
 
         [Tooltip("If true, the camera will follow the target on the Y axis.")]
@@ -33,10 +31,9 @@ namespace Extensions
         [Range(1, 256)]
         public float pixelsPerUnit = 100;
 
-        [Header("World Bounds")]
-        [Tooltip("If true, world bounds will be applied to camera movement.")]
+        [Header("World Bounds")] [Tooltip("If true, world bounds will be applied to camera movement.")]
         public bool useWorldBounds = true;
-        
+
         [Tooltip("The collider that defines the world boundaries. Camera will not move outside these bounds.")]
         public Collider2D worldBoundsCollider;
 

@@ -7,6 +7,8 @@ namespace Health.Components
     {
         private IDamageable _damageable;
 
+        public bool IsInvulnerable { get; set; }
+
         private void Awake()
         {
             _damageable = GetComponent<IDamageable>();
@@ -21,9 +23,8 @@ namespace Health.Components
         }
         private void TryDamageDealer(GameObject other)
         {
-
             if (_damageable == null) return;
-
+            if (IsInvulnerable) return;
 
             if (other.TryGetComponent(out IDamageDealer dealer))
             {
