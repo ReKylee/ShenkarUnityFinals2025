@@ -4889,63 +4889,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1001 &767352822
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3756264254996195622, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_Name
-      value: Pre_PickableBoomerangContainer Variant
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
 --- !u!1001 &773845131
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30582,6 +30525,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireballPrefab: {fileID: 460594579410848658, guid: 6f68afa22ca752143aa01ee27050a07e, type: 3}
+--- !u!1001 &1861512533
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3756264254996195622, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_Name
+      value: Pre_PickableBoomerangContainer Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4143323292207406672, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9b2e4b0014f4812488b69a5e59926b70, type: 3}
 --- !u!1 &1887416125
 GameObject:
   m_ObjectHideFlags: 0
@@ -31967,6 +31967,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1887416126}
     m_Modifications:
+    - target: {fileID: 2744869299825136038, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
+      propertyPath: m_Mass
+      value: 1.7853982
+      objectReference: {fileID: 0}
     - target: {fileID: 3354482609634551655, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
       propertyPath: axePool
       value: 
@@ -32019,6 +32023,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 4509492725762489347, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 32ac1f2ccd15ef24ba3be5c7e9ce343a, type: 2}
     - target: {fileID: 5692119513404325601, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
       propertyPath: fireballPool
       value: 
@@ -32674,4 +32682,4 @@ SceneRoots:
   - {fileID: 72274837}
   - {fileID: 1171389828}
   - {fileID: 657669682}
-  - {fileID: 767352822}
+  - {fileID: 1861512533}

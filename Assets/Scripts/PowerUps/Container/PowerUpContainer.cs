@@ -1,30 +1,28 @@
 ﻿using Health.Interfaces;
 using UnityEngine;
 
-namespace PowerUps
+namespace PowerUps.Container
 {
     public class PowerUpContainer : MonoBehaviour, IDamageable
     {
         [SerializeField] private Sprite crackedSprite;
         [SerializeField] private GameObject powerUpPrefab;
-        [SerializeField] private Vector2 launchVel = new(2, 2);
         private SpriteRenderer _spriteRenderer;
-        private Rigidbody2D _rigidbody;
         public int CurrentHp { get; private set; } = 2;
         public int MaxHp { get; } = 2;
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
-            _rigidbody = GetComponent<Rigidbody2D>();
         }
 
         private void OnCollisionEnter2D(Collision2D other)
         {
+            // Player collision: damage on first hit
             if (other.gameObject.CompareTag("Player") && CurrentHp == MaxHp)
             {
-                _rigidbody.linearVelocity = launchVel;
                 Damage(1);
             }
+            // Ground collision: break open after hit
             else if (other.gameObject.layer == LayerMask.NameToLayer("Ground") && CurrentHp < MaxHp)
             {
                 BreakOpen();

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2958948688776934200}
   - component: {fileID: 2197583644925119259}
+  - component: {fileID: 576873617077118719}
   - component: {fileID: 3180208430479383032}
   - component: {fileID: 4026916297320648317}
   - component: {fileID: 5543492904153383888}
@@ -91,6 +92,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &576873617077118719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2643798538806117454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a44186176054471ba48e8dcbe20d720, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  horizontalSpeed: 6
+  verticalSpeed: 12
+  ignoreDuration: 3
 --- !u!114 &3180208430479383032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +133,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crackedSprite: {fileID: -1623689680, guid: 516accff2d6f9674b9a6826660913091, type: 3}
   powerUpPrefab: {fileID: 0}
-  launchVel: {x: 3, y: 5}
 --- !u!50 &5543492904153383888
 Rigidbody2D:
   serializedVersion: 5
@@ -133,7 +148,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
