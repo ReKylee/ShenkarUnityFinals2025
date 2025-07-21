@@ -94,7 +94,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 1773726258, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+  m_Sprite: {fileID: -889070893, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -396,7 +396,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponType: 3
-  fireball: {fileID: 460594579410848658, guid: 749db9f6f469d3843a8558e628486c6e, type: 3}
   spawnPoint: {fileID: 8740184567830207716}
   cooldownTime: 0.3
   fireballPool: {fileID: 0}
@@ -486,7 +485,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponType: 4
-  fireball: {fileID: 460594579410848658, guid: 6f68afa22ca752143aa01ee27050a07e, type: 3}
   spawnPoint: {fileID: 388501036162216537}
   cooldownTime: 0.1
   fireballPool: {fileID: 0}
@@ -515,7 +513,7 @@ Transform:
   m_GameObject: {fileID: 5456921034032889372}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: -1, z: 0}
+  m_LocalPosition: {x: 0.5, y: -0.413, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
