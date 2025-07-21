@@ -5,14 +5,14 @@ using UnityEngine;
 namespace PowerUps.Invincibility
 {
 
-    public class InvincibilityEffect : MonoBehaviour
+    public class InvincibilityEffect : MonoBehaviour, Health.Interfaces.IInvincibilityDealer
     {
         [SerializeField] private GameObject effectObject;
-        private DamageController _dc;
+        private PlayerDamageController _dc;
 
         private void Awake()
         {
-            _dc = GetComponent<DamageController>();
+            _dc = GetComponent<PlayerDamageController>();
         }
         public void Activate(float duration)
         {
@@ -30,5 +30,6 @@ namespace PowerUps.Invincibility
             _dc.IsInvulnerable = false;
             effectObject?.SetActive(false);
         }
+        public int GetDamageAmount() => 1; // Damage amount when invincible impacts an enemy
     }
 }

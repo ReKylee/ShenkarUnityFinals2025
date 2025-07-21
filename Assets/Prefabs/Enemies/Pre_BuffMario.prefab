@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 734069360122375956}
   - component: {fileID: 7785795968096963856}
   - component: {fileID: 7623829853099636217}
-  - component: {fileID: 7818152810527482500}
+  - component: {fileID: 2694657435682438895}
+  - component: {fileID: 8044948040430242548}
   - component: {fileID: 5075611672214000102}
   - component: {fileID: 364413600775854170}
-  - component: {fileID: 8044948040430242548}
   m_Layer: 7
   m_Name: Pre_BuffMario
   m_TagString: Untagged
@@ -158,7 +158,7 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.96, y: 1.7460938}
   m_Direction: 0
---- !u!114 &7818152810527482500
+--- !u!114 &2694657435682438895
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -167,9 +167,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 5834558213719639574}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3235fd23caa74797a5526571a4a05f2b, type: 3}
+  m_Script: {fileID: 11500000, guid: 76129b1826f84d23a75759f8434330ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8044948040430242548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5834558213719639574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c1d740874b4466ebf46eb4c396e93dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 3
 --- !u!114 &5075611672214000102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,19 +208,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1
---- !u!114 &8044948040430242548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5834558213719639574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c1d740874b4466ebf46eb4c396e93dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHp: 3
 --- !u!1 &9126669805728146567
 GameObject:
   m_ObjectHideFlags: 0
@@ -267,7 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 756e8507f1654e642a52f67cdd627b8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireball: {fileID: 460594579410848658, guid: 749db9f6f469d3843a8558e628486c6e, type: 3}
+  weaponType: 3
   spawnPoint: {fileID: 0}
   cooldownTime: 0.3
   fireballPool: {fileID: 0}
