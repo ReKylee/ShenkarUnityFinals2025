@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 7344749491402581461}
   - component: {fileID: 3128399289799986672}
+  - component: {fileID: 7300533301158722036}
+  - component: {fileID: 442766043293744575}
   - component: {fileID: -4871620721317051894}
   - component: {fileID: -3460905289729604622}
   - component: {fileID: 8542017364035483804}
-  - component: {fileID: 7300533301158722036}
-  - component: {fileID: 442766043293744575}
   m_Layer: 0
   m_Name: Pre_Axe
   m_TagString: Untagged
@@ -93,6 +93,32 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7300533301158722036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460594579410848658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6af906812e1ba24496d697bd5d351cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: {x: 7, y: 5}
+--- !u!114 &442766043293744575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460594579410848658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78dec0894f44472d884aabe20e41be5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
 --- !u!114 &-4871620721317051894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,32 +197,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &7300533301158722036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 460594579410848658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6af906812e1ba24496d697bd5d351cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: {x: 7, y: 7}
---- !u!114 &442766043293744575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 460594579410848658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78dec0894f44472d884aabe20e41be5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 1
 --- !u!1 &1597275737950424792
 GameObject:
   m_ObjectHideFlags: 0
