@@ -18,6 +18,7 @@ namespace Collectables.Score
 
         public override void OnCollect(GameObject collector)
         {
+            Debug.Log("Score collected: " + gameObject.name);
             _popupTextService?.ShowFloatingText(transform.position, scoreAmount.ToString());
             _scoreService?.AddScore(scoreAmount);
         }

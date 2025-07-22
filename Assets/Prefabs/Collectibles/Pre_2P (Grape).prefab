@@ -9,10 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2401708722982155617}
+  - component: {fileID: 8334829258568421723}
   - component: {fileID: 80865439779142716}
+  - component: {fileID: 7130376738277940949}
   - component: {fileID: 7052500394653157145}
   - component: {fileID: 4191460718751220213}
-  - component: {fileID: 7130376738277940949}
   m_Layer: 8
   m_Name: Pre_2P (Grape)
   m_TagString: Untagged
@@ -29,12 +30,24 @@ Transform:
   m_GameObject: {fileID: 7572787494368743431}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.453, y: 2.66645, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8334829258568421723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7572787494368743431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b6cbd11b14441d49ad76a0bbc2695ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &80865439779142716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48,6 +61,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healAmount: 2
+--- !u!114 &7130376738277940949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7572787494368743431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60cb0d7b10d7094aad524a542a7dda3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreAmount: 200
 --- !u!212 &7052500394653157145
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -139,16 +165,3 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0.03125, y: 0.03125}
   m_Radius: 0.46875
---- !u!114 &7130376738277940949
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7572787494368743431}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d60cb0d7b10d7094aad524a542a7dda3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreAmount: 200
