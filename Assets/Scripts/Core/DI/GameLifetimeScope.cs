@@ -13,7 +13,7 @@ namespace Core.DI
 {
     public class GameLifetimeScope : LifetimeScope
     {
-     
+
 
         protected override void Awake()
         {
@@ -43,19 +43,30 @@ namespace Core.DI
                     resolver.Resolve<IEventBus>()
                 ), Lifetime.Singleton);
 
-            // Register MonoBehaviour components in the scene for injection
+            // Game Management
             builder.RegisterComponentInHierarchy<GameFlowManager>();
             builder.RegisterComponentInHierarchy<GameDataCoordinator>();
+            
+            // Weapons
             builder.RegisterComponentInHierarchy<Weapons.Models.AxeWeapon>();
             builder.RegisterComponentInHierarchy<Weapons.Models.FireballWeapon>();
             builder.RegisterComponentInHierarchy<Weapons.Services.WeaponManagerService>();
+            
+            // Health
             builder.RegisterComponentInHierarchy<PlayerHealthController>();
             builder.RegisterComponentInHierarchy<Player.UI.PlayerLivesUIController>();
+            
+            // Score System
+            builder.RegisterComponentInHierarchy<PopupTextService>();
             builder.RegisterComponentInHierarchy<ScoreController>();
+            builder.RegisterComponentInHierarchy<ScoreCollectable>();
+            
+            builder.Register<IPopupTextService>(resolver
+                => resolver.Resolve<PopupTextService>(), Lifetime.Singleton);
 
             Debug.Log("[GameLifetimeScope] DI container configured successfully.");
         }
 
-   
+
     }
 }

@@ -50,7 +50,7 @@ namespace Player.Services
                 Timestamp = UnityEngine.Time.time
             });
 
-            return newLives > 0; // Return true if still has lives after using one
+            return newLives > 0; 
         }
 
         public void ResetLives()
