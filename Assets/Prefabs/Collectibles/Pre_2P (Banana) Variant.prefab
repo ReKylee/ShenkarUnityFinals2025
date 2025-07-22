@@ -12,9 +12,17 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -5102014150556417439, guid: de39ab17d254dd4459836b83c728eb03, type: 3}
+    - target: {fileID: 2513993732597742995, guid: 1f1c2d43cdb12384892bb684f59cdbdd, type: 3}
+      propertyPath: scoreAmount
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4369275311915148350, guid: 1f1c2d43cdb12384892bb684f59cdbdd, type: 3}
+      propertyPath: healAmount
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5816559798574522330, guid: 1f1c2d43cdb12384892bb684f59cdbdd, type: 3}
       propertyPath: m_Name
-      value: Pre_1P (Banana) Variant
+      value: Pre_2P (Banana) Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7695470607040572919, guid: 1f1c2d43cdb12384892bb684f59cdbdd, type: 3}
       propertyPath: m_LocalPosition.x
