@@ -2,12 +2,12 @@
 using PowerUps._Base;
 using UnityEngine;
 
-namespace PowerUps.OneUp
+namespace PowerUps.HealthUp
 {
-    public class OneUpPowerUp : IPowerUp
+    public class HealthPowerUp : IPowerUp
     {
         private readonly int _healAmount;
-        public OneUpPowerUp(int healAmount = 1)
+        public HealthPowerUp(int healAmount = 1)
         {
             _healAmount = healAmount;
         }

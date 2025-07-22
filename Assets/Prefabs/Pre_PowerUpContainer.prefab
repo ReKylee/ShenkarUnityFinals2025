@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1863355073273294887, guid: 516accff2d6f9674b9a6826660913091, type: 3}
+  m_Sprite: {fileID: 1913934448352513544, guid: de39ab17d254dd4459836b83c728eb03, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8cebe3f2bfc44b4b03a23eae49c86be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crackedSprite: {fileID: -1623689680, guid: 516accff2d6f9674b9a6826660913091, type: 3}
+  crackedSprite: {fileID: -1713768754937268519, guid: de39ab17d254dd4459836b83c728eb03, type: 3}
   powerUpPrefab: {fileID: 0}
 --- !u!50 &5543492904153383888
 Rigidbody2D:
