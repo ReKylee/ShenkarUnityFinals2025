@@ -3,6 +3,7 @@ using Core.Events;
 using Health;
 using Health.Components;
 using Health.Interfaces;
+using Player.Interfaces;
 using Player.Services;
 using UnityEngine;
 using VContainer;

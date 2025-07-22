@@ -163,22 +163,6 @@ namespace Core
 
         #region Public API
 
-        public void AddScore(int points)
-        {
-            if (!_isInitialized || _gameDataService == null) return;
-
-            int newScore = _gameDataService.CurrentData.score + points;
-            _gameDataService.UpdateScore(newScore);
-        }
-
-        public void AddCoins(int coinCount)
-        {
-            if (!_isInitialized || _gameDataService == null) return;
-
-            int newCoins = _gameDataService.CurrentData.coins + coinCount;
-            _gameDataService.UpdateCoins(newCoins);
-        }
-
         public GameData GetCurrentData()
         {
             if (!_isInitialized || _gameDataService == null) return null;

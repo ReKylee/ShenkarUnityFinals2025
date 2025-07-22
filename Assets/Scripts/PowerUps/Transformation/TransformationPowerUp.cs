@@ -3,6 +3,7 @@ using PowerUps._Base;
 using UnityEngine;
 using Weapons.Services;
 using Player.Components;
+using Player.Interfaces;
 using Weapons;
 
 namespace PowerUps.Transformation

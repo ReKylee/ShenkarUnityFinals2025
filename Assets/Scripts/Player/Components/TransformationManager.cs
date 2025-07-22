@@ -3,6 +3,7 @@ using UnityEngine;
 using Weapons.Services;
 using GabrielBigardi.SpriteAnimator;
 using Health.Components;
+using Player.Interfaces;
 using Weapons;
 
 namespace Player.Components

@@ -30,11 +30,7 @@ namespace Core.Data
             NotifyDataChanged();
         }
 
-        public void UpdateCoins(int coins)
-        {
-            _currentData.coins = coins;
-            NotifyDataChanged();
-        }
+ 
         public void UpdateCurrentLevel(string levelName)
         {
             _currentData.currentLevel = levelName;

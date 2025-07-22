@@ -66,7 +66,6 @@ namespace Core.Data
             {
                 lives = 3,
                 score = 0,
-                coins = 0,
                 currentLevel = "Level_01",
                 bestTime = float.MaxValue,
                 hasFireball = false,

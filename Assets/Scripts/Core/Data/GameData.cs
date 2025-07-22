@@ -9,7 +9,6 @@ namespace Core.Data
         [Header("Player Data")]
         public int lives = 3;
         public int score = 0;
-        public int coins = 0;
         
         [Header("Level Progress")]
         public string currentLevel = "Level_01";
@@ -34,7 +33,6 @@ namespace Core.Data
         {
             lives = other.lives;
             score = other.score;
-            coins = other.coins;
             currentLevel = other.currentLevel;
             bestTime = other.bestTime;
             hasFireball = other.hasFireball;
@@ -48,7 +46,6 @@ namespace Core.Data
         {
             lives = 3;
             score = 0;
-            coins = 0;
             currentLevel = "Level_01";
             bestTime = float.MaxValue;
             hasFireball = false;

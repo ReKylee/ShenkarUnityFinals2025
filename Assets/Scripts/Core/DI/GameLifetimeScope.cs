@@ -1,7 +1,9 @@
-﻿using Core.Data;
+﻿using Collectables.Score;
+using Core.Data;
 using Core.Events;
 using Core.Services;
 using Player.Components;
+using Player.Interfaces;
 using Player.Services;
 using VContainer;
 using VContainer.Unity;
@@ -32,6 +34,7 @@ namespace Core.DI
             builder.Register<IGameDataRepository, JsonGameDataRepository>(Lifetime.Singleton);
             builder.Register<IGameDataService, GameDataService>(Lifetime.Singleton);
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
+            builder.Register<IScoreService, ScoreService>(Lifetime.Singleton);
 
             // Register Player Services
             builder.Register<IPlayerLivesService>(resolver
@@ -48,7 +51,7 @@ namespace Core.DI
             builder.RegisterComponentInHierarchy<Weapons.Services.WeaponManagerService>();
             builder.RegisterComponentInHierarchy<PlayerHealthController>();
             builder.RegisterComponentInHierarchy<Player.UI.PlayerLivesUIController>();
-            builder.RegisterComponentInHierarchy<Collectables.Coin.CoinController>();
+            builder.RegisterComponentInHierarchy<ScoreController>();
 
             Debug.Log("[GameLifetimeScope] DI container configured successfully.");
         }

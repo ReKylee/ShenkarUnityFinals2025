@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Hazards
 {
-    public class BoulderHazard : MonoBehaviour, IDamageDealer
+    public class ShieldActiveDisappearHazard : MonoBehaviour, IDamageDealer
     {
         [SerializeField] private int damageAmount = 1;
         private bool _damaged;

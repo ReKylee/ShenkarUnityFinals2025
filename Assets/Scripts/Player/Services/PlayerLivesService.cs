@@ -1,6 +1,7 @@
 ﻿using System;
 using Core.Data;
 using Core.Events;
+using Player.Interfaces;
 
 namespace Player.Services
 {

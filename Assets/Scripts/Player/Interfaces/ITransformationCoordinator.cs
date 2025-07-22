@@ -1,9 +1,8 @@
 ﻿using GabrielBigardi.SpriteAnimator;
 using UnityEngine;
 using Weapons;
-using Weapons.Services;
 
-namespace Player.Components
+namespace Player.Interfaces
 {
     /// <summary>
     /// Interface for transformation coordinators that handle different aspects of transformations
