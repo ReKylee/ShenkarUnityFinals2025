@@ -1,22 +1,24 @@
 ﻿using Health.Interfaces;
+using Player.Components;
 using UnityEngine;
 
 namespace Hazards
 {
-    public class SpikeHazard : MonoBehaviour, IDamageDealer
+    public class BoulderHazard : MonoBehaviour, IDamageDealer
     {
         [SerializeField] private int damageAmount = 1;
         private bool _damaged;
-        private void OnTriggerEnter2D(Collider2D other)
+        private void OnCollisionEnter2D(Collision2D other)
         {
-            Debug.Log("Spike Collission With " + other.gameObject.name);
             if (_damaged) return;
             if (other.gameObject.CompareTag("Player"))
             {
                 _damaged = true;
+                if (other.gameObject.TryGetComponent(out IDamageShield shield) && shield.IsActive)
+                    gameObject.SetActive(false);
             }
         }
-        private void OnTriggerExit2D(Collider2D other)
+        private void OnCollisionExit2D(Collision2D other)
         {
             if (other.gameObject.CompareTag("Player"))
             {

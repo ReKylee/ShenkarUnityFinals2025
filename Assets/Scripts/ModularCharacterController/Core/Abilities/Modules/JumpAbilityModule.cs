@@ -17,6 +17,7 @@ namespace ModularCharacterController.Core.Abilities.Modules
         {
             if (!Controller || !Controller.Stats) return currentVelocity;
 
+
             if (isGrounded)
             {
                 _lastGroundedTime = Time.time;
@@ -40,11 +41,11 @@ namespace ModularCharacterController.Core.Abilities.Modules
                 _isJumping = true;
             }
 
-            // Variable jump height on jump release
-            else if (inputContext.JumpReleased && currentVelocity.y > 0 && _isJumping)
+            // Variable jump height: cut ascent when jump button is no longer held
+            if (!inputContext.JumpHeld && currentVelocity.y > 0)
             {
                 currentVelocity.y *= Controller.Stats.jumpReleaseVelocityMultiplier;
-                _lastGroundedTime = -100f;
+                _isJumping = false;
             }
 
             return currentVelocity;

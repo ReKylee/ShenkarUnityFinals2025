@@ -1,6 +1,7 @@
 ﻿using Core.Data;
 using Core.Events;
 using Core.Services;
+using Player.Components;
 using Player.Services;
 using VContainer;
 using VContainer.Unity;
@@ -45,7 +46,7 @@ namespace Core.DI
             builder.RegisterComponentInHierarchy<Weapons.Models.AxeWeapon>();
             builder.RegisterComponentInHierarchy<Weapons.Models.FireballWeapon>();
             builder.RegisterComponentInHierarchy<Weapons.Services.WeaponManagerService>();
-            builder.RegisterComponentInHierarchy<Player.PlayerHealthController>();
+            builder.RegisterComponentInHierarchy<PlayerHealthController>();
             builder.RegisterComponentInHierarchy<Player.UI.PlayerLivesUIController>();
             builder.RegisterComponentInHierarchy<Collectables.Coin.CoinController>();
 

@@ -1,14 +1,13 @@
-﻿using Core.Events;
-using Core;
+﻿using Core;
+using Core.Events;
 using Health;
 using Health.Components;
 using Health.Interfaces;
-using Player.Components;
 using Player.Services;
 using UnityEngine;
 using VContainer;
 
-namespace Player
+namespace Player.Components
 {
     public class PlayerHealthController : SimpleHealthController, IBypassableDamageable
     {
