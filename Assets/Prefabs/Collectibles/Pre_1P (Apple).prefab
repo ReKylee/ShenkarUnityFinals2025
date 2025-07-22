@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4369275311915148350}
   - component: {fileID: 1766741668481503133}
   - component: {fileID: 9040205379947937441}
+  - component: {fileID: 2513993732597742995}
   m_Layer: 8
   m_Name: Pre_1P (Apple)
   m_TagString: Untagged
@@ -138,3 +139,16 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0.03125, y: 0.03125}
   m_Radius: 0.46875
+--- !u!114 &2513993732597742995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5816559798574522330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60cb0d7b10d7094aad524a542a7dda3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreAmount: 50

@@ -9,7 +9,7 @@ namespace Collectables.Score
         
         public void ShowFloatingText(Vector3 position, string text)
         {
-            TextMeshProUGUI floatingText = scoreTextPool?.Get(text);
+            TextMeshPro floatingText = scoreTextPool?.Get(text);
             if (floatingText)
             {
                 floatingText.transform.position = position;

@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: healAmount
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 4500998964303813386, guid: cf847994c3435a94693a15887d716083, type: 3}
+      propertyPath: scoreAmount
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 5489095330327378243, guid: cf847994c3435a94693a15887d716083, type: 3}
       propertyPath: m_Name
       value: Pre_3P (Pineapple) Variant
