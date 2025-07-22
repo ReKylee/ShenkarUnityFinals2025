@@ -58,11 +58,13 @@ namespace Core.DI
             
             // Score System
             builder.RegisterComponentInHierarchy<PopupTextService>();
+            builder.Register<IPopupTextService>(resolver
+                => resolver.Resolve<PopupTextService>(), Lifetime.Singleton);
+            
             builder.RegisterComponentInHierarchy<ScoreController>();
             builder.RegisterComponentInHierarchy<ScoreCollectable>();
             
-            builder.Register<IPopupTextService>(resolver
-                => resolver.Resolve<PopupTextService>(), Lifetime.Singleton);
+           
 
             Debug.Log("[GameLifetimeScope] DI container configured successfully.");
         }
