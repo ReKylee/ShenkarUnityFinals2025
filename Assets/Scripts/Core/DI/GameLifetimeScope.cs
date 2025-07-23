@@ -57,9 +57,7 @@ namespace Core.DI
             builder.RegisterComponentInHierarchy<Player.UI.PlayerLivesUIController>();
             
             // Score System
-            builder.RegisterComponentInHierarchy<PopupTextService>();
             builder.RegisterComponentInHierarchy<ScoreController>();
-            builder.RegisterComponentInHierarchy<ScoreCollectable>();
 
 
             Debug.Log("[GameLifetimeScope] DI container configured successfully.");

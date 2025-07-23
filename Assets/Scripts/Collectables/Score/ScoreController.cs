@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using VContainer;
 using Core.Events;
 
@@ -8,35 +9,43 @@ namespace Collectables.Score
     {
         [SerializeField] private ScoreView view;
 
-        private IEventBus _eventBus;
+        private IScoreService _scoreService;
 
         #region VContainer Injection
 
         [Inject]
-        public void Construct(IEventBus eventBus)
+        public void Construct(IScoreService scoreService)
         {
-            _eventBus = eventBus;
+            _scoreService = scoreService;
         }
 
         #endregion
 
+        private void Start()
+        {
+            if (view)
+            {
+                view.UpdateCountDisplay(_scoreService.CurrentScore);
+            }
+        }
 
         private void OnEnable()
         {
-            _eventBus?.Subscribe<ScoreChangedEvent>(HandleScoreChangedEvent);
+            ScoreCollectable.OnScoreCollected += HandleScoreCollected;
         }
 
         private void OnDisable()
         {
-            _eventBus?.Unsubscribe<ScoreChangedEvent>(HandleScoreChangedEvent);
+            ScoreCollectable.OnScoreCollected -= HandleScoreCollected;
         }
 
-        private void HandleScoreChangedEvent(ScoreChangedEvent scoreEvent)
+        private void HandleScoreCollected(int scoreAmount, Vector3 position)
         {
             if (view)
             {
-                view.UpdateCountDisplay(scoreEvent.TotalScore);
+                view.UpdateCountDisplay(_scoreService.CurrentScore + scoreAmount);
             }
+            _scoreService.AddScore(scoreAmount);
         }
     }
 }

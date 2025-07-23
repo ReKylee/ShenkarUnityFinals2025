@@ -5,37 +5,28 @@ using VContainer;
 
 namespace Collectables.Score
 {
-    public class PopupTextService : MonoBehaviour, IPopupTextService
+    public class PopupTextService : MonoBehaviour
     {
         [SerializeField] private ScoreTextPool scoreTextPool;
 
-        private IEventBus _eventBus;
-
-        [Inject]
-        public void Construct(IEventBus eventBus)
-        {
-            _eventBus = eventBus;
-        }
 
         private void OnEnable()
         {
-            _eventBus?.Subscribe<ScoreChangedEvent>(OnScoreChanged);
+            ScoreCollectable.OnScoreCollected += HandleScoreCollected;
         }
 
         private void OnDisable()
         {
-            _eventBus?.Unsubscribe<ScoreChangedEvent>(OnScoreChanged);
+            ScoreCollectable.OnScoreCollected -= HandleScoreCollected;
         }
 
-        private void OnScoreChanged(ScoreChangedEvent scoreEvent)
+        private void HandleScoreCollected(int scoreAmount, Vector3 position)
         {
-            // Display the added score amount as floating text
-            ShowFloatingText(scoreEvent.Position, $"{scoreEvent.ScoreAmount}");
+            ShowFloatingText(position, $"{scoreAmount}");
         }
 
         public void ShowFloatingText(Vector3 position, string text)
         {
-            // Ensure this method is only called via ScoreChangedEvent
             TextMeshPro floatingText = scoreTextPool?.Get(text);
             if (floatingText)
             {
