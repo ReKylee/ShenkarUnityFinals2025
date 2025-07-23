@@ -7,7 +7,6 @@ namespace Collectables.Score
         public int CurrentScore { get; }
         public void AddScore(int amount);
         public void ResetScore();
-        public event Action<int> ScoreChanged;
     }
 
 }

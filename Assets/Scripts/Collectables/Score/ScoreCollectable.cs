@@ -1,6 +1,7 @@
 using Collectables._Base;
 using UnityEngine;
 using VContainer;
+using Core.Events;
 
 namespace Collectables.Score
 {
@@ -8,19 +9,27 @@ namespace Collectables.Score
     {
         [SerializeField] private int scoreAmount = 1;
         private IScoreService _scoreService;
-        private IPopupTextService _popupTextService;
+        private IEventBus _eventBus;
+
         [Inject]
-        public void Construct(IScoreService scoreService, IPopupTextService popupTextService)
+        public void Construct(IScoreService scoreService, IEventBus eventBus)
         {
             _scoreService = scoreService;
-            _popupTextService = popupTextService;
+            _eventBus = eventBus;
+            Debug.Log("ScoreCollectable constructed with service: " + _scoreService?.GetType().Name);
         }
 
         public override void OnCollect(GameObject collector)
         {
             Debug.Log("Score collected: " + gameObject.name);
-            _popupTextService?.ShowFloatingText(transform.position, scoreAmount.ToString());
-            _scoreService?.AddScore(scoreAmount);
+            _scoreService.AddScore(scoreAmount);
+
+            _eventBus?.Publish(new ScoreChangedEvent
+            {
+                ScoreAmount = scoreAmount,
+                TotalScore = _scoreService.CurrentScore + scoreAmount,
+                Position = transform.position
+            });
         }
     }
 }

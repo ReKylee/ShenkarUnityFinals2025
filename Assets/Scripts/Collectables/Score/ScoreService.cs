@@ -15,18 +15,11 @@ namespace Collectables.Score
         }
         public void AddScore(int amount)
         {
-            if (_gameDataService == null) return;
-
-            _gameDataService.UpdateScore(CurrentScore + amount);
-            ScoreChanged?.Invoke(CurrentScore);
+            _gameDataService?.UpdateScore(CurrentScore + amount);
         }
         public void ResetScore()
         {
-            if (_gameDataService == null) return;
-
-            _gameDataService.UpdateScore(0);
-            ScoreChanged?.Invoke(CurrentScore);
+            _gameDataService?.UpdateScore(0);
         }
-        public event Action<int> ScoreChanged;
     }
 }

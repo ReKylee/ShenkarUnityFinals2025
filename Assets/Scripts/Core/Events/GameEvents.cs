@@ -35,6 +35,13 @@ namespace Core.Events
         public float Timestamp;
     }
 
+    public struct ScoreChangedEvent
+    {
+        public Vector3 Position;
+        public int ScoreAmount; // Delta amount
+        public int TotalScore;  // Overall score
+    }
+
     // Base event structure for consistency
     public interface IGameEvent
     {
@@ -61,9 +68,6 @@ namespace Core.Events
     }
 
 
-
-    // Redundant with GameStateChangedEvent when NewState = GameState.GameOver
-    // But keeping for backward compatibility
     public struct GameOverEvent : IGameEvent
     {
         public float Timestamp { get; set; }

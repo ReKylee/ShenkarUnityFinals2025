@@ -128,12 +128,6 @@ namespace Core
             });
         }
 
-        // This method is now redundant because GameOverEvent is triggered by ChangeState(GameState.GameOver)
-        // Keeping for backward compatibility
-        public void HandleGameOver()
-        {
-            ChangeState(GameState.GameOver);
-        }
 
         #endregion
 
@@ -141,8 +135,6 @@ namespace Core
 
         private void SubscribeToEvents()
         {
-            // GameOverEvent is now a redundant event - it's automatically published when state changes to GameOver
-            // Keeping the subscription for backward compatibility or external sources of GameOverEvent
             _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
             _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
         }
