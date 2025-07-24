@@ -9,7 +9,6 @@ namespace ModularCharacterController.Core.Abilities.Modules
     /// </summary>
     public class JumpAbilityModule : AbilityModuleBase, IMovementAbilityModule
     {
-        private bool _isJumping;
         private float _jumpStartTime;
         private float _lastGroundedTime;
 
@@ -21,7 +20,6 @@ namespace ModularCharacterController.Core.Abilities.Modules
             if (isGrounded)
             {
                 _lastGroundedTime = Time.time;
-                _isJumping = false;
             }
 
             if (inputContext.JumpPressed)
@@ -38,14 +36,12 @@ namespace ModularCharacterController.Core.Abilities.Modules
                 currentVelocity.y = Controller.Stats.jumpVelocity;
                 _lastGroundedTime = -100f;
                 _jumpStartTime = -100f;
-                _isJumping = true;
             }
 
             // Variable jump height: cut ascent when jump button is no longer held
             if (!inputContext.JumpHeld && currentVelocity.y > 0)
             {
                 currentVelocity.y *= Controller.Stats.jumpReleaseVelocityMultiplier;
-                _isJumping = false;
             }
 
             return currentVelocity;

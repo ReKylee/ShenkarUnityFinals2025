@@ -13,22 +13,22 @@ namespace ModularCharacterController.Core.Abilities
         private static readonly Dictionary<StatType, (FieldInfo field, string category)> StatInfoCache;
 
         [Header("Movement Settings")] [ModularCharacterControllerStat(StatType.WalkSpeed, "Movement")]
-        public float walkSpeed = 4.0f;
+        public float walkSpeed = 5.0f;
 
         [ModularCharacterControllerStat(StatType.RunSpeed, "Movement")]
         public float runSpeed = 6f;
 
         [ModularCharacterControllerStat(StatType.GroundAcceleration, "Movement")]
-        public float groundAcceleration = 50f;
+        public float groundAcceleration = 70f;
 
         [ModularCharacterControllerStat(StatType.GroundDeceleration, "Movement")]
         public float groundDeceleration = 70f;
 
         [ModularCharacterControllerStat(StatType.AirAcceleration, "Movement")]
-        public float airAcceleration = 25f;
+        public float airAcceleration = 30f;
 
         [ModularCharacterControllerStat(StatType.AirDeceleration, "Movement")]
-        public float airDeceleration = 10f;
+        public float airDeceleration = 30f;
 
         [Header("Jump Settings")] [ModularCharacterControllerStat(StatType.JumpVelocity, "Jump")]
         public float jumpVelocity = 14f;
@@ -43,33 +43,13 @@ namespace ModularCharacterController.Core.Abilities
         public float coyoteTime = 0.08f;
 
         [ModularCharacterControllerStat(StatType.JumpBufferTime, "Jump")]
-        public float jumpBufferTime = 0.1f;
-
-        [Header("Fly Settings")] [ModularCharacterControllerStat(StatType.FlapImpulse, "Float")]
-        public float flapImpulse = 5.5f;
-
-        [ModularCharacterControllerStat(StatType.FloatDescentSpeed, "Float")]
-        public float floatDescentSpeed = 1.0f;
-
+        public float jumpBufferTime = 0.4f;
+        
 
         [Header("Physics")] [ModularCharacterControllerStat(StatType.GravityScale, "Physics")]
-        public float gravityScale = 2.8f;
+        public float gravityScale = 3f;
 
-        [Header("Combat")] [ModularCharacterControllerStat(StatType.AttackDamage, "Combat")]
-        public float attackDamage = 10f;
-
-        [ModularCharacterControllerStat(StatType.AttackRange, "Combat")]
-        public float attackRange = 0.5f;
-
-        [ModularCharacterControllerStat(StatType.AttackSpeed, "Combat")]
-        public float attackSpeed = 1.0f;
-
-        [Header("Other")] [ModularCharacterControllerStat(StatType.InhaleRange, "Other")]
-        public float inhaleRange = 2.5f;
-
-        [ModularCharacterControllerStat(StatType.InhalePower, "Other")]
-        public float inhalePower = 5f;
-
+       
         // Initialize the reflection cache
         static MccStats()
         {

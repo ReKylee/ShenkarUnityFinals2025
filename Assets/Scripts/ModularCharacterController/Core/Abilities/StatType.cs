@@ -20,20 +20,9 @@
         CoyoteTime,
         JumpBufferTime,
 
-        // Fly
-        FloatDescentSpeed,
-        FlapImpulse,
-
         // Physics
         GravityScale,
 
-        // Combat
-        AttackDamage,
-        AttackRange,
-        AttackSpeed,
 
-        // Other
-        InhaleRange,
-        InhalePower
     }
 }
