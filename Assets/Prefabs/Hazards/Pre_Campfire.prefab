@@ -12,9 +12,8 @@ GameObject:
   - component: {fileID: 3332027808509070233}
   - component: {fileID: 5385797975733049059}
   - component: {fileID: 325784297118239965}
-  - component: {fileID: 3220864810097108225}
   - component: {fileID: 8365137970618261010}
-  - component: {fileID: 5307094196519583445}
+  - component: {fileID: 3220864810097108225}
   - component: {fileID: 8522503082259179122}
   m_Layer: 7
   m_Name: Pre_Campfire
@@ -142,18 +141,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp: 1
---- !u!114 &3220864810097108225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8363118166971722726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20e64d34880c47be9d0d55b1d0b5307c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8365137970618261010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 20
---- !u!114 &5307094196519583445
+--- !u!114 &3220864810097108225
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -176,7 +163,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8363118166971722726}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d7edd465c6fe424cae6c5bc1d8ddbfc, type: 3}
+  m_Script: {fileID: 11500000, guid: 20e64d34880c47be9d0d55b1d0b5307c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!95 &8522503082259179122
