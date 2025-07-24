@@ -9,14 +9,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4604229242786182261}
-  - component: {fileID: 3743949284981105148}
-  - component: {fileID: 5118020161858312049}
-  - component: {fileID: 2217429654812035360}
-  - component: {fileID: 4101630459541062360}
   - component: {fileID: 6705351917961942146}
   - component: {fileID: 1967521739581293546}
   - component: {fileID: 3146045202917183874}
   - component: {fileID: 7224504149462766094}
+  - component: {fileID: 3743949284981105148}
+  - component: {fileID: 5118020161858312049}
+  - component: {fileID: 2217429654812035360}
+  - component: {fileID: 4101630459541062360}
   m_Layer: 7
   m_Name: Pre_Ghost
   m_TagString: Untagged
@@ -39,6 +39,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6705351917961942146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6393277964807551920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aa8f0e32a1e4a5c9ca8894504c4ab25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 20
+--- !u!114 &1967521739581293546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6393277964807551920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e64d34880c47be9d0d55b1d0b5307c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3146045202917183874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6393277964807551920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d7edd465c6fe424cae6c5bc1d8ddbfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7224504149462766094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6393277964807551920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c1d740874b4466ebf46eb4c396e93dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 1
 --- !u!212 &3743949284981105148
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -173,53 +223,3 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1.19, y: 1.1230469}
   m_Direction: 0
---- !u!114 &6705351917961942146
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6393277964807551920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5aa8f0e32a1e4a5c9ca8894504c4ab25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageAmount: 1
---- !u!114 &1967521739581293546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6393277964807551920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20e64d34880c47be9d0d55b1d0b5307c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &3146045202917183874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6393277964807551920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d7edd465c6fe424cae6c5bc1d8ddbfc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7224504149462766094
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6393277964807551920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c1d740874b4466ebf46eb4c396e93dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHp: 1
