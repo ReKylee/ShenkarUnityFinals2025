@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/Assets/Scripts/Hazards/ShieldActiveDisappearHazard.cs">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Hazards/ShieldActiveDisappearHazard.cs" />
+              <option name="originalContent" value="using Health.Interfaces;&#10;using Player.Components;&#10;using UnityEngine;&#10;&#10;namespace Hazards&#10;{&#10;    public class ShieldActiveDisappearHazard : MonoBehaviour, IDamageDealer&#10;    {&#10;        [SerializeField] private int damageAmount = 1;&#10;        private bool _damaged;&#10;        private void OnCollisionEnter2D(Collision2D other)&#10;        {&#10;            if (_damaged) return;&#10;            if (other.gameObject.CompareTag(&quot;Player&quot;))&#10;            {&#10;                _damaged = true;&#10;                if (other.gameObject.TryGetComponent(out IDamageShield shield) &amp;&amp; shield.IsActive)&#10;                {&#10;                    gameObject.SetActive(false);&#10;                }&#10;            }&#10;        }&#10;        private void OnCollisionExit2D(Collision2D other)&#10;        {&#10;            if (other.gameObject.CompareTag(&quot;Player&quot;))&#10;            {&#10;                _damaged = false;&#10;            }&#10;        }&#10;        public int GetDamageAmount() =&gt; damageAmount;&#10;    }&#10;}&#10;" />
+              <option name="updatedContent" value="using Health.Interfaces;&#10;using Player.Components;&#10;using UnityEngine;&#10;&#10;namespace Hazards&#10;{&#10;    public class ShieldActiveDisappearHazard : MonoBehaviour, IDamageDealer&#10;    {&#10;        [SerializeField] private int damageAmount = 1;&#10;        private bool _damaged;&#10;        private void OnCollisionEnter2D(Collision2D other)&#10;        {&#10;            if (_damaged) return;&#10;            if (other.gameObject.CompareTag(&quot;Player&quot;))&#10;            {&#10;                _damaged = true;&#10;                if (other.gameObject.TryGetComponent(out IDamageShield shield) &amp;&amp; shield.IsActive)&#10;                {&#10;                    // Instead of disabling, deal fatal damage to this object if possible&#10;                    if (TryGetComponent(out IHealthEvents health))&#10;                    {&#10;                        health.TakeDamage(int.MaxValue); // Assumes this will trigger OnLivesEmpty&#10;                    }&#10;                    else&#10;                    {&#10;                        gameObject.SetActive(false); // fallback if no health component&#10;                    }&#10;                }&#10;            }&#10;        }&#10;        private void OnCollisionExit2D(Collision2D other)&#10;        {&#10;            if (other.gameObject.CompareTag(&quot;Player&quot;))&#10;            {&#10;                _damaged = false;&#10;            }&#10;        }&#10;        public int GetDamageAmount() =&gt; damageAmount;&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

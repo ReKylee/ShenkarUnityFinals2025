@@ -15,7 +15,16 @@ namespace Hazards
             {
                 _damaged = true;
                 if (other.gameObject.TryGetComponent(out IDamageShield shield) && shield.IsActive)
-                    gameObject.SetActive(false);
+                {
+                    if (TryGetComponent(out IDamageable health))
+                    {
+                        health.Damage(health.MaxHp); 
+                    }
+                    else
+                    {
+                        gameObject.SetActive(false); 
+                    }
+                }
             }
         }
         private void OnCollisionExit2D(Collision2D other)
