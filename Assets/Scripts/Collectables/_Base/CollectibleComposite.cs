@@ -3,8 +3,8 @@
 namespace Collectables._Base
 {
     /// <summary>
-    /// Composite manager for multiple ICollectable components on a single GameObject.
-    /// Attach this only to objects that need multiple collectibles.
+    ///     Composite manager for multiple ICollectable components on a single GameObject.
+    ///     Attach this only to objects that need multiple collectibles.
     /// </summary>
     public class CollectibleComposite : MonoBehaviour
     {
@@ -21,11 +21,11 @@ namespace Collectables._Base
             {
                 foreach (ICollectable collectable in _collectables)
                 {
-                        collectable.OnCollect(col.gameObject);
+                    collectable.OnCollect(col.gameObject);
                 }
+
                 gameObject.SetActive(false);
             }
         }
     }
 }
-

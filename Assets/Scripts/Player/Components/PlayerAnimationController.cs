@@ -1,5 +1,4 @@
-﻿using System;
-using GabrielBigardi.SpriteAnimator;
+﻿using GabrielBigardi.SpriteAnimator;
 using ModularCharacterController.Core;
 using ModularCharacterController.Core.Components;
 using UnityEngine;
@@ -7,14 +6,14 @@ using UnityEngine;
 namespace Player
 {
     /// <summary>
-    /// Handles basic player animation operations
+    ///     Handles basic player animation operations
     /// </summary>
     public class PlayerAnimationController : MonoBehaviour
     {
+        private MccGroundCheck _groundCheck;
         private InputHandler _inputHandler;
         private SpriteAnimator _spriteAnimator;
         private SpriteRenderer _spriteRenderer;
-        private MccGroundCheck _groundCheck;
         public SpriteAnimationObject OriginalAnimationObject { get; private set; }
 
         public Sprite CurrentSprite
@@ -38,7 +37,7 @@ namespace Player
 
             InputContext input = _inputHandler.CurrentInput;
             // NOTE: I ADDED THIS
-            if (input.WalkInput != 0 )
+            if (input.WalkInput != 0)
             {
                 transform.localScale = new Vector3(input.WalkInput, 1, 1);
             }
@@ -94,7 +93,7 @@ namespace Player
 
 
         /// <summary>
-        /// Change to a new animation object
+        ///     Change to a new animation object
         /// </summary>
         public void ChangeAnimationObject(SpriteAnimationObject animationObject)
         {
@@ -102,7 +101,7 @@ namespace Player
         }
 
         /// <summary>
-        /// Play a specific animation
+        ///     Play a specific animation
         /// </summary>
         public void PlayAnimation(string animationName)
         {
@@ -111,7 +110,7 @@ namespace Player
 
 
         /// <summary>
-        /// Pause animation playback
+        ///     Pause animation playback
         /// </summary>
         public void PauseAnimation()
         {
@@ -119,7 +118,7 @@ namespace Player
         }
 
         /// <summary>
-        /// Resume animation playback
+        ///     Resume animation playback
         /// </summary>
         public void ResumeAnimation()
         {

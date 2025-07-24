@@ -6,20 +6,20 @@ namespace Core.Data
     [Serializable]
     public class GameData
     {
-        [Header("Player Data")]
-        public int lives = 3;
-        public int score = 0;
-        
-        [Header("Level Progress")]
-        public string currentLevel = "Level_01";
+        [Header("Player Data")] public int lives = 3;
+
+        public int score;
+
+        [Header("Level Progress")] public string currentLevel = "Level_01";
+
         public float bestTime = float.MaxValue;
-        
-        [Header("Power-ups")]
-        public bool hasFireball = false;
-        public bool hasAxe = false;
-        
-        [Header("Settings")]
-        public float musicVolume = 1.0f;
+
+        [Header("Power-ups")] public bool hasFireball;
+
+        public bool hasAxe;
+
+        [Header("Settings")] public float musicVolume = 1.0f;
+
         public float sfxVolume = 1.0f;
 
         // Constructor for easy initialization

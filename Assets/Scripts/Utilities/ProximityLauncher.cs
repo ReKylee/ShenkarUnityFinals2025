@@ -4,21 +4,23 @@ using UnityEngine;
 namespace Utilities
 {
     /// <summary>
-    /// Hides the container and launches it upwards when the player exceeds a vertical threshold.
+    ///     Hides the container and launches it upwards when the player exceeds a vertical threshold.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer), typeof(Collider2D))]
     public class ProximityLauncher : MonoBehaviour
     {
         [Tooltip("Vertical distance above container at which it triggers launch.")]
         public float triggerHeight;
-        [Tooltip("Launch velocity applied when triggered.")]
-        public Vector2 launchVel = new Vector2(0f, 5f);
 
-        private bool _triggered;
-        private Rigidbody2D _rb;
-        private SpriteRenderer _sr;
+        [Tooltip("Launch velocity applied when triggered.")]
+        public Vector2 launchVel = new(0f, 5f);
+
         private Collider2D _col;
         private Transform _player;
+        private Rigidbody2D _rb;
+        private SpriteRenderer _sr;
+
+        private bool _triggered;
 
         private void Awake()
         {

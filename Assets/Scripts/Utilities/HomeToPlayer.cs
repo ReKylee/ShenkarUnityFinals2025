@@ -5,8 +5,8 @@ namespace Utilities
 {
     public class HomeToPlayer : MonoBehaviour
     {
-        [Tooltip("Speed of the homing movement.")]
-        [SerializeField] private float speed = 5f;
+        [Tooltip("Speed of the homing movement.")] [SerializeField]
+        private float speed = 5f;
 
         private Transform _target;
 

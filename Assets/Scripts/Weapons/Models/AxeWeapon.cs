@@ -1,34 +1,31 @@
 using System;
-using Core.Data;
 using Projectiles;
 using UnityEngine;
-using VContainer;
-using Weapons;
 using Weapons.Interfaces;
 
 namespace Weapons.Models
 {
     public class AxeWeapon : MonoBehaviour, IUseableWeapon
     {
-        public WeaponType WeaponType => WeaponType.Axe;
         [SerializeField] private GameObject axe;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.5f;
         [SerializeField] private AxePool axePool;
+        private float _nextFireTime;
 
         [NonSerialized] private Rigidbody2D _throwerRb;
-        private float _nextFireTime;
-        private bool _isEquipped;
 
-        public bool IsEquipped => _isEquipped;
+        public bool IsEquipped { get; private set; }
+
         private void Awake()
         {
             _throwerRb = GetComponentInParent<Rigidbody2D>();
         }
+        public WeaponType WeaponType => WeaponType.Axe;
         public void Shoot()
         {
             // Check if weapon is equipped
-            if (!_isEquipped)
+            if (!IsEquipped)
             {
                 return;
             }
@@ -57,7 +54,7 @@ namespace Weapons.Models
                 float direction = transform.parent?.localScale.x ?? 1;
                 scAxe.Direction = direction;
                 scAxe.ThrowerVelocityX = _throwerRb.linearVelocityX;
-                
+
                 scAxe.Fire();
 
                 // Set cooldown
@@ -67,12 +64,12 @@ namespace Weapons.Models
 
         public void Equip()
         {
-            _isEquipped = true;
+            IsEquipped = true;
         }
 
         public void UnEquip()
         {
-            _isEquipped = false;
+            IsEquipped = false;
         }
     }
 }

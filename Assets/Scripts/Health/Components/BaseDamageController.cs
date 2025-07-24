@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Health.Components
 {
     /// <summary>
-    /// Abstract base implementing the Template Method for damage handling.
+    ///     Abstract base implementing the Template Method for damage handling.
     /// </summary>
     [RequireComponent(typeof(IDamageable))]
     public abstract class BaseDamageController : MonoBehaviour
@@ -30,20 +30,23 @@ namespace Health.Components
         {
             if (Damageable == null)
                 return;
+
             if (!other.TryGetComponent(out IDamageDealer dealer))
                 return;
+
             if (!ShouldProcessDealer(dealer))
                 return;
+
             ProcessDamage(dealer);
         }
 
         /// <summary>
-        /// Hook: decide whether to process damage from this dealer.
+        ///     Hook: decide whether to process damage from this dealer.
         /// </summary>
         protected abstract bool ShouldProcessDealer(IDamageDealer dealer);
 
         /// <summary>
-        /// Hook: apply damage after passing checks.
+        ///     Hook: apply damage after passing checks.
         /// </summary>
         protected abstract void ProcessDamage(IDamageDealer dealer);
     }

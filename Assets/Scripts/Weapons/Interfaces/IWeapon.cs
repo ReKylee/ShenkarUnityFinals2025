@@ -1,4 +1,3 @@
-
 namespace Weapons.Interfaces
 {
     /// <summary>
@@ -7,7 +6,7 @@ namespace Weapons.Interfaces
     public interface IWeapon
     {
         /// <summary>
-        /// Type of this weapon.
+        ///     Type of this weapon.
         /// </summary>
         WeaponType WeaponType { get; }
 

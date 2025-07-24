@@ -1,19 +1,19 @@
 ﻿using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
-using TMPro;
 
 namespace Collectables.Score
 {
     [RequireComponent(typeof(TextMeshPro))]
     public class FloatingText : MonoBehaviour
     {
-        public IObjectPool<TextMeshPro> Pool { get; set; }
-        [SerializeField] private float ppu = 100f; 
+        [SerializeField] private float ppu = 100f;
         [SerializeField] private float floatDistance = 1f;
         [SerializeField] private float duration = 1f;
 
         private TextMeshPro _tmp;
+        public IObjectPool<TextMeshPro> Pool { get; set; }
 
         private void Awake()
         {

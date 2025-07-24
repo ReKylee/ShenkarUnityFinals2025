@@ -1,6 +1,4 @@
 ﻿using System;
-using Core.Data;
-using UnityEngine;
 
 namespace Core.Data
 {
@@ -17,4 +15,3 @@ namespace Core.Data
     }
 
 }
-

@@ -1,7 +1,7 @@
 ﻿namespace Weapons
 {
     /// <summary>
-    /// Enum representing different types of weapons.
+    ///     Enum representing different types of weapons.
     /// </summary>
     public enum WeaponType
     {
@@ -12,4 +12,3 @@
         Spark
     }
 }
-

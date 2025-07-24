@@ -15,6 +15,7 @@ namespace PowerUps.Invincibility
         {
             _dc = GetComponent<PlayerDamageController>();
         }
+        public int GetDamageAmount() => _dc.IsInvulnerable ? 10 : 0;
         public void Activate(float duration)
         {
             if (!_dc) return;
@@ -31,6 +32,5 @@ namespace PowerUps.Invincibility
             _dc.IsInvulnerable = false;
             effectObject?.SetActive(false);
         }
-        public int GetDamageAmount() => _dc.IsInvulnerable ? 10 : 0;
     }
 }

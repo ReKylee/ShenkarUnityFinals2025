@@ -1,10 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Player.Components
 {
     /// <summary>
-    /// Provides a global reference to the player transform.
+    ///     Provides a global reference to the player transform.
     /// </summary>
     public class PlayerLocator : MonoBehaviour
     {

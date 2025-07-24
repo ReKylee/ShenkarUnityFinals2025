@@ -16,19 +16,18 @@ namespace ModularCharacterController.Core.Abilities.Modules
         private const float WALL_CAST_HEIGHT_MULTIPLIER = 0.7f;
         private const float WALL_CAST_DISTANCE = 0.01f;
 
-        [Header("Pixel Perfect Settings")]
-        [Tooltip("Enable pixel-perfect movement to eliminate sub-pixel jitter")]
-        public bool enablePixelPerfectMovement = false;
+        // Cached ground layer mask to avoid repeated GetMask calls
+        private static int? _groundLayerMask;
 
-        [Tooltip("Pixels per unit - must match your sprite's PPU and Pixel Perfect Camera settings")]
-        [Range(1f, 1000f)]
+        [Header("Pixel Perfect Settings")] [Tooltip("Enable pixel-perfect movement to eliminate sub-pixel jitter")]
+        public bool enablePixelPerfectMovement;
+
+        [Tooltip("Pixels per unit - must match your sprite's PPU and Pixel Perfect Camera settings")] [Range(1f, 1000f)]
         public float pixelsPerUnit = 100f;
 
         [Tooltip("Minimum movement threshold for pixel snapping")]
         public float pixelSnapThreshold = 0.001f;
 
-        // Cached ground layer mask to avoid repeated GetMask calls
-        private static int? _groundLayerMask;
         private Bounds _colliderBounds;
 
         // Track direction facing for sprite flipping
@@ -103,7 +102,7 @@ namespace ModularCharacterController.Core.Abilities.Modules
         }
 
         /// <summary>
-        /// Snaps a velocity value to the pixel grid to ensure pixel-perfect movement
+        ///     Snaps a velocity value to the pixel grid to ensure pixel-perfect movement
         /// </summary>
         /// <param name="velocity">The velocity to snap</param>
         /// <returns>Pixel-aligned velocity</returns>

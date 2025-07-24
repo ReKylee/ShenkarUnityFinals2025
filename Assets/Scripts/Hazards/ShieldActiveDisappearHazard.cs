@@ -18,11 +18,11 @@ namespace Hazards
                 {
                     if (TryGetComponent(out IDamageable health))
                     {
-                        health.Damage(health.MaxHp); 
+                        health.Damage(health.MaxHp);
                     }
                     else
                     {
-                        gameObject.SetActive(false); 
+                        gameObject.SetActive(false);
                     }
                 }
             }

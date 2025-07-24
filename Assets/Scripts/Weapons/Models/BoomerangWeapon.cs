@@ -2,27 +2,20 @@
 using Projectiles;
 using UnityEngine;
 using Weapons.Interfaces;
-using Weapons;
 
 namespace Weapons.Models
 {
     public class BoomerangWeapon : MonoBehaviour, IAmmoWeapon
     {
-        public WeaponType WeaponType => WeaponType.Boomerang;
         [SerializeField] private GameObject boomerang;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.3f;
 
         private float _nextFireTime;
-        private Transform _returnToTransform;
 
         private GameObject _pooledBoomerang;
         private ProjectileBoomerang _pooledProjectile;
-
-        public int CurrentAmmo { get; private set; } = 1;
-        public int MaxAmmo => 1;
-        public bool HasAmmo => CurrentAmmo > 0;
-        public event Action<int> OnAmmoChanged;
+        private Transform _returnToTransform;
 
         private void Start()
         {
@@ -36,6 +29,20 @@ namespace Weapons.Models
             _pooledProjectile = _pooledBoomerang.GetComponent<ProjectileBoomerang>();
             _pooledBoomerang.SetActive(false);
         }
+
+        private void OnDestroy()
+        {
+            if (_pooledProjectile)
+                _pooledProjectile.OnBoomerangReturned -= OnBoomerangReturned;
+
+            if (_pooledBoomerang)
+                Destroy(_pooledBoomerang);
+        }
+        public WeaponType WeaponType => WeaponType.Boomerang;
+
+        public int CurrentAmmo { get; private set; } = 1;
+        public int MaxAmmo => 1;
+        public bool HasAmmo => CurrentAmmo > 0;
 
         public void SetAmmo(int ammo)
         {
@@ -54,6 +61,7 @@ namespace Weapons.Models
                 spawnPoint ? spawnPoint.position : transform.position,
                 Quaternion.identity
             );
+
             _pooledBoomerang.layer = gameObject.layer;
 
             SetAmmo(0);
@@ -69,25 +77,17 @@ namespace Weapons.Models
             _nextFireTime = Time.time + cooldownTime;
         }
 
+        public void Reload()
+        {
+            SetAmmo(1);
+        }
+        public event Action<int> OnAmmoChanged;
+
         private void OnBoomerangReturned()
         {
             _pooledProjectile.OnBoomerangReturned -= OnBoomerangReturned;
             _pooledBoomerang.SetActive(false);
             SetAmmo(1);
-        }
-
-        public void Reload()
-        {
-            SetAmmo(1);
-        }
-
-        private void OnDestroy()
-        {
-            if (_pooledProjectile)
-                _pooledProjectile.OnBoomerangReturned -= OnBoomerangReturned;
-
-            if (_pooledBoomerang)
-                Destroy(_pooledBoomerang);
         }
     }
 }

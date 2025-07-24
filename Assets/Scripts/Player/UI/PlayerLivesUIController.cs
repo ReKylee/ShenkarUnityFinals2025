@@ -1,6 +1,5 @@
 ﻿using Health.Views;
 using Player.Interfaces;
-using Player.Services;
 using UnityEngine;
 using VContainer;
 

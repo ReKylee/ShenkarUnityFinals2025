@@ -1,14 +1,14 @@
+using System;
 using Collectables._Base;
 using UnityEngine;
-using System;
 
 namespace Collectables.Score
 {
     public class ScoreCollectable : CollectibleBase
     {
-        [SerializeField] private int scoreAmount = 1;
 
         public static Action<int, Vector3> OnScoreCollected;
+        [SerializeField] private int scoreAmount = 1;
 
         public override void OnCollect(GameObject collector)
         {

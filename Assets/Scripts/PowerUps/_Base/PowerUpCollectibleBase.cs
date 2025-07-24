@@ -9,7 +9,7 @@ namespace PowerUps._Base
         public override void OnCollect(GameObject collector)
         {
             Debug.Log("PowerUp collected: " + gameObject.name);
-            
+
             IPowerUpCollector powerUpCollector = collector.GetComponent<IPowerUpCollector>();
 
             // NOTE: The Power Up still disappears even if you can't collect it.

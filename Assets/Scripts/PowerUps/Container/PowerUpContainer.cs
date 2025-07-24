@@ -8,8 +8,6 @@ namespace PowerUps.Container
         [SerializeField] private Sprite crackedSprite;
         [SerializeField] private GameObject powerUpPrefab;
         private SpriteRenderer _spriteRenderer;
-        public int CurrentHp { get; private set; } = 2;
-        public int MaxHp { get; } = 2;
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -28,11 +26,8 @@ namespace PowerUps.Container
                 BreakOpen();
             }
         }
-        private void BreakOpen()
-        {
-            Instantiate(powerUpPrefab, transform.position, Quaternion.identity);
-            Destroy(gameObject);
-        }
+        public int CurrentHp { get; private set; } = 2;
+        public int MaxHp { get; } = 2;
         public void Damage(int amount)
         {
             CurrentHp -= 1;
@@ -46,12 +41,16 @@ namespace PowerUps.Container
                     break;
             }
         }
+        private void BreakOpen()
+        {
+            Instantiate(powerUpPrefab, transform.position, Quaternion.identity);
+            Destroy(gameObject);
+        }
 
         private void Crack()
         {
             _spriteRenderer.sprite = crackedSprite;
 
         }
-
     }
 }

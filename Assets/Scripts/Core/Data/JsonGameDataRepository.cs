@@ -15,13 +15,11 @@ namespace Core.Data
                 if (File.Exists(SaveFilePath))
                 {
                     string json = File.ReadAllText(SaveFilePath);
-                    var data = JsonUtility.FromJson<GameData>(json);
+                    GameData data = JsonUtility.FromJson<GameData>(json);
                     return data;
                 }
-                else
-                {
-                    return CreateDefaultData();
-                }
+
+                return CreateDefaultData();
             }
             catch (Exception e)
             {
@@ -60,9 +58,8 @@ namespace Core.Data
 
         public string GetSaveFilePath() => SaveFilePath;
 
-        private GameData CreateDefaultData()
-        {
-            return new GameData
+        private GameData CreateDefaultData() =>
+            new()
             {
                 lives = 3,
                 score = 0,
@@ -73,6 +70,5 @@ namespace Core.Data
                 musicVolume = 1.0f,
                 sfxVolume = 1.0f
             };
-        }
     }
 }

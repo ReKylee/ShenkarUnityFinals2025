@@ -20,7 +20,5 @@ namespace PowerUps._Base
                 powerUp.ApplyPowerUp(gameObject);
             }
         }
-
-    
     }
 }

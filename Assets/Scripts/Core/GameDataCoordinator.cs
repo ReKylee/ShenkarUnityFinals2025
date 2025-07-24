@@ -7,16 +7,16 @@ using VContainer;
 namespace Core
 {
     /// <summary>
-    /// Coordinates between game events and data storage.
-    /// Responsible only for translating events into data updates and managing save operations.
+    ///     Coordinates between game events and data storage.
+    ///     Responsible only for translating events into data updates and managing save operations.
     /// </summary>
     public class GameDataCoordinator : MonoBehaviour
     {
         [SerializeField] private float autoSaveInterval = 30;
-        private IGameDataService _gameDataService;
-        private IEventBus _eventBus;
         private IAutoSaveService _autoSaveService;
-        private bool _isInitialized = false;
+        private IEventBus _eventBus;
+        private IGameDataService _gameDataService;
+        private bool _isInitialized;
 
         #region VContainer Injection
 
@@ -30,10 +30,44 @@ namespace Core
             _eventBus = eventBus;
             _autoSaveService = autoSaveService;
             _isInitialized = true;
-            
+
 
             // Initialize after dependencies are injected
             Initialize();
+        }
+
+        #endregion
+
+        #region Initialization
+
+        private void Initialize()
+        {
+            // Subscribe to events - only subscribe to events that affect game data
+            _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted); // For best time tracking
+            _eventBus?.Subscribe<LevelStartedEvent>(OnLevelStarted); // For current level tracking
+            _eventBus?.Subscribe<PlayerLivesChangedEvent>(OnLivesChanged); // For lives tracking
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged); // For game state changes
+
+            _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
+
+            if (_gameDataService != null)
+                _gameDataService.OnDataChanged += OnGameDataChanged;
+
+            if (_autoSaveService != null)
+            {
+                _autoSaveService.OnSaveRequested += SaveData;
+                _autoSaveService.SaveInterval = autoSaveInterval;
+                _autoSaveService.IsEnabled = true;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void SaveData()
+        {
+            _gameDataService?.SaveData();
         }
 
         #endregion
@@ -45,7 +79,6 @@ namespace Core
             // If not yet initialized (dependencies not injected), wait
             if (!_isInitialized)
             {
-                return;
             }
         }
 
@@ -97,31 +130,6 @@ namespace Core
 
         #endregion
 
-        #region Initialization
-
-        private void Initialize()
-        {
-            // Subscribe to events - only subscribe to events that affect game data
-            _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted); // For best time tracking
-            _eventBus?.Subscribe<LevelStartedEvent>(OnLevelStarted);     // For current level tracking
-            _eventBus?.Subscribe<PlayerLivesChangedEvent>(OnLivesChanged); // For lives tracking
-            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged); // For game state changes
-
-            _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
-
-            if (_gameDataService != null)
-                _gameDataService.OnDataChanged += OnGameDataChanged;
-
-            if (_autoSaveService != null)
-            {
-                _autoSaveService.OnSaveRequested += SaveData;
-                _autoSaveService.SaveInterval = autoSaveInterval;
-                _autoSaveService.IsEnabled = true;
-            }
-        }
-
-        #endregion
-
         #region Event Handlers
 
         private void OnPlayerDied(PlayerDeathEvent deathEvent)
@@ -149,7 +157,9 @@ namespace Core
         }
         private void OnLivesChanged(PlayerLivesChangedEvent livesEvent)
         {
-            Debug.Log($"[GameDataCoordinator] Received PlayerLivesChangedEvent: CurrentLives={livesEvent.CurrentLives}");
+            Debug.Log(
+                $"[GameDataCoordinator] Received PlayerLivesChangedEvent: CurrentLives={livesEvent.CurrentLives}");
+
             _gameDataService?.UpdateLives(livesEvent.CurrentLives);
             Debug.Log($"[GameDataCoordinator] Updated GameData lives to: {_gameDataService?.CurrentData.lives}");
         }
@@ -175,15 +185,6 @@ namespace Core
             if (!_isInitialized) return;
 
             _gameDataService?.ResetAllData();
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private void SaveData()
-        {
-            _gameDataService?.SaveData();
         }
 
         #endregion

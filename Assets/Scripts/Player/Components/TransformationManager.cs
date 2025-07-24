@@ -1,37 +1,29 @@
 ﻿using System;
-using UnityEngine;
-using Weapons.Services;
 using GabrielBigardi.SpriteAnimator;
 using Health.Components;
 using Player.Interfaces;
+using UnityEngine;
 using Weapons;
+using Weapons.Services;
 
 namespace Player.Components
 {
     /// <summary>
-    /// Orchestrates transformations 
+    ///     Orchestrates transformations
     /// </summary>
     public class TransformationManager : MonoBehaviour, ITransformationCoordinator
     {
+        private DamageShield _damageShield;
+        private PlayerHealthController _healthController;
+
+        private WeaponType _pendingWeapon = WeaponType.None;
         private TransformationVisualEffects _visualEffects;
         private WeaponManagerService _weaponManager;
-        private PlayerHealthController _healthController;
-        private DamageShield _damageShield;
 
         /// <summary>
-        /// Event raised when transformation process completes
+        ///     Whether player is currently transformed
         /// </summary>
-        public event Action OnTransformationComplete;
-
-        /// <summary>
-        /// Event raised when detransformation process completes
-        /// </summary>
-        public event Action OnDetransformationComplete;
-
-        /// <summary>
-        /// Whether player is currently transformed
-        /// </summary>
-        public bool IsTransformed { get; private set; } = false;
+        public bool IsTransformed { get; private set; }
 
         private void Awake()
         {
@@ -60,7 +52,7 @@ namespace Player.Components
         }
 
         /// <summary>
-        /// Apply transformation by coordinating all necessary components
+        ///     Apply transformation by coordinating all necessary components
         /// </summary>
         public void ApplyTransformation(SpriteAnimationObject animationObject, Sprite transitionTexture,
             WeaponType weapon)
@@ -85,7 +77,7 @@ namespace Player.Components
         }
 
         /// <summary>
-        /// Revert transformation by coordinating all necessary components
+        ///     Revert transformation by coordinating all necessary components
         /// </summary>
         public void RevertTransformation()
         {
@@ -113,7 +105,15 @@ namespace Player.Components
             Debug.Log("[TransformationManager] Transformation reverted");
         }
 
-        private WeaponType _pendingWeapon = WeaponType.None;
+        /// <summary>
+        ///     Event raised when transformation process completes
+        /// </summary>
+        public event Action OnTransformationComplete;
+
+        /// <summary>
+        ///     Event raised when detransformation process completes
+        /// </summary>
+        public event Action OnDetransformationComplete;
 
         private void OnVisualEffectComplete()
         {

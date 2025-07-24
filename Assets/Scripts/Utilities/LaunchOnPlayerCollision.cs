@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Utilities
 {
     /// <summary>
-    /// Launches the container in an arc when kicked sideways or upwards when stomped.
+    ///     Launches the container in an arc when kicked sideways or upwards when stomped.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public class LaunchOnPlayerCollision : MonoBehaviour
@@ -15,11 +15,12 @@ namespace Utilities
         [Tooltip("Vertical launch speed when kicked or stomped.")] [SerializeField]
         private float verticalSpeed = 2f;
 
-        [SerializeField, Tooltip("Time window to ignore collisions with the player after launch.")]
+        [SerializeField] [Tooltip("Time window to ignore collisions with the player after launch.")]
         private float ignoreDuration = 0.2f;
 
-        private Rigidbody2D _rb;
         private Collider2D _col;
+
+        private Rigidbody2D _rb;
 
         private void Awake()
         {

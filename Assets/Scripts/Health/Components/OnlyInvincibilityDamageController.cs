@@ -1,10 +1,9 @@
 ﻿using Health.Interfaces;
-using UnityEngine;
 
 namespace Health.Components
 {
     /// <summary>
-    /// Damage controller for enemies: only processes damage from invincibility dealers (player when invincible).
+    ///     Damage controller for enemies: only processes damage from invincibility dealers (player when invincible).
     /// </summary>
     public class OnlyInvincibilityDamageController : BaseDamageController
     {

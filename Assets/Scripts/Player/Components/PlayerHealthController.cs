@@ -4,7 +4,6 @@ using Health;
 using Health.Components;
 using Health.Interfaces;
 using Player.Interfaces;
-using Player.Services;
 using UnityEngine;
 using VContainer;
 
@@ -13,11 +12,11 @@ namespace Player.Components
     public class PlayerHealthController : SimpleHealthController, IBypassableDamageable
     {
         [SerializeField] private BarsHealthView healthView;
+        private IDamageShield _damageShield;
 
         private IEventBus _eventBus;
-        private IPlayerLivesService _livesService;
-        private IDamageShield _damageShield;
         private GameFlowManager _gameFlowManager;
+        private IPlayerLivesService _livesService;
 
         #region VContainer Injection
 
@@ -99,7 +98,7 @@ namespace Player.Components
 
         public void ActivateShield() => _damageShield.Activate();
         public void DeactivateShield() => _damageShield.Deactivate();
-        
+
         #endregion
 
         #region Damage Handling
@@ -116,7 +115,7 @@ namespace Player.Components
         }
 
         /// <summary>
-        /// Damage that bypasses transformation shield (used by continuous damage, etc.)
+        ///     Damage that bypasses transformation shield (used by continuous damage, etc.)
         /// </summary>
         public void DamageBypass(int amount)
         {

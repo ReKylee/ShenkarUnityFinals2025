@@ -39,7 +39,7 @@ namespace Core.Events
     {
         public Vector3 Position;
         public int ScoreAmount; // Delta amount
-        public int TotalScore;  // Overall score
+        public int TotalScore; // Overall score
     }
 
     // Base event structure for consistency

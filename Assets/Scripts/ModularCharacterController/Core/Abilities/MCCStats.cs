@@ -44,12 +44,12 @@ namespace ModularCharacterController.Core.Abilities
 
         [ModularCharacterControllerStat(StatType.JumpBufferTime, "Jump")]
         public float jumpBufferTime = 0.4f;
-        
+
 
         [Header("Physics")] [ModularCharacterControllerStat(StatType.GravityScale, "Physics")]
         public float gravityScale = 3f;
 
-       
+
         // Initialize the reflection cache
         static MccStats()
         {
@@ -59,7 +59,9 @@ namespace ModularCharacterController.Core.Abilities
             var fields = typeof(MccStats).GetFields(BindingFlags.Public | BindingFlags.Instance);
             foreach (FieldInfo field in fields)
             {
-                ModularCharacterControllerStatAttribute attribute = field.GetCustomAttribute<ModularCharacterControllerStatAttribute>();
+                ModularCharacterControllerStatAttribute attribute =
+                    field.GetCustomAttribute<ModularCharacterControllerStatAttribute>();
+
                 if (attribute != null)
                 {
                     StatInfoCache[attribute.Type] = (field, attribute.Category);

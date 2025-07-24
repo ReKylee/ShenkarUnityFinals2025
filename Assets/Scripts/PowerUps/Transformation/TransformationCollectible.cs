@@ -2,7 +2,6 @@
 using PowerUps._Base;
 using UnityEngine;
 using Weapons;
-using Weapons.Services;
 
 namespace PowerUps.Transformation
 {
@@ -12,6 +11,7 @@ namespace PowerUps.Transformation
         [SerializeField] private Sprite transitionTexture;
         [SerializeField] private WeaponType transformationWeapon = WeaponType.Fireball;
 
-        protected override IPowerUp CreatePowerUp() => new TransformationPowerUp(animationObject, transitionTexture, transformationWeapon);
+        protected override IPowerUp CreatePowerUp() =>
+            new TransformationPowerUp(animationObject, transitionTexture, transformationWeapon);
     }
 }

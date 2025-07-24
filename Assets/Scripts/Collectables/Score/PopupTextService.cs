@@ -1,7 +1,5 @@
-﻿using Core.Events;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
-using VContainer;
 
 namespace Collectables.Score
 {

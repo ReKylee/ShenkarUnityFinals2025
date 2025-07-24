@@ -5,9 +5,12 @@ using Core.Services;
 using Player.Components;
 using Player.Interfaces;
 using Player.Services;
+using Player.UI;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using UnityEngine;
+using Weapons.Models;
+using Weapons.Services;
 
 namespace Core.DI
 {
@@ -46,23 +49,21 @@ namespace Core.DI
             // Game Management
             builder.RegisterComponentInHierarchy<GameFlowManager>();
             builder.RegisterComponentInHierarchy<GameDataCoordinator>();
-            
+
             // Weapons
-            builder.RegisterComponentInHierarchy<Weapons.Models.AxeWeapon>();
-            builder.RegisterComponentInHierarchy<Weapons.Models.FireballWeapon>();
-            builder.RegisterComponentInHierarchy<Weapons.Services.WeaponManagerService>();
-            
+            builder.RegisterComponentInHierarchy<AxeWeapon>();
+            builder.RegisterComponentInHierarchy<FireballWeapon>();
+            builder.RegisterComponentInHierarchy<WeaponManagerService>();
+
             // Health
             builder.RegisterComponentInHierarchy<PlayerHealthController>();
-            builder.RegisterComponentInHierarchy<Player.UI.PlayerLivesUIController>();
-            
+            builder.RegisterComponentInHierarchy<PlayerLivesUIController>();
+
             // Score System
             builder.RegisterComponentInHierarchy<ScoreController>();
 
 
             Debug.Log("[GameLifetimeScope] DI container configured successfully.");
         }
-
-
     }
 }

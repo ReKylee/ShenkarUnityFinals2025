@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Collectables.Score
+﻿namespace Collectables.Score
 {
     public interface IScoreService
     {

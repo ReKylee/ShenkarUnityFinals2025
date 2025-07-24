@@ -3,10 +3,10 @@
 namespace Extensions
 {
     /// <summary>
-    /// A custom camera controller for pixel-perfect 2D games.
-    /// This script makes the camera follow a target transform with a configurable offset,
-    /// allows locking movement on individual axes, and snaps the final position to the
-    /// pixel grid to prevent jitter.
+    ///     A custom camera controller for pixel-perfect 2D games.
+    ///     This script makes the camera follow a target transform with a configurable offset,
+    ///     allows locking movement on individual axes, and snaps the final position to the
+    ///     pixel grid to prevent jitter.
     /// </summary>
     [ExecuteInEditMode]
     public class PixelPerfectFollowCamera : MonoBehaviour
@@ -15,7 +15,7 @@ namespace Extensions
         public Transform target;
 
         [Tooltip("The offset from the target's position.")]
-        public Vector3 offset = new Vector3(0, 0, -10);
+        public Vector3 offset = new(0, 0, -10);
 
         [Header("Follow Behavior")] [Tooltip("If true, the camera will follow the target on the X axis.")]
         public bool followX = true;

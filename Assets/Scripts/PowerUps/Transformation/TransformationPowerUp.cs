@@ -1,9 +1,7 @@
 ﻿using GabrielBigardi.SpriteAnimator;
+using Player.Interfaces;
 using PowerUps._Base;
 using UnityEngine;
-using Weapons.Services;
-using Player.Components;
-using Player.Interfaces;
 using Weapons;
 
 namespace PowerUps.Transformation
@@ -11,8 +9,8 @@ namespace PowerUps.Transformation
     public class TransformationPowerUp : IPowerUp
     {
         private readonly SpriteAnimationObject _animationObject;
-        private readonly Sprite _transitionTexture;
         private readonly WeaponType _transformationWeapon;
+        private readonly Sprite _transitionTexture;
 
         public TransformationPowerUp(SpriteAnimationObject animationObject, Sprite transitionTexture,
             WeaponType transformationWeapon = WeaponType.Fireball)
@@ -21,11 +19,11 @@ namespace PowerUps.Transformation
             _transitionTexture = transitionTexture;
             _transformationWeapon = transformationWeapon;
         }
-        
+
         public void ApplyPowerUp(GameObject player)
         {
             ITransformationCoordinator transformationManager = player.GetComponent<ITransformationCoordinator>();
-            
+
             transformationManager?.ApplyTransformation(_animationObject, _transitionTexture, _transformationWeapon);
         }
     }

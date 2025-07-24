@@ -1,6 +1,5 @@
 using Projectiles;
 using UnityEngine;
-using Weapons;
 using Weapons.Interfaces;
 
 namespace Weapons.Models
@@ -8,8 +7,7 @@ namespace Weapons.Models
     public class FireballWeapon : MonoBehaviour, IUseableWeapon
     {
         [SerializeField] private WeaponType weaponType = WeaponType.Fireball;
-        public WeaponType WeaponType => weaponType;
-        
+
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.3f;
         [SerializeField] private FireballPool fireballPool;
@@ -17,6 +15,7 @@ namespace Weapons.Models
         private float _nextFireTime;
 
         public bool IsEquipped { get; private set; }
+        public WeaponType WeaponType => weaponType;
 
         public void Shoot()
         {

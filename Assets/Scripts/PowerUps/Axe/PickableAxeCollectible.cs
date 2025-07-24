@@ -1,4 +1,3 @@
-using Collectables._Base;
 using PowerUps._Base;
 
 namespace PowerUps.Axe

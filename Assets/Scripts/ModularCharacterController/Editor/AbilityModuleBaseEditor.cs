@@ -17,7 +17,7 @@ namespace ModularCharacterController.Editor
         private void OnEnable()
         {
             _abilityDefinedModifiersProperty = serializedObject.FindProperty("abilityDefinedModifiers");
-            _modifierList = new ModularCharacterController.Editor.ReorderableModifierList(serializedObject, _abilityDefinedModifiersProperty);
+            _modifierList = new ReorderableModifierList(serializedObject, _abilityDefinedModifiersProperty);
         }
 
         public override void OnInspectorGUI()

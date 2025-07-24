@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.Pool;
-using TMPro;
 
 namespace Collectables.Score
 {

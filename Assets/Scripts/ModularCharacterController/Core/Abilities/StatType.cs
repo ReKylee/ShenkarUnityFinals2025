@@ -21,7 +21,7 @@
         JumpBufferTime,
 
         // Physics
-        GravityScale,
+        GravityScale
 
 
     }

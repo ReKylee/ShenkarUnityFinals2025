@@ -1,7 +1,5 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using VContainer;
-using Core.Events;
 
 namespace Collectables.Score
 {
@@ -10,16 +8,6 @@ namespace Collectables.Score
         [SerializeField] private ScoreView view;
 
         private IScoreService _scoreService;
-
-        #region VContainer Injection
-
-        [Inject]
-        public void Construct(IScoreService scoreService)
-        {
-            _scoreService = scoreService;
-        }
-
-        #endregion
 
         private void Start()
         {
@@ -39,12 +27,23 @@ namespace Collectables.Score
             ScoreCollectable.OnScoreCollected -= HandleScoreCollected;
         }
 
+        #region VContainer Injection
+
+        [Inject]
+        public void Construct(IScoreService scoreService)
+        {
+            _scoreService = scoreService;
+        }
+
+        #endregion
+
         private void HandleScoreCollected(int scoreAmount, Vector3 position)
         {
             if (view)
             {
                 view.UpdateCountDisplay(_scoreService.CurrentScore + scoreAmount);
             }
+
             _scoreService.AddScore(scoreAmount);
         }
     }

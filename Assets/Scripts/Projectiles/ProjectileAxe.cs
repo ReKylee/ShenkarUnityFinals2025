@@ -27,7 +27,7 @@ namespace Projectiles
         {
 
             // World-space velocity = player's current velocity + desired arc velocity
-            Vector2 worldVelocity =  new Vector2(speed.x * Direction + ThrowerVelocityX, speed.y);
+            Vector2 worldVelocity = new(speed.x * Direction + ThrowerVelocityX, speed.y);
 
             // Cancel out thrower motion to isolate projectile speed
             Rb.linearVelocity = worldVelocity;

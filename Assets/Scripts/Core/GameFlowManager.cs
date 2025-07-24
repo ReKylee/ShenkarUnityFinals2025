@@ -6,31 +6,10 @@ using VContainer;
 namespace Core
 {
     /// <summary>
-    /// All aspects of game flow including state transitions, level management, and game progression.
+    ///     All aspects of game flow including state transitions, level management, and game progression.
     /// </summary>
     public class GameFlowManager : MonoBehaviour
     {
-
-        #region Fields
-
-        [Header("Game Settings")] [SerializeField]
-        private bool autoStartGame = true;
-
-        [SerializeField] private float restartDelay = 2f;
-
-        private GameState _currentState = GameState.MainMenu;
-        private string _currentLevelName = "Unknown";
-        private float _levelStartTime;
-        private IEventBus _eventBus;
-
-        #endregion
-
-        #region Properties
-
-        public GameState CurrentState => _currentState;
-        public bool IsPlaying => _currentState == GameState.Playing;
-
-        #endregion
 
         #region VContainer Injection
 
@@ -40,6 +19,27 @@ namespace Core
             _eventBus = eventBus;
             SubscribeToEvents();
         }
+
+        #endregion
+
+        #region Fields
+
+        [Header("Game Settings")] [SerializeField]
+        private bool autoStartGame = true;
+
+        [SerializeField] private float restartDelay = 2f;
+
+        private string _currentLevelName = "Unknown";
+        private float _levelStartTime;
+        private IEventBus _eventBus;
+
+        #endregion
+
+        #region Properties
+
+        public GameState CurrentState { get; private set; } = GameState.MainMenu;
+
+        public bool IsPlaying => CurrentState == GameState.Playing;
 
         #endregion
 
@@ -74,13 +74,13 @@ namespace Core
 
         public void PauseGame()
         {
-            if (_currentState == GameState.Playing)
+            if (CurrentState == GameState.Playing)
                 ChangeState(GameState.Paused);
         }
 
         public void ResumeGame()
         {
-            if (_currentState == GameState.Paused)
+            if (CurrentState == GameState.Paused)
                 ChangeState(GameState.Playing);
         }
 
@@ -128,7 +128,6 @@ namespace Core
             });
         }
 
-
         #endregion
 
         #region Event Handlers
@@ -164,10 +163,10 @@ namespace Core
 
         private void ChangeState(GameState newState)
         {
-            if (_currentState == newState) return;
+            if (CurrentState == newState) return;
 
-            GameState oldState = _currentState;
-            _currentState = newState;
+            GameState oldState = CurrentState;
+            CurrentState = newState;
 
             // Publish state change event
             _eventBus?.Publish(new GameStateChangedEvent
@@ -184,10 +183,7 @@ namespace Core
             }
         }
 
-        private string GetCurrentLevelName()
-        {
-            return SceneManager.GetActiveScene().name;
-        }
+        private string GetCurrentLevelName() => SceneManager.GetActiveScene().name;
 
         private void PublishLevelStartedEvent()
         {

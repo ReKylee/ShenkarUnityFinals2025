@@ -1,30 +1,28 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Weapons.Interfaces;
-using Weapons;
 
 namespace Weapons.Services
 {
     /// <summary>
-    /// Service that manages weapon switching logic according to Adventure Island 3 mechanics
-    /// All weapons are always available - power-ups just switch between them
+    ///     Service that manages weapon switching logic according to Adventure Island 3 mechanics
+    ///     All weapons are always available - power-ups just switch between them
     /// </summary>
     public class WeaponManagerService : MonoBehaviour
     {
-        private Dictionary<WeaponType, IWeapon> _weaponMap;
-
-        private WeaponType _currentPrimaryWeapon;
-        private WeaponType _activeWeapon;
-        private bool _isUsingTemporaryWeapon;
 
         [Header("Attack Settings")] [SerializeField]
         public bool canAttack;
 
+        private Dictionary<WeaponType, IWeapon> _weaponMap;
 
-        public event Action<WeaponType> OnWeaponChanged;
-        public event Action<WeaponType> OnPrimaryWeaponChanged;
+        public WeaponType CurrentPrimaryWeapon { get; private set; }
+
+        public WeaponType ActiveWeapon { get; private set; }
+
+        public bool IsUsingTemporaryWeapon { get; private set; }
 
         private void Start()
         {
@@ -35,13 +33,13 @@ namespace Weapons.Services
             UnequipAllWeapons();
         }
 
-        public WeaponType CurrentPrimaryWeapon => _currentPrimaryWeapon;
-        public WeaponType ActiveWeapon => _activeWeapon;
-        public bool IsUsingTemporaryWeapon => _isUsingTemporaryWeapon;
+
+        public event Action<WeaponType> OnWeaponChanged;
+        public event Action<WeaponType> OnPrimaryWeaponChanged;
 
 
         /// <summary>
-        /// Switch to a new primary weapon (Axe or Boomerang)
+        ///     Switch to a new primary weapon (Axe or Boomerang)
         /// </summary>
         public void SwitchToPrimaryWeapon(WeaponType weaponType)
         {
@@ -54,72 +52,72 @@ namespace Weapons.Services
             }
 
             // Unequip current primary weapon if not using temporary weapon
-            if (!_isUsingTemporaryWeapon && _currentPrimaryWeapon != WeaponType.None)
+            if (!IsUsingTemporaryWeapon && CurrentPrimaryWeapon != WeaponType.None)
             {
-                UnequipWeapon(_currentPrimaryWeapon);
+                UnequipWeapon(CurrentPrimaryWeapon);
             }
 
             // Set new primary weapon
-            _currentPrimaryWeapon = weaponType;
-            OnPrimaryWeaponChanged?.Invoke(_currentPrimaryWeapon);
+            CurrentPrimaryWeapon = weaponType;
+            OnPrimaryWeaponChanged?.Invoke(CurrentPrimaryWeapon);
 
             // If not using temporary weapon, equip the new primary weapon
-            if (!_isUsingTemporaryWeapon)
+            if (!IsUsingTemporaryWeapon)
             {
-                EquipWeapon(_currentPrimaryWeapon);
-                _activeWeapon = _currentPrimaryWeapon;
-                OnWeaponChanged?.Invoke(_activeWeapon);
+                EquipWeapon(CurrentPrimaryWeapon);
+                ActiveWeapon = CurrentPrimaryWeapon;
+                OnWeaponChanged?.Invoke(ActiveWeapon);
             }
         }
 
         /// <summary>
-        /// Temporarily switch to a specified weapon (overrides current weapon)
+        ///     Temporarily switch to a specified weapon (overrides current weapon)
         /// </summary>
         /// <param name="weaponType">The weapon type to switch to (defaults to Fireball if not specified)</param>
         public void SwitchToTemporaryWeapon(WeaponType weaponType = WeaponType.Fireball)
         {
             // Unequip current active weapon
-            if (_activeWeapon != WeaponType.None)
+            if (ActiveWeapon != WeaponType.None)
             {
-                UnequipWeapon(_activeWeapon);
+                UnequipWeapon(ActiveWeapon);
             }
 
             // Equip the specified weapon
             EquipWeapon(weaponType);
-            _activeWeapon = weaponType;
-            _isUsingTemporaryWeapon = true;
+            ActiveWeapon = weaponType;
+            IsUsingTemporaryWeapon = true;
 
-            OnWeaponChanged?.Invoke(_activeWeapon);
+            OnWeaponChanged?.Invoke(ActiveWeapon);
         }
 
         /// <summary>
-        /// Stop using temporary weapon and revert to primary weapon
+        ///     Stop using temporary weapon and revert to primary weapon
         /// </summary>
         public void RevertFromTemporaryWeapon()
         {
-            if (!_isUsingTemporaryWeapon)
+            if (!IsUsingTemporaryWeapon)
             {
                 Debug.LogWarning("WeaponManagerService: Not currently using temporary weapon");
                 return;
             }
 
             // Unequip fireball weapon
-            UnequipWeapon(_activeWeapon);
+            UnequipWeapon(ActiveWeapon);
 
-            _isUsingTemporaryWeapon = false;
+            IsUsingTemporaryWeapon = false;
 
             // Equip primary weapon if we have one
-            if (_currentPrimaryWeapon != WeaponType.None)
+            if (CurrentPrimaryWeapon != WeaponType.None)
             {
-                EquipWeapon(_currentPrimaryWeapon);
-                _activeWeapon = _currentPrimaryWeapon;
+                EquipWeapon(CurrentPrimaryWeapon);
+                ActiveWeapon = CurrentPrimaryWeapon;
             }
             else
             {
-                _activeWeapon = WeaponType.None;
+                ActiveWeapon = WeaponType.None;
             }
 
-            OnWeaponChanged?.Invoke(_activeWeapon);
+            OnWeaponChanged?.Invoke(ActiveWeapon);
         }
 
         private void EquipWeapon(WeaponType weaponType)
@@ -147,11 +145,9 @@ namespace Weapons.Services
         }
 
         /// <summary>
-        /// For debugging - get current weapon status
+        ///     For debugging - get current weapon status
         /// </summary>
-        public string GetWeaponStatus()
-        {
-            return $"Primary: {_currentPrimaryWeapon}, Active: {_activeWeapon}, Temporary: {_isUsingTemporaryWeapon}";
-        }
+        public string GetWeaponStatus() =>
+            $"Primary: {CurrentPrimaryWeapon}, Active: {ActiveWeapon}, Temporary: {IsUsingTemporaryWeapon}";
     }
 }
