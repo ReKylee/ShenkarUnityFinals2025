@@ -3,6 +3,15 @@
   <component name="CopilotDiffPersistence">
     <option name="pendingDiffs">
       <map>
+        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/EnemyDeath.cs">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/EnemyDeath.cs" />
+              <option name="originalContent" value="&#10;" />
+              <option name="updatedContent" value="using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Disables the enemy GameObject forever when Die() is called&#10;    public class EnemyDeath : MonoBehaviour&#10;    {&#10;        private Health.Interfaces.IHealthEvents _healthEvents;&#10;&#10;        private void Awake()&#10;        {&#10;            _healthEvents = GetComponent&lt;Health.Interfaces.IHealthEvents&gt;();&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath += Die;&#10;        }&#10;&#10;        private void OnDestroy()&#10;        {&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath -= Die;&#10;        }&#10;&#10;        public void Die()&#10;        {&#10;            gameObject.SetActive(false);&#10;        }&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/FrogProximityJump.cs">
           <value>
             <PendingDiffInfo>
@@ -30,6 +39,15 @@
             </PendingDiffInfo>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/RespawningEnemyDeath.cs">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/RespawningEnemyDeath.cs" />
+              <option name="originalContent" value="using UnityEngine;&#10;using System.Collections;&#10;using Health.Interfaces;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Disables the enemy GameObject, then respawns it at the same position after a delay&#10;    public class RespawningEnemyDeath : MonoBehaviour&#10;    {&#10;        [SerializeField] private float respawnDelay = 3f;&#10;        private Vector3 _respawnPosition;&#10;        private Quaternion _respawnRotation;&#10;        private Coroutine _respawnCoroutine;&#10;        private IHealthEvents _healthEvents;&#10;&#10;        private void Awake()&#10;        {&#10;            _respawnPosition = transform.position;&#10;            _respawnRotation = transform.rotation;&#10;            _healthEvents = GetComponent&lt;IHealthEvents&gt;();&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath += Die;&#10;        }&#10;&#10;        private void OnDestroy()&#10;        {&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath -= Die;&#10;        }&#10;&#10;        private void Die()&#10;        {&#10;            _respawnCoroutine ??= StartCoroutine(RespawnRoutine());&#10;        }&#10;&#10;        private IEnumerator RespawnRoutine()&#10;        {&#10;            gameObject.SetActive(false);&#10;            yield return new WaitForSeconds(respawnDelay);&#10;            transform.position = _respawnPosition;&#10;            transform.rotation = _respawnRotation;&#10;            gameObject.SetActive(true);&#10;            _respawnCoroutine = null;&#10;        }&#10;    }&#10;}&#10;" />
+              <option name="updatedContent" value="using UnityEngine;&#10;using System.Collections;&#10;using Health.Interfaces;&#10;using System.Threading.Tasks;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Disables the enemy GameObject, then respawns it at the same position after a delay&#10;    public class RespawningEnemyDeath : MonoBehaviour&#10;    {&#10;        [SerializeField] private float respawnDelay = 3f;&#10;        private Vector3 _respawnPosition;&#10;        private Quaternion _respawnRotation;&#10;        private IHealthEvents _healthEvents;&#10;&#10;        private void Awake()&#10;        {&#10;            _respawnPosition = transform.position;&#10;            _respawnRotation = transform.rotation;&#10;            _healthEvents = GetComponent&lt;IHealthEvents&gt;();&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath += Die;&#10;        }&#10;&#10;        private void OnDestroy()&#10;        {&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath -= Die;&#10;        }&#10;&#10;        private void Die()&#10;        {&#10;            if (_respawnCoroutine == null)&#10;            {&#10;                _ = RespawnTask();&#10;            }&#10;        }&#10;&#10;        private async Task RespawnTask()&#10;        {&#10;            gameObject.SetActive(false);&#10;            await Task.Delay((int)(respawnDelay * 1000f));&#10;            transform.position = _respawnPosition;&#10;            transform.rotation = _respawnRotation;&#10;            gameObject.SetActive(true);&#10;        }&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/VerticalMover.cs">
           <value>
             <PendingDiffInfo>
@@ -48,11 +66,44 @@
             </PendingDiffInfo>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyAttackController.cs">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyAttackController.cs" />
+              <option name="updatedContent" value="using UnityEngine;&#10;using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Handles all attack behaviors for an enemy&#10;    public class EnemyAttackController : MonoBehaviour&#10;    {&#10;        private IAttackBehavior[] _attackBehaviors;&#10;&#10;        private void Awake()&#10;        {&#10;            _attackBehaviors = GetComponents&lt;IAttackBehavior&gt;();&#10;        }&#10;&#10;        private void LateUpdate()&#10;        {&#10;            foreach (var attack in _attackBehaviors)&#10;                attack.Attack();&#10;        }&#10;    }&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyBehaviorController.cs">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyBehaviorController.cs" />
+              <option name="originalContent" value="using UnityEngine;&#10;using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Wires up modular behaviors. Attach this to any enemy prefab.&#10;    public class EnemyBehaviorController : MonoBehaviour&#10;    {&#10;        private IMovementBehavior[] _movementBehaviors;&#10;        private IAttackBehavior[] _attackBehaviors;&#10;        private ITriggerBehavior[] _triggerBehaviors;&#10;&#10;        private void Awake()&#10;        {&#10;            _movementBehaviors = GetComponents&lt;IMovementBehavior&gt;();&#10;            _attackBehaviors = GetComponents&lt;IAttackBehavior&gt;();&#10;            _triggerBehaviors = GetComponents&lt;ITriggerBehavior&gt;();&#10;        }&#10;&#10;        private void Update()&#10;        {&#10;            foreach (ITriggerBehavior trigger in _triggerBehaviors) trigger.CheckTrigger();&#10;            foreach (IMovementBehavior move in _movementBehaviors) move.Move();&#10;            foreach (IAttackBehavior attack in _attackBehaviors) attack.Attack();&#10;        }&#10;    }&#10;}&#10;" />
+              <option name="updatedContent" value="using UnityEngine;&#10;using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Coordinates modular behaviors. Attach this to any enemy prefab.&#10;    public class EnemyBehaviorController : MonoBehaviour&#10;    {&#10;        private IMovementBehavior[] _movementBehaviors;&#10;        private IAttackBehavior[] _attackBehaviors;&#10;        private ITriggerBehavior[] _triggerBehaviors;&#10;&#10;        private void Awake()&#10;        {&#10;            _movementBehaviors = GetComponents&lt;IMovementBehavior&gt;();&#10;            _attackBehaviors = GetComponents&lt;IAttackBehavior&gt;();&#10;            _triggerBehaviors = GetComponents&lt;ITriggerBehavior&gt;();&#10;        }&#10;&#10;        private void Update()&#10;        {&#10;            foreach (ITriggerBehavior trigger in _triggerBehaviors) trigger.CheckTrigger();&#10;        }&#10;&#10;        private void FixedUpdate()&#10;        {&#10;            foreach (IMovementBehavior move in _movementBehaviors) move.Move();&#10;        }&#10;&#10;        private void LateUpdate()&#10;        {&#10;            foreach (IAttackBehavior attack in _attackBehaviors) attack.Attack();&#10;        }&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyController.cs">
           <value>
             <PendingDiffInfo>
               <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyController.cs" />
               <option name="updatedContent" value="using UnityEngine;&#10;using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Wires up modular behaviors. Attach this to any enemy prefab.&#10;    public class EnemyController : MonoBehaviour&#10;    {&#10;        private IMovementBehavior[] _movementBehaviors;&#10;        private IAttackBehavior[] _attackBehaviors;&#10;        private ITriggerBehavior[] _triggerBehaviors;&#10;&#10;        private void Awake()&#10;        {&#10;            _movementBehaviors = GetComponents&lt;IMovementBehavior&gt;();&#10;            _attackBehaviors = GetComponents&lt;IAttackBehavior&gt;();&#10;            _triggerBehaviors = GetComponents&lt;ITriggerBehavior&gt;();&#10;        }&#10;&#10;        private void Update()&#10;        {&#10;            foreach (var trigger in _triggerBehaviors) trigger.CheckTrigger();&#10;            foreach (var move in _movementBehaviors) move.Move();&#10;            foreach (var attack in _attackBehaviors) attack.Attack();&#10;        }&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyMovementController.cs">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyMovementController.cs" />
+              <option name="updatedContent" value="using UnityEngine;&#10;using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Handles all movement behaviors for an enemy&#10;    public class EnemyMovementController : MonoBehaviour&#10;    {&#10;        private IMovementBehavior[] _movementBehaviors;&#10;&#10;        private void Awake()&#10;        {&#10;            _movementBehaviors = GetComponents&lt;IMovementBehavior&gt;();&#10;        }&#10;&#10;        private void FixedUpdate()&#10;        {&#10;            foreach (var move in _movementBehaviors)&#10;                move.Move();&#10;        }&#10;    }&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyTriggerController.cs">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyTriggerController.cs" />
+              <option name="updatedContent" value="using UnityEngine;&#10;using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Handles all trigger behaviors for an enemy&#10;    public class EnemyTriggerController : MonoBehaviour&#10;    {&#10;        private ITriggerBehavior[] _triggerBehaviors;&#10;&#10;        private void Awake()&#10;        {&#10;            _triggerBehaviors = GetComponents&lt;ITriggerBehavior&gt;();&#10;        }&#10;&#10;        private void Update()&#10;        {&#10;            foreach (var trigger in _triggerBehaviors)&#10;                trigger.CheckTrigger();&#10;        }&#10;    }&#10;}&#10;" />
             </PendingDiffInfo>
           </value>
         </entry>

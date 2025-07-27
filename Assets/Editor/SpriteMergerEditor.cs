@@ -786,14 +786,11 @@ namespace Editor
                 {
                     if (prop.propertyType == SerializedPropertyType.ObjectReference &&
                         prop.objectReferenceValue is Sprite oldSprite &&
-                        oldSprite != null &&
+                        oldSprite &&
                         spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
                     {
                         // Store original reference for potential undo
-                        if (!OriginalReferences.ContainsKey(asset))
-                        {
-                            OriginalReferences[asset] = oldSprite;
-                        }
+                        OriginalReferences.TryAdd(asset, oldSprite);
 
                         prop.objectReferenceValue = newSprite;
                         assetModified = true;

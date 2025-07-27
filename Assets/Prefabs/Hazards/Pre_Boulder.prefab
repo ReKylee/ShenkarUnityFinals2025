@@ -11,13 +11,13 @@ GameObject:
   - component: {fileID: 3057967514986733344}
   - component: {fileID: 2969160970230694506}
   - component: {fileID: 7313516828582975902}
-  - component: {fileID: 3185177405978327956}
   - component: {fileID: 7486466874680489317}
   - component: {fileID: 4526163897664834340}
   - component: {fileID: 3763460406479727838}
   - component: {fileID: 1358734936208528288}
   - component: {fileID: 3128153927308964738}
   - component: {fileID: 5513100927146761421}
+  - component: {fileID: 276726764249970461}
   m_Layer: 7
   m_Name: Pre_Boulder
   m_TagString: Untagged
@@ -131,18 +131,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &3185177405978327956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3362448756760223544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d7edd465c6fe424cae6c5bc1d8ddbfc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7486466874680489317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,3 +230,15 @@ MonoBehaviour:
   sourceLayers:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &276726764249970461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3362448756760223544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0469d5816dd54d2089ff0ac4268f9a96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
