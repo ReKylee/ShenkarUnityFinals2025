@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 5383650695978721937}
   - component: {fileID: 5552104572248172135}
   - component: {fileID: 7315043283670872466}
-  - component: {fileID: 3614968127464465895}
+  - component: {fileID: 3105674932958471287}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -434,7 +434,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33d908d79be14411a162b075c8f1a012, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startActive: 0
 --- !u!114 &7315043283670872466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -447,7 +446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5a3a475e2c447c8970edae60029e42e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3614968127464465895
+--- !u!114 &3105674932958471287
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -456,13 +455,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3926891512402252426}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83f01dad4a9c47cc97a453fbd9f3c0a3, type: 3}
+  m_Script: {fileID: 11500000, guid: d2634fe20194456d9703578c1408b405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageAmount: 9999
-  targetLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  damageAmount: 1
+  interval: 3
 --- !u!1 &5139845219191842715
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,7 +585,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01bc17a5e2c46e09bf9102bf484c5d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canAttack: 1
 --- !u!114 &5692119513404325601
 MonoBehaviour:
   m_ObjectHideFlags: 0

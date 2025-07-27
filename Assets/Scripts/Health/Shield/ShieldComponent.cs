@@ -5,14 +5,8 @@ using UnityEngine;
 namespace Health.Shield
 {
     [DisallowMultipleComponent]
-    public class ShieldComponent : MonoBehaviour, IShield
+    public class ShieldComponent : MonoBehaviour, IShield, IDamageDealer
     {
-        [SerializeField] private bool startActive = true;
-
-        private void Awake()
-        {
-            IsActive = startActive;
-        }
         public bool IsActive { get; private set; }
         public event Action<int> OnShieldBroken;
 
@@ -26,5 +20,6 @@ namespace Health.Shield
             IsActive = false;
             OnShieldBroken?.Invoke(damageAmount);
         }
+        public int GetDamageAmount() => IsActive ? 1 : 0;
     }
 }

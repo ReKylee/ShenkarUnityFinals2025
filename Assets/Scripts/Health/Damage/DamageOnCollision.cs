@@ -3,12 +3,13 @@ using UnityEngine;
 
 namespace Health.Damage
 {
-    // Example: Attach this to hazards or damaging objects
     [DisallowMultipleComponent]
     public class DamageOnCollision : MonoBehaviour
     {
         private IDamageDealer _dealer;
         private DamageConditionsComponent _damageConditions;
+
+        [SerializeField] private LayerMask targetLayers = ~0; // All layers by default
 
         private void Awake()
         {
@@ -19,10 +20,11 @@ namespace Health.Damage
         private void OnCollisionEnter2D(Collision2D collision)
         {
             GameObject target = collision.gameObject;
+            if (((1 << target.layer) & targetLayers) == 0)
+                return;
             IDamageable damageable = target.GetComponent<IDamageable>();
             if (damageable == null) return;
 
-            // If hazard has conditions, check them
             if (_damageConditions && !_damageConditions.CanBeDamagedBy(target))
                 return;
 

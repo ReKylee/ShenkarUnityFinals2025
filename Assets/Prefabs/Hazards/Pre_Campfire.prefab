@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 7233946428582052696}
   - component: {fileID: 5983096423636023091}
   - component: {fileID: 219558243741594734}
+  - component: {fileID: 2406202706731065291}
   m_Layer: 7
   m_Name: Pre_Campfire
   m_TagString: Untagged
@@ -192,6 +193,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageConditions:
   - {fileID: 7233946428582052696}
+  - {fileID: 2406202706731065291}
 --- !u!114 &7233946428582052696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,6 +218,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9785b48f20d94f7ea97b4f77e843c496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &219558243741594734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,3 +234,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp: 1
+--- !u!114 &2406202706731065291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8363118166971722726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb02d20114c409386f1d4aeea3e0e64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
