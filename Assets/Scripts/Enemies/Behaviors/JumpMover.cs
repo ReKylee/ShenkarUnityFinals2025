@@ -12,6 +12,7 @@ namespace Enemies.Behaviors
         [SerializeField] private float jumpInterval = 2f;
         private Rigidbody2D _rb;
         private float _nextJumpTime;
+        private bool _grounded;
 
         private void Awake()
         {
@@ -19,18 +20,25 @@ namespace Enemies.Behaviors
             _nextJumpTime = Time.time + jumpInterval;
         }
 
-        public void Move()
+        private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (Time.time >= _nextJumpTime && IsGrounded())
-            {
-                _rb.linearVelocity = new Vector2(jumpForceX, jumpForceY);
-                _nextJumpTime = Time.time + jumpInterval;
-            }
+            // Consider any collision as grounded (customize layer/tag if needed)
+            _grounded = true;
         }
 
-        private bool IsGrounded()
+        private void OnCollisionExit2D(Collision2D collision)
         {
-            return Physics2D.Raycast(transform.position, Vector2.down, 0.1f);
+            _grounded = false;
+        }
+
+        public void Move()
+        {
+            if (Time.time >= _nextJumpTime && _grounded)
+            {
+                Vector2 jumpDir = new Vector2(transform.localScale.x * jumpForceX, jumpForceY);
+                _rb.linearVelocity = jumpDir;
+                _nextJumpTime = Time.time + jumpInterval;
+            }
         }
     }
 }

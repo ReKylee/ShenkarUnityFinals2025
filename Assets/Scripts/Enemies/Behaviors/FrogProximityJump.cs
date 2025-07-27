@@ -17,11 +17,22 @@ namespace Enemies.Behaviors
         private float _lastJumpTime;
         private Transform _player;
         private int _frameCounter;
+        private bool _grounded;
 
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
             _player = PlayerLocator.PlayerTransform;
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            _grounded = true;
+        }
+
+        private void OnCollisionExit2D(Collision2D collision)
+        {
+            _grounded = false;
         }
 
         public void CheckTrigger()
@@ -31,16 +42,13 @@ namespace Enemies.Behaviors
             if (!_player) return;
             float sqrDist = (transform.position - _player.position).sqrMagnitude;
             float sqrTrigger = triggerDistance * triggerDistance;
-            if (sqrDist < sqrTrigger && Time.time - _lastJumpTime > jumpCooldown && IsGrounded())
+            if (sqrDist < sqrTrigger && Time.time - _lastJumpTime > jumpCooldown && _grounded)
             {
-                _rb.linearVelocity = new Vector2(jumpForceX, jumpForceY);
+                // Jump in the direction the object is facing (local scale)
+                Vector2 jumpDir = new Vector2(transform.localScale.x * jumpForceX, jumpForceY);
+                _rb.linearVelocity = jumpDir;
                 _lastJumpTime = Time.time;
             }
-        }
-
-        private bool IsGrounded()
-        {
-            return Physics2D.Raycast(transform.position, Vector2.down, 0.1f);
         }
     }
 }

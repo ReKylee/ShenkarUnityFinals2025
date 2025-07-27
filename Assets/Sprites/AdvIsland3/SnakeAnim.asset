@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a77fafcc6bd2ee94ebe9ac341b986e7a, type: 3}
-  m_Name: CrowAnim
+  m_Name: SnakeAnim
   m_EditorClassIdentifier: 
   SpriteAnimations:
   - Name: Idle
-    FPS: 8
+    FPS: 4
     Frames:
-    - {fileID: 4326624705632376732, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
-    - {fileID: 7567029276475656668, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
+    - {fileID: 6509037976618118478, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
+    - {fileID: 107231184159449523, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
     SpriteAnimationType: 0

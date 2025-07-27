@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 3128153927308964738}
   - component: {fileID: 5513100927146761421}
   - component: {fileID: 276726764249970461}
+  - component: {fileID: 7190641506749828733}
   m_Layer: 7
   m_Name: Pre_Boulder
   m_TagString: Untagged
@@ -154,6 +155,7 @@ MonoBehaviour:
         children:
         - rid: 2459174924205424871
         - rid: 2459174924205424872
+        - rid: 2459174924205424931
     - rid: 2459174924205424871
       type: {class: ConditionLeaf, ns: Health.Damage, asm: Assembly-CSharp}
       data:
@@ -162,6 +164,10 @@ MonoBehaviour:
       type: {class: ConditionLeaf, ns: Health.Damage, asm: Assembly-CSharp}
       data:
         conditionBehaviour: {fileID: 4526163897664834340}
+    - rid: 2459174924205424931
+      type: {class: ConditionLeaf, ns: Health.Damage, asm: Assembly-CSharp}
+      data:
+        conditionBehaviour: {fileID: 7190641506749828733}
 --- !u!114 &4526163897664834340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,5 +248,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0469d5816dd54d2089ff0ac4268f9a96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7190641506749828733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3362448756760223544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873c9448c881438b8750e8d4209852a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
