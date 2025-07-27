@@ -782,14 +782,23 @@ namespace Editor
                 SerializedProperty prop = so.GetIterator();
                 bool assetModified = false;
 
-                if (prop.NextVisible(true))
+                while (prop.NextVisible(true))
                 {
-                    do
+                    if (prop.propertyType == SerializedPropertyType.ObjectReference &&
+                        prop.objectReferenceValue is Sprite oldSprite &&
+                        oldSprite != null &&
+                        spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
                     {
-                        int updated = UpdateSpriteReferencesRecursive(prop, spriteMap, asset);
-                        if (updated > 0) assetModified = true;
-                        count += updated;
-                    } while (prop.NextVisible(false));
+                        // Store original reference for potential undo
+                        if (!OriginalReferences.ContainsKey(asset))
+                        {
+                            OriginalReferences[asset] = oldSprite;
+                        }
+
+                        prop.objectReferenceValue = newSprite;
+                        assetModified = true;
+                        count++;
+                    }
                 }
 
                 if (assetModified)
@@ -799,37 +808,6 @@ namespace Editor
                     {
                         EditorUtility.SetDirty(asset);
                     }
-                }
-            }
-
-            return count;
-        }
-
-        // Recursively update all Sprite references in a SerializedProperty
-        private int UpdateSpriteReferencesRecursive(SerializedProperty prop, Dictionary<int, Sprite> spriteMap, Object asset)
-        {
-            int count = 0;
-            if (prop.propertyType == SerializedPropertyType.ObjectReference &&
-                prop.objectReferenceValue is Sprite oldSprite &&
-                oldSprite != null &&
-                spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
-            {
-                if (!OriginalReferences.ContainsKey(asset))
-                {
-                    OriginalReferences[asset] = oldSprite;
-                }
-                prop.objectReferenceValue = newSprite;
-                count++;
-            }
-            // Recursively check children
-            if (prop.hasVisibleChildren)
-            {
-                SerializedProperty child = prop.Copy();
-                bool enterChildren = true;
-                while (child.NextVisible(enterChildren) && child.propertyPath.StartsWith(prop.propertyPath))
-                {
-                    count += UpdateSpriteReferencesRecursive(child, spriteMap, asset);
-                    enterChildren = false;
                 }
             }
 
