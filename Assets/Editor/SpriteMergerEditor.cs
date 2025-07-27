@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -5,34 +6,41 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.U2D.Sprites;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
+
+// REQUIRED: The "2D Sprite" package must be installed via the Package Manager for this to compile.
 
 namespace Editor
 {
     public class SpriteMergerEditor : EditorWindow
     {
-        private readonly List<Sprite> _spritesToMerge = new List<Sprite>();
-        private string _outputFileName = "MergedSpriteAtlas";
-        private int _padding = 2;
-        private int _maxAtlasSize = 4096;
-        private bool _updateScenes = true;
-        private bool _updatePrefabs = true;
-        private bool _updateScriptableObjects = true;
-        private bool _makeBackup = true;
-        private Vector2 _scrollPosition;
+
+        // Undo tracking
+        private static readonly string UndoGroupName = "Sprite Atlas Merge";
+        private static readonly Dictionary<Object, Object> OriginalReferences = new();
+        [SerializeField] private List<string> createdAssetPaths = new();
+        [SerializeField] private string outputFileName = "MergedSpriteAtlas";
+        private readonly List<Sprite> _spritesToMerge = new();
         private FilterMode _filterMode = FilterMode.Point;
+        private bool _makeBackup = true;
+        private int _maxAtlasSize = 4096;
+        private int _padding = 2;
+        private Vector2 _scrollPosition;
         private TextureFormat _textureFormat = TextureFormat.RGBA32;
+        private bool _updatePrefabs = true;
+        private bool _updateScenes = true;
+        private bool _updateScriptableObjects = true;
 
-        [MenuItem("Tools/Enhanced Sprite Atlas Merger")]
-        public static void ShowWindow()
+        private void OnGUI()
         {
-            GetWindow<SpriteMergerEditor>("Enhanced Atlas Merger");
-        }
+            GUILayout.Label("Sprite Atlas Merger", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                "Merge multiple sprite sheets into a single atlas and update ALL project references automatically.",
+                MessageType.Info);
 
-        void OnGUI()
-        {
-            GUILayout.Label("Enhanced Sprite Atlas Merger", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox("Merge multiple sprite sheets into a single atlas and update ALL project references automatically.", MessageType.Info);
-            EditorGUILayout.HelpBox("IMPORTANT: This tool requires the '2D Sprite' package. Make backups before use!", MessageType.Warning);
+            EditorGUILayout.HelpBox("IMPORTANT: This tool requires the '2D Sprite' package. Make backups before use!",
+                MessageType.Warning);
 
             DrawSpriteList();
             DrawOutputSettings();
@@ -40,14 +48,22 @@ namespace Editor
             DrawMergeButton();
         }
 
+        [MenuItem("Tools/Sprite Atlas Merger")]
+        public static void ShowWindow()
+        {
+            GetWindow<SpriteMergerEditor>("Atlas Merger");
+        }
+
         private void DrawSpriteList()
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             GUILayout.Label($"Sprites to Merge ({_spritesToMerge.Count})", EditorStyles.centeredGreyMiniLabel);
-        
+
             // Drag and drop area
             Rect dropArea = GUILayoutUtility.GetRect(0.0f, 60.0f, GUILayout.ExpandWidth(true));
-            GUI.Box(dropArea, "Drag & Drop Sprites or Textures Here\n(Individual sprites or entire sprite sheets)", EditorStyles.helpBox);
+            GUI.Box(dropArea, "Drag & Drop Sprites or Textures Here\n(Individual sprites or entire sprite sheets)",
+                EditorStyles.helpBox);
+
             ProcessDragAndDrop(dropArea);
 
             // Sprite list with scroll view
@@ -59,22 +75,25 @@ namespace Editor
                     _spritesToMerge.RemoveAt(i);
                     continue;
                 }
-            
+
                 EditorGUILayout.BeginHorizontal();
                 _spritesToMerge[i] = (Sprite)EditorGUILayout.ObjectField(_spritesToMerge[i], typeof(Sprite), false);
-            
+
                 // Show source texture info
                 if (_spritesToMerge[i] != null)
                 {
-                    GUILayout.Label($"[{_spritesToMerge[i].texture.name}]", EditorStyles.miniLabel, GUILayout.Width(100));
+                    GUILayout.Label($"[{_spritesToMerge[i].texture.name}]", EditorStyles.miniLabel,
+                        GUILayout.Width(100));
                 }
-            
+
                 if (GUILayout.Button("Remove", GUILayout.Width(60)))
                 {
                     _spritesToMerge.RemoveAt(i);
                 }
+
                 EditorGUILayout.EndHorizontal();
             }
+
             EditorGUILayout.EndScrollView();
 
             // Control buttons
@@ -83,14 +102,17 @@ namespace Editor
             {
                 AddSelectedSprites();
             }
+
             if (GUILayout.Button("Add All from Folders"))
             {
                 AddSpritesFromSelectedFolders();
             }
+
             if (GUILayout.Button("Clear All"))
             {
                 _spritesToMerge.Clear();
             }
+
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
         }
@@ -99,15 +121,16 @@ namespace Editor
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             GUILayout.Label("Atlas Settings", EditorStyles.centeredGreyMiniLabel);
-        
-            _outputFileName = EditorGUILayout.TextField("Output File Name", _outputFileName);
+
+            outputFileName = EditorGUILayout.TextField("Output File Name", outputFileName);
             _padding = EditorGUILayout.IntSlider("Padding", _padding, 0, 10);
-            _maxAtlasSize = EditorGUILayout.IntPopup("Max Atlas Size", _maxAtlasSize, 
-                new string[] { "1024", "2048", "4096", "8192" }, 
-                new int[] { 1024, 2048, 4096, 8192 });
+            _maxAtlasSize = EditorGUILayout.IntPopup("Max Atlas Size", _maxAtlasSize,
+                new[] { "1024", "2048", "4096", "8192" },
+                new[] { 1024, 2048, 4096, 8192 });
+
             _filterMode = (FilterMode)EditorGUILayout.EnumPopup("Filter Mode", _filterMode);
             _textureFormat = (TextureFormat)EditorGUILayout.EnumPopup("Texture Format", _textureFormat);
-        
+
             EditorGUILayout.EndVertical();
         }
 
@@ -115,12 +138,27 @@ namespace Editor
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             GUILayout.Label("Reference Update Options", EditorStyles.centeredGreyMiniLabel);
-        
-            _updateScenes = EditorGUILayout.Toggle("Update Scene References", _updateScenes);
-            _updatePrefabs = EditorGUILayout.Toggle("Update Prefab References", _updatePrefabs);
-            _updateScriptableObjects = EditorGUILayout.Toggle("Update ScriptableObject References", _updateScriptableObjects);
-            _makeBackup = EditorGUILayout.Toggle("Create Backup Before Merge", _makeBackup);
-        
+
+            EditorGUILayout.BeginHorizontal();
+            _updateScenes = EditorGUILayout.Toggle(_updateScenes, GUILayout.Width(20));
+            GUILayout.Label("Update Scene References", GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            _updatePrefabs = EditorGUILayout.Toggle(_updatePrefabs, GUILayout.Width(20));
+            GUILayout.Label("Update Prefab References", GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            _updateScriptableObjects = EditorGUILayout.Toggle(_updateScriptableObjects, GUILayout.Width(20));
+            GUILayout.Label("Update ScriptableObject References", GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            _makeBackup = EditorGUILayout.Toggle(_makeBackup, GUILayout.Width(20));
+            GUILayout.Label("Create Backup Before Merge", GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
             EditorGUILayout.EndVertical();
         }
 
@@ -133,13 +171,16 @@ namespace Editor
                 {
                     if (_makeBackup && !CreateBackup())
                     {
-                        EditorUtility.DisplayDialog("Backup Failed", "Could not create backup. Operation cancelled.", "OK");
+                        EditorUtility.DisplayDialog("Backup Failed", "Could not create backup. Operation cancelled.",
+                            "OK");
+
                         return;
                     }
-                
+
                     MergeSpritesIntoAtlas();
                 }
             }
+
             GUI.backgroundColor = Color.white;
         }
 
@@ -150,30 +191,31 @@ namespace Editor
                 EditorUtility.DisplayDialog("Error", "Please select at least two sprites to merge.", "OK");
                 return false;
             }
-        
-            if (string.IsNullOrEmpty(_outputFileName))
+
+            if (string.IsNullOrEmpty(outputFileName))
             {
                 EditorUtility.DisplayDialog("Error", "Please provide an output file name.", "OK");
                 return false;
             }
-        
+
             // Check for duplicate sprite names
             var duplicates = _spritesToMerge.Where(s => s != null)
                 .GroupBy(s => s.name)
                 .Where(g => g.Count() > 1)
-                .Select(g => g.Key);
-        
-            if (duplicates.Any())
+                .Select(g => g.Key)
+                .ToList();
+
+            if (duplicates.Count > 0)
             {
                 string duplicateNames = string.Join(", ", duplicates);
-                if (!EditorUtility.DisplayDialog("Duplicate Names Found", 
-                        $"Found duplicate sprite names: {duplicateNames}\n\nThis may cause reference update issues. Continue anyway?", 
+                if (!EditorUtility.DisplayDialog("Duplicate Names Found",
+                        $"Found duplicate sprite names: {duplicateNames}\n\nThis may cause reference update issues. Continue anyway?",
                         "Yes", "Cancel"))
                 {
                     return false;
                 }
             }
-        
+
             return true;
         }
 
@@ -181,15 +223,15 @@ namespace Editor
         {
             try
             {
-                string backupFolder = "Assets/SpriteAtlasBackup_" + System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string backupFolder = "Assets/SpriteAtlasBackup_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 Directory.CreateDirectory(backupFolder);
-            
+
                 // Backup original textures
                 var originalTextures = _spritesToMerge.Where(s => s != null)
                     .Select(s => s.texture)
                     .Distinct();
-            
-                foreach (var texture in originalTextures)
+
+                foreach (Texture2D texture in originalTextures)
                 {
                     string originalPath = AssetDatabase.GetAssetPath(texture);
                     if (!string.IsNullOrEmpty(originalPath))
@@ -198,12 +240,12 @@ namespace Editor
                         AssetDatabase.CopyAsset(originalPath, backupPath);
                     }
                 }
-            
+
                 AssetDatabase.Refresh();
                 Debug.Log($"Backup created at: {backupFolder}");
                 return true;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Debug.LogError($"Failed to create backup: {e.Message}");
                 return false;
@@ -246,7 +288,7 @@ namespace Editor
                 if (!string.IsNullOrEmpty(path))
                 {
                     var spritesInTexture = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>();
-                    foreach (var s in spritesInTexture)
+                    foreach (Sprite s in spritesInTexture)
                     {
                         if (s != null && !_spritesToMerge.Contains(s))
                             _spritesToMerge.Add(s);
@@ -303,8 +345,16 @@ namespace Editor
 
         private void MergeSpritesIntoAtlas()
         {
-            string outputPath = EditorUtility.SaveFilePanelInProject("Save Atlas Texture", _outputFileName, "png", "Save the merged atlas texture");
+            string outputPath = EditorUtility.SaveFilePanelInProject("Save Atlas Texture", outputFileName, "png",
+                "Save the merged atlas texture");
+
             if (string.IsNullOrEmpty(outputPath)) return;
+
+            // Begin Undo group
+            Undo.IncrementCurrentGroup();
+            Undo.SetCurrentGroupName(UndoGroupName);
+            createdAssetPaths.Clear();
+            OriginalReferences.Clear();
 
             EditorUtility.DisplayProgressBar("Creating Atlas", "Preparing sprites...", 0f);
 
@@ -330,6 +380,10 @@ namespace Editor
                 File.WriteAllBytes(outputPath, bytes);
                 AssetDatabase.Refresh();
 
+                // Track created asset for undo
+                createdAssetPaths.Add(outputPath);
+                RegisterCreatedAssetForUndo(outputPath);
+
                 EditorUtility.DisplayProgressBar("Creating Atlas", "Configuring texture importer...", 0.5f);
 
                 // Configure texture importer
@@ -344,14 +398,22 @@ namespace Editor
                 // Update all references
                 UpdateAllProjectReferences(validSprites, outputPath);
 
-                EditorUtility.DisplayDialog("Success", 
-                    $"Atlas created successfully!\n" +
+                // Collapse undo group
+                Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
+                Debug.Log("Atlas merge completed. Use Ctrl+Z to undo all changes made by this operation.");
+
+                EditorUtility.DisplayDialog("Success",
+                    "Atlas created successfully!\n" +
                     $"• Merged {validSprites.Count} sprites\n" +
                     $"• Atlas size: {atlas.width}x{atlas.height}\n" +
-                    $"• All project references updated", "OK");
+                    "• All project references updated" +
+                    "• Use Ctrl+Z to undo if needed", "OK");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
+                // Revert undo group on error
+                Undo.RevertAllInCurrentGroup();
+
                 EditorUtility.DisplayDialog("Error", $"Failed to create atlas: {e.Message}", "OK");
                 Debug.LogError($"Atlas creation failed: {e}");
             }
@@ -366,21 +428,19 @@ namespace Editor
             // Group sprites by their source texture to handle sprite sheets properly
             var textureGroups = sprites.GroupBy(s => s.texture).ToList();
             var textureRects = new List<Texture2D>();
-            var spriteToTextureMap = new Dictionary<Sprite, int>();
 
             // Create individual textures for each sprite
             for (int groupIndex = 0; groupIndex < textureGroups.Count(); groupIndex++)
             {
                 var group = textureGroups[groupIndex];
                 Texture2D sourceTexture = GetReadableTexture(group.Key);
-            
-                foreach (var sprite in group)
+
+                foreach (Sprite sprite in group)
                 {
                     // Extract sprite region from source texture
                     Texture2D spriteTexture = ExtractSpriteTexture(sourceTexture, sprite);
-                    if (spriteTexture != null)
+                    if (spriteTexture)
                     {
-                        spriteToTextureMap[sprite] = textureRects.Count;
                         textureRects.Add(spriteTexture);
                     }
                 }
@@ -389,35 +449,38 @@ namespace Editor
             if (textureRects.Count == 0) return null;
 
             // Pack textures into atlas
-            Texture2D atlas = new Texture2D(1, 1, _textureFormat, false);
-            atlas.filterMode = _filterMode;
-        
-            Rect[] packedRects = atlas.PackTextures(textureRects.ToArray(), _padding, _maxAtlasSize, false);
-        
+            Texture2D atlas = new(1, 1, _textureFormat, false)
+            {
+                filterMode = _filterMode
+            };
+
+            atlas.PackTextures(textureRects.ToArray(), _padding, _maxAtlasSize, false);
+
             return atlas;
         }
 
         private Texture2D ExtractSpriteTexture(Texture2D sourceTexture, Sprite sprite)
         {
-            if (sourceTexture == null || sprite == null) return null;
 
-            var textureRect = sprite.textureRect;
+            Rect textureRect = sprite.textureRect;
             int width = Mathf.FloorToInt(textureRect.width);
             int height = Mathf.FloorToInt(textureRect.height);
-        
+
             if (width <= 0 || height <= 0) return null;
 
-            Texture2D spriteTexture = new Texture2D(width, height, _textureFormat, false);
-            spriteTexture.name = sprite.name;
+            Texture2D spriteTexture = new(width, height, _textureFormat, false)
+            {
+                name = sprite.name
+            };
 
             // Copy pixels from source texture
-            Color[] pixels = sourceTexture.GetPixels(
+            var pixels = sourceTexture.GetPixels(
                 Mathf.FloorToInt(textureRect.x),
                 Mathf.FloorToInt(textureRect.y),
                 width,
                 height
             );
-        
+
             spriteTexture.SetPixels(pixels);
             spriteTexture.Apply();
 
@@ -429,43 +492,45 @@ namespace Editor
             if (texture == null) return null;
 
             string path = AssetDatabase.GetAssetPath(texture);
-            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
 
             if (importer == null)
             {
-                throw new System.InvalidOperationException($"Could not get TextureImporter for {texture.name}");
+                throw new InvalidOperationException($"Could not get TextureImporter for {texture.name}");
             }
 
             // If already readable, create a copy
             if (importer.isReadable)
             {
-                var copy = new Texture2D(texture.width, texture.height, texture.format, texture.mipmapCount > 1);
+                Texture2D copy = new(texture.width, texture.height, texture.format, texture.mipmapCount > 1);
                 copy.name = texture.name;
                 Graphics.CopyTexture(texture, copy);
                 return copy;
             }
-        
+
             // Create readable version using RenderTexture
-            var rt = RenderTexture.GetTemporary(texture.width, texture.height, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+            RenderTexture rt = RenderTexture.GetTemporary(texture.width, texture.height, 0, RenderTextureFormat.Default,
+                RenderTextureReadWrite.Linear);
+
             Graphics.Blit(texture, rt);
-            var previous = RenderTexture.active;
+            RenderTexture previous = RenderTexture.active;
             RenderTexture.active = rt;
-        
-            var readableTexture = new Texture2D(texture.width, texture.height);
+
+            Texture2D readableTexture = new(texture.width, texture.height);
             readableTexture.name = texture.name;
             readableTexture.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
             readableTexture.Apply();
-        
+
             RenderTexture.active = previous;
             RenderTexture.ReleaseTemporary(rt);
-        
+
             return readableTexture;
         }
 
         private bool ConfigureAtlasImporter(string atlasPath, List<Sprite> originalSprites, Texture2D atlas)
         {
             TextureImporter importer = AssetImporter.GetAtPath(atlasPath) as TextureImporter;
-            if (importer == null) return false;
+            if (!importer) return false;
 
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Multiple;
@@ -474,28 +539,21 @@ namespace Editor
 
             // Create sprite rectangles
             var spriteRects = new List<SpriteRect>();
-            var textureRects = new List<Texture2D>();
 
             // Recreate the packing to get correct rectangles
-            foreach (var sprite in originalSprites)
-            {
-                var sourceTexture = GetReadableTexture(sprite.texture);
-                var spriteTexture = ExtractSpriteTexture(sourceTexture, sprite);
-                if (spriteTexture != null)
-                {
-                    textureRects.Add(spriteTexture);
-                }
-            }
 
-            Texture2D tempAtlas = new Texture2D(1, 1);
-            Rect[] packedRects = tempAtlas.PackTextures(textureRects.ToArray(), _padding, _maxAtlasSize, false);
+            Texture2D tempAtlas = new(1, 1);
+            var packedRects = tempAtlas.PackTextures(originalSprites
+                .Select(sprite => new { sprite, sourceTexture = GetReadableTexture(sprite.texture) })
+                .Select(t => ExtractSpriteTexture(t.sourceTexture, t.sprite))
+                .Where(spriteTexture => spriteTexture is not null).ToArray(), _padding, _maxAtlasSize, false);
 
             for (int i = 0; i < originalSprites.Count && i < packedRects.Length; i++)
             {
-                var sprite = originalSprites[i];
-                var packedRect = packedRects[i];
+                Sprite sprite = originalSprites[i];
+                Rect packedRect = packedRects[i];
 
-                var spriteRect = new SpriteRect
+                SpriteRect spriteRect = new()
                 {
                     name = sprite.name,
                     rect = new Rect(
@@ -504,26 +562,55 @@ namespace Editor
                         packedRect.width * atlas.width,
                         packedRect.height * atlas.height
                     ),
-                    pivot = sprite.textureRect.size == Vector2.zero ? 
-                        new Vector2(0.5f, 0.5f) : 
-                        sprite.pivot / sprite.textureRect.size,
+                    pivot = sprite.textureRect.size == Vector2.zero
+                        ? new Vector2(0.5f, 0.5f)
+                        : sprite.pivot / sprite.textureRect.size,
                     border = sprite.border,
                     alignment = SpriteAlignment.Custom
                 };
+
                 spriteRects.Add(spriteRect);
             }
 
             // Apply sprite rectangles
-            var factories = new SpriteDataProviderFactories();
+            SpriteDataProviderFactories factories = new();
             factories.Init();
-            var dataProvider = factories.GetSpriteEditorDataProviderFromObject(importer);
-            if (dataProvider == null) return false;
+            ISpriteEditorDataProvider dataProvider = factories.GetSpriteEditorDataProviderFromObject(importer);
+            if (dataProvider == null)
+            {
+                Debug.LogError(
+                    "Failed to get SpriteEditorDataProvider from importer. The atlas asset may not be fully imported yet.");
 
+                return false;
+            }
+
+            dataProvider.InitSpriteEditorDataProvider();
             dataProvider.SetSpriteRects(spriteRects.ToArray());
             dataProvider.Apply();
 
             EditorUtility.SetDirty(importer);
             importer.SaveAndReimport();
+
+            if (originalSprites.Count > 0 && originalSprites[0] && originalSprites[0].texture)
+            {
+                string srcPath = AssetDatabase.GetAssetPath(originalSprites[0].texture);
+                TextureImporter srcImporter = AssetImporter.GetAtPath(srcPath) as TextureImporter;
+                if (srcImporter)
+                {
+                    importer.sRGBTexture = srcImporter.sRGBTexture;
+                    importer.mipmapEnabled = srcImporter.mipmapEnabled;
+                    importer.filterMode = srcImporter.filterMode;
+                    importer.anisoLevel = srcImporter.anisoLevel;
+                    importer.wrapMode = srcImporter.wrapMode;
+                    importer.npotScale = srcImporter.npotScale;
+                    importer.alphaIsTransparency = srcImporter.alphaIsTransparency;
+                    importer.compressionQuality = srcImporter.compressionQuality;
+                    importer.textureCompression = srcImporter.textureCompression;
+                    importer.isReadable = srcImporter.isReadable;
+                    importer.maxTextureSize = srcImporter.maxTextureSize;
+                    importer.spritePixelsPerUnit = srcImporter.spritePixelsPerUnit;
+                }
+            }
 
             return true;
         }
@@ -546,8 +633,8 @@ namespace Editor
             for (int i = 0; i < allAssetPaths.Length; i++)
             {
                 string path = allAssetPaths[i];
-            
-                if (EditorUtility.DisplayCancelableProgressBar("Updating References", 
+
+                if (EditorUtility.DisplayCancelableProgressBar("Updating References",
                         $"Processing: {Path.GetFileName(path)}", (float)i / allAssetPaths.Length))
                 {
                     break;
@@ -576,11 +663,11 @@ namespace Editor
             var mapping = new Dictionary<int, Sprite>();
             var newSprites = AssetDatabase.LoadAllAssetsAtPath(atlasPath).OfType<Sprite>().ToList();
 
-            foreach (var originalSprite in originalSprites)
+            foreach (Sprite originalSprite in originalSprites)
             {
                 if (originalSprite == null) continue;
 
-                var newSprite = newSprites.FirstOrDefault(s => s != null && s.name == originalSprite.name);
+                Sprite newSprite = newSprites.FirstOrDefault(s => s != null && s.name == originalSprite.name);
                 if (newSprite != null)
                 {
                     mapping[originalSprite.GetInstanceID()] = newSprite;
@@ -597,10 +684,18 @@ namespace Editor
         private int UpdateSceneReferences(string scenePath, Dictionary<int, Sprite> spriteMap)
         {
             int count = 0;
-            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+            Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
             if (!scene.IsValid()) return 0;
 
             bool sceneModified = false;
+
+            foreach (GameObject rootGo in scene.GetRootGameObjects())
+            {
+                if (WillGameObjectBeModified(rootGo, spriteMap))
+                {
+                    Undo.RegisterCompleteObjectUndo(rootGo, UndoGroupName);
+                }
+            }
 
             foreach (GameObject rootGo in scene.GetRootGameObjects())
             {
@@ -620,13 +715,20 @@ namespace Editor
         private int UpdateGameObjectReferences(GameObject go, Dictionary<int, Sprite> spriteMap, ref bool modified)
         {
             int count = 0;
-        
+
             foreach (Component component in go.GetComponentsInChildren<Component>(true))
             {
-                if (component == null) continue;
+                if (!component) continue;
 
-                var so = new SerializedObject(component);
-                var prop = so.GetIterator();
+                // Register component for undo before modification
+                bool componentWillBeModified = WillComponentBeModified(component, spriteMap);
+                if (componentWillBeModified)
+                {
+                    Undo.RecordObject(component, UndoGroupName);
+                }
+
+                SerializedObject so = new(component);
+                SerializedProperty prop = so.GetIterator();
 
                 while (prop.NextVisible(true))
                 {
@@ -635,6 +737,12 @@ namespace Editor
                         oldSprite != null &&
                         spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
                     {
+                        // Store original reference for potential undo
+                        if (!OriginalReferences.ContainsKey(component))
+                        {
+                            OriginalReferences[component] = oldSprite;
+                        }
+
                         prop.objectReferenceValue = newSprite;
                         modified = true;
                         count++;
@@ -644,6 +752,10 @@ namespace Editor
                 if (so.hasModifiedProperties)
                 {
                     so.ApplyModifiedProperties();
+                    if (componentWillBeModified)
+                    {
+                        EditorUtility.SetDirty(component);
+                    }
                 }
             }
 
@@ -653,14 +765,21 @@ namespace Editor
         private int UpdateAssetReferences(string assetPath, Dictionary<int, Sprite> spriteMap)
         {
             int count = 0;
-            Object[] assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
+            var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
 
             foreach (Object asset in assets)
             {
-                if (asset == null || asset is Texture2D || asset is Sprite) continue;
+                if (!asset || asset is Texture2D || asset is Sprite) continue;
 
-                var so = new SerializedObject(asset);
-                var prop = so.GetIterator();
+                // Check if this asset will be modified and register for undo
+                bool assetWillBeModified = WillAssetBeModified(asset, spriteMap);
+                if (assetWillBeModified)
+                {
+                    Undo.RecordObject(asset, UndoGroupName);
+                }
+
+                SerializedObject so = new(asset);
+                SerializedProperty prop = so.GetIterator();
                 bool assetModified = false;
 
                 while (prop.NextVisible(true))
@@ -670,6 +789,12 @@ namespace Editor
                         oldSprite != null &&
                         spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
                     {
+                        // Store original reference for potential undo
+                        if (!OriginalReferences.ContainsKey(asset))
+                        {
+                            OriginalReferences[asset] = oldSprite;
+                        }
+
                         prop.objectReferenceValue = newSprite;
                         assetModified = true;
                         count++;
@@ -679,11 +804,111 @@ namespace Editor
                 if (assetModified)
                 {
                     so.ApplyModifiedProperties();
-                    EditorUtility.SetDirty(asset);
+                    if (assetWillBeModified)
+                    {
+                        EditorUtility.SetDirty(asset);
+                    }
                 }
             }
 
             return count;
         }
+
+        #region Undo Support Methods
+
+        private void RegisterCreatedAssetForUndo(string assetPath)
+        {
+            // Custom undo operation for created assets
+            Undo.RegisterCreatedObjectUndo(AssetDatabase.LoadAssetAtPath<Object>(assetPath), UndoGroupName);
+        }
+
+        private bool WillGameObjectBeModified(GameObject go, Dictionary<int, Sprite> spriteMap)
+        {
+            foreach (Component component in go.GetComponentsInChildren<Component>(true))
+            {
+                if (component != null && WillComponentBeModified(component, spriteMap))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool WillComponentBeModified(Component component, Dictionary<int, Sprite> spriteMap)
+        {
+            if (component == null) return false;
+
+            SerializedObject so = new(component);
+            SerializedProperty prop = so.GetIterator();
+
+            while (prop.NextVisible(true))
+            {
+                if (prop.propertyType == SerializedPropertyType.ObjectReference &&
+                    prop.objectReferenceValue is Sprite sprite &&
+                    sprite != null &&
+                    spriteMap.ContainsKey(sprite.GetInstanceID()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool WillAssetBeModified(Object asset, Dictionary<int, Sprite> spriteMap)
+        {
+            if (asset == null || asset is Texture2D || asset is Sprite) return false;
+
+            SerializedObject so = new(asset);
+            SerializedProperty prop = so.GetIterator();
+
+            while (prop.NextVisible(true))
+            {
+                if (prop.propertyType == SerializedPropertyType.ObjectReference &&
+                    prop.objectReferenceValue is Sprite sprite &&
+                    sprite != null &&
+                    spriteMap.ContainsKey(sprite.GetInstanceID()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Custom undo callback for cleaning up created assets
+        [Serializable]
+        public class AtlasMergeUndoOperation : ScriptableObject
+        {
+            public List<string> createdAssetPaths = new();
+
+            private void OnEnable()
+            {
+                Undo.undoRedoPerformed += OnUndoRedo;
+            }
+
+            private void OnDisable()
+            {
+                Undo.undoRedoPerformed -= OnUndoRedo;
+            }
+
+            private void OnUndoRedo()
+            {
+                // Clean up created assets when undoing
+                foreach (string path in createdAssetPaths)
+                {
+                    if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                    {
+                        AssetDatabase.DeleteAsset(path);
+                    }
+                }
+
+                AssetDatabase.Refresh();
+            }
+        }
+
+        #endregion
+
     }
 }
