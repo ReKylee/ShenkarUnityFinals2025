@@ -1,7 +1,7 @@
 ﻿using Core;
 using Core.Events;
 using Health;
-using Health.Components;
+using Health.Core;
 using Health.Interfaces;
 using Player.Interfaces;
 using UnityEngine;
@@ -9,14 +9,14 @@ using VContainer;
 
 namespace Player.Components
 {
-    public class PlayerHealthController : SimpleHealthController, IBypassableDamageable
+    public class PlayerHealthController : HealthComponent, IBypassableDamageable
     {
         [SerializeField] private BarsHealthView healthView;
-        private IDamageShield _damageShield;
-
         private IEventBus _eventBus;
         private GameFlowManager _gameFlowManager;
         private IPlayerLivesService _livesService;
+        private IShield _shield;
+        private IInvincibility _invincibility;
 
         #region VContainer Injection
 
@@ -32,20 +32,24 @@ namespace Player.Components
 
         #region Unity Lifecycle
 
+        private new void Awake()
+        {
+            base.Awake();
+            _shield = GetComponent<IShield>();
+            _invincibility = GetComponent<IInvincibility>();
+        }
+
         protected void Start()
         {
-            _damageShield = GetComponent<IDamageShield>();
             healthView.UpdateDisplay(CurrentHp, MaxHp);
-
-            // Subscribe to events after base initialization
             OnHealthChanged += HandleHealthChanged;
-            OnLivesEmpty += HandleHealthEmpty;
+            OnDeath += HandleHealthEmpty;
         }
 
         protected void OnDestroy()
         {
             OnHealthChanged -= HandleHealthChanged;
-            OnLivesEmpty -= HandleHealthEmpty;
+            OnDeath -= HandleHealthEmpty;
         }
 
         #endregion
@@ -54,7 +58,7 @@ namespace Player.Components
 
         private void HandleHealthChanged(int hp, int maxHp)
         {
-            healthView.UpdateDisplay(CurrentHp, MaxHp);
+            healthView.UpdateDisplay(hp, maxHp);
             _eventBus?.Publish(new PlayerHealthChangedEvent
             {
                 CurrentHp = hp,
@@ -66,7 +70,6 @@ namespace Player.Components
 
         private void HandleHealthEmpty()
         {
-            // Check for null dependencies
             if (_livesService == null)
             {
                 Debug.LogError("[PlayerHealthController] _livesService is null. Ensure it is properly injected.");
@@ -79,10 +82,8 @@ namespace Player.Components
                 return;
             }
 
-            // Try to use a life through the service
             if (_livesService.TryUseLife())
             {
-                ResetState();
                 Debug.Log(
                     $"[PlayerHealthController] Used a life, restored health. Lives remaining: {_livesService.CurrentLives}");
 
@@ -94,24 +95,20 @@ namespace Player.Components
 
         #endregion
 
-        #region Transformation Handling
-
-        public void ActivateShield() => _damageShield.Activate();
-        public void DeactivateShield() => _damageShield.Deactivate();
-
-        #endregion
 
         #region Damage Handling
 
-        public new void Damage(int amount)
+        public override void Damage(int amount, GameObject source = null)
         {
-            if (_damageShield.TryAbsorbDamage(amount))
+            if (_invincibility is { IsInvincible: true })
+                return;
+            if (_shield is { IsActive: true })
             {
-                Debug.Log("[PlayerHealthController] Transformation absorbed damage!");
+                _shield.BreakShield(amount);
                 return;
             }
 
-            base.Damage(amount);
+            base.Damage(amount, source);
         }
 
         /// <summary>
@@ -119,7 +116,7 @@ namespace Player.Components
         /// </summary>
         public void DamageBypass(int amount)
         {
-            base.Damage(amount);
+            base.Damage(amount, gameObject);
         }
 
         #endregion

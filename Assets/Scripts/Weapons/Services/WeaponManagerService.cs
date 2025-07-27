@@ -13,23 +13,20 @@ namespace Weapons.Services
     public class WeaponManagerService : MonoBehaviour
     {
 
-        [Header("Attack Settings")] [SerializeField]
-        public bool canAttack;
+        public bool CanAttack { get; private set; }
 
         private Dictionary<WeaponType, IWeapon> _weaponMap;
 
-        public WeaponType CurrentPrimaryWeapon { get; private set; }
+        private WeaponType CurrentPrimaryWeapon { get; set; }
 
         public WeaponType ActiveWeapon { get; private set; }
 
-        public bool IsUsingTemporaryWeapon { get; private set; }
+        private bool IsUsingTemporaryWeapon { get; set; }
 
         private void Start()
         {
-            // Discover all weapon components and map by their WeaponType
             var weapons = GetComponentsInChildren<MonoBehaviour>().OfType<IWeapon>();
             _weaponMap = weapons.ToDictionary(w => w.WeaponType, w => w);
-            // Start with no weapons equipped
             UnequipAllWeapons();
         }
 
@@ -37,7 +34,14 @@ namespace Weapons.Services
         public event Action<WeaponType> OnWeaponChanged;
         public event Action<WeaponType> OnPrimaryWeaponChanged;
 
-
+        public void EnableAttacking()
+        {
+            CanAttack = true;
+        }
+        public void DisableAttacking()
+        {
+            CanAttack = false;
+        }
         /// <summary>
         ///     Switch to a new primary weapon (Axe or Boomerang)
         /// </summary>
@@ -144,10 +148,6 @@ namespace Weapons.Services
                     useable.UnEquip();
         }
 
-        /// <summary>
-        ///     For debugging - get current weapon status
-        /// </summary>
-        public string GetWeaponStatus() =>
-            $"Primary: {CurrentPrimaryWeapon}, Active: {ActiveWeapon}, Temporary: {IsUsingTemporaryWeapon}";
+   
     }
 }

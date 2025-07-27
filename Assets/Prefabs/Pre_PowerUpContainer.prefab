@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 2958948688776934200}
   - component: {fileID: 2197583644925119259}
   - component: {fileID: 576873617077118719}
-  - component: {fileID: 3180208430479383032}
   - component: {fileID: 4026916297320648317}
   - component: {fileID: 5543492904153383888}
   - component: {fileID: 5974047121875459250}
+  - component: {fileID: 1579130814505104006}
   m_Layer: 8
   m_Name: Pre_PowerUpContainer
   m_TagString: Untagged
@@ -107,18 +107,6 @@ MonoBehaviour:
   horizontalSpeed: 6
   verticalSpeed: 12
   ignoreDuration: 3
---- !u!114 &3180208430479383032
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2643798538806117454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3235fd23caa74797a5526571a4a05f2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4026916297320648317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,3 +185,16 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1.375, y: 1}
   m_Direction: 1
+--- !u!114 &1579130814505104006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2643798538806117454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e1ae9dd03a4df2b52b48ed1b043c20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 2

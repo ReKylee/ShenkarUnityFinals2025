@@ -1,35 +1,37 @@
 ﻿using System.Collections;
-using Health.Components;
 using Health.Interfaces;
+using Health.Invincibility;
 using UnityEngine;
 
 namespace PowerUps.Invincibility
 {
 
-    public class InvincibilityEffect : MonoBehaviour, IInvincibilityDealer
+    public class InvincibilityEffect : MonoBehaviour
     {
         [SerializeField] private GameObject effectObject;
-        private PlayerDamageController _dc;
+        private IInvincibility _invincibility;
 
         private void Awake()
         {
-            _dc = GetComponent<PlayerDamageController>();
+            _invincibility = GetComponent<IInvincibility>();
         }
-        public int GetDamageAmount() => _dc.IsInvulnerable ? 10 : 0;
+
         public void Activate(float duration)
         {
-            if (!_dc) return;
+            if (_invincibility == null) return;
             StartCoroutine(RunEffect(duration));
         }
 
         private IEnumerator RunEffect(float duration)
         {
-            _dc.IsInvulnerable = true;
+            _invincibility.SetInvincible(true);
+
             effectObject?.SetActive(true);
 
             yield return new WaitForSeconds(duration);
 
-            _dc.IsInvulnerable = false;
+            _invincibility.SetInvincible(false);
+
             effectObject?.SetActive(false);
         }
     }

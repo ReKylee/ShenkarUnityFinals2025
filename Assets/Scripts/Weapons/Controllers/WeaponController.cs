@@ -139,7 +139,7 @@ namespace Weapons.Controllers
             private void OnActionPerformed(InputAction.CallbackContext context)
             {
                 // Only shoot if this weapon is currently active according to the weapon manager
-                if (_weaponManager is { canAttack: true } && _weaponManager.ActiveWeapon == weaponType)
+                if (_weaponManager is { CanAttack: true } && _weaponManager.ActiveWeapon == weaponType)
                 {
                     WeaponComponent?.Shoot();
                 }

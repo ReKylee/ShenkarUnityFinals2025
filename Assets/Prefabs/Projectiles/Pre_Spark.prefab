@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: -3460905289729604622}
   - component: {fileID: 1440673935502952221}
   - component: {fileID: 8441927413991358612}
-  - component: {fileID: 3420668176969805233}
+  - component: {fileID: 7798028523285467646}
+  - component: {fileID: -7077484597919142051}
   m_Layer: 0
   m_Name: Pre_Spark
   m_TagString: Untagged
@@ -184,7 +185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: {x: 12, y: 0}
   destroyTime: 0.4
---- !u!114 &3420668176969805233
+--- !u!114 &7798028523285467646
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -193,7 +194,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 460594579410848658}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78dec0894f44472d884aabe20e41be5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 729e404b12034676a74a8356426fffd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
+  damageAmount: 1
+--- !u!114 &-7077484597919142051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460594579410848658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9785b48f20d94f7ea97b4f77e843c496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

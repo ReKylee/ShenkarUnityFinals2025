@@ -8,6 +8,8 @@ namespace PowerUps.Container
         [SerializeField] private Sprite crackedSprite;
         [SerializeField] private GameObject powerUpPrefab;
         private SpriteRenderer _spriteRenderer;
+        public int CurrentHp { get; private set; } = 2;
+        public int MaxHp { get; } = 2;
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -26,9 +28,7 @@ namespace PowerUps.Container
                 BreakOpen();
             }
         }
-        public int CurrentHp { get; private set; } = 2;
-        public int MaxHp { get; } = 2;
-        public void Damage(int amount)
+        public void Damage(int amount, GameObject source = null)
         {
             CurrentHp -= 1;
             switch (CurrentHp)

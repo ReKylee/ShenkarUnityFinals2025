@@ -5,17 +5,18 @@ namespace Enemy
 {
     public class EnemyDeath : MonoBehaviour
     {
-        private IHealthEvents _simpleHealthController;
+        private IHealthEvents _healthEvents;
         private void Start()
         {
-            _simpleHealthController = GetComponent<IHealthEvents>();
-            _simpleHealthController.OnLivesEmpty += HandleDeath;
+            _healthEvents = GetComponent<IHealthEvents>();
+            if (_healthEvents != null)
+                _healthEvents.OnDeath += HandleDeath;
         }
         private void OnDisable()
         {
-            _simpleHealthController.OnLivesEmpty -= HandleDeath;
+            if (_healthEvents != null)
+                _healthEvents.OnDeath -= HandleDeath;
         }
-
         private void HandleDeath()
         {
             gameObject.SetActive(false);

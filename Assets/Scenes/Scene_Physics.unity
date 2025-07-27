@@ -6294,7 +6294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4255879117411758815, guid: f4fafdb2c4772e0458933dffff845350, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 4255879117411758815, guid: f4fafdb2c4772e0458933dffff845350, type: 3}
       propertyPath: m_LocalPosition.y
@@ -29967,10 +29967,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.2627197
-    y: 0.105205484
-    width: 0.47363552
-    height: 0.7890411
+    x: 0.23333335
+    y: 0.055555556
+    width: 0.53333336
+    height: 0.8888889
   near clip plane: 0.1
   far clip plane: 5000
   field of view: 40
@@ -30142,6 +30142,10 @@ PrefabInstance:
       propertyPath: axePool
       value: 
       objectReference: {fileID: 488614934}
+    - target: {fileID: 3614968127464465895, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
+      propertyPath: targetLayers.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
     - target: {fileID: 3880546536829734273, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
       propertyPath: fireballPool
       value: 
@@ -30206,7 +30210,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -889070893, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6806085336056450057, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
+    - {fileID: 279962894031721775, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
+    - {fileID: 2627408834215788637, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
