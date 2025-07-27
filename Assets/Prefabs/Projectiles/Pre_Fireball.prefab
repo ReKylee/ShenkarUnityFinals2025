@@ -15,10 +15,9 @@ GameObject:
   - component: {fileID: 1440673935502952221}
   - component: {fileID: 8441927413991358612}
   - component: {fileID: 2797411319710022473}
-  - component: {fileID: 7388432197716674264}
   m_Layer: 0
   m_Name: Pre_Fireball
-  m_TagString: Untagged
+  m_TagString: Projectiles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -198,15 +197,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1
---- !u!114 &7388432197716674264
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 460594579410848658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9785b48f20d94f7ea97b4f77e843c496, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

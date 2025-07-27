@@ -9,7 +9,7 @@ namespace Health.Damage.Conditions
         public bool CanBeDamagedBy(GameObject damager)
         {
             IShield shield = damager.GetComponent<IShield>();
-            return shield != null && shield.IsActive;
+            return shield is { IsActive: true };
         }
     }
 }

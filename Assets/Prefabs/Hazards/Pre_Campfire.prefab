@@ -16,9 +16,9 @@ GameObject:
   - component: {fileID: 6216066647861129826}
   - component: {fileID: 3645266198257391235}
   - component: {fileID: 7233946428582052696}
-  - component: {fileID: 5983096423636023091}
-  - component: {fileID: 219558243741594734}
   - component: {fileID: 2406202706731065291}
+  - component: {fileID: 219558243741594734}
+  - component: {fileID: -2563837864777353849}
   m_Layer: 7
   m_Name: Pre_Campfire
   m_TagString: Untagged
@@ -191,9 +191,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d18b27fbb32429a81a500d3db6716be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageConditions:
-  - {fileID: 7233946428582052696}
-  - {fileID: 2406202706731065291}
+  rootCondition:
+    rid: 2459174924205424864
+  references:
+    version: 2
+    RefIds:
+    - rid: 2459174924205424859
+      type: {class: ConditionLeaf, ns: Health.Damage, asm: Assembly-CSharp}
+      data:
+        conditionBehaviour: {fileID: 7233946428582052696}
+    - rid: 2459174924205424860
+      type: {class: ConditionLeaf, ns: Health.Damage, asm: Assembly-CSharp}
+      data:
+        conditionBehaviour: {fileID: 2406202706731065291}
+    - rid: 2459174924205424864
+      type: {class: OrCondition, ns: Health.Damage, asm: Assembly-CSharp}
+      data:
+        children:
+        - rid: 2459174924205424859
+        - rid: 2459174924205424860
 --- !u!114 &7233946428582052696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,7 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 873c9448c881438b8750e8d4209852a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5983096423636023091
+--- !u!114 &2406202706731065291
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -215,12 +231,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8363118166971722726}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9785b48f20d94f7ea97b4f77e843c496, type: 3}
+  m_Script: {fileID: 11500000, guid: bbb02d20114c409386f1d4aeea3e0e64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!114 &219558243741594734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,7 +247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp: 1
---- !u!114 &2406202706731065291
+--- !u!114 &-2563837864777353849
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -243,6 +256,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8363118166971722726}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbb02d20114c409386f1d4aeea3e0e64, type: 3}
+  m_Script: {fileID: 11500000, guid: ef485323108e47cfb8d6ffcf96821d13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sourceLayers:
+    serializedVersion: 2
+    m_Bits: 64

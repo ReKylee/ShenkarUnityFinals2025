@@ -114,6 +114,7 @@ GameObject:
   - component: {fileID: 5552104572248172135}
   - component: {fileID: 7315043283670872466}
   - component: {fileID: 3105674932958471287}
+  - component: {fileID: 3058566569831002630}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -460,6 +461,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageAmount: 1
   interval: 3
+--- !u!114 &3058566569831002630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926891512402252426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef485323108e47cfb8d6ffcf96821d13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sourceLayers:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &5139845219191842715
 GameObject:
   m_ObjectHideFlags: 0
@@ -470,11 +486,11 @@ GameObject:
   m_Component:
   - component: {fileID: 5618698531668652424}
   - component: {fileID: 3880546536829734273}
+  - component: {fileID: 5692119513404325601}
   - component: {fileID: 3354482609634551655}
   - component: {fileID: 4855835521647181485}
   - component: {fileID: 5372833804394028595}
   - component: {fileID: 6944014089907720284}
-  - component: {fileID: 5692119513404325601}
   m_Layer: 6
   m_Name: Weapons
   m_TagString: Untagged
@@ -512,6 +528,22 @@ MonoBehaviour:
   weaponType: 3
   spawnPoint: {fileID: 8740184567830207716}
   cooldownTime: 0.3
+  fireballPool: {fileID: 0}
+--- !u!114 &5692119513404325601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5139845219191842715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 756e8507f1654e642a52f67cdd627b8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponType: 4
+  spawnPoint: {fileID: 388501036162216537}
+  cooldownTime: 0.1
   fireballPool: {fileID: 0}
 --- !u!114 &3354482609634551655
 MonoBehaviour:
@@ -585,22 +617,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01bc17a5e2c46e09bf9102bf484c5d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5692119513404325601
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5139845219191842715}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 756e8507f1654e642a52f67cdd627b8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weaponType: 4
-  spawnPoint: {fileID: 388501036162216537}
-  cooldownTime: 0.1
-  fireballPool: {fileID: 0}
 --- !u!1 &5456921034032889372
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,10 +15,9 @@ GameObject:
   - component: {fileID: 8542017364035483804}
   - component: {fileID: 7300533301158722036}
   - component: {fileID: 2023661130969030922}
-  - component: {fileID: 8215585879366696303}
   m_Layer: 0
   m_Name: Pre_Axe
-  m_TagString: Untagged
+  m_TagString: Projectiles
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -198,18 +197,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1
---- !u!114 &8215585879366696303
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 460594579410848658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9785b48f20d94f7ea97b4f77e843c496, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1597275737950424792
 GameObject:
   m_ObjectHideFlags: 0
@@ -256,7 +243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playAutomatically: 1
-  _spriteAnimationObject: {fileID: 11400000, guid: 82e84c43b1e7d3d409878c583beb669a, type: 2}
+  _spriteAnimationObject: {fileID: 0}
   _spriteRenderer: {fileID: 6517570308473214089}
 --- !u!212 &6517570308473214089
 SpriteRenderer:

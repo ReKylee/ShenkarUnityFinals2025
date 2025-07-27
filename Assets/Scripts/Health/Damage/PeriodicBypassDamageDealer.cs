@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Health.Damage
 {
     /// <summary>
-    ///     Applies damage every 3 seconds to the attached GameObject, bypassing shield logic.
+    ///     Applies damage every interval seconds to the attached GameObject, bypassing shield logic.
     /// </summary>
     [DisallowMultipleComponent]
     public class PeriodicBypassDamageDealer : MonoBehaviour

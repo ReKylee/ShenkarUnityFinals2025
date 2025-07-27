@@ -14,11 +14,11 @@ GameObject:
   - component: {fileID: 2217429654812035360}
   - component: {fileID: 4101630459541062360}
   - component: {fileID: 3146045202917183874}
-  - component: {fileID: 8388825433490428136}
   - component: {fileID: 6274977632867213259}
   - component: {fileID: 6653421916782970}
   - component: {fileID: 9158326944399007226}
   - component: {fileID: 8969546618050451972}
+  - component: {fileID: 80166445993962753}
   m_Layer: 7
   m_Name: Pre_Ghost
   m_TagString: Untagged
@@ -187,18 +187,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d7edd465c6fe424cae6c5bc1d8ddbfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8388825433490428136
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6393277964807551920}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9785b48f20d94f7ea97b4f77e843c496, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6274977632867213259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,8 +212,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d18b27fbb32429a81a500d3db6716be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageConditions:
-  - {fileID: 9158326944399007226}
+  rootCondition:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &9158326944399007226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,3 +244,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 20
+--- !u!114 &80166445993962753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6393277964807551920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef485323108e47cfb8d6ffcf96821d13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sourceLayers:
+    serializedVersion: 2
+    m_Bits: 64

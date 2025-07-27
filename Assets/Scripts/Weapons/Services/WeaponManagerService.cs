@@ -13,7 +13,7 @@ namespace Weapons.Services
     public class WeaponManagerService : MonoBehaviour
     {
 
-        public bool CanAttack { get; private set; }
+        public bool CanAttack { get; private set; } = true;
 
         private Dictionary<WeaponType, IWeapon> _weaponMap;
 
@@ -28,6 +28,7 @@ namespace Weapons.Services
             var weapons = GetComponentsInChildren<MonoBehaviour>().OfType<IWeapon>();
             _weaponMap = weapons.ToDictionary(w => w.WeaponType, w => w);
             UnequipAllWeapons();
+            EnableAttacking();
         }
 
 
