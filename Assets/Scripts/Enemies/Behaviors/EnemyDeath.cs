@@ -1,15 +1,16 @@
-﻿using UnityEngine;
+﻿using Health.Interfaces;
+using UnityEngine;
 
 namespace Enemies.Behaviors
 {
     // Disables the enemy GameObject forever when Die() is called
     public class EnemyDeath : MonoBehaviour
     {
-        private Health.Interfaces.IHealthEvents _healthEvents;
+        private IHealthEvents _healthEvents;
 
         private void Awake()
         {
-            _healthEvents = GetComponent<Health.Interfaces.IHealthEvents>();
+            _healthEvents = GetComponent<IHealthEvents>();
             if (_healthEvents != null)
                 _healthEvents.OnDeath += Die;
         }

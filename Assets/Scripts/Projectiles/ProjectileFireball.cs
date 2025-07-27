@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Projectiles.Core;
 using UnityEngine;
+using Weapons;
 
 namespace Projectiles
 {

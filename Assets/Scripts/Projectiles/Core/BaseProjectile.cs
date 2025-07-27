@@ -1,14 +1,17 @@
 using UnityEngine;
 using UnityEngine.Pool;
+using Weapons;
+using Weapons.Interfaces;
 
 namespace Projectiles.Core
 {
-    public abstract class BaseProjectile : MonoBehaviour
+    public abstract class BaseProjectile : MonoBehaviour, IWeaponTypeProvider
     {
         [SerializeField] protected Vector2 speed = new(12f, 0f);
 
         protected Rigidbody2D Rb;
         public IObjectPool<GameObject> Pool { get; set; }
+        public virtual WeaponType WeaponType { get; set; }
 
         protected virtual void Awake()
         {
@@ -20,7 +23,6 @@ namespace Projectiles.Core
         {
             Move();
         }
-
 
         protected abstract void Move();
 

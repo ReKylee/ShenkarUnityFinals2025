@@ -1,6 +1,7 @@
 using System;
 using Projectiles.Core;
 using UnityEngine;
+using Weapons;
 
 namespace Projectiles
 {
@@ -8,7 +9,6 @@ namespace Projectiles
     {
         [NonSerialized] public float Direction;
         [NonSerialized] public float ThrowerVelocityX;
-
         private void OnBecameInvisible()
         {
             ReturnToPool();

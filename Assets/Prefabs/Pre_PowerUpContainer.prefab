@@ -14,7 +14,10 @@ GameObject:
   - component: {fileID: 4026916297320648317}
   - component: {fileID: 5543492904153383888}
   - component: {fileID: 5974047121875459250}
+  - component: {fileID: -3065099459671063055}
+  - component: {fileID: -5121963614803949496}
   - component: {fileID: 1579130814505104006}
+  - component: {fileID: 7676039638876186798}
   m_Layer: 8
   m_Name: Pre_PowerUpContainer
   m_TagString: Untagged
@@ -185,6 +188,44 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1.375, y: 1}
   m_Direction: 1
+--- !u!114 &-3065099459671063055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2643798538806117454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d18b27fbb32429a81a500d3db6716be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootCondition:
+    rid: 2459174924205424922
+  references:
+    version: 2
+    RefIds:
+    - rid: 2459174924205424922
+      type: {class: ConditionLeaf, ns: Health.Damage, asm: Assembly-CSharp}
+      data:
+        conditionBehaviour: {fileID: -5121963614803949496}
+--- !u!114 &-5121963614803949496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2643798538806117454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d313bbae50845c1abcca64373c1a60f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  requireWeaponType: 0
+  allowedWeaponType: 2
 --- !u!114 &1579130814505104006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,3 +239,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHp: 2
+--- !u!114 &7676039638876186798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2643798538806117454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef485323108e47cfb8d6ffcf96821d13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sourceLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295

@@ -7,6 +7,7 @@ namespace Weapons.Models
     public class FireballWeapon : MonoBehaviour, IUseableWeapon
     {
         [SerializeField] private WeaponType weaponType = WeaponType.Fireball;
+        public WeaponType WeaponType => weaponType;
 
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.3f;
@@ -15,7 +16,6 @@ namespace Weapons.Models
         private float _nextFireTime;
 
         public bool IsEquipped { get; private set; }
-        public WeaponType WeaponType => weaponType;
 
         public void Shoot()
         {
@@ -36,6 +36,7 @@ namespace Weapons.Models
             {
                 curFireball.layer = gameObject.layer;
                 scFireball.Direction = transform.parent?.localScale.x ?? 1;
+                scFireball.WeaponType = weaponType; 
                 scFireball.Fire();
 
                 // Set cooldown

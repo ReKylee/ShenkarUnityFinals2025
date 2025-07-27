@@ -7,6 +7,8 @@ namespace Weapons.Models
 {
     public class AxeWeapon : MonoBehaviour, IUseableWeapon
     {
+        [SerializeField] private WeaponType weaponType = WeaponType.Axe;
+        public WeaponType WeaponType => weaponType;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.5f;
         [SerializeField] private AxePool axePool;
@@ -20,7 +22,6 @@ namespace Weapons.Models
         {
             _throwerRb = GetComponentInParent<Rigidbody2D>();
         }
-        public WeaponType WeaponType => WeaponType.Axe;
         public void Shoot()
         {
             // Check if weapon is equipped

@@ -7,6 +7,8 @@ namespace Weapons.Models
 {
     public class BoomerangWeapon : MonoBehaviour, IAmmoWeapon
     {
+        [SerializeField] private WeaponType weaponType = WeaponType.Boomerang;
+        public WeaponType WeaponType => weaponType;        
         [SerializeField] private GameObject boomerang;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.3f;
@@ -27,6 +29,8 @@ namespace Weapons.Models
             Transform spawnParent = spawnPoint ? spawnPoint : transform;
             _pooledBoomerang = Instantiate(boomerang, spawnParent.position, Quaternion.identity, spawnParent);
             _pooledProjectile = _pooledBoomerang.GetComponent<ProjectileBoomerang>();
+            _pooledProjectile.WeaponType = WeaponType;
+            
             _pooledBoomerang.SetActive(false);
         }
 
@@ -38,7 +42,6 @@ namespace Weapons.Models
             if (_pooledBoomerang)
                 Destroy(_pooledBoomerang);
         }
-        public WeaponType WeaponType => WeaponType.Boomerang;
 
         public int CurrentAmmo { get; private set; } = 1;
         public int MaxAmmo => 1;
@@ -63,7 +66,6 @@ namespace Weapons.Models
             );
 
             _pooledBoomerang.layer = gameObject.layer;
-
             SetAmmo(0);
 
             float dir = transform.parent?.localScale.x ?? 1;

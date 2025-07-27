@@ -1,6 +1,7 @@
 ﻿using System;
 using Projectiles.Core;
 using UnityEngine;
+using Weapons;
 
 namespace Projectiles
 {

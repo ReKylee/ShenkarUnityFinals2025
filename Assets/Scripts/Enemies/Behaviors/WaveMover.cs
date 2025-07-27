@@ -20,7 +20,9 @@ namespace Enemies.Behaviors
 
         public void Move()
         {
-            float y = _startY + Mathf.Sin(Time.time * frequency) * amplitude;
+            float t = Mathf.PingPong(Time.time * frequency, 1f);
+            float triangle = 2f * Mathf.Abs(t - 0.5f);
+            float y = _startY + (triangle - 0.5f) * 2f * amplitude;
             _rb.linearVelocity = new Vector2(-speed, (y - _rb.position.y) / Time.fixedDeltaTime);
         }
     }

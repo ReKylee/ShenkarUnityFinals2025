@@ -8,15 +8,13 @@ namespace Enemies.Behaviors
     public class RespawningEnemyDeath : MonoBehaviour
     {
         [SerializeField] private float respawnDelay = 3f;
-        private Vector3 _respawnPosition;
-        private Quaternion _respawnRotation;
         private IHealthEvents _healthEvents;
+        private IHealth _health;
 
         private void Awake()
         {
-            _respawnPosition = transform.position;
-            _respawnRotation = transform.rotation;
             _healthEvents = GetComponent<IHealthEvents>();
+            _health = GetComponent<IHealth>();
             if (_healthEvents != null)
                 _healthEvents.OnDeath += Die;
         }
@@ -36,9 +34,9 @@ namespace Enemies.Behaviors
         {
             gameObject.SetActive(false);
             await Task.Delay((int)(respawnDelay * 1000f));
-            transform.position = _respawnPosition;
-            transform.rotation = _respawnRotation;
             gameObject.SetActive(true);
+            _health.Heal(_health.MaxHp);
+            Debug.Log("Health reset to " + _health.MaxHp + " after respawn.");
         }
     }
 }

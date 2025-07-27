@@ -26,7 +26,6 @@ namespace Collectables.Score
 
         private void OnReturnToPool(TextMeshPro tmp)
         {
-            Debug.Log($"FloatingText releasing instance {GetInstanceID()}");
             tmp.gameObject.SetActive(false);
         }
 
@@ -37,7 +36,6 @@ namespace Collectables.Score
         }
         private TextMeshPro CreateNewTextForPool()
         {
-            Debug.Log("Creating new ScoreText for pool");
             TextMeshPro tmp = Instantiate(scoreTextPrefab, transform);
             tmp.gameObject.SetActive(false);
             FloatingText floatComp = tmp.GetComponent<FloatingText>();
@@ -47,8 +45,6 @@ namespace Collectables.Score
         public TextMeshPro Get(string text)
         {
             TextMeshPro tmp = _pool.Get();
-            Debug.Log($"ScoreTextPool.Get: Got text instance {tmp.GetInstanceID()} with text '{text}'");
-
             tmp.text = text;
             return tmp;
         }

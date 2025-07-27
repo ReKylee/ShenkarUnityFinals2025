@@ -58,7 +58,6 @@ namespace Player.Components
 
         private void HandleHealthChanged(int hp, int maxHp)
         {
-            Debug.Log($"[PlayerHealthController] HandleHealthChanged called: hp={hp}, maxHp={maxHp}");
             healthView.UpdateDisplay(hp, maxHp);
             _eventBus?.Publish(new PlayerHealthChangedEvent
             {
@@ -101,7 +100,6 @@ namespace Player.Components
 
         public override void Damage(int amount, GameObject source = null)
         {
-            Debug.Log($"[PlayerHealthController] Damage called: amount={amount}, invincible={_invincibility?.IsInvincible}, shieldActive={_shield?.IsActive}");
             if (_invincibility is { IsInvincible: true })
                 return;
             if (_shield is { IsActive: true })

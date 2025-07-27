@@ -3,7 +3,7 @@ namespace Weapons.Interfaces
     /// <summary>
     ///     Base interface for all weapons
     /// </summary>
-    public interface IWeapon
+    public interface IWeapon 
     {
         /// <summary>
         ///     Type of this weapon.
