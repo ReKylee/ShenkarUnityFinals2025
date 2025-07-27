@@ -32,7 +32,6 @@ namespace Health.Core
 
         public void Heal(int amount)
         {
-            if (CurrentHp <= 0) return;
             CurrentHp = Mathf.Min(MaxHp, CurrentHp + amount);
             OnHealthChanged?.Invoke(CurrentHp, MaxHp);
         }

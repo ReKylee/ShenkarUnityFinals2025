@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Health.Interfaces;
 using System.Threading.Tasks;
 
@@ -18,7 +19,10 @@ namespace Enemies.Behaviors
             if (_healthEvents != null)
                 _healthEvents.OnDeath += Die;
         }
-
+        private void OnEnable()
+        {
+            _health.Heal(_health.MaxHp);
+        }
         private void OnDestroy()
         {
             if (_healthEvents != null)
@@ -35,8 +39,6 @@ namespace Enemies.Behaviors
             gameObject.SetActive(false);
             await Task.Delay((int)(respawnDelay * 1000f));
             gameObject.SetActive(true);
-            _health.Heal(_health.MaxHp);
-            Debug.Log("Health reset to " + _health.MaxHp + " after respawn.");
         }
     }
 }

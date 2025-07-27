@@ -10,10 +10,8 @@ namespace Enemies.Behaviors
         [SerializeField] private float jumpForceX = 2f;
         [SerializeField] private float jumpForceY = 5f;
         [SerializeField] private float jumpInterval = 2f;
-        [SerializeField] private LayerMask groundLayer;
         private Rigidbody2D _rb;
         private float _nextJumpTime;
-        private bool _isGrounded;
 
         private void Awake()
         {
@@ -23,23 +21,16 @@ namespace Enemies.Behaviors
 
         public void Move()
         {
-            if (Time.time >= _nextJumpTime && _isGrounded)
+            if (Time.time >= _nextJumpTime && IsGrounded())
             {
                 _rb.linearVelocity = new Vector2(jumpForceX, jumpForceY);
                 _nextJumpTime = Time.time + jumpInterval;
             }
         }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+        private bool IsGrounded()
         {
-            if (((1 << collision.gameObject.layer) & groundLayer) != 0)
-                _isGrounded = true;
-        }
-
-        private void OnCollisionExit2D(Collision2D collision)
-        {
-            if (((1 << collision.gameObject.layer) & groundLayer) != 0)
-                _isGrounded = false;
+            return Physics2D.Raycast(transform.position, Vector2.down, 0.1f);
         }
     }
 }
