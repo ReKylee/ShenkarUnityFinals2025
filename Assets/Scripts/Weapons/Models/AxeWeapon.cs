@@ -7,7 +7,6 @@ namespace Weapons.Models
 {
     public class AxeWeapon : MonoBehaviour, IUseableWeapon
     {
-        [SerializeField] private GameObject axe;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.5f;
         [SerializeField] private AxePool axePool;
@@ -36,12 +35,6 @@ namespace Weapons.Models
                 return;
             }
 
-            // Check axe prefab
-            if (!axe)
-            {
-                return;
-            }
-
             GameObject curAxe = axePool.Get();
             Vector3 spawnPosition = spawnPoint ? spawnPoint.position : transform.position;
             curAxe.transform.position = spawnPosition;
@@ -51,8 +44,7 @@ namespace Weapons.Models
             {
                 curAxe.layer = gameObject.layer;
 
-                float direction = transform.parent?.localScale.x ?? 1;
-                scAxe.Direction = direction;
+                scAxe.Direction = transform.parent?.localScale.x ?? 1;
                 scAxe.ThrowerVelocityX = _throwerRb.linearVelocityX;
 
                 scAxe.Fire();

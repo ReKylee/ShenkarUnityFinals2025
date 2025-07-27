@@ -171,7 +171,7 @@ namespace Weapons.Controllers
                 {
                     status.currentAmmo = boomerangWeapon.CurrentAmmo;
                     status.maxAmmo = boomerangWeapon.MaxAmmo;
-                    status.isEquipped = true; // Boomerang is always "equipped" when active
+                    status.isEquipped = true; 
                 }
                 else if (weaponComponent is FireballWeapon fireballWeapon)
                 {

@@ -49,7 +49,7 @@ namespace Player.Components
             if (!ValidateDependencies()) return;
             _isTransformed = true;
             _shield?.ActivateShield();
-            _weaponManager.EnableAttacking();
+            _weaponManager.DisableAttacking();
             _pendingWeapon = weapon;
             _visualEffects.PlayTransformationEffect(transitionTexture, animationObject);
         }
@@ -61,7 +61,6 @@ namespace Player.Components
             _isTransformed = false;
             _visualEffects.RevertToOriginalState();
             _weaponManager.RevertFromTemporaryWeapon();
-            _weaponManager.DisableAttacking();
             Debug.Log("[TransformationManager] Transformation reverted");
         }
 

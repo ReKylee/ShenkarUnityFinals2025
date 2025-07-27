@@ -36,14 +36,14 @@ namespace Projectiles
         }
         private GameObject CreateNewFireballForPool()
         {
-            GameObject newLaser = Instantiate(fireballPrefab, transform);
+            GameObject newFireball = Instantiate(fireballPrefab, transform);
             // Give the projectile a reference to the pool so it can return itself.
-            if (newLaser.TryGetComponent(out BaseProjectile projectile))
+            if (newFireball.TryGetComponent(out BaseProjectile projectile))
             {
                 projectile.Pool = _pool;
             }
 
-            return newLaser;
+            return newFireball;
         }
         public GameObject Get() => _pool.Get();
     }

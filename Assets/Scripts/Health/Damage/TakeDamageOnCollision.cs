@@ -20,6 +20,7 @@ namespace Health.Damage
         private void OnCollisionEnter2D(Collision2D collision)
         {
             GameObject source = collision.gameObject;
+            Debug.Log("[TakeDamageOnCollision] Collision detected with: " + source.name, gameObject);
             if (_damageable == null) return;
             if (((1 << source.layer) & sourceLayers) == 0) return;
             
@@ -30,6 +31,8 @@ namespace Health.Damage
             int amount = dealer.GetDamageAmount();
             if (amount > 0)
                 _damageable.Damage(amount, source);
+
+            Debug.Log("[TakeDamageOnCollision] Damage taken: " + amount + " from " + source.name, gameObject);
         }
     }
 }

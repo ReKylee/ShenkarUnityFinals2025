@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 8542017364035483804}
   - component: {fileID: 7300533301158722036}
   - component: {fileID: 2023661130969030922}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pre_Axe
-  m_TagString: Projectiles
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 460594579410848658}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.15, y: 0.27, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 3265032642249431551}
   - component: {fileID: 734023473420462162}
   - component: {fileID: 6517570308473214089}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ExplosionFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}

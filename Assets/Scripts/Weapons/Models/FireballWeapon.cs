@@ -35,8 +35,7 @@ namespace Weapons.Models
             if (curFireball.TryGetComponent(out ProjectileFireball scFireball))
             {
                 curFireball.layer = gameObject.layer;
-                float direction = transform.parent?.localScale.x ?? 1;
-                scFireball.Direction = direction;
+                scFireball.Direction = transform.parent?.localScale.x ?? 1;
                 scFireball.Fire();
 
                 // Set cooldown

@@ -116,6 +116,7 @@ namespace Weapons.Services
             {
                 EquipWeapon(CurrentPrimaryWeapon);
                 ActiveWeapon = CurrentPrimaryWeapon;
+                EnableAttacking();
             }
             else
             {

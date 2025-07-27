@@ -6,8 +6,10 @@ namespace Health.Damage.Conditions
     [DisallowMultipleComponent]
     public class OnlyProjectileCanDamage : MonoBehaviour, IDamageCondition
     {
-        [SerializeField] private string projectileTag = "Projectiles";
-        public bool CanBeDamagedBy(GameObject damager) => damager.CompareTag(projectileTag);
+        [SerializeField] private LayerMask projectileLayers = ~0;
+        public bool CanBeDamagedBy(GameObject damager)
+        {
+            return ((1 << damager.layer) & projectileLayers) != 0;
+        }
     }
 }
-
