@@ -24,13 +24,13 @@ namespace PowerUps.Invincibility
 
         private IEnumerator RunEffect(float duration)
         {
-            _invincibility.SetInvincible(true);
+            _invincibility?.SetInvincible(true);
 
             effectObject?.SetActive(true);
 
             yield return new WaitForSeconds(duration);
 
-            _invincibility.SetInvincible(false);
+            _invincibility?.SetInvincible(false);
 
             effectObject?.SetActive(false);
         }

@@ -3937,7 +3937,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1087162081}
     m_Modifications:
     - target: {fileID: 4687730324487337372, guid: eed373b922bfef74f9b335b6e48c90f3, type: 3}
       propertyPath: m_Name
@@ -3945,7 +3945,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4687730324487337372, guid: eed373b922bfef74f9b335b6e48c90f3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5525579194826785514, guid: eed373b922bfef74f9b335b6e48c90f3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3965,15 +3965,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5525579194826785514, guid: eed373b922bfef74f9b335b6e48c90f3, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5525579194826785514, guid: eed373b922bfef74f9b335b6e48c90f3, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5525579194826785514, guid: eed373b922bfef74f9b335b6e48c90f3, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5525579194826785514, guid: eed373b922bfef74f9b335b6e48c90f3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5520,6 +5520,7 @@ Transform:
   - {fileID: 58920947}
   - {fileID: 7808966378083966612}
   - {fileID: 1018340278}
+  - {fileID: 1168662519}
   - {fileID: 736618708}
   - {fileID: 927643593}
   - {fileID: 894952106}
@@ -5703,6 +5704,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!4 &1168662519 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5525579194826785514, guid: eed373b922bfef74f9b335b6e48c90f3, type: 3}
+  m_PrefabInstance: {fileID: 794166046}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1171389826
 GameObject:
   m_ObjectHideFlags: 0
@@ -30908,4 +30914,3 @@ SceneRoots:
   - {fileID: 72274837}
   - {fileID: 1171389828}
   - {fileID: 657669682}
-  - {fileID: 794166046}

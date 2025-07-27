@@ -54,7 +54,7 @@ namespace Player.Components
             _visualEffects.PlayTransformationEffect(transitionTexture, animationObject);
         }
 
-  
+
         public void RevertTransformation()
         {
             if (!ValidateDependencies() || !_isTransformed) return;

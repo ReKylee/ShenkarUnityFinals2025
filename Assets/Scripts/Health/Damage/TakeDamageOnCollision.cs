@@ -1,5 +1,6 @@
 ﻿using Health.Interfaces;
 using UnityEngine;
+using System.Linq;
 
 namespace Health.Damage
 {
@@ -20,19 +21,17 @@ namespace Health.Damage
         private void OnCollisionEnter2D(Collision2D collision)
         {
             GameObject source = collision.gameObject;
-            Debug.Log("[TakeDamageOnCollision] Collision detected with: " + source.name, gameObject);
-            if (_damageable == null) return;
+            if (_damageable is null) return;
             if (((1 << source.layer) & sourceLayers) == 0) return;
-            
-            if (!source.TryGetComponent(out IDamageDealer dealer)) return;
-            
             if (_damageConditions && !_damageConditions.CanBeDamagedBy(source)) return;
-            
-            int amount = dealer.GetDamageAmount();
-            if (amount > 0)
-                _damageable.Damage(amount, source);
 
-            Debug.Log("[TakeDamageOnCollision] Damage taken: " + amount + " from " + source.name, gameObject);
+            var dealers = source.GetComponents<IDamageDealer>();
+            if (dealers is {Length: 0}) return;
+
+            IDamageDealer chosenDealer = dealers.OrderByDescending(d => d.GetDamageAmount()).FirstOrDefault();
+            int maxAmount = chosenDealer?.GetDamageAmount() ?? 0;
+            if (chosenDealer == null || maxAmount <= 0) return;
+            _damageable.Damage(maxAmount, source);
         }
     }
 }

@@ -12,6 +12,10 @@ namespace Health.Invincibility
             IsInvincible = value;
         }
 
-        public int GetDamageAmount() => IsInvincible ? 9999 : 0;
+        public int GetDamageAmount()
+        {
+            Debug.Log("[InvincibilityComponent] GetDamageAmount called. IsInvincible: " + IsInvincible, gameObject);
+            return IsInvincible ? 9999 : 0;
+        }
     }
 }
