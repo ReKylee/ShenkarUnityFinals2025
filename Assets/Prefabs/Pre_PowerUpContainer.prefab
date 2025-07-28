@@ -122,6 +122,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8cebe3f2bfc44b4b03a23eae49c86be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
   crackedSprite: {fileID: -1713768754937268519, guid: de39ab17d254dd4459836b83c728eb03, type: 3}
   powerUpPrefab: {fileID: 0}
 --- !u!50 &5543492904153383888
@@ -225,7 +228,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   requireWeaponType: 0
-  allowedWeaponType: 2
+  allowedWeaponType: 
 --- !u!114 &1579130814505104006
 MonoBehaviour:
   m_ObjectHideFlags: 0

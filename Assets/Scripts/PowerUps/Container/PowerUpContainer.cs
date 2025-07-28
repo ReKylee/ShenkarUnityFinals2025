@@ -5,6 +5,7 @@ namespace PowerUps.Container
 {
     public class PowerUpContainer : MonoBehaviour, IDamageable
     {
+        [SerializeField] private LayerMask groundLayer;
         [SerializeField] private Sprite crackedSprite;
         [SerializeField] private GameObject powerUpPrefab;
         private SpriteRenderer _spriteRenderer;
@@ -23,7 +24,7 @@ namespace PowerUps.Container
                 Damage(1);
             }
             // Ground collision: break open after hit
-            else if (other.gameObject.layer == LayerMask.NameToLayer("Ground") && CurrentHp < MaxHp)
+            else if (((1 << other.gameObject.layer) & groundLayer) != 0 && CurrentHp < MaxHp)
             {
                 BreakOpen();
             }

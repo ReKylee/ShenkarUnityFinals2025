@@ -182,7 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef46cfd2d56a4e68b161c26c37247d5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: {x: 6, y: 2}
+  speed: {x: 7, y: 2}
   totalFlightTime: 1.2
   trajectoryXCurve:
     serializedVersion: 2

@@ -7,6 +7,7 @@ namespace Enemies.Behaviors
     [RequireComponent(typeof(Rigidbody2D))]
     public class JumpMover : MonoBehaviour, IMovementBehavior
     {
+        [SerializeField] private LayerMask groundLayer;
         [SerializeField] private float jumpForceX = 2f;
         [SerializeField] private float jumpForceY = 5f;
         [SerializeField] private float jumpInterval = 2f;
@@ -22,12 +23,14 @@ namespace Enemies.Behaviors
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            _grounded = true;
+            if (((1 << collision.gameObject.layer) & groundLayer) != 0)
+                _grounded = true;
         }
 
         private void OnCollisionExit2D(Collision2D collision)
         {
-            _grounded = false;
+            if (((1 << collision.gameObject.layer) & groundLayer) != 0)
+                _grounded = false;
         }
 
         public void Move()

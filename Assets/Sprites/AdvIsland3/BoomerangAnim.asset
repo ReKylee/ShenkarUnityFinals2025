@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpriteAnimations:
   - Name: Spin
-    FPS: 4
+    FPS: 12
     Frames:
     - {fileID: 1310683816, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: -323462004, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}

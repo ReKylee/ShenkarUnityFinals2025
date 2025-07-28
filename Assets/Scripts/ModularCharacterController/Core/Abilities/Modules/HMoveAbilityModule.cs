@@ -16,7 +16,6 @@ namespace ModularCharacterController.Core.Abilities.Modules
         private const float WALL_CAST_HEIGHT_MULTIPLIER = 0.7f;
         private const float WALL_CAST_DISTANCE = 0.01f;
 
-        // Cached ground layer mask to avoid repeated GetMask calls
         private static int? _groundLayerMask;
 
         [Header("Pixel Perfect Settings")] [Tooltip("Enable pixel-perfect movement to eliminate sub-pixel jitter")]
