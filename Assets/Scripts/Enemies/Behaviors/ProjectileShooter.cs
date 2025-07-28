@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Enemies.Interfaces;
-using System.Threading.Tasks;
 using Weapons.Models;
 
 namespace Enemies.Behaviors
@@ -10,39 +10,22 @@ namespace Enemies.Behaviors
     {
         [SerializeField] private FireballWeapon fireballWeapon;
         [SerializeField] private float fireInterval = 2f;
-        private bool _isFiring;
 
-        private void OnEnable()
+        private float _lastFireTime;
+        private void Start()
         {
-            _isFiring = false;
+            fireballWeapon.Equip();
         }
-
         public void Attack()
         {
-            if (_isFiring || !fireballWeapon)
+            if (!fireballWeapon)
                 return;
-            _isFiring = true;
-            _ = FireLoop();
+            if (Time.time - _lastFireTime < fireInterval)
+                return;
+            fireballWeapon.Shoot();
+            _lastFireTime = Time.time;
         }
 
-        private async Task FireLoop()
-        {
-            try
-            {
-                while (enabled && gameObject.activeInHierarchy)
-                {
-                    fireballWeapon.Shoot();
-                    await Task.Delay((int)(fireInterval * 1000f));
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Debug.LogError($"ProjectileShooter FireLoop Exception: {ex}");
-            }
-            finally
-            {
-                _isFiring = false;
-            }
-        }
+  
     }
 }

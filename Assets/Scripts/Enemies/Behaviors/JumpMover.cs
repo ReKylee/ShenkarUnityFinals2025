@@ -22,7 +22,6 @@ namespace Enemies.Behaviors
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            // Consider any collision as grounded (customize layer/tag if needed)
             _grounded = true;
         }
 

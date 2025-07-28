@@ -56,21 +56,7 @@ namespace Weapons.Controllers
         }
 
 
-        /// <summary>
-        ///     Get weapon status for UI display
-        /// </summary>
-        public WeaponStatus GetWeaponStatus(string weaponName)
-        {
-            foreach (WeaponMapping mapping in weaponMappings)
-            {
-                if (mapping.weaponName == weaponName)
-                {
-                    return mapping.GetWeaponStatus();
-                }
-            }
-
-            return new WeaponStatus();
-        }
+    
 
         [Serializable]
         public class WeaponMapping
@@ -151,45 +137,9 @@ namespace Weapons.Controllers
             }
 
 
-            // Get weapon status for UI
-            public WeaponStatus GetWeaponStatus()
-            {
-                WeaponStatus status = new()
-                {
-                    weaponName = weaponName,
-                    isUnlocked = true, // Always unlocked
-                    isEquipped = false,
-                    currentAmmo = 0,
-                    maxAmmo = 0
-                };
-
-                if (weaponComponent is AxeWeapon axeWeapon)
-                {
-                    status.isEquipped = axeWeapon.IsEquipped;
-                }
-                else if (weaponComponent is BoomerangWeapon boomerangWeapon)
-                {
-                    status.currentAmmo = boomerangWeapon.CurrentAmmo;
-                    status.maxAmmo = boomerangWeapon.MaxAmmo;
-                    status.isEquipped = true; 
-                }
-                else if (weaponComponent is FireballWeapon fireballWeapon)
-                {
-                    status.isEquipped = fireballWeapon.IsEquipped;
-                }
-
-                return status;
-            }
+          
         }
     }
 
-    [Serializable]
-    public struct WeaponStatus
-    {
-        public string weaponName;
-        public bool isUnlocked;
-        public bool isEquipped;
-        public int currentAmmo;
-        public int maxAmmo;
-    }
+
 }
