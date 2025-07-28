@@ -13,9 +13,9 @@ namespace Weapons.Services
     public class WeaponManagerService : MonoBehaviour
     {
 
-        public bool CanAttack { get; private set; } = true;
-
         private Dictionary<WeaponType, IWeapon> _weaponMap;
+
+        public bool CanAttack { get; private set; } = true;
 
         private WeaponType CurrentPrimaryWeapon { get; set; }
 
@@ -149,7 +149,5 @@ namespace Weapons.Services
                 if (weapon is IUseableWeapon useable)
                     useable.UnEquip();
         }
-
-   
     }
 }

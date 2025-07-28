@@ -1,11 +1,14 @@
-﻿using TMPro;
+﻿using Pooling;
+using TMPro;
 using UnityEngine;
+using VContainer;
 
 namespace Collectables.Score
 {
     public class PopupTextService : MonoBehaviour
     {
-        [SerializeField] private ScoreTextPool scoreTextPool;
+        [SerializeField] private GameObject scoreTextPrefab;
+        [Inject] private IPoolService _scoreTextPool;
 
 
         private void OnEnable()
@@ -23,13 +26,13 @@ namespace Collectables.Score
             ShowFloatingText(position, $"{scoreAmount}");
         }
 
-        public void ShowFloatingText(Vector3 position, string text)
+        private void ShowFloatingText(Vector3 position, string text)
         {
-            TextMeshPro floatingText = scoreTextPool?.Get(text);
-            if (floatingText)
-            {
-                floatingText.transform.position = position;
-            }
+            TextMeshPro floatingTextObj =
+                _scoreTextPool?.Get<TextMeshPro>(scoreTextPrefab, position, Quaternion.identity);
+
+            if (floatingTextObj)
+                floatingTextObj.text = text;
         }
     }
 }

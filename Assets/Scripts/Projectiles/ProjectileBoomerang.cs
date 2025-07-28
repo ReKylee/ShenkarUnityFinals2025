@@ -1,7 +1,6 @@
 ﻿using System;
 using Projectiles.Core;
 using UnityEngine;
-using Weapons;
 
 namespace Projectiles
 {
@@ -28,8 +27,7 @@ namespace Projectiles
 
                 if (progress >= 1f)
                 {
-                    OnBoomerangReturned?.Invoke();
-                    ReturnToPool();
+                    OnProjectileDestroyed?.Invoke(gameObject);
                     return;
                 }
 
@@ -46,8 +44,7 @@ namespace Projectiles
                 // Check if close to player (especially near the end)
                 if (progress > 0.7f && Vector3.Distance(transform.position, PlayerTransform.position) < 1.5f)
                 {
-                    OnBoomerangReturned?.Invoke();
-                    ReturnToPool();
+                    OnProjectileDestroyed?.Invoke(gameObject);
                 }
             }
         }
@@ -62,12 +59,9 @@ namespace Projectiles
         {
             if (other.gameObject.CompareTag("Player") && _flightTimer > 0.5f)
             {
-                OnBoomerangReturned?.Invoke();
-                ReturnToPool();
+                OnProjectileDestroyed?.Invoke(gameObject);
             }
         }
-
-        public event Action OnBoomerangReturned;
 
         protected override void Move()
         {

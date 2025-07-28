@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using Health.Interfaces;
-using Health.Invincibility;
 using UnityEngine;
 
 namespace PowerUps.Invincibility

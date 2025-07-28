@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Enemies.Interfaces;
 using UnityEngine;
-using Enemies.Interfaces;
 using Weapons.Models;
 
 namespace Enemies.Behaviors
@@ -20,12 +19,12 @@ namespace Enemies.Behaviors
         {
             if (!fireballWeapon)
                 return;
+
             if (Time.time - _lastFireTime < fireInterval)
                 return;
+
             fireballWeapon.Shoot();
             _lastFireTime = Time.time;
         }
-
-  
     }
 }

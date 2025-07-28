@@ -24,7 +24,7 @@ namespace PowerUps.Container
                 Damage(1);
             }
             // Ground collision: break open after hit
-            else if (((1 << other.gameObject.layer) & groundLayer) != 0 && CurrentHp < MaxHp)
+            else if ((1 << other.gameObject.layer & groundLayer) != 0 && CurrentHp < MaxHp)
             {
                 BreakOpen();
             }

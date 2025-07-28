@@ -15,7 +15,7 @@ namespace Health.Damage
     [Serializable]
     public class ConditionLeaf : ConditionNode
     {
-        [SerializeField] public MonoBehaviour conditionBehaviour; 
+        [SerializeField] public MonoBehaviour conditionBehaviour;
         public override bool Evaluate(GameObject damager)
         {
             IDamageCondition cond = conditionBehaviour as IDamageCondition;
@@ -51,12 +51,12 @@ namespace Health.Damage
     public class DamageConditionsComponent : MonoBehaviour
     {
         [SerializeReference] public ConditionNode rootCondition;
-        public bool CanBeDamagedBy(GameObject damager)
-            => rootCondition != null && rootCondition.Evaluate(damager);
 
         public void Reset()
         {
             rootCondition = new ConditionLeaf();
         }
+        public bool CanBeDamagedBy(GameObject damager)
+            => rootCondition != null && rootCondition.Evaluate(damager);
     }
 }

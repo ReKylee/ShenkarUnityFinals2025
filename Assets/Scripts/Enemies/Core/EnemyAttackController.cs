@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Enemies.Interfaces;
+﻿using Enemies.Interfaces;
+using UnityEngine;
 
 namespace Enemies.Core
 {
@@ -20,4 +20,3 @@ namespace Enemies.Core
         }
     }
 }
-

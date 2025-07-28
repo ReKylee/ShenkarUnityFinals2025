@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Enemies.Interfaces;
+﻿using Enemies.Interfaces;
+using UnityEngine;
 
 namespace Enemies.Behaviors
 {
@@ -9,8 +9,8 @@ namespace Enemies.Behaviors
         [SerializeField] private float speed = 2f;
         [SerializeField] private float amplitude = 1f;
         [SerializeField] private float frequency = 1.11f;
-        private float _startY;
         private Rigidbody2D _rb;
+        private float _startY;
 
         private void Awake()
         {

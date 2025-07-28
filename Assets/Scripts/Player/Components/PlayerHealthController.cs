@@ -14,9 +14,9 @@ namespace Player.Components
         [SerializeField] private BarsHealthView healthView;
         private IEventBus _eventBus;
         private GameFlowManager _gameFlowManager;
+        private IInvincibility _invincibility;
         private IPlayerLivesService _livesService;
         private IShield _shield;
-        private IInvincibility _invincibility;
 
         #region VContainer Injection
 
@@ -86,6 +86,7 @@ namespace Player.Components
             {
                 Debug.Log(
                     $"[PlayerHealthController] Used a life, waiting for scene reload. Lives remaining: {_livesService.CurrentLives}");
+
                 return;
             }
 
@@ -102,6 +103,7 @@ namespace Player.Components
         {
             if (_invincibility is { IsInvincible: true })
                 return;
+
             if (_shield is { IsActive: true })
             {
                 Debug.Log("[PlayerHealthController] Shield active, breaking shield.");

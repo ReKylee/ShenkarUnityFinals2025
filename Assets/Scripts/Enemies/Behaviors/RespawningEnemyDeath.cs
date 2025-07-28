@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using System.Threading.Tasks;
 using Health.Interfaces;
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Enemies.Behaviors
 {
@@ -9,8 +8,8 @@ namespace Enemies.Behaviors
     public class RespawningEnemyDeath : MonoBehaviour
     {
         [SerializeField] private float respawnDelay = 3f;
-        private IHealthEvents _healthEvents;
         private IHealth _health;
+        private IHealthEvents _healthEvents;
 
         private void Awake()
         {

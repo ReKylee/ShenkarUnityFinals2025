@@ -6,6 +6,7 @@ using Player.Components;
 using Player.Interfaces;
 using Player.Services;
 using Player.UI;
+using Pooling;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -61,6 +62,9 @@ namespace Core.DI
 
             // Score System
             builder.RegisterComponentInHierarchy<ScoreController>();
+
+            // Pooling System
+            builder.RegisterComponentInHierarchy<PoolManager>().As<IPoolService>();
 
 
             Debug.Log("[GameLifetimeScope] DI container configured successfully.");

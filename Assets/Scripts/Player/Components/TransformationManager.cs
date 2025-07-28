@@ -1,5 +1,4 @@
-﻿using System;
-using GabrielBigardi.SpriteAnimator;
+﻿using GabrielBigardi.SpriteAnimator;
 using Health.Interfaces;
 using Player.Interfaces;
 using UnityEngine;
@@ -10,12 +9,12 @@ namespace Player.Components
 {
     public class TransformationManager : MonoBehaviour, ITransformationCoordinator
     {
-        private TransformationVisualEffects _visualEffects;
-        private WeaponManagerService _weaponManager;
-        private IShield _shield;
+        private bool _isTransformed;
 
         private WeaponType _pendingWeapon = WeaponType.None;
-        private bool _isTransformed;
+        private IShield _shield;
+        private TransformationVisualEffects _visualEffects;
+        private WeaponManagerService _weaponManager;
 
         private void Awake()
         {

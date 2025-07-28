@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Enemies.Interfaces;
+﻿using Enemies.Interfaces;
+using UnityEngine;
 
 namespace Enemies.Behaviors
 {
@@ -11,9 +11,9 @@ namespace Enemies.Behaviors
         [SerializeField] private float jumpForceX = 2f;
         [SerializeField] private float jumpForceY = 5f;
         [SerializeField] private float jumpInterval = 2f;
-        private Rigidbody2D _rb;
-        private float _nextJumpTime;
         private bool _grounded;
+        private float _nextJumpTime;
+        private Rigidbody2D _rb;
 
         private void Awake()
         {
@@ -23,13 +23,13 @@ namespace Enemies.Behaviors
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (((1 << collision.gameObject.layer) & groundLayer) != 0)
+            if ((1 << collision.gameObject.layer & groundLayer) != 0)
                 _grounded = true;
         }
 
         private void OnCollisionExit2D(Collision2D collision)
         {
-            if (((1 << collision.gameObject.layer) & groundLayer) != 0)
+            if ((1 << collision.gameObject.layer & groundLayer) != 0)
                 _grounded = false;
         }
 
@@ -37,7 +37,7 @@ namespace Enemies.Behaviors
         {
             if (Time.time >= _nextJumpTime && _grounded)
             {
-                Vector2 jumpDir = new Vector2(transform.localScale.x * jumpForceX, jumpForceY);
+                Vector2 jumpDir = new(transform.localScale.x * jumpForceX, jumpForceY);
                 _rb.linearVelocity = jumpDir;
                 _nextJumpTime = Time.time + jumpInterval;
             }

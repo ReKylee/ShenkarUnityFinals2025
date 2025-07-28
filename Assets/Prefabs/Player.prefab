@@ -208,11 +208,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 1.7853982
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: cbd7274e5b294044f943331351fd5e48, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -233,7 +233,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 32ac1f2ccd15ef24ba3be5c7e9ce343a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -528,7 +528,7 @@ MonoBehaviour:
   weaponType: 3
   spawnPoint: {fileID: 8740184567830207716}
   cooldownTime: 0.3
-  fireballPool: {fileID: 0}
+  fireballPrefab: {fileID: 460594579410848658, guid: 749db9f6f469d3843a8558e628486c6e, type: 3}
 --- !u!114 &5692119513404325601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -544,7 +544,7 @@ MonoBehaviour:
   weaponType: 4
   spawnPoint: {fileID: 388501036162216537}
   cooldownTime: 0.1
-  fireballPool: {fileID: 0}
+  fireballPrefab: {fileID: 460594579410848658, guid: 6f68afa22ca752143aa01ee27050a07e, type: 3}
 --- !u!114 &3354482609634551655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -557,10 +557,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27df689139b81464293d70ad2c8297db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axe: {fileID: 460594579410848658, guid: 4ab8b6dd74ca8374588c1806bdf74e28, type: 3}
+  weaponType: 1
   spawnPoint: {fileID: 8740184567830207716}
   cooldownTime: 0.5
-  axePool: {fileID: 0}
+  axePrefab: {fileID: 460594579410848658, guid: 4ab8b6dd74ca8374588c1806bdf74e28, type: 3}
 --- !u!114 &4855835521647181485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -573,6 +573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54950873360f4fe79ed2e4fb751d42f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  weaponType: 2
   boomerang: {fileID: 2685813220447095671, guid: 21d2b53bc3e8a8d4eb3cdb06c74f0012, type: 3}
   spawnPoint: {fileID: 8740184567830207716}
   cooldownTime: 0
@@ -642,7 +643,7 @@ Transform:
   m_GameObject: {fileID: 5456921034032889372}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: -0.413, z: 0}
+  m_LocalPosition: {x: 0.5, y: -0.4375, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

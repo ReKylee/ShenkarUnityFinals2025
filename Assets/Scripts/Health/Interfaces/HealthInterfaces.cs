@@ -35,7 +35,7 @@ namespace Health.Interfaces
         bool IsActive { get; }
         void ActivateShield();
         void BreakShield(int damageAmount);
-        event System.Action<int> OnShieldBroken;
+        event Action<int> OnShieldBroken;
     }
 
     public interface IInvincibility

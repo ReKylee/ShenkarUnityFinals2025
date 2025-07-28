@@ -7,6 +7,7 @@ namespace Health.Shield
     [DisallowMultipleComponent]
     public class ShieldComponent : MonoBehaviour, IShield, IDamageDealer
     {
+        public int GetDamageAmount() => IsActive ? 1 : 0;
         public bool IsActive { get; private set; }
         public event Action<int> OnShieldBroken;
 
@@ -20,6 +21,5 @@ namespace Health.Shield
             IsActive = false;
             OnShieldBroken?.Invoke(damageAmount);
         }
-        public int GetDamageAmount() => IsActive ? 1 : 0;
     }
 }

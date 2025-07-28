@@ -8,7 +8,6 @@ namespace Weapons.Models
     public class BoomerangWeapon : MonoBehaviour, IAmmoWeapon
     {
         [SerializeField] private WeaponType weaponType = WeaponType.Boomerang;
-        public WeaponType WeaponType => weaponType;        
         [SerializeField] private GameObject boomerang;
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private float cooldownTime = 0.3f;
@@ -37,11 +36,12 @@ namespace Weapons.Models
         private void OnDestroy()
         {
             if (_pooledProjectile)
-                _pooledProjectile.OnBoomerangReturned -= OnBoomerangReturned;
+                _pooledProjectile.OnProjectileDestroyed -= OnBoomerangReturned;
 
             if (_pooledBoomerang)
                 Destroy(_pooledBoomerang);
         }
+        public WeaponType WeaponType => weaponType;
 
         public int CurrentAmmo { get; private set; } = 1;
         public int MaxAmmo => 1;
@@ -49,10 +49,7 @@ namespace Weapons.Models
 
         public void SetAmmo(int ammo)
         {
-            int old = CurrentAmmo;
             CurrentAmmo = Mathf.Clamp(ammo, 0, MaxAmmo);
-            if (old != CurrentAmmo)
-                OnAmmoChanged?.Invoke(CurrentAmmo);
         }
 
         public void Shoot()
@@ -65,15 +62,16 @@ namespace Weapons.Models
                 Quaternion.identity
             );
 
-            _pooledBoomerang.layer = gameObject.layer;
             SetAmmo(0);
+            _pooledBoomerang.layer = gameObject.layer;
 
             float dir = transform.parent?.localScale.x ?? 1;
             _pooledProjectile.Direction = dir;
             _pooledProjectile.PlayerTransform = _returnToTransform;
-            _pooledProjectile.OnBoomerangReturned += OnBoomerangReturned;
-
+            _pooledProjectile.OnProjectileDestroyed += OnBoomerangReturned;
+            
             _pooledBoomerang.SetActive(true);
+            
             _pooledProjectile.Fire();
 
             _nextFireTime = Time.time + cooldownTime;
@@ -83,13 +81,11 @@ namespace Weapons.Models
         {
             SetAmmo(1);
         }
-        public event Action<int> OnAmmoChanged;
 
-        private void OnBoomerangReturned()
+        private void OnBoomerangReturned(GameObject obj)
         {
-            _pooledProjectile.OnBoomerangReturned -= OnBoomerangReturned;
             _pooledBoomerang.SetActive(false);
-            SetAmmo(1);
+            Reload();
         }
     }
 }

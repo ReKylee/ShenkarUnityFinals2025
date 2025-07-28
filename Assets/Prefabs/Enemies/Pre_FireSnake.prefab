@@ -47,7 +47,7 @@ MonoBehaviour:
   weaponType: 3
   spawnPoint: {fileID: 0}
   cooldownTime: 0.3
-  fireballPool: {fileID: 0}
+  fireballPrefab: {fileID: 460594579410848658, guid: 749db9f6f469d3843a8558e628486c6e, type: 3}
 --- !u!1 &5321648136915839534
 GameObject:
   m_ObjectHideFlags: 0

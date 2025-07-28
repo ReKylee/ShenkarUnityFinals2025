@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using Projectiles.Core;
 using UnityEngine;
-using Weapons;
 
 namespace Projectiles
 {
@@ -16,20 +15,20 @@ namespace Projectiles
         }
         private void OnBecameInvisible()
         {
-            ReturnToPool();
+            DestroyProjectile();
         }
         private void OnCollisionEnter2D(Collision2D other)
         {
             if (other.gameObject.CompareTag("Player"))
                 return;
 
-            Debug.Log($"Laser hit {other.gameObject.name}.");
-            ReturnToPool();
+            DestroyProjectile();
+
         }
         private IEnumerator DestroyObject()
         {
             yield return new WaitForSeconds(destroyTime);
-            ReturnToPool();
+            DestroyProjectile();
         }
 
 

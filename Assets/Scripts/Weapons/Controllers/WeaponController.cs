@@ -4,7 +4,6 @@ using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Weapons.Interfaces;
-using Weapons.Models;
 using Weapons.Services;
 
 namespace Weapons.Controllers
@@ -55,8 +54,6 @@ namespace Weapons.Controllers
             _inputActions.Disable();
         }
 
-
-    
 
         [Serializable]
         public class WeaponMapping
@@ -129,15 +126,7 @@ namespace Weapons.Controllers
                 {
                     WeaponComponent?.Shoot();
                 }
-                else
-                {
-                    Debug.Log(
-                        $"WeaponController: {weaponName} is not the active weapon (Active: {_weaponManager?.ActiveWeapon}, This: {weaponType})");
-                }
             }
-
-
-          
         }
     }
 

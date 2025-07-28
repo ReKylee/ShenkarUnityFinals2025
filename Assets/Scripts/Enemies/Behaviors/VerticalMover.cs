@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Enemies.Interfaces;
+﻿using Enemies.Interfaces;
+using UnityEngine;
 
 namespace Enemies.Behaviors
 {
@@ -7,7 +7,7 @@ namespace Enemies.Behaviors
     public class VerticalMover : MonoBehaviour, IMovementBehavior
     {
         [SerializeField] private float amplitude = 2f;
-        [SerializeField] private float frequency = 0.8f; 
+        [SerializeField] private float frequency = 0.8f;
 
         private Rigidbody2D _rb;
         private float _startY;

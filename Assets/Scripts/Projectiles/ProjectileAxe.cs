@@ -1,7 +1,6 @@
 using System;
 using Projectiles.Core;
 using UnityEngine;
-using Weapons;
 
 namespace Projectiles
 {
@@ -11,14 +10,14 @@ namespace Projectiles
         [NonSerialized] public float ThrowerVelocityX;
         private void OnBecameInvisible()
         {
-            ReturnToPool();
+            DestroyProjectile();
         }
         private void OnCollisionEnter2D(Collision2D other)
         {
             if (other.gameObject.CompareTag("Player"))
                 return;
 
-            ReturnToPool();
+            DestroyProjectile();
             Debug.Log($"Axe hit {other.gameObject.name}.");
         }
 
