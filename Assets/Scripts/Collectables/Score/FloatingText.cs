@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Pooling;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Pool;
 
 namespace Collectables.Score
 {
@@ -13,10 +11,10 @@ namespace Collectables.Score
         [SerializeField] private float ppu = 16f;
         [SerializeField] private float floatDistance = 1f;
         [SerializeField] private float duration = 1f;
-
-        private TextMeshPro _tmp;
         private IPoolService _poolService;
         private GameObject _sourcePrefab;
+
+        private TextMeshPro _tmp;
 
         public string Text
         {
@@ -32,6 +30,20 @@ namespace Collectables.Score
         private void OnEnable()
         {
             StartCoroutine(FloatAndRelease());
+        }
+
+        public void SetPoolingInfo(IPoolService poolService, GameObject sourcePrefab)
+        {
+            _poolService = poolService;
+            _sourcePrefab = sourcePrefab;
+        }
+
+        public void ReturnToPool()
+        {
+            if (_poolService != null && _sourcePrefab && gameObject.activeInHierarchy)
+            {
+                _poolService.Release(_sourcePrefab, gameObject);
+            }
         }
 
         private IEnumerator FloatAndRelease()
@@ -59,20 +71,6 @@ namespace Collectables.Score
             transform.localPosition = endPos;
             // Return to pool instead of invoking event
             ReturnToPool();
-        }
-
-        public void SetPoolingInfo(IPoolService poolService, GameObject sourcePrefab)
-        {
-            _poolService = poolService;
-            _sourcePrefab = sourcePrefab;
-        }
-
-        public void ReturnToPool()
-        {
-            if (_poolService != null && _sourcePrefab && gameObject.activeInHierarchy)
-            {
-                _poolService.Release(_sourcePrefab, gameObject);
-            }
         }
     }
 }

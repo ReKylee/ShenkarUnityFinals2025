@@ -24,7 +24,7 @@ namespace Weapons.Models
         {
             _throwerRb = GetComponentInParent<Rigidbody2D>();
         }
-     
+
         public WeaponType WeaponType => weaponType;
         public void Shoot()
         {

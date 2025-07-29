@@ -1,6 +1,5 @@
-using UnityEngine;
-using Collectables.Score;
 using Pooling;
+using UnityEngine;
 using Weapons;
 using Weapons.Interfaces;
 
@@ -9,23 +8,38 @@ namespace Projectiles.Core
     public abstract class BaseProjectile : MonoBehaviour, IWeaponTypeProvider, IPoolable
     {
         [SerializeField] protected Vector2 speed = new(12f, 0f);
-
-        protected Rigidbody2D Rb;
         private bool _isDestroyed;
 
         // Direct references for pooling - exposed through IPoolable interface
         private IPoolService _poolService;
         private GameObject _sourcePrefab;
 
+        protected Rigidbody2D Rb;
+
         protected virtual void Awake()
         {
             Rb = GetComponent<Rigidbody2D>();
         }
-        public virtual WeaponType WeaponType { get; set; }
         private void OnEnable()
         {
             _isDestroyed = false;
         }
+
+        public void SetPoolingInfo(IPoolService poolService, GameObject sourcePrefab)
+        {
+            _poolService = poolService;
+            _sourcePrefab = sourcePrefab;
+        }
+
+        public void ReturnToPool()
+        {
+            if (_poolService != null && _sourcePrefab )
+            {
+                _poolService.Release(_sourcePrefab, gameObject);
+            }
+
+        }
+        public virtual WeaponType WeaponType { get; set; }
 
         public void Fire()
         {
@@ -55,21 +69,6 @@ namespace Projectiles.Core
                 // Return to pool
                 ReturnToPool();
             }
-        }
-
-        public void SetPoolingInfo(IPoolService poolService, GameObject sourcePrefab)
-        {
-            _poolService = poolService;
-            _sourcePrefab = sourcePrefab;
-        }
-
-        public void ReturnToPool()
-        {
-            if (_poolService != null && _sourcePrefab && gameObject.activeInHierarchy)
-            {
-                _poolService.Release(_sourcePrefab, gameObject);
-            }
-
         }
     }
 }

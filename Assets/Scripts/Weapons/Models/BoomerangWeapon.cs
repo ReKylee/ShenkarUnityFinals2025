@@ -1,5 +1,4 @@
-﻿using System;
-using Projectiles;
+﻿using Projectiles;
 using UnityEngine;
 using Weapons.Interfaces;
 
@@ -29,7 +28,7 @@ namespace Weapons.Models
             _pooledBoomerang = Instantiate(boomerang, spawnParent.position, Quaternion.identity, spawnParent);
             _pooledProjectile = _pooledBoomerang.GetComponent<ProjectileBoomerang>();
             _pooledProjectile.WeaponType = WeaponType;
-            
+
             _pooledBoomerang.SetActive(false);
         }
 
@@ -69,9 +68,9 @@ namespace Weapons.Models
             _pooledProjectile.Direction = dir;
             _pooledProjectile.PlayerTransform = _returnToTransform;
             _pooledProjectile.OnProjectileDestroyed += OnBoomerangReturned;
-            
+
             _pooledBoomerang.SetActive(true);
-            
+
             _pooledProjectile.Fire();
 
             _nextFireTime = Time.time + cooldownTime;

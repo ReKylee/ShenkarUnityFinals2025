@@ -10,18 +10,10 @@ namespace Pooling
         [SerializeField] private int defaultCapacity = 10;
         [SerializeField] private int maxSize = 128;
         [SerializeField] private int maxPools = 64;
+        private int _poolCount;
 
         // Ultra-fast array-based mapping - fastest approach for Unity
         private PoolInfo[] _pools;
-        private int _poolCount = 0;
-
-        private struct PoolInfo
-        {
-            public IObjectPool<GameObject> Pool;
-            public Transform Parent;
-            public int PrefabId;
-            public GameObject Prefab;
-        }
 
         private void Awake()
         {
@@ -97,17 +89,6 @@ namespace Pooling
             }
         }
 
-        // Linear search is faster than Dictionary for small collections (<50 items)
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int FindPoolIndex(int prefabId)
-        {
-            for (int i = 0; i < _poolCount; i++)
-                if (_pools[i].PrefabId == prefabId)
-                    return i;
-
-            return -1;
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Get<T>(GameObject prefab, Vector3 position, Quaternion rotation) where T : MonoBehaviour
         {
@@ -120,6 +101,17 @@ namespace Pooling
         {
             if (instance)
                 Release(prefab, instance.gameObject);
+        }
+
+        // Linear search is faster than Dictionary for small collections (<50 items)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int FindPoolIndex(int prefabId)
+        {
+            for (int i = 0; i < _poolCount; i++)
+                if (_pools[i].PrefabId == prefabId)
+                    return i;
+
+            return -1;
         }
 
         private GameObject CreatePoolAndGet(GameObject prefab, int prefabId, Vector3 position, Quaternion rotation)
@@ -136,16 +128,16 @@ namespace Pooling
 
             // Create Unity's optimized ObjectPool
             var pool = new ObjectPool<GameObject>(
-                createFunc: () => Instantiate(prefab, poolParent),
-                actionOnGet: obj => obj.SetActive(true),
-                actionOnRelease: obj => obj.SetActive(false),
-                actionOnDestroy: obj =>
+                () => Instantiate(prefab, poolParent),
+                obj => obj.SetActive(true),
+                obj => obj.SetActive(false),
+                obj =>
                 {
                     if (obj) Destroy(obj);
                 },
-                collectionCheck: false, // Disable for performance
-                defaultCapacity: defaultCapacity,
-                maxSize: maxSize
+                false, // Disable for performance
+                defaultCapacity,
+                maxSize
             );
 
             int poolIndex = _poolCount;
@@ -277,7 +269,13 @@ namespace Pooling
             }
         }
 
-
+        private struct PoolInfo
+        {
+            public IObjectPool<GameObject> Pool;
+            public Transform Parent;
+            public int PrefabId;
+            public GameObject Prefab;
+        }
     }
 
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using Pooling;
-using TMPro;
+﻿using Pooling;
 using UnityEngine;
 using VContainer;
 
@@ -10,12 +8,6 @@ namespace Collectables.Score
     {
         [SerializeField] private GameObject scoreTextPrefab;
         private IPoolService _scoreTextPool;
-        
-        [Inject]
-        private void Configure(IPoolService poolService)
-        {
-            _scoreTextPool = poolService;
-        }
 
         private void OnEnable()
         {
@@ -25,6 +17,12 @@ namespace Collectables.Score
         private void OnDisable()
         {
             ScoreCollectable.OnScoreCollected -= HandleScoreCollected;
+        }
+
+        [Inject]
+        private void Configure(IPoolService poolService)
+        {
+            _scoreTextPool = poolService;
         }
 
         private void HandleScoreCollected(int scoreAmount, Vector3 position)

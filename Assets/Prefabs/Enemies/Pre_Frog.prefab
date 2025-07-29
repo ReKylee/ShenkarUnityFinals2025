@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3573462343191576054}
   - component: {fileID: 7377143805596788149}
   - component: {fileID: 2298100126830896996}
+  - component: {fileID: 9083734868856212536}
   - component: {fileID: 6305349335733756632}
   - component: {fileID: 8183187831961530027}
   - component: {fileID: 5858471907867648250}
@@ -111,6 +112,19 @@ MonoBehaviour:
   _playAutomatically: 1
   _spriteAnimationObject: {fileID: 11400000, guid: fd1391b128baf8b409ad13d166bf2b65, type: 2}
   _spriteRenderer: {fileID: 7377143805596788149}
+--- !u!114 &9083734868856212536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910659273603949271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c77c874e706a452b9bc2ead1b0364230, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 2298100126830896996}
 --- !u!50 &6305349335733756632
 Rigidbody2D:
   serializedVersion: 5
