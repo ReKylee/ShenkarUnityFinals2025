@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using Pooling;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -6,14 +8,21 @@ using UnityEngine.Pool;
 namespace Collectables.Score
 {
     [RequireComponent(typeof(TextMeshPro))]
-    public class FloatingText : MonoBehaviour
+    public class FloatingText : MonoBehaviour, IPoolable
     {
-        [SerializeField] private float ppu = 100f;
+        [SerializeField] private float ppu = 16f;
         [SerializeField] private float floatDistance = 1f;
         [SerializeField] private float duration = 1f;
 
         private TextMeshPro _tmp;
-        public IObjectPool<TextMeshPro> Pool { get; set; }
+        private IPoolService _poolService;
+        private GameObject _sourcePrefab;
+
+        public string Text
+        {
+            get => _tmp.text;
+            set => _tmp.text = value;
+        }
 
         private void Awake()
         {
@@ -48,7 +57,22 @@ namespace Collectables.Score
             }
 
             transform.localPosition = endPos;
-            Pool?.Release(_tmp);
+            // Return to pool instead of invoking event
+            ReturnToPool();
+        }
+
+        public void SetPoolingInfo(IPoolService poolService, GameObject sourcePrefab)
+        {
+            _poolService = poolService;
+            _sourcePrefab = sourcePrefab;
+        }
+
+        public void ReturnToPool()
+        {
+            if (_poolService != null && _sourcePrefab && gameObject.activeInHierarchy)
+            {
+                _poolService.Release(_sourcePrefab, gameObject);
+            }
         }
     }
 }

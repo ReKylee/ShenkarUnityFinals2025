@@ -1,4 +1,5 @@
-﻿using Pooling;
+﻿using System;
+using Pooling;
 using TMPro;
 using UnityEngine;
 using VContainer;
@@ -8,8 +9,13 @@ namespace Collectables.Score
     public class PopupTextService : MonoBehaviour
     {
         [SerializeField] private GameObject scoreTextPrefab;
-        [Inject] private IPoolService _scoreTextPool;
-
+        private IPoolService _scoreTextPool;
+        
+        [Inject]
+        private void Configure(IPoolService poolService)
+        {
+            _scoreTextPool = poolService;
+        }
 
         private void OnEnable()
         {
@@ -28,11 +34,15 @@ namespace Collectables.Score
 
         private void ShowFloatingText(Vector3 position, string text)
         {
-            TextMeshPro floatingTextObj =
-                _scoreTextPool?.Get<TextMeshPro>(scoreTextPrefab, position, Quaternion.identity);
+            FloatingText floatingTextObj =
+                _scoreTextPool?.Get<FloatingText>(scoreTextPrefab, position, Quaternion.identity);
 
             if (floatingTextObj)
-                floatingTextObj.text = text;
+            {
+                floatingTextObj.Text = text;
+
+                floatingTextObj.SetPoolingInfo(_scoreTextPool, scoreTextPrefab);
+            }
         }
     }
 }

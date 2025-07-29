@@ -24,10 +24,7 @@ namespace Weapons.Models
         {
             _throwerRb = GetComponentInParent<Rigidbody2D>();
         }
-        private void Start()
-        {
-          
-        }
+     
         public WeaponType WeaponType => weaponType;
         public void Shoot()
         {
@@ -46,7 +43,8 @@ namespace Weapons.Models
 
             if (scAxe)
             {
-                scAxe.OnProjectileDestroyed += Release;
+                scAxe.SetPoolingInfo(_poolService, axePrefab);
+
                 scAxe.gameObject.layer = gameObject.layer;
                 scAxe.Direction = transform.parent?.localScale.x ?? 1;
                 scAxe.ThrowerVelocityX = _throwerRb.linearVelocity.x;
@@ -71,15 +69,6 @@ namespace Weapons.Models
         private void Configure(IPoolService poolService)
         {
             _poolService = poolService;
-        }
-
-        private void Release(GameObject instance)
-        {
-            if (!gameObject.activeInHierarchy)
-            {
-                return;
-            }
-            _poolService.Release(axePrefab, instance);
         }
     }
 }

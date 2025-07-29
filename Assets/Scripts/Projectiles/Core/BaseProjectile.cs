@@ -1,17 +1,21 @@
-using System;
 using UnityEngine;
+using Collectables.Score;
+using Pooling;
 using Weapons;
 using Weapons.Interfaces;
 
 namespace Projectiles.Core
 {
-    public abstract class BaseProjectile : MonoBehaviour, IWeaponTypeProvider
+    public abstract class BaseProjectile : MonoBehaviour, IWeaponTypeProvider, IPoolable
     {
         [SerializeField] protected Vector2 speed = new(12f, 0f);
 
         protected Rigidbody2D Rb;
         private bool _isDestroyed;
-        public Action<GameObject> OnProjectileDestroyed { get; set; }
+
+        // Direct references for pooling - exposed through IPoolable interface
+        private IPoolService _poolService;
+        private GameObject _sourcePrefab;
 
         protected virtual void Awake()
         {
@@ -34,19 +38,38 @@ namespace Projectiles.Core
         {
             if (_isDestroyed)
                 return;
-            if (!gameObject.activeInHierarchy)
-                return;
 
             _isDestroyed = true;
 
-            // Reset all physics properties
-            Rb.linearVelocity = Vector2.zero;
-            Rb.angularVelocity = 0f;
+            // Only proceed with physics reset if object is still active
+            if (gameObject.activeInHierarchy)
+            {
+                // Reset all physics properties
+                Rb.linearVelocity = Vector2.zero;
+                Rb.angularVelocity = 0f;
 
-            // Reset any accumulated forces
-            Rb.totalForce = Vector2.zero;
-            Rb.totalTorque = 0f;
-            OnProjectileDestroyed?.Invoke(gameObject);
+                // Reset any accumulated forces
+                Rb.totalForce = Vector2.zero;
+                Rb.totalTorque = 0f;
+
+                // Return to pool
+                ReturnToPool();
+            }
+        }
+
+        public void SetPoolingInfo(IPoolService poolService, GameObject sourcePrefab)
+        {
+            _poolService = poolService;
+            _sourcePrefab = sourcePrefab;
+        }
+
+        public void ReturnToPool()
+        {
+            if (_poolService != null && _sourcePrefab && gameObject.activeInHierarchy)
+            {
+                _poolService.Release(_sourcePrefab, gameObject);
+            }
+
         }
     }
 }

@@ -34,7 +34,8 @@ namespace Weapons.Models
 
             if (scFireball)
             {
-                scFireball.OnProjectileDestroyed += Release;
+                scFireball.SetPoolingInfo(_poolService, fireballPrefab);
+
                 scFireball.gameObject.layer = gameObject.layer;
                 scFireball.Direction = transform.parent?.localScale.x ?? 1;
                 scFireball.WeaponType = weaponType;
@@ -59,15 +60,6 @@ namespace Weapons.Models
         private void Configure(IPoolService poolService)
         {
             _poolService = poolService;
-        }
-
-        private void Release(GameObject instance)
-        {
-            if (!gameObject.activeInHierarchy)
-            {
-                return;
-            }
-            _poolService.Release(fireballPrefab, instance);
         }
     }
 }

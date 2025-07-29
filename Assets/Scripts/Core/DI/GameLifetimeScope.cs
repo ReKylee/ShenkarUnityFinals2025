@@ -50,7 +50,9 @@ namespace Core.DI
             // Game Management
             builder.RegisterComponentInHierarchy<GameFlowManager>();
             builder.RegisterComponentInHierarchy<GameDataCoordinator>();
-
+            // Pooling System
+            builder.RegisterComponentInHierarchy<PoolManager>().As<IPoolService>();
+            
             // Weapons
             builder.RegisterComponentInHierarchy<AxeWeapon>();
             builder.RegisterComponentInHierarchy<FireballWeapon>();
@@ -62,9 +64,9 @@ namespace Core.DI
 
             // Score System
             builder.RegisterComponentInHierarchy<ScoreController>();
+            builder.RegisterComponentInHierarchy<PopupTextService>();
 
-            // Pooling System
-            builder.RegisterComponentInHierarchy<PoolManager>().As<IPoolService>();
+            
 
 
             Debug.Log("[GameLifetimeScope] DI container configured successfully.");

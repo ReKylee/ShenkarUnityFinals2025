@@ -16,7 +16,7 @@ namespace Projectiles
 
         [NonSerialized] public float Direction;
         [NonSerialized] public Transform PlayerTransform;
-
+        public event Action<GameObject> OnProjectileDestroyed;
         private void Update()
         {
 

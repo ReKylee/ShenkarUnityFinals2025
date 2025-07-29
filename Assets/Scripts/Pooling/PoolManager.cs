@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Pooling
 {
@@ -9,21 +9,23 @@ namespace Pooling
     {
         [SerializeField] private int defaultCapacity = 10;
         [SerializeField] private int maxSize = 128;
+        [SerializeField] private int maxPools = 64;
 
-        // Fast array-based pools for performance
-        private readonly Dictionary<int, PoolData> _poolMap = new();
-        private readonly Transform[] _poolParents = new Transform[64];
-        private readonly Stack<GameObject>[] _pools = new Stack<GameObject>[64];
-        private readonly GameObject[] _prefabLookup = new GameObject[64];
-        private int _poolCount;
+        // Ultra-fast array-based mapping - fastest approach for Unity
+        private PoolInfo[] _pools;
+        private int _poolCount = 0;
+
+        private struct PoolInfo
+        {
+            public IObjectPool<GameObject> Pool;
+            public Transform Parent;
+            public int PrefabId;
+            public GameObject Prefab;
+        }
 
         private void Awake()
         {
-            // Pre-initialize pools
-            for (int i = 0; i < _pools.Length; i++)
-            {
-                _pools[i] = new Stack<GameObject>(defaultCapacity);
-            }
+            _pools = new PoolInfo[maxPools];
         }
 
         private void OnDestroy()
@@ -35,13 +37,30 @@ namespace Pooling
         public GameObject Get(GameObject prefab, Vector3 position, Quaternion rotation)
         {
             int prefabId = prefab.GetInstanceID();
+            int poolIndex = FindPoolIndex(prefabId);
 
-            if (_poolMap.TryGetValue(prefabId, out PoolData poolData))
+            if (poolIndex >= 0)
             {
-                return GetFromPool(poolData.PoolIndex, position, rotation);
+                // Verify that the prefabId we're using matches what's stored in the pool
+                if (_pools[poolIndex].PrefabId != prefabId)
+                {
+                    Debug.LogError(
+                        $"Pool ID mismatch! Expected ID: {_pools[poolIndex].PrefabId}, Actual ID: {prefabId}");
+                }
+
+                // Use the stored Prefab to verify we're getting the correct type
+                if (_pools[poolIndex].Prefab != prefab)
+                {
+                    Debug.LogWarning(
+                        $"Pool prefab mismatch! Requested: {prefab.name}, Pool contains: {_pools[poolIndex].Prefab.name}");
+                }
+
+                GameObject obj = _pools[poolIndex].Pool.Get();
+                obj.transform.SetPositionAndRotation(position, rotation);
+                return obj;
             }
 
-            // First time - create pool
+            // Create new pool
             return CreatePoolAndGet(prefab, prefabId, position, rotation);
         }
 
@@ -50,15 +69,43 @@ namespace Pooling
         {
             if (!instance) return;
 
+            // Get the pool index first
             int prefabId = prefab.GetInstanceID();
-            if (_poolMap.TryGetValue(prefabId, out PoolData poolData))
+            int poolIndex = FindPoolIndex(prefabId);
+
+            // Fast active state check - only warn if not already in pool
+            if (!instance.activeInHierarchy)
             {
-                ReleaseToPool(poolData.PoolIndex, instance);
+                // If object is already inactive, we can assume it's already pooled
+                // or in the process of being released
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                if (poolIndex < 0)
+                {
+                    Debug.LogWarning($"Attempting to release inactive object: {instance.name}");
+                }
+#endif
+                return;
+            }
+
+            if (poolIndex >= 0)
+            {
+                _pools[poolIndex].Pool.Release(instance);
             }
             else
             {
                 instance.SetActive(false);
             }
+        }
+
+        // Linear search is faster than Dictionary for small collections (<50 items)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int FindPoolIndex(int prefabId)
+        {
+            for (int i = 0; i < _poolCount; i++)
+                if (_pools[i].PrefabId == prefabId)
+                    return i;
+
+            return -1;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -75,147 +122,99 @@ namespace Pooling
                 Release(prefab, instance.gameObject);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private GameObject GetFromPool(int poolIndex, Vector3 position, Quaternion rotation)
-        {
-            var pool = _pools[poolIndex];
-
-            while (pool.Count > 0)
-            {
-                GameObject obj = pool.Pop();
-                if (obj && !obj.activeInHierarchy)
-                {
-                    obj.transform.SetPositionAndRotation(position, rotation);
-                    obj.SetActive(true);
-                    return obj;
-                }
-            }
-
-            // Pool empty or all objects still active - create new instance
-            return CreateNewInstance(poolIndex, position, rotation);
-        }
-
         private GameObject CreatePoolAndGet(GameObject prefab, int prefabId, Vector3 position, Quaternion rotation)
         {
-            if (_poolCount >= _pools.Length)
+            if (_poolCount >= maxPools)
             {
                 Debug.LogError("Maximum pool count exceeded!");
                 return Instantiate(prefab, position, rotation);
             }
 
-            int poolIndex = _poolCount++;
-
             // Create organized parent
             Transform poolParent = new GameObject($"Pool_{prefab.name}").transform;
             poolParent.SetParent(transform);
 
-            PoolData poolData = new()
+            // Create Unity's optimized ObjectPool
+            var pool = new ObjectPool<GameObject>(
+                createFunc: () => Instantiate(prefab, poolParent),
+                actionOnGet: obj => obj.SetActive(true),
+                actionOnRelease: obj => obj.SetActive(false),
+                actionOnDestroy: obj =>
+                {
+                    if (obj) Destroy(obj);
+                },
+                collectionCheck: false, // Disable for performance
+                defaultCapacity: defaultCapacity,
+                maxSize: maxSize
+            );
+
+            int poolIndex = _poolCount;
+            _pools[poolIndex] = new PoolInfo
             {
-                PoolIndex = poolIndex,
+                Pool = pool,
+                Parent = poolParent,
+                PrefabId = prefabId,
                 Prefab = prefab
             };
 
-            _poolMap[prefabId] = poolData;
-            _prefabLookup[poolIndex] = prefab;
-            _poolParents[poolIndex] = poolParent;
+            _poolCount++;
 
-            // Pre-populate with a few instances
-            PrePopulatePool(poolIndex, prefab, poolParent);
+            // Pre-populate pool
+            WarmPool(prefab, Mathf.Min(8, defaultCapacity));
 
-            return GetFromPool(poolIndex, position, rotation);
-        }
-
-        private void PrePopulatePool(int poolIndex, GameObject prefab, Transform parent)
-        {
-            var pool = _pools[poolIndex];
-            int initialCount = Mathf.Min(8, defaultCapacity); // Start with 8 instances
-
-            for (int i = 0; i < initialCount; i++)
-            {
-                GameObject obj = Instantiate(prefab, parent);
-                obj.SetActive(false);
-                pool.Push(obj);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private GameObject CreateNewInstance(int poolIndex, Vector3 position, Quaternion rotation)
-        {
-            GameObject prefab = _prefabLookup[poolIndex];
-            Transform parent = _poolParents[poolIndex];
-
-            GameObject obj = Instantiate(prefab, parent);
+            // Get first object
+            GameObject obj = pool.Get();
             obj.transform.SetPositionAndRotation(position, rotation);
-            obj.SetActive(true);
             return obj;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ReleaseToPool(int poolIndex, GameObject instance)
-        {
-            // Only release if object is actually active
-            if (!instance.activeInHierarchy)
-            {
-                Debug.LogWarning($"Attempting to release an already inactive object: {instance.name}");
-                return;
-            }
-
-            instance.SetActive(false);
-
-            var pool = _pools[poolIndex];
-            if (pool.Count < maxSize)
-            {
-                pool.Push(instance);
-            }
-            else
-            {
-                // Pool full - destroy excess
-                Destroy(instance);
-            }
         }
 
         // Utility methods
         public void WarmPool(GameObject prefab, int count)
         {
             int prefabId = prefab.GetInstanceID();
-            if (!_poolMap.TryGetValue(prefabId, out PoolData poolData))
+            int poolIndex = FindPoolIndex(prefabId);
+
+            if (poolIndex < 0)
             {
-                // Create pool if it doesn't exist
-                CreatePoolAndGet(prefab, prefabId, Vector3.zero, Quaternion.identity);
-                Release(prefab, GetFromPool(_poolCount - 1, Vector3.zero, Quaternion.identity));
-                poolData = _poolMap[prefabId];
+                GameObject tempObj = Get(prefab, Vector3.zero, Quaternion.identity);
+                Release(prefab, tempObj);
+                poolIndex = FindPoolIndex(prefabId);
             }
 
-            var pool = _pools[poolData.PoolIndex];
-            Transform parent = _poolParents[poolData.PoolIndex];
-
-            for (int i = 0; i < count && pool.Count < maxSize; i++)
+            if (poolIndex >= 0)
             {
-                GameObject obj = Instantiate(prefab, parent);
-                obj.SetActive(false);
-                pool.Push(obj);
+                var tempObjects = new GameObject[count];
+                for (int i = 0; i < count; i++)
+                {
+                    tempObjects[i] = _pools[poolIndex].Pool.Get();
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    _pools[poolIndex].Pool.Release(tempObjects[i]);
+                }
             }
         }
 
         public void ClearPool(GameObject prefab)
         {
             int prefabId = prefab.GetInstanceID();
-            if (_poolMap.TryGetValue(prefabId, out PoolData poolData))
-            {
-                var pool = _pools[poolData.PoolIndex];
+            int poolIndex = FindPoolIndex(prefabId);
 
-                while (pool.Count > 0)
+            if (poolIndex >= 0)
+            {
+                DisposePool(poolIndex);
+
+                // Compact array - move last element to removed position
+                if (poolIndex < _poolCount - 1)
                 {
-                    GameObject obj = pool.Pop();
-                    if (obj) Destroy(obj);
+                    _pools[poolIndex] = _pools[_poolCount - 1];
                 }
 
-                if (_poolParents[poolData.PoolIndex])
-                    Destroy(_poolParents[poolData.PoolIndex].gameObject);
+                _poolCount--;
 
-                _poolMap.Remove(prefabId);
-                _prefabLookup[poolData.PoolIndex] = null;
-                _poolParents[poolData.PoolIndex] = null;
+                // Clear last slot
+                _pools[_poolCount] = default;
             }
         }
 
@@ -223,41 +222,62 @@ namespace Pooling
         {
             for (int i = 0; i < _poolCount; i++)
             {
-                var pool = _pools[i];
-                while (pool.Count > 0)
-                {
-                    GameObject obj = pool.Pop();
-                    if (obj) Destroy(obj);
-                }
-
-                if (_poolParents[i])
-                    Destroy(_poolParents[i].gameObject);
+                DisposePool(i);
             }
 
-            _poolMap.Clear();
-            Array.Clear(_prefabLookup, 0, _poolCount);
-            Array.Clear(_poolParents, 0, _poolCount);
+            Array.Clear(_pools, 0, _poolCount);
             _poolCount = 0;
         }
 
-        // Simple stats
+        private void DisposePool(int poolIndex)
+        {
+
+            if (_pools[poolIndex].Pool is IDisposable disposablePool)
+            {
+                disposablePool.Dispose();
+            }
+
+            if (_pools[poolIndex].Parent)
+            {
+                Destroy(_pools[poolIndex].Parent.gameObject);
+            }
+        }
+
         public int GetPooledCount(GameObject prefab)
         {
             int prefabId = prefab.GetInstanceID();
-            if (_poolMap.TryGetValue(prefabId, out PoolData poolData))
+            int poolIndex = FindPoolIndex(prefabId);
+
+            if (poolIndex >= 0 && _pools[poolIndex].Pool is ObjectPool<GameObject> objectPool)
             {
-                return _pools[poolData.PoolIndex].Count;
+                return objectPool.CountAll - objectPool.CountActive;
             }
 
             return 0;
         }
 
-        public bool HasPool(GameObject prefab) => _poolMap.ContainsKey(prefab.GetInstanceID());
-
-        private struct PoolData
+        // Debug method 
+        public void LogPoolStatus()
         {
-            public int PoolIndex;
-            public GameObject Prefab;
+            Debug.Log($"===== Pool Manager Status: {_poolCount}/{maxPools} pools =====");
+
+            for (int i = 0; i < _poolCount; i++)
+            {
+                PoolInfo info = _pools[i];
+                string prefabName = info.Prefab ? info.Prefab.name : "<missing>";
+                string poolStatus = "";
+
+                if (info.Pool is ObjectPool<GameObject> objPool)
+                {
+                    poolStatus =
+                        $"Total: {objPool.CountAll}, Active: {objPool.CountActive}, Inactive: {objPool.CountInactive}";
+                }
+
+                Debug.Log($"Pool #{i}: PrefabId={info.PrefabId}, Prefab={prefabName}, {poolStatus}");
+            }
         }
+
+
     }
+
 }
