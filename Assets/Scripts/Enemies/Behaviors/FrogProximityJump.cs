@@ -18,7 +18,7 @@ namespace Enemies.Behaviors
         private float _lastTriggerTime;
         private Transform _player;
 
-        private void Awake()
+        private void Start()
         {
             _player = PlayerLocator.PlayerTransform;
         }
@@ -39,19 +39,20 @@ namespace Enemies.Behaviors
 
         public void CheckTrigger()
         {
-            _frameCounter++;
-            if (_frameCounter % checkEveryNFrames != 0) return;
-            if (!_player) return;
+            if (++_frameCounter % checkEveryNFrames != 0 || !_player) return;
 
             Vector2 toPlayer = _player.position - transform.position;
             float sqrDist = toPlayer.sqrMagnitude;
             float sqrTrigger = triggerDistance * triggerDistance;
 
-            IsTriggered = sqrDist < sqrTrigger && Time.time - _lastTriggerTime > jumpCooldown && _grounded;
-
-            if (IsTriggered)
+            if (sqrDist < sqrTrigger && Time.time - _lastTriggerTime > jumpCooldown && _grounded)
             {
+                IsTriggered = true;
                 _lastTriggerTime = Time.time;
+            }
+            else
+            {
+                IsTriggered = false;
             }
         }
     }
