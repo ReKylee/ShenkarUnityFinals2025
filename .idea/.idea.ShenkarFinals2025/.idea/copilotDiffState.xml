@@ -21,6 +21,14 @@
             </PendingDiffInfo>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/GroundedTrigger.cs">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/GroundedTrigger.cs" />
+              <option name="updatedContent" value="using Enemies.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Trigger to check if the object is on the ground&#10;    [RequireComponent(typeof(Collider2D))]&#10;    public class GroundedTrigger : MonoBehaviour, ITrigger&#10;    {&#10;        [SerializeField] private LayerMask groundLayer;&#10;&#10;        private bool _isGrounded;&#10;&#10;        public bool IsTriggered =&gt; _isGrounded;&#10;&#10;        private void OnCollisionEnter2D(Collision2D collision)&#10;        {&#10;            if ((1 &lt;&lt; collision.gameObject.layer &amp; groundLayer) != 0)&#10;                _isGrounded = true;&#10;        }&#10;&#10;        private void OnCollisionExit2D(Collision2D collision)&#10;        {&#10;            if ((1 &lt;&lt; collision.gameObject.layer &amp; groundLayer) != 0)&#10;                _isGrounded = false;&#10;        }&#10;&#10;        public void CheckTrigger()&#10;        {&#10;            // No periodic checks needed; state is updated via collision events&#10;        }&#10;    }&#10;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/JumpMover.cs">
           <value>
             <PendingDiffInfo>

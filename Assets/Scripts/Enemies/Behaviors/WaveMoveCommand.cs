@@ -3,11 +3,12 @@ using UnityEngine;
 
 namespace Enemies.Behaviors
 {
-    // Command to move the enemy up and down
-    public class VerticalMoveCommand : MonoBehaviour, IMovementCommand
+    // Command to move the enemy in a wave pattern
+    public class WaveMoveCommand : MonoBehaviour, IMovementCommand
     {
-        [SerializeField] private float amplitude = 2f;
-        [SerializeField] private float frequency = 0.8f;
+        [SerializeField] private float speed = 2f;
+        [SerializeField] private float amplitude = 1f;
+        [SerializeField] private float frequency = 1.11f;
 
         private Rigidbody2D _rb;
         private float _startY;
@@ -23,12 +24,9 @@ namespace Enemies.Behaviors
             float t = Mathf.PingPong(Time.time * frequency, 1f);
             float triangle = 2f * Mathf.Abs(t - 0.5f);
             float y = _startY + (triangle - 0.5f) * 2f * amplitude;
-            _rb.linearVelocityY = (y - _rb.position.y) / Time.fixedDeltaTime;
+            _rb.linearVelocity = new Vector2(-speed, (y - _rb.position.y) / Time.fixedDeltaTime);
         }
 
-        public void ResetPosition()
-        {
-            _rb.position = new Vector2(_rb.position.x, _startY);
-        }
+  
     }
 }
