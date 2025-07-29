@@ -63,6 +63,10 @@ namespace Weapons.Models
 
         private void Release(GameObject instance)
         {
+            if (!gameObject.activeInHierarchy)
+            {
+                return;
+            }
             _poolService.Release(fireballPrefab, instance);
         }
     }

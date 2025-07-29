@@ -559,7 +559,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponType: 1
   spawnPoint: {fileID: 8740184567830207716}
-  cooldownTime: 0.5
+  cooldownTime: 0.25
   axePrefab: {fileID: 460594579410848658, guid: 4ab8b6dd74ca8374588c1806bdf74e28, type: 3}
 --- !u!114 &4855835521647181485
 MonoBehaviour:

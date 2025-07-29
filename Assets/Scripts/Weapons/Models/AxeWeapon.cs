@@ -24,6 +24,10 @@ namespace Weapons.Models
         {
             _throwerRb = GetComponentInParent<Rigidbody2D>();
         }
+        private void Start()
+        {
+          
+        }
         public WeaponType WeaponType => weaponType;
         public void Shoot()
         {
@@ -71,6 +75,10 @@ namespace Weapons.Models
 
         private void Release(GameObject instance)
         {
+            if (!gameObject.activeInHierarchy)
+            {
+                return;
+            }
             _poolService.Release(axePrefab, instance);
         }
     }

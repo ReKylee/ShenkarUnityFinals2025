@@ -10,6 +10,7 @@ namespace Projectiles.Core
         [SerializeField] protected Vector2 speed = new(12f, 0f);
 
         protected Rigidbody2D Rb;
+        private bool _isDestroyed;
         public Action<GameObject> OnProjectileDestroyed { get; set; }
 
         protected virtual void Awake()
@@ -17,7 +18,10 @@ namespace Projectiles.Core
             Rb = GetComponent<Rigidbody2D>();
         }
         public virtual WeaponType WeaponType { get; set; }
-
+        private void OnEnable()
+        {
+            _isDestroyed = false;
+        }
 
         public void Fire()
         {
@@ -28,23 +32,21 @@ namespace Projectiles.Core
 
         protected void DestroyProjectile()
         {
-            if (!gameObject.activeInHierarchy)
-            {
+            if (_isDestroyed)
                 return;
-            }
+            if (!gameObject.activeInHierarchy)
+                return;
 
-            if (OnProjectileDestroyed != null)
-            {
+            _isDestroyed = true;
 
-                // Reset all physics properties
-                Rb.linearVelocity = Vector2.zero;
-                Rb.angularVelocity = 0f;
+            // Reset all physics properties
+            Rb.linearVelocity = Vector2.zero;
+            Rb.angularVelocity = 0f;
 
-                // Reset any accumulated forces
-                Rb.totalForce = Vector2.zero;
-                Rb.totalTorque = 0f;
-                OnProjectileDestroyed.Invoke(gameObject);
-            }
+            // Reset any accumulated forces
+            Rb.totalForce = Vector2.zero;
+            Rb.totalTorque = 0f;
+            OnProjectileDestroyed?.Invoke(gameObject);
         }
     }
 }

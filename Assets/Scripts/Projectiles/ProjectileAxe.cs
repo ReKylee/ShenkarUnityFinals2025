@@ -18,7 +18,6 @@ namespace Projectiles
                 return;
 
             DestroyProjectile();
-            Debug.Log($"Axe hit {other.gameObject.name}.");
         }
 
 
