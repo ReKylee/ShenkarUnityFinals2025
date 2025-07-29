@@ -46,11 +46,17 @@ namespace Enemies.Behaviors
             _frameCounter++;
             if (_frameCounter % checkEveryNFrames != 0) return;
             if (!_player) return;
-            float sqrDist = (transform.position - _player.position).sqrMagnitude;
+            Vector2 toPlayer = _player.position - transform.position;
+            float sqrDist = toPlayer.sqrMagnitude;
             float sqrTrigger = triggerDistance * triggerDistance;
             if (sqrDist < sqrTrigger && Time.time - _lastJumpTime > jumpCooldown && _grounded)
             {
-                Vector2 jumpDir = new(transform.localScale.x * jumpForceX, jumpForceY);
+                // Flip to face the player
+                Vector3 scale = transform.localScale;
+                scale.x = toPlayer.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+                transform.localScale = scale;
+
+                Vector2 jumpDir = new(transform.localScale.x > 0 ? jumpForceX : -jumpForceX, jumpForceY);
                 _rb.linearVelocity = jumpDir;
                 _lastJumpTime = Time.time;
             }
