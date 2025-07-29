@@ -4,18 +4,20 @@ using Weapons.Models;
 
 namespace Enemies.Behaviors
 {
-    // Shoots a projectile at intervals from a specified fire point
-    public class ProjectileShooter : MonoBehaviour, IAttackBehavior
+    // Command to shoot a projectile at intervals
+    public class ProjectileShootCommand : MonoBehaviour, IAttackCommand
     {
         [SerializeField] private FireballWeapon fireballWeapon;
         [SerializeField] private float fireInterval = 2f;
 
         private float _lastFireTime;
+
         private void Start()
         {
             fireballWeapon.Equip();
         }
-        public void Attack()
+
+        public void Execute()
         {
             if (!fireballWeapon)
                 return;
@@ -25,6 +27,11 @@ namespace Enemies.Behaviors
 
             fireballWeapon.Shoot();
             _lastFireTime = Time.time;
+        }
+
+        public void ResetCooldown()
+        {
+            _lastFireTime = 0f;
         }
     }
 }

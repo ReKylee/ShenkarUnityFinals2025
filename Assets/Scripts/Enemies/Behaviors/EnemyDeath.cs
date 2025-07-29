@@ -25,5 +25,10 @@ namespace Enemies.Behaviors
         {
             gameObject.SetActive(false);
         }
+
+        public void ResetDeathState()
+        {
+            gameObject.SetActive(true);
+        }
     }
 }

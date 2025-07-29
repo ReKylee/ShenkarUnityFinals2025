@@ -3,22 +3,20 @@ using UnityEngine;
 
 namespace Enemies.Behaviors
 {
-    // Makes the enemy jump forward at intervals (configurable for snakes, frogs, etc.)
+    // Command to make the enemy jump forward
     [RequireComponent(typeof(Rigidbody2D))]
-    public class JumpMover : MonoBehaviour, IMovementBehavior
+    public class JumpCommand : MonoBehaviour, IMovementCommand
     {
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private float jumpForceX = 2f;
         [SerializeField] private float jumpForceY = 5f;
-        [SerializeField] private float jumpInterval = 2f;
+
         private bool _grounded;
-        private float _nextJumpTime;
         private Rigidbody2D _rb;
 
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
-            _nextJumpTime = Time.time + jumpInterval;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -33,14 +31,18 @@ namespace Enemies.Behaviors
                 _grounded = false;
         }
 
-        public void Move()
+        public void Execute()
         {
-            if (Time.time >= _nextJumpTime && _grounded)
+            if (_grounded)
             {
                 Vector2 jumpDir = new(transform.localScale.x * jumpForceX, jumpForceY);
                 _rb.linearVelocity = jumpDir;
-                _nextJumpTime = Time.time + jumpInterval;
             }
+        }
+
+        public void ResetState()
+        {
+            _grounded = false;
         }
     }
 }

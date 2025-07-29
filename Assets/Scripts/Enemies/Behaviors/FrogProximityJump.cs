@@ -4,27 +4,21 @@ using UnityEngine;
 
 namespace Enemies.Behaviors
 {
-    // Makes the enemy jump when the player is within a certain distance
+    // Emits an event when the player is within a certain distance
     [RequireComponent(typeof(Rigidbody2D))]
-    public class FrogProximityJump : MonoBehaviour, ITriggerBehavior
+    public class FrogProximityTrigger : MonoBehaviour, ITrigger
     {
         [SerializeField] private LayerMask groundLayer;
         [SerializeField] private float triggerDistance = 3f;
-        [SerializeField] private float jumpForceX = 4f;
-        [SerializeField] private float jumpForceY = 8f;
         [SerializeField] private float jumpCooldown = 2f;
         [SerializeField] private int checkEveryNFrames = 1;
+
         private int _frameCounter;
         private bool _grounded;
-        private float _lastJumpTime;
+        private float _lastTriggerTime;
         private Transform _player;
-        private Rigidbody2D _rb;
 
         private void Awake()
-        {
-            _rb = GetComponent<Rigidbody2D>();
-        }
-        private void Start()
         {
             _player = PlayerLocator.PlayerTransform;
         }
@@ -41,24 +35,23 @@ namespace Enemies.Behaviors
                 _grounded = false;
         }
 
+        public bool IsTriggered { get; private set; }
+
         public void CheckTrigger()
         {
             _frameCounter++;
             if (_frameCounter % checkEveryNFrames != 0) return;
             if (!_player) return;
+
             Vector2 toPlayer = _player.position - transform.position;
             float sqrDist = toPlayer.sqrMagnitude;
             float sqrTrigger = triggerDistance * triggerDistance;
-            if (sqrDist < sqrTrigger && Time.time - _lastJumpTime > jumpCooldown && _grounded)
-            {
-                // Flip to face the player
-                Vector3 scale = transform.localScale;
-                scale.x = toPlayer.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
-                transform.localScale = scale;
 
-                Vector2 jumpDir = new(transform.localScale.x > 0 ? jumpForceX : -jumpForceX, jumpForceY);
-                _rb.linearVelocity = jumpDir;
-                _lastJumpTime = Time.time;
+            IsTriggered = sqrDist < sqrTrigger && Time.time - _lastTriggerTime > jumpCooldown && _grounded;
+
+            if (IsTriggered)
+            {
+                _lastTriggerTime = Time.time;
             }
         }
     }

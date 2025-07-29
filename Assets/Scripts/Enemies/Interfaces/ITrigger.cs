@@ -1,7 +1,8 @@
 ﻿namespace Enemies.Interfaces
 {
-    public interface ITriggerBehavior
+    public interface ITrigger
     {
+        bool IsTriggered { get; }
         void CheckTrigger();
     }
 }
