@@ -16,15 +16,15 @@ MonoBehaviour:
   - Name: Idle
     FPS: 3
     Frames:
-    - {fileID: -1402380810, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
-    - {fileID: -1402380810, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
-    - {fileID: -1769127334, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
-    - {fileID: -1769127334, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
-    - {fileID: -1769127334, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
-    - {fileID: -1769127334, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
+    - {fileID: -1325943824, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
+    - {fileID: -1325943824, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
+    - {fileID: 2007734270, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
+    - {fileID: 2007734270, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
+    - {fileID: 2007734270, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
+    - {fileID: 2007734270, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
     SpriteAnimationType: 0
   - Name: Jump
     FPS: 0
     Frames:
-    - {fileID: 1890067015, guid: 2a8686e845abb2947b6336b4eb3ef5ce, type: 3}
+    - {fileID: 1853066926, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
     SpriteAnimationType: 1

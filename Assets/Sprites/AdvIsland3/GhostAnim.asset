@@ -16,8 +16,8 @@ MonoBehaviour:
   - Name: Idle
     FPS: 12
     Frames:
-    - {fileID: 5533069868533325077, guid: e27f4df0eca15df488662922fed55a84, type: 3}
-    - {fileID: 999373279, guid: e27f4df0eca15df488662922fed55a84, type: 3}
-    - {fileID: 1408658931, guid: e27f4df0eca15df488662922fed55a84, type: 3}
-    - {fileID: 215064269, guid: e27f4df0eca15df488662922fed55a84, type: 3}
+    - {fileID: 1965794196, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
+    - {fileID: -1108278271, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
+    - {fileID: 1144934486, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
+    - {fileID: -105789301, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
     SpriteAnimationType: 0

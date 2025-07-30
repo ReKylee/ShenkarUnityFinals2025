@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.U2D.Sprites;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 // REQUIRED: The "2D Sprite" package must be installed via the Package Manager for this to compile.
@@ -15,7 +17,6 @@ namespace Editor
 {
     public class SpriteMergerEditor : EditorWindow
     {
-
         // Undo tracking
         private static readonly string UndoGroupName = "Sprite Atlas Merge";
         private static readonly Dictionary<Object, Object> OriginalReferences = new();
@@ -31,12 +32,15 @@ namespace Editor
         private bool _updatePrefabs = true;
         private bool _updateScenes = true;
         private bool _updateScriptableObjects = true;
+        private bool _updateAnimations = true;
+        private bool _updateMaterials = true;
+        private bool _deepScan = true; // New option for thorough scanning
 
         private void OnGUI()
         {
-            GUILayout.Label("Sprite Atlas Merger", EditorStyles.boldLabel);
+            GUILayout.Label("Enhanced Sprite Atlas Merger", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox(
-                "Merge multiple sprite sheets into a single atlas and update ALL project references automatically.",
+                "Merge multiple sprite sheets into a single atlas and update ALL project references automatically with deep scanning.",
                 MessageType.Info);
 
             EditorGUILayout.HelpBox("IMPORTANT: This tool requires the '2D Sprite' package. Make backups before use!",
@@ -51,7 +55,7 @@ namespace Editor
         [MenuItem("Tools/Sprite Atlas Merger")]
         public static void ShowWindow()
         {
-            GetWindow<SpriteMergerEditor>("Atlas Merger");
+            GetWindow<SpriteMergerEditor>("Sprite Atlas Merger");
         }
 
         private void DrawSpriteList()
@@ -152,6 +156,21 @@ namespace Editor
             EditorGUILayout.BeginHorizontal();
             _updateScriptableObjects = EditorGUILayout.Toggle(_updateScriptableObjects, GUILayout.Width(20));
             GUILayout.Label("Update ScriptableObject References", GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            _updateAnimations = EditorGUILayout.Toggle(_updateAnimations, GUILayout.Width(20));
+            GUILayout.Label("Update Animation Clips", GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            _updateMaterials = EditorGUILayout.Toggle(_updateMaterials, GUILayout.Width(20));
+            GUILayout.Label("Update Materials", GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            _deepScan = EditorGUILayout.Toggle(_deepScan, GUILayout.Width(20));
+            GUILayout.Label("Deep Scan (slower but more thorough)", GUILayout.ExpandWidth(true));
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
@@ -395,8 +414,8 @@ namespace Editor
 
                 EditorUtility.DisplayProgressBar("Creating Atlas", "Updating references...", 0.7f);
 
-                // Update all references
-                UpdateAllProjectReferences(validSprites, outputPath);
+                // Update all references with enhanced scanning
+                UpdateAllProjectReferencesEnhanced(validSprites, outputPath);
 
                 // Collapse undo group
                 Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
@@ -406,7 +425,7 @@ namespace Editor
                     "Atlas created successfully!\n" +
                     $"• Merged {validSprites.Count} sprites\n" +
                     $"• Atlas size: {atlas.width}x{atlas.height}\n" +
-                    "• All project references updated" +
+                    "• All project references updated\n" +
                     "• Use Ctrl+Z to undo if needed", "OK");
             }
             catch (Exception e)
@@ -461,7 +480,6 @@ namespace Editor
 
         private Texture2D ExtractSpriteTexture(Texture2D sourceTexture, Sprite sprite)
         {
-
             Rect textureRect = sprite.textureRect;
             int width = Mathf.FloorToInt(textureRect.width);
             int height = Mathf.FloorToInt(textureRect.height);
@@ -541,7 +559,6 @@ namespace Editor
             var spriteRects = new List<SpriteRect>();
 
             // Recreate the packing to get correct rectangles
-
             Texture2D tempAtlas = new(1, 1);
             var packedRects = tempAtlas.PackTextures(originalSprites
                 .Select(sprite => new { sprite, sourceTexture = GetReadableTexture(sprite.texture) })
@@ -607,7 +624,7 @@ namespace Editor
                     importer.compressionQuality = srcImporter.compressionQuality;
                     importer.textureCompression = srcImporter.textureCompression;
                     importer.isReadable = srcImporter.isReadable;
-                    importer.maxTextureSize = srcImporter.maxTextureSize;
+                    importer.maxTextureSize = _maxAtlasSize;
                     importer.spritePixelsPerUnit = srcImporter.spritePixelsPerUnit;
                 }
             }
@@ -615,7 +632,8 @@ namespace Editor
             return true;
         }
 
-        private void UpdateAllProjectReferences(List<Sprite> originalSprites, string atlasPath)
+        // ENHANCED REFERENCE UPDATING SYSTEM
+        private void UpdateAllProjectReferencesEnhanced(List<Sprite> originalSprites, string atlasPath)
         {
             // Create mapping from old sprites to new sprites
             var spriteMap = CreateSpriteMapping(originalSprites, atlasPath);
@@ -625,43 +643,176 @@ namespace Editor
                 return;
             }
 
+            Debug.Log($"Created sprite mapping for {spriteMap.Count} sprites");
+
             int totalUpdated = 0;
+
+            // Get all asset paths, excluding packages
             string[] allAssetPaths = AssetDatabase.GetAllAssetPaths()
-                .Where(path => path.StartsWith("Assets/"))
+                .Where(path => path.StartsWith("Assets/") && !path.StartsWith("Packages/"))
                 .ToArray();
 
-            for (int i = 0; i < allAssetPaths.Length; i++)
+            Debug.Log($"Scanning {allAssetPaths.Length} assets for sprite references...");
+
+            // Process different asset types
+            var assetGroups = new Dictionary<string, List<string>>
             {
-                string path = allAssetPaths[i];
+                ["Scenes"] = allAssetPaths.Where(p => p.EndsWith(".unity")).ToList(),
+                ["Prefabs"] = allAssetPaths.Where(p => p.EndsWith(".prefab")).ToList(),
+                ["ScriptableObjects"] = allAssetPaths.Where(p => p.EndsWith(".asset")).ToList(),
+                ["AnimationClips"] = allAssetPaths.Where(p => p.EndsWith(".anim")).ToList(),
+                ["Materials"] = allAssetPaths.Where(p => p.EndsWith(".mat")).ToList(),
+                ["Other"] = allAssetPaths.Where(p => !p.EndsWith(".unity") && !p.EndsWith(".prefab") &&
+                                                     !p.EndsWith(".asset") && !p.EndsWith(".anim") &&
+                                                     !p.EndsWith(".mat") && !p.EndsWith(".cs") &&
+                                                     !p.EndsWith(".js") && !p.EndsWith(".dll")).ToList()
+            };
 
-                if (EditorUtility.DisplayCancelableProgressBar("Updating References",
-                        $"Processing: {Path.GetFileName(path)}", (float)i / allAssetPaths.Length))
-                {
-                    break;
-                }
+            int processedCount = 0;
+            int totalCount = allAssetPaths.Length;
 
-                if (_updateScenes && path.EndsWith(".unity"))
+            foreach (var group in assetGroups)
+            {
+                if (group.Value.Count == 0) continue;
+
+                Debug.Log($"Processing {group.Key}: {group.Value.Count} assets");
+
+                foreach (string path in group.Value)
                 {
-                    totalUpdated += UpdateSceneReferences(path, spriteMap);
-                }
-                else if (_updatePrefabs && path.EndsWith(".prefab"))
-                {
-                    totalUpdated += UpdateAssetReferences(path, spriteMap);
-                }
-                else if (_updateScriptableObjects && path.EndsWith(".asset"))
-                {
-                    totalUpdated += UpdateAssetReferences(path, spriteMap);
+                    processedCount++;
+                    if (EditorUtility.DisplayCancelableProgressBar("Updating References",
+                            $"Processing {group.Key}: {Path.GetFileName(path)}",
+                            (float)processedCount / totalCount))
+                    {
+                        break;
+                    }
+
+                    int updated = 0;
+
+                    try
+                    {
+                        switch (group.Key)
+                        {
+                            case "Scenes" when _updateScenes:
+                                updated = UpdateSceneReferencesEnhanced(path, spriteMap);
+                                break;
+                            case "Prefabs" when _updatePrefabs:
+                                updated = UpdateAssetReferencesEnhanced(path, spriteMap);
+                                break;
+                            case "ScriptableObjects" when _updateScriptableObjects:
+                                updated = UpdateAssetReferencesEnhanced(path, spriteMap);
+                                break;
+                            case "AnimationClips" when _updateAnimations:
+                                updated = UpdateAnimationClipReferences(path, spriteMap);
+                                break;
+                            case "Materials" when _updateMaterials:
+                                updated = UpdateMaterialReferences(path, spriteMap);
+                                break;
+                            case "Other" when _deepScan:
+                                updated = UpdateAssetReferencesEnhanced(path, spriteMap);
+                                break;
+                        }
+
+                        totalUpdated += updated;
+                        if (updated > 0)
+                        {
+                            Debug.Log($"Updated {updated} references in {path}");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarning($"Failed to process {path}: {e.Message}");
+                    }
                 }
             }
 
+            // Additional deep scan for any missed references
+            if (_deepScan)
+            {
+                totalUpdated += PerformDeepReferenceScan(spriteMap);
+            }
+
             AssetDatabase.SaveAssets();
-            Debug.Log($"Successfully updated {totalUpdated} sprite references across the project.");
+            AssetDatabase.Refresh();
+            Debug.Log($"Successfully updated {totalUpdated} sprite references across the entire project.");
+        }
+
+        private int PerformDeepReferenceScan(Dictionary<int, Sprite> spriteMap)
+        {
+            int updated = 0;
+
+            // Scan all loaded objects in memory
+            Object[] allObjects = Resources.FindObjectsOfTypeAll<Object>();
+
+            foreach (Object obj in allObjects)
+            {
+                if (obj == null || obj is Sprite || obj is Texture2D) continue;
+
+                // Skip objects that aren't part of the project
+                string assetPath = AssetDatabase.GetAssetPath(obj);
+                if (string.IsNullOrEmpty(assetPath) || !assetPath.StartsWith("Assets/")) continue;
+
+                try
+                {
+                    updated += UpdateObjectReferencesDeep(obj, spriteMap);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"Deep scan failed for {obj.name}: {e.Message}");
+                }
+            }
+
+            if (updated > 0)
+            {
+                Debug.Log($"Deep scan found and updated {updated} additional references");
+            }
+
+            return updated;
+        }
+
+        private int UpdateObjectReferencesDeep(Object obj, Dictionary<int, Sprite> spriteMap)
+        {
+            int count = 0;
+
+            SerializedObject so = new(obj);
+            SerializedProperty prop = so.GetIterator();
+            bool hasModified = false;
+
+            while (prop.NextVisible(true))
+            {
+                if (prop.propertyType == SerializedPropertyType.ObjectReference)
+                {
+                    if (prop.objectReferenceValue is Sprite oldSprite &&
+                        oldSprite &&
+                        spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
+                    {
+                        Undo.RecordObject(obj, UndoGroupName);
+                        prop.objectReferenceValue = newSprite;
+                        hasModified = true;
+                        count++;
+                    }
+                }
+            }
+
+            if (hasModified)
+            {
+                so.ApplyModifiedProperties();
+                EditorUtility.SetDirty(obj);
+            }
+
+            return count;
         }
 
         private Dictionary<int, Sprite> CreateSpriteMapping(List<Sprite> originalSprites, string atlasPath)
         {
             var mapping = new Dictionary<int, Sprite>();
+
+            // Wait for import to complete
+            AssetDatabase.ImportAsset(atlasPath, ImportAssetOptions.ForceSynchronousImport);
+
             var newSprites = AssetDatabase.LoadAllAssetsAtPath(atlasPath).OfType<Sprite>().ToList();
+
+            Debug.Log($"Found {newSprites.Count} sprites in new atlas");
 
             foreach (Sprite originalSprite in originalSprites)
             {
@@ -671,6 +822,7 @@ namespace Editor
                 if (newSprite != null)
                 {
                     mapping[originalSprite.GetInstanceID()] = newSprite;
+                    Debug.Log($"Mapped {originalSprite.name} -> {newSprite.name}");
                 }
                 else
                 {
@@ -681,15 +833,31 @@ namespace Editor
             return mapping;
         }
 
-        private int UpdateSceneReferences(string scenePath, Dictionary<int, Sprite> spriteMap)
+        private int UpdateSceneReferencesEnhanced(string scenePath, Dictionary<int, Sprite> spriteMap)
         {
             int count = 0;
-            Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+
+            // Check if scene is already open
+            Scene existingScene = SceneManager.GetSceneByPath(scenePath);
+            bool wasAlreadyOpen = existingScene.isLoaded;
+
+            Scene scene;
+            if (wasAlreadyOpen)
+            {
+                scene = existingScene;
+            }
+            else
+            {
+                scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+            }
+
             if (!scene.IsValid()) return 0;
 
             bool sceneModified = false;
 
-            foreach (GameObject rootGo in scene.GetRootGameObjects())
+            // Register all root objects for undo before modification
+            var rootObjects = scene.GetRootGameObjects();
+            foreach (GameObject rootGo in rootObjects)
             {
                 if (WillGameObjectBeModified(rootGo, spriteMap))
                 {
@@ -697,26 +865,40 @@ namespace Editor
                 }
             }
 
-            foreach (GameObject rootGo in scene.GetRootGameObjects())
+            // Update references in all GameObjects
+            foreach (GameObject rootGo in rootObjects)
             {
-                count += UpdateGameObjectReferences(rootGo, spriteMap, ref sceneModified);
+                count += UpdateGameObjectReferencesEnhanced(rootGo, spriteMap, ref sceneModified);
             }
 
             if (sceneModified)
             {
-                EditorSceneManager.SaveScene(scene);
+                EditorSceneManager.MarkSceneDirty(scene);
+                if (!wasAlreadyOpen)
+                {
+                    EditorSceneManager.SaveScene(scene);
+                }
+
                 Debug.Log($"Updated {count} references in scene: {scene.name}");
             }
 
-            EditorSceneManager.CloseScene(scene, false);
+            if (!wasAlreadyOpen)
+            {
+                EditorSceneManager.CloseScene(scene, false);
+            }
+
             return count;
         }
 
-        private int UpdateGameObjectReferences(GameObject go, Dictionary<int, Sprite> spriteMap, ref bool modified)
+        private int UpdateGameObjectReferencesEnhanced(GameObject go, Dictionary<int, Sprite> spriteMap,
+            ref bool modified)
         {
             int count = 0;
 
-            foreach (Component component in go.GetComponentsInChildren<Component>(true))
+            // Get all components including inactive ones
+            Component[] allComponents = go.GetComponentsInChildren<Component>(true);
+
+            foreach (Component component in allComponents)
             {
                 if (!component) continue;
 
@@ -727,7 +909,266 @@ namespace Editor
                     Undo.RecordObject(component, UndoGroupName);
                 }
 
-                SerializedObject so = new(component);
+                // Handle specific component types that might have sprite references
+                count += UpdateComponentSpecific(component, spriteMap, ref modified);
+
+                // Generic serialized property update
+                count += UpdateComponentGeneric(component, spriteMap, ref modified);
+            }
+
+            return count;
+        }
+
+        private int UpdateComponentSpecific(Component component, Dictionary<int, Sprite> spriteMap, ref bool modified)
+        {
+            int count = 0;
+
+            // Handle UI Image components
+            if (component is Image image && image.sprite != null)
+            {
+                if (spriteMap.TryGetValue(image.sprite.GetInstanceID(), out Sprite newSprite))
+                {
+                    image.sprite = newSprite;
+                    modified = true;
+                    count++;
+                }
+            }
+
+            // Handle SpriteRenderer components
+            else if (component is SpriteRenderer spriteRenderer && spriteRenderer.sprite != null)
+            {
+                if (spriteMap.TryGetValue(spriteRenderer.sprite.GetInstanceID(), out Sprite newSprite))
+                {
+                    spriteRenderer.sprite = newSprite;
+                    modified = true;
+                    count++;
+                }
+            }
+
+            // Handle UI Button components (may have sprite states)
+            else if (component is Button button)
+            {
+                var spriteState = button.spriteState;
+                bool spriteStateModified = false;
+
+                if (spriteState.highlightedSprite != null &&
+                    spriteMap.TryGetValue(spriteState.highlightedSprite.GetInstanceID(), out Sprite highlightSprite))
+                {
+                    spriteState.highlightedSprite = highlightSprite;
+                    spriteStateModified = true;
+                    count++;
+                }
+
+                if (spriteState.pressedSprite != null &&
+                    spriteMap.TryGetValue(spriteState.pressedSprite.GetInstanceID(), out Sprite pressedSprite))
+                {
+                    spriteState.pressedSprite = pressedSprite;
+                    spriteStateModified = true;
+                    count++;
+                }
+
+                if (spriteState.selectedSprite != null &&
+                    spriteMap.TryGetValue(spriteState.selectedSprite.GetInstanceID(), out Sprite selectedSprite))
+                {
+                    spriteState.selectedSprite = selectedSprite;
+                    spriteStateModified = true;
+                    count++;
+                }
+
+                if (spriteState.disabledSprite != null &&
+                    spriteMap.TryGetValue(spriteState.disabledSprite.GetInstanceID(), out Sprite disabledSprite))
+                {
+                    spriteState.disabledSprite = disabledSprite;
+                    spriteStateModified = true;
+                    count++;
+                }
+
+                if (spriteStateModified)
+                {
+                    button.spriteState = spriteState;
+                    modified = true;
+                }
+            }
+
+            return count;
+        }
+
+        private int UpdateComponentGeneric(Component component, Dictionary<int, Sprite> spriteMap, ref bool modified)
+        {
+            int count = 0;
+
+            SerializedObject so = new(component);
+            SerializedProperty prop = so.GetIterator();
+
+            while (prop.NextVisible(true))
+            {
+                if (prop.propertyType == SerializedPropertyType.ObjectReference &&
+                    prop.objectReferenceValue is Sprite oldSprite &&
+                    oldSprite != null &&
+                    spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
+                {
+                    // Store original reference for potential undo
+                    OriginalReferences.TryAdd(component, oldSprite);
+
+                    prop.objectReferenceValue = newSprite;
+                    modified = true;
+                    count++;
+                }
+            }
+
+            if (so.hasModifiedProperties)
+            {
+                so.ApplyModifiedProperties();
+                EditorUtility.SetDirty(component);
+            }
+
+            return count;
+        }
+
+        private int UpdateAssetReferencesEnhanced(string assetPath, Dictionary<int, Sprite> spriteMap)
+        {
+            int count = 0;
+
+            try
+            {
+                var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
+
+                foreach (Object asset in assets)
+                {
+                    if (!asset || asset is Texture2D || asset is Sprite) continue;
+
+                    // Check if this asset will be modified and register for undo
+                    bool assetWillBeModified = WillAssetBeModified(asset, spriteMap);
+                    if (assetWillBeModified)
+                    {
+                        Undo.RecordObject(asset, UndoGroupName);
+                    }
+
+                    count += UpdateObjectReferencesDeep(asset, spriteMap);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Failed to update asset references in {assetPath}: {e.Message}");
+            }
+
+            return count;
+        }
+
+        private int UpdateAnimationClipReferences(string animPath, Dictionary<int, Sprite> spriteMap)
+        {
+            int count = 0;
+
+            try
+            {
+                AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(animPath);
+                if (clip == null) return 0;
+
+                // Get all curve bindings
+                var curveBindings = AnimationUtility.GetObjectReferenceCurveBindings(clip);
+                bool clipModified = false;
+
+                foreach (var binding in curveBindings)
+                {
+                    if (binding.propertyName.Contains("sprite") || binding.propertyName.Contains("Sprite"))
+                    {
+                        var keyframes = AnimationUtility.GetObjectReferenceCurve(clip, binding);
+                        bool bindingModified = false;
+
+                        for (int i = 0; i < keyframes.Length; i++)
+                        {
+                            if (keyframes[i].value is Sprite oldSprite &&
+                                spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
+                            {
+                                if (!clipModified)
+                                {
+                                    Undo.RecordObject(clip, UndoGroupName);
+                                    clipModified = true;
+                                }
+
+                                keyframes[i].value = newSprite;
+                                bindingModified = true;
+                                count++;
+                            }
+                        }
+
+                        if (bindingModified)
+                        {
+                            AnimationUtility.SetObjectReferenceCurve(clip, binding, keyframes);
+                        }
+                    }
+                }
+
+                if (clipModified)
+                {
+                    EditorUtility.SetDirty(clip);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Failed to update animation clip {animPath}: {e.Message}");
+            }
+
+            return count;
+        }
+
+        private int UpdateMaterialReferences(string matPath, Dictionary<int, Sprite> spriteMap)
+        {
+            int count = 0;
+
+            try
+            {
+                Material material = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+                if (material == null) return 0;
+
+                bool materialModified = false;
+
+                // Create a lookup for textures from our original sprites
+                var textureToNewSpriteMap = new Dictionary<Texture2D, Sprite>();
+                foreach (var kvp in spriteMap)
+                {
+                    // Find the original sprite by instance ID (we need to search for it)
+                    var originalSprites = _spritesToMerge.Where(s => s != null && s.GetInstanceID() == kvp.Key);
+                    foreach (var originalSprite in originalSprites)
+                    {
+                        if (originalSprite.texture != null)
+                        {
+                            textureToNewSpriteMap[originalSprite.texture] = kvp.Value;
+                        }
+                    }
+                }
+
+                // Check all texture properties in the material
+                Shader shader = material.shader;
+                if (shader != null)
+                {
+                    for (int i = 0; i < ShaderUtil.GetPropertyCount(shader); i++)
+                    {
+                        if (ShaderUtil.GetPropertyType(shader, i) == ShaderUtil.ShaderPropertyType.TexEnv)
+                        {
+                            string propertyName = ShaderUtil.GetPropertyName(shader, i);
+                            Texture currentTexture = material.GetTexture(propertyName);
+
+                            // Check if this texture matches one of our original sprite textures
+                            if (currentTexture is Texture2D texture2D &&
+                                textureToNewSpriteMap.TryGetValue(texture2D, out Sprite newSprite))
+                            {
+                                if (!materialModified)
+                                {
+                                    Undo.RecordObject(material, UndoGroupName);
+                                    materialModified = true;
+                                }
+
+                                // Replace with the new atlas texture
+                                material.SetTexture(propertyName, newSprite.texture);
+                                count++;
+                            }
+                        }
+                    }
+                }
+
+                // Also use generic SerializedObject approach for any other sprite references
+                SerializedObject so = new(material);
                 SerializedProperty prop = so.GetIterator();
 
                 while (prop.NextVisible(true))
@@ -737,14 +1178,13 @@ namespace Editor
                         oldSprite != null &&
                         spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
                     {
-                        // Store original reference for potential undo
-                        if (!OriginalReferences.ContainsKey(component))
+                        if (!materialModified)
                         {
-                            OriginalReferences[component] = oldSprite;
+                            Undo.RecordObject(material, UndoGroupName);
+                            materialModified = true;
                         }
 
                         prop.objectReferenceValue = newSprite;
-                        modified = true;
                         count++;
                     }
                 }
@@ -752,60 +1192,16 @@ namespace Editor
                 if (so.hasModifiedProperties)
                 {
                     so.ApplyModifiedProperties();
-                    if (componentWillBeModified)
-                    {
-                        EditorUtility.SetDirty(component);
-                    }
+                }
+
+                if (materialModified)
+                {
+                    EditorUtility.SetDirty(material);
                 }
             }
-
-            return count;
-        }
-
-        private int UpdateAssetReferences(string assetPath, Dictionary<int, Sprite> spriteMap)
-        {
-            int count = 0;
-            var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
-
-            foreach (Object asset in assets)
+            catch (Exception e)
             {
-                if (!asset || asset is Texture2D || asset is Sprite) continue;
-
-                // Check if this asset will be modified and register for undo
-                bool assetWillBeModified = WillAssetBeModified(asset, spriteMap);
-                if (assetWillBeModified)
-                {
-                    Undo.RecordObject(asset, UndoGroupName);
-                }
-
-                SerializedObject so = new(asset);
-                SerializedProperty prop = so.GetIterator();
-                bool assetModified = false;
-
-                while (prop.NextVisible(true))
-                {
-                    if (prop.propertyType == SerializedPropertyType.ObjectReference &&
-                        prop.objectReferenceValue is Sprite oldSprite &&
-                        oldSprite &&
-                        spriteMap.TryGetValue(oldSprite.GetInstanceID(), out Sprite newSprite))
-                    {
-                        // Store original reference for potential undo
-                        OriginalReferences.TryAdd(asset, oldSprite);
-
-                        prop.objectReferenceValue = newSprite;
-                        assetModified = true;
-                        count++;
-                    }
-                }
-
-                if (assetModified)
-                {
-                    so.ApplyModifiedProperties();
-                    if (assetWillBeModified)
-                    {
-                        EditorUtility.SetDirty(asset);
-                    }
-                }
+                Debug.LogWarning($"Failed to update material {matPath}: {e.Message}");
             }
 
             return count;
@@ -821,21 +1217,26 @@ namespace Editor
 
         private bool WillGameObjectBeModified(GameObject go, Dictionary<int, Sprite> spriteMap)
         {
-            foreach (Component component in go.GetComponentsInChildren<Component>(true))
-            {
-                if (component != null && WillComponentBeModified(component, spriteMap))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            Component[] components = go.GetComponentsInChildren<Component>(true);
+            return components.Any(component => component != null && WillComponentBeModified(component, spriteMap));
         }
 
         private bool WillComponentBeModified(Component component, Dictionary<int, Sprite> spriteMap)
         {
             if (component == null) return false;
 
+            // Check specific component types first
+            if (component is Image image && image.sprite != null)
+            {
+                return spriteMap.ContainsKey(image.sprite.GetInstanceID());
+            }
+
+            if (component is SpriteRenderer spriteRenderer && spriteRenderer.sprite != null)
+            {
+                return spriteMap.ContainsKey(spriteRenderer.sprite.GetInstanceID());
+            }
+
+            // Generic check using SerializedObject
             SerializedObject so = new(component);
             SerializedProperty prop = so.GetIterator();
 

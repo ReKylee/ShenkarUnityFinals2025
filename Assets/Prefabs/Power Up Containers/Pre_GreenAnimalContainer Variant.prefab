@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 570190007886909467, guid: 1b47afa226b496848b4a9ba3acc53824, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1971459727, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
+    - target: {fileID: 3347477914704450941, guid: 1b47afa226b496848b4a9ba3acc53824, type: 3}
+      propertyPath: crackedSprite
+      value: 
+      objectReference: {fileID: -820139862, guid: 01c47869f6ceae4418c43b93986936e0, type: 3}
     - target: {fileID: 3347477914704450941, guid: 1b47afa226b496848b4a9ba3acc53824, type: 3}
       propertyPath: powerUpPrefab
       value: 

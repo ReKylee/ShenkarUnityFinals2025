@@ -3,29 +3,12 @@
   <component name="CopilotDiffPersistence">
     <option name="pendingDiffs">
       <map>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/EnemyDeath.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/EnemyDeath.cs" />
-              <option name="originalContent" value="using Health.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Disables the enemy GameObject forever when Die() is called&#10;    public class EnemyDeath : MonoBehaviour&#10;    {&#10;        private IHealthEvents _healthEvents;&#10;&#10;        private void Awake()&#10;        {&#10;            _healthEvents = GetComponent&lt;IHealthEvents&gt;();&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath += Die;&#10;        }&#10;&#10;        private void OnDestroy()&#10;        {&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath -= Die;&#10;        }&#10;&#10;        private void Die()&#10;        {&#10;            gameObject.SetActive(false);&#10;        }&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="using Health.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Disables the enemy GameObject forever when Die() is called&#10;    public class EnemyDeath : MonoBehaviour&#10;    {&#10;        private IHealthEvents _healthEvents;&#10;&#10;        private void Awake()&#10;        {&#10;            _healthEvents = GetComponent&lt;IHealthEvents&gt;();&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath += Die;&#10;        }&#10;&#10;        private void OnDestroy()&#10;        {&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath -= Die;&#10;        }&#10;&#10;        private void Die()&#10;        {&#10;            gameObject.SetActive(false);&#10;        }&#10;&#10;        public void ResetDeathState()&#10;        {&#10;            gameObject.SetActive(true);&#10;        }&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/FrogProximityJump.cs">
           <value>
             <PendingDiffInfo>
               <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/FrogProximityJump.cs" />
               <option name="originalContent" value="using Enemies.Interfaces;&#10;using Player.Components;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Emits an event when the player is within a certain distance&#10;    [RequireComponent(typeof(Rigidbody2D))]&#10;    public class FrogProximityTrigger : MonoBehaviour, ITrigger&#10;    {&#10;        [SerializeField] private LayerMask groundLayer;&#10;        [SerializeField] private float triggerDistance = 3f;&#10;        [SerializeField] private float jumpCooldown = 2f;&#10;        [SerializeField] private int checkEveryNFrames = 1;&#10;&#10;        private int _frameCounter;&#10;        private bool _grounded;&#10;        private float _lastTriggerTime;&#10;        private Transform _player;&#10;&#10;        private void Start()&#10;        {&#10;            _player = PlayerLocator.PlayerTransform;&#10;        }&#10;&#10;        private void OnCollisionEnter2D(Collision2D collision)&#10;        {&#10;            if ((1 &lt;&lt; collision.gameObject.layer &amp; groundLayer) != 0)&#10;                _grounded = true;&#10;        }&#10;&#10;        private void OnCollisionExit2D(Collision2D collision)&#10;        {&#10;            if ((1 &lt;&lt; collision.gameObject.layer &amp; groundLayer) != 0)&#10;                _grounded = false;&#10;        }&#10;&#10;        public bool IsTriggered { get; private set; }&#10;&#10;        public void CheckTrigger()&#10;        {&#10;            if (++_frameCounter % checkEveryNFrames != 0 || !_player) return;&#10;&#10;            Vector2 toPlayer = _player.position - transform.position;&#10;            float sqrDist = toPlayer.sqrMagnitude;&#10;            float sqrTrigger = triggerDistance * triggerDistance;&#10;&#10;            if (sqrDist &lt; sqrTrigger &amp;&amp; Time.time - _lastTriggerTime &gt; jumpCooldown &amp;&amp; _grounded)&#10;            {&#10;                IsTriggered = true;&#10;                _lastTriggerTime = Time.time;&#10;            }&#10;            else&#10;            {&#10;                IsTriggered = false;&#10;            }&#10;        }&#10;    }&#10;}&#10;" />
               <option name="updatedContent" value="using Enemies.Interfaces;&#10;using Player.Components;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Emits an event when the player is within a certain distance&#10;    [RequireComponent(typeof(Rigidbody2D))]&#10;    public class FrogProximityTrigger : MonoBehaviour, ITrigger&#10;    {&#10;        [SerializeField] private LayerMask groundLayer;&#10;        [SerializeField] private float triggerDistance = 3f;&#10;        [SerializeField] private float jumpCooldown = 2f;&#10;        [SerializeField] private int checkEveryNFrames = 1;&#10;&#10;        private int _frameCounter;&#10;        private bool _grounded;&#10;        private float _lastTriggerTime;&#10;        private Transform _player;&#10;&#10;        private void Start()&#10;        {&#10;            _player = PlayerLocator.PlayerTransform;&#10;        }&#10;&#10;        private void OnCollisionEnter2D(Collision2D collision)&#10;        {&#10;            if ((1 &lt;&lt; collision.gameObject.layer &amp; groundLayer) != 0)&#10;                _grounded = true;&#10;        }&#10;&#10;        private void OnCollisionExit2D(Collision2D collision)&#10;        {&#10;            if ((1 &lt;&lt; collision.gameObject.layer &amp; groundLayer) != 0)&#10;                _grounded = false;&#10;        }&#10;&#10;        public bool IsTriggered { get; private set; }&#10;&#10;        public void CheckTrigger()&#10;        {&#10;            if (++_frameCounter % checkEveryNFrames != 0 || !_player) return;&#10;&#10;            Vector2 toPlayer = _player.position - transform.position;&#10;            float sqrDist = toPlayer.sqrMagnitude;&#10;            float sqrTrigger = triggerDistance * triggerDistance;&#10;&#10;            if (sqrDist &lt; sqrTrigger &amp;&amp; Time.time - _lastTriggerTime &gt; jumpCooldown &amp;&amp; _grounded)&#10;            {&#10;                IsTriggered = true;&#10;                _lastTriggerTime = Time.time;&#10;            }&#10;            else&#10;            {&#10;                IsTriggered = false;&#10;            }&#10;        }&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/IntervalTrigger.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/IntervalTrigger.cs" />
-              <option name="updatedContent" value="using Enemies.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Trigger that activates at a fixed interval&#10;    public class IntervalTrigger : MonoBehaviour, ITrigger&#10;    {&#10;        [SerializeField] private float interval = 1f;&#10;        private float _lastTriggerTime;&#10;        public bool IsTriggered { get; private set; }&#10;&#10;        public void CheckTrigger()&#10;        {&#10;            if (Time.time - _lastTriggerTime &gt;= interval)&#10;            {&#10;                IsTriggered = true;&#10;                _lastTriggerTime = Time.time;&#10;            }&#10;            else&#10;            {&#10;                IsTriggered = false;&#10;            }&#10;        }&#10;    }&#10;}&#10;" />
             </PendingDiffInfo>
           </value>
         </entry>
@@ -107,29 +90,12 @@
             </PendingDiffInfo>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/ICommand.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/ICommand.cs" />
-              <option name="updatedContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface ICommand&#10;    {&#10;        void Execute();&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/IMovementBehavior.cs">
           <value>
             <PendingDiffInfo>
               <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/IMovementBehavior.cs" />
               <option name="originalContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IMovementBehavior&#10;    {&#10;        void Move();&#10;    }&#10;}&#10;" />
               <option name="updatedContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IMovementBehavior&#10;    {&#10;        void Move();&#10;    }&#10;}&#10;" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/IMovementCommand.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/IMovementCommand.cs" />
-              <option name="originalContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IMovementCommand&#10;    {&#10;        void Execute();&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IMovementCommand : ICommand&#10;    {&#10;    }&#10;}" />
             </PendingDiffInfo>
           </value>
         </entry>

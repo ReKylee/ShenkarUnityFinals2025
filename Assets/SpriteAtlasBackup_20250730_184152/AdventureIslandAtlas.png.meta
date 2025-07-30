@@ -1,0 +1,845 @@
+fileFormatVersion: 2
+guid: fa897c2eee3487e4aa1f2c1c9e182d0d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1617852922339545039
+    second: AdventureIslandAtlas_0
+  - first:
+      213: -5393583482473174342
+    second: AdventureIslandAtlas_1
+  - first:
+      213: -2467843244888271121
+    second: AdventureIslandAtlas_2
+  - first:
+      213: 6208418668179045426
+    second: AdventureIslandAtlas_3
+  - first:
+      213: -6598682097562100558
+    second: AdventureIslandAtlas_4
+  - first:
+      213: 7480326082157445130
+    second: AdventureIslandAtlas_5
+  - first:
+      213: 1101894538193088865
+    second: AdventureIslandAtlas_6
+  - first:
+      213: -9002508361134322867
+    second: AdventureIslandAtlas_7
+  - first:
+      213: 3580699889812225294
+    second: AdventureIslandAtlas_8
+  - first:
+      213: 2572315983876268700
+    second: AdventureIslandAtlas_9
+  - first:
+      213: 11945268053005234
+    second: AdventureIslandAtlas_10
+  - first:
+      213: -4483748135710742019
+    second: AdventureIslandAtlas_11
+  - first:
+      213: 4705614013952034022
+    second: AdventureIslandAtlas_12
+  - first:
+      213: -1716106723326756701
+    second: AdventureIslandAtlas_13
+  - first:
+      213: -7341406842037985317
+    second: AdventureIslandAtlas_14
+  - first:
+      213: -4529383598600009751
+    second: AdventureIslandAtlas_15
+  - first:
+      213: 4358049496984417251
+    second: AdventureIslandAtlas_16
+  - first:
+      213: 7475273288244505340
+    second: AdventureIslandAtlas_17
+  - first:
+      213: 3882854216936009580
+    second: AdventureIslandAtlas_18
+  - first:
+      213: -3115095728414672970
+    second: AdventureIslandAtlas_19
+  - first:
+      213: -9002561824793030308
+    second: AdventureIslandAtlas_20
+  - first:
+      213: -9220384210078058306
+    second: AdventureIslandAtlas_21
+  - first:
+      213: 5452580812015724145
+    second: AdventureIslandAtlas_22
+  - first:
+      213: 8684605897547954398
+    second: AdventureIslandAtlas_23
+  - first:
+      213: -1237701346070180609
+    second: AdventureIslandAtlas_24
+  - first:
+      213: 8161029517685309495
+    second: AdventureIslandAtlas_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Adventure Island 3 Objects_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 72
+        width: 13
+        height: 15
+      alignment: 9
+      pivot: {x: 0.4615385, y: 0.4666667}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de512b54d5660e74f9ced91734cdfec1
+      internalID: 1458733916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Objects_Egg
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 107
+        width: 22
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 109053fbd38ddcf4da10a61b1dc5a7d9
+      internalID: -1519708184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Objects_EggBroken
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 25
+        width: 22
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88d7e1cb0ba9bad46a10cd664d37e344
+      internalID: 1924104082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Objects_Campfire
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 25
+        width: 16
+        height: 23
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5217391}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bce501d23b057104487948d170bef570
+      internalID: 1046264367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Objects_7
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 54
+        width: 15
+        height: 16
+      alignment: 9
+      pivot: {x: 0.4666667, y: 0.4375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 32d4c8b3fd8202b4db5fc4456e6b3196
+      internalID: 2043238439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Objects_8
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 54
+        width: 12
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d3526927074d214995df70988fed427
+      internalID: 1425465135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Objects_6
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 54
+        width: 15
+        height: 16
+      alignment: 9
+      pivot: {x: 0.53333336, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83d29da1050b85f4287f2478ae6e00c1
+      internalID: -584148856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Objects_5
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 89
+        width: 13
+        height: 15
+      alignment: 9
+      pivot: {x: 0.4615385, y: 0.4666667}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bef50bccf566a8c41b81aeb0fba22fef
+      internalID: 213433586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Objects_Boulder
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 54
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 93e04b765ec76ba469d0acffecee76e0
+      internalID: -1347848752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Ghost_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 29
+        width: 21
+        height: 23
+      alignment: 9
+      pivot: {x: 0.47619048, y: 0.5217391}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa5ebd1adc340294796bad612bf12ae6
+      internalID: 1195643263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Ghost_1
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 0
+        width: 26
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbad373f7594e63468bffcb8f122f6c6
+      internalID: 1010642095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Ghost_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 54
+        width: 21
+        height: 23
+      alignment: 9
+      pivot: {x: 0.52380955, y: 0.5217391}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67e6fa1f471a2c44eacf684c6c6349e7
+      internalID: 254535546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Adventure Island 3 Ghost_3
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 25
+        width: 16
+        height: 27
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5185185}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2324db0a61985394f8736366c3ed02a1
+      internalID: 681220027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 22
+        height: 27
+      alignment: 9
+      pivot: {x: 0.5, y: 0.4814815}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42a2372d8a7515041b588416728f4bd6
+      internalID: -887773314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_8
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 53
+        width: 17
+        height: 27
+      alignment: 9
+      pivot: {x: 0.47058824, y: 0.4814815}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f19320ad7052f534e99097ef957867f6
+      internalID: -509101173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 79
+        width: 18
+        height: 26
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a8c92359a367a249bd59a1fa4b70a9a
+      internalID: 1357615382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_3
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 110
+        width: 18
+        height: 18
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccfa24aed07144141a8dcd2ddee311a8
+      internalID: -49854239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_6
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 82
+        width: 17
+        height: 26
+      alignment: 9
+      pivot: {x: 0.5294118, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff3017bf900c1254ca79cf47b0a3c25f
+      internalID: -1673887987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_7
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 25
+        width: 18
+        height: 26
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 57532d0e2d3e6d641935797b8b4d1050
+      internalID: -1668591642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_4
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 25
+        width: 18
+        height: 18
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c85b12a739ab4fd47aaba3d67a748a43
+      internalID: -1224023629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_5
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 54
+        width: 18
+        height: 18
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1557fd43c23b8240b5c0b2f02f17446
+      internalID: 2108732538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_0
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 0
+        width: 23
+        height: 21
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee258a6c804aced4fb1ae0b9aab1a858
+      internalID: -1809284145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_1
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 0
+        width: 23
+        height: 23
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ef281fc6d927ed428cdfc7e7959feec
+      internalID: -1797473020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_10
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 74
+        width: 18
+        height: 18
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3274735e38261a4bbb2d2adb3d2f994
+      internalID: -1799419451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_11
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 94
+        width: 18
+        height: 18
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c8da4357757c1b46b882486049ad21a
+      internalID: -1409070488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Enemies_12
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 0
+        width: 26
+        height: 15
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 851753bb82f60cf428cf0d6f1d29de72
+      internalID: -1768239429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 0300852f18923d046a5a39e27ab17bf6
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Adventure Island 3 Ghost_0: 1195643263
+      Adventure Island 3 Ghost_1: 1010642095
+      Adventure Island 3 Ghost_2: 254535546
+      Adventure Island 3 Ghost_3: 681220027
+      Adventure Island 3 Objects_1: 1458733916
+      Adventure Island 3 Objects_5: 213433586
+      Adventure Island 3 Objects_6: -584148856
+      Adventure Island 3 Objects_7: 2043238439
+      Adventure Island 3 Objects_8: 1425465135
+      Adventure Island 3 Objects_Boulder: -1347848752
+      Adventure Island 3 Objects_Campfire: 1046264367
+      Adventure Island 3 Objects_Egg: -1519708184
+      Adventure Island 3 Objects_EggBroken: 1924104082
+      AdventureIslandAtlas_0: 1617852922339545039
+      AdventureIslandAtlas_1: -5393583482473174342
+      AdventureIslandAtlas_10: 11945268053005234
+      AdventureIslandAtlas_11: -4483748135710742019
+      AdventureIslandAtlas_12: 4705614013952034022
+      AdventureIslandAtlas_13: -1716106723326756701
+      AdventureIslandAtlas_14: -7341406842037985317
+      AdventureIslandAtlas_15: -4529383598600009751
+      AdventureIslandAtlas_16: 4358049496984417251
+      AdventureIslandAtlas_17: 7475273288244505340
+      AdventureIslandAtlas_18: 3882854216936009580
+      AdventureIslandAtlas_19: -3115095728414672970
+      AdventureIslandAtlas_2: -2467843244888271121
+      AdventureIslandAtlas_20: -9002561824793030308
+      AdventureIslandAtlas_21: -9220384210078058306
+      AdventureIslandAtlas_22: 5452580812015724145
+      AdventureIslandAtlas_23: 8684605897547954398
+      AdventureIslandAtlas_24: -1237701346070180609
+      AdventureIslandAtlas_25: 8161029517685309495
+      AdventureIslandAtlas_3: 6208418668179045426
+      AdventureIslandAtlas_4: -6598682097562100558
+      AdventureIslandAtlas_5: 7480326082157445130
+      AdventureIslandAtlas_6: 1101894538193088865
+      AdventureIslandAtlas_7: -9002508361134322867
+      AdventureIslandAtlas_8: 3580699889812225294
+      AdventureIslandAtlas_9: 2572315983876268700
+      NES - Adventure Island 3 - Enemies_0: -1809284145
+      NES - Adventure Island 3 - Enemies_1: -1797473020
+      NES - Adventure Island 3 - Enemies_10: -1799419451
+      NES - Adventure Island 3 - Enemies_11: -1409070488
+      NES - Adventure Island 3 - Enemies_12: -1768239429
+      NES - Adventure Island 3 - Enemies_2: 1357615382
+      NES - Adventure Island 3 - Enemies_3: -49854239
+      NES - Adventure Island 3 - Enemies_4: -1224023629
+      NES - Adventure Island 3 - Enemies_5: 2108732538
+      NES - Adventure Island 3 - Enemies_6: -1673887987
+      NES - Adventure Island 3 - Enemies_7: -1668591642
+      NES - Adventure Island 3 - Enemies_8: -509101173
+      NES - Adventure Island 3 - Enemies_9: -887773314
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
