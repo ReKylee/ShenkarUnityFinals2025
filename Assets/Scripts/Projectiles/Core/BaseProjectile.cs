@@ -8,7 +8,6 @@ namespace Projectiles.Core
     public abstract class BaseProjectile : MonoBehaviour, IWeaponTypeProvider, IPoolable
     {
         [SerializeField] protected Vector2 speed = new(12f, 0f);
-        private bool _isDestroyed;
 
         // Direct references for pooling - exposed through IPoolable interface
         private IPoolService _poolService;
@@ -20,10 +19,6 @@ namespace Projectiles.Core
         {
             Rb = GetComponent<Rigidbody2D>();
         }
-        private void OnEnable()
-        {
-            _isDestroyed = false;
-        }
 
         public void SetPoolingInfo(IPoolService poolService, GameObject sourcePrefab)
         {
@@ -33,7 +28,7 @@ namespace Projectiles.Core
 
         public void ReturnToPool()
         {
-            if (_poolService != null && _sourcePrefab )
+            if (_poolService != null && _sourcePrefab)
             {
                 _poolService.Release(_sourcePrefab, gameObject);
             }
@@ -50,12 +45,6 @@ namespace Projectiles.Core
 
         protected void DestroyProjectile()
         {
-            if (_isDestroyed)
-                return;
-
-            _isDestroyed = true;
-
-            // Only proceed with physics reset if object is still active
             if (gameObject.activeInHierarchy)
             {
                 // Reset all physics properties

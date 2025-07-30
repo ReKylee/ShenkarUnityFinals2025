@@ -5390,6 +5390,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pre_FireSnake
       objectReference: {fileID: 0}
+    - target: {fileID: 5321648136915839534, guid: 2ff02a792ba83a04cbed00c2f1f15401, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7825209050868744566, guid: 2ff02a792ba83a04cbed00c2f1f15401, type: 3}
       propertyPath: m_LocalPosition.x
       value: 18.42255

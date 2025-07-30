@@ -1,8 +1,8 @@
-﻿using Collectables.Score;
+﻿using System.Collections.Generic;
+using Collectables.Score;
 using Core.Data;
 using Core.Events;
 using Core.Services;
-using Extensions;
 using Player.Components;
 using Player.Interfaces;
 using Player.Services;
@@ -11,7 +11,6 @@ using Pooling;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
-using Weapons.Interfaces;
 using Weapons.Models;
 using Weapons.Services;
 
@@ -20,10 +19,20 @@ namespace Core.DI
     public class GameLifetimeScope : LifetimeScope
     {
 
+        public void AddToAutoInject<T>() where T : Component
+        {
 
+            var components = FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+            foreach (T comp in components)
+            {
+                autoInjectGameObjects.Add(comp.gameObject);
+            }
+        }
         protected override void Awake()
         {
             Debug.Log("[GameLifetimeScope] Awake called.");
+            AddToAutoInject<FireballWeapon>();
             base.Awake();
         }
 
@@ -57,7 +66,6 @@ namespace Core.DI
 
             // Weapons
             builder.RegisterComponentInHierarchy<AxeWeapon>();
-            builder.RegisterComponentInHierarchy<FireballWeapon>();
             builder.RegisterComponentInHierarchy<WeaponManagerService>();
 
             // Health

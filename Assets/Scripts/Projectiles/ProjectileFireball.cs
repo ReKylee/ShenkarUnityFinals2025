@@ -9,21 +9,14 @@ namespace Projectiles
     {
         public float destroyTime = 5f;
         [NonSerialized] public float Direction;
-        private void OnEnable()
-        {
-            StartCoroutine(DestroyObject());
-        }
+  
         private void OnBecameInvisible()
         {
             DestroyProjectile();
         }
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if (other.gameObject.CompareTag("Player"))
-                return;
-
             DestroyProjectile();
-
         }
         private IEnumerator DestroyObject()
         {
@@ -35,6 +28,7 @@ namespace Projectiles
         protected override void Move()
         {
             Rb.linearVelocity = new Vector2(speed.x * Direction, speed.y);
+            StartCoroutine(DestroyObject());
         }
     }
 }
