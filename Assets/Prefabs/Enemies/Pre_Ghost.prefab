@@ -201,12 +201,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rootCondition:
-    rid: -2
+    rid: 2459174997381349380
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    - rid: 2459174997381349380
+      type: {class: ConditionLeaf, ns: Health.Damage, asm: Assembly-CSharp}
+      data:
+        conditionBehaviour: {fileID: 9158326944399007226}
 --- !u!114 &9158326944399007226
 MonoBehaviour:
   m_ObjectHideFlags: 0

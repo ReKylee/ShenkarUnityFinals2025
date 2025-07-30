@@ -63,6 +63,7 @@ GameObject:
   - component: {fileID: 5864079117574630970}
   - component: {fileID: 1448244929395315657}
   - component: {fileID: 3948624604827710732}
+  - component: {fileID: 585798348902680264}
   - component: {fileID: 5639188283508621201}
   - component: {fileID: 7011931513430848884}
   - component: {fileID: 6496507093114173924}
@@ -235,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd0622ef6f9f4ea19e223639aa333739, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultTriggerCondition: 0
+  defaultTriggerCondition: 1
 --- !u!114 &3948624604827710732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,7 +250,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireballWeapon: {fileID: 7113734273231339645}
-  fireInterval: 2
+--- !u!114 &585798348902680264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5321648136915839534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4ee36759c304b009abc03016084223f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interval: 2
 --- !u!114 &5639188283508621201
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -21,11 +21,11 @@
             </PendingDiffInfo>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/GroundedTrigger.cs">
+        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/IntervalTrigger.cs">
           <value>
             <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/GroundedTrigger.cs" />
-              <option name="updatedContent" value="using Enemies.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Trigger to check if the object is on the ground&#10;    [RequireComponent(typeof(Collider2D))]&#10;    public class GroundedTrigger : MonoBehaviour, ITrigger&#10;    {&#10;        [SerializeField] private LayerMask groundLayer;&#10;&#10;        private bool _isGrounded;&#10;&#10;        public bool IsTriggered =&gt; _isGrounded;&#10;&#10;        private void OnCollisionEnter2D(Collision2D collision)&#10;        {&#10;            if ((1 &lt;&lt; collision.gameObject.layer &amp; groundLayer) != 0)&#10;                _isGrounded = true;&#10;        }&#10;&#10;        private void OnCollisionExit2D(Collision2D collision)&#10;        {&#10;            if ((1 &lt;&lt; collision.gameObject.layer &amp; groundLayer) != 0)&#10;                _isGrounded = false;&#10;        }&#10;&#10;        public void CheckTrigger()&#10;        {&#10;            // No periodic checks needed; state is updated via collision events&#10;        }&#10;    }&#10;}" />
+              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/IntervalTrigger.cs" />
+              <option name="updatedContent" value="using Enemies.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Trigger that activates at a fixed interval&#10;    public class IntervalTrigger : MonoBehaviour, ITrigger&#10;    {&#10;        [SerializeField] private float interval = 1f;&#10;        private float _lastTriggerTime;&#10;        public bool IsTriggered { get; private set; }&#10;&#10;        public void CheckTrigger()&#10;        {&#10;            if (Time.time - _lastTriggerTime &gt;= interval)&#10;            {&#10;                IsTriggered = true;&#10;                _lastTriggerTime = Time.time;&#10;            }&#10;            else&#10;            {&#10;                IsTriggered = false;&#10;            }&#10;        }&#10;    }&#10;}&#10;" />
             </PendingDiffInfo>
           </value>
         </entry>
@@ -44,15 +44,6 @@
               <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/ProjectileShooter.cs" />
               <option name="originalContent" value="using Enemies.Interfaces;&#10;using UnityEngine;&#10;using Weapons.Models;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Command to shoot a projectile at intervals&#10;    public class ProjectileShootCommand : MonoBehaviour, IAttackCommand&#10;    {&#10;        [SerializeField] private FireballWeapon fireballWeapon;&#10;        [SerializeField] private float fireInterval = 2f;&#10;&#10;        private float _lastFireTime;&#10;&#10;        private void Start()&#10;        {&#10;            fireballWeapon.Equip();&#10;        }&#10;&#10;        public void Execute()&#10;        {&#10;            if (!fireballWeapon)&#10;                return;&#10;&#10;            if (Time.time - _lastFireTime &lt; fireInterval)&#10;                return;&#10;&#10;            fireballWeapon.Shoot();&#10;            _lastFireTime = Time.time;&#10;        }&#10;    }&#10;}&#10;" />
               <option name="updatedContent" value="using Enemies.Interfaces;&#10;using UnityEngine;&#10;using Weapons.Models;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Command to shoot a projectile at intervals&#10;    public class ProjectileShootCommand : MonoBehaviour, IAttackCommand&#10;    {&#10;        [SerializeField] private FireballWeapon fireballWeapon;&#10;        [SerializeField] private float fireInterval = 2f;&#10;&#10;        private float _lastFireTime;&#10;&#10;        private void Start()&#10;        {&#10;            fireballWeapon.Equip();&#10;        }&#10;&#10;        public void Execute()&#10;        {&#10;            if (!fireballWeapon)&#10;                return;&#10;&#10;            if (Time.time - _lastFireTime &lt; fireInterval)&#10;                return;&#10;&#10;            fireballWeapon.Shoot();&#10;            _lastFireTime = Time.time;&#10;        }&#10;&#10;        public void ResetCooldown()&#10;        {&#10;            _lastFireTime = 0f;&#10;        }&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/RespawningEnemyDeath.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Behaviors/RespawningEnemyDeath.cs" />
-              <option name="originalContent" value="using System.Threading.Tasks;&#10;using Health.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Disables the enemy GameObject, then respawns it at the same position after a delay&#10;    public class RespawningEnemyDeath : MonoBehaviour&#10;    {&#10;        [SerializeField] private float respawnDelay = 3f;&#10;        private IHealth _health;&#10;        private IHealthEvents _healthEvents;&#10;&#10;        private void Awake()&#10;        {&#10;            _healthEvents = GetComponent&lt;IHealthEvents&gt;();&#10;            _health = GetComponent&lt;IHealth&gt;();&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath += Die;&#10;        }&#10;        private void OnEnable()&#10;        {&#10;            _health.Heal(_health.MaxHp);&#10;        }&#10;        private void OnDestroy()&#10;        {&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath -= Die;&#10;        }&#10;&#10;        private void Die()&#10;        {&#10;            _ = RespawnTask();&#10;        }&#10;&#10;        private async Task RespawnTask()&#10;        {&#10;            gameObject.SetActive(false);&#10;            await Task.Delay((int)(respawnDelay * 1000f));&#10;            gameObject.SetActive(true);&#10;        }&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="using System.Threading.Tasks;&#10;using Health.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Behaviors&#10;{&#10;    // Disables the enemy GameObject, then respawns it at the same position after a delay&#10;    public class RespawningEnemyDeath : MonoBehaviour&#10;    {&#10;        [SerializeField] private float respawnDelay = 3f;&#10;        private IHealth _health;&#10;        private IHealthEvents _healthEvents;&#10;&#10;        private void Awake()&#10;        {&#10;            _healthEvents = GetComponent&lt;IHealthEvents&gt;();&#10;            _health = GetComponent&lt;IHealth&gt;();&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath += Die;&#10;        }&#10;        private void OnEnable()&#10;        {&#10;            _health.Heal(_health.MaxHp);&#10;        }&#10;        private void OnDestroy()&#10;        {&#10;            if (_healthEvents != null)&#10;                _healthEvents.OnDeath -= Die;&#10;        }&#10;&#10;        private void Die()&#10;        {&#10;            _ = RespawnTask();&#10;        }&#10;&#10;        private async Task RespawnTask()&#10;        {&#10;            gameObject.SetActive(false);&#10;            await Task.Delay((int)(respawnDelay * 1000f));&#10;            gameObject.SetActive(true);&#10;        }&#10;    }&#10;}" />
             </PendingDiffInfo>
           </value>
         </entry>
@@ -81,15 +72,6 @@
             </PendingDiffInfo>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyAttackController.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyAttackController.cs" />
-              <option name="originalContent" value="using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Handles all attack behaviors for an enemy&#10;    public class EnemyAttackController : GenericCommandController&lt;IAttackCommand&gt;&#10;    {&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Handles all attack behaviors for an enemy&#10;    public class EnemyAttackController : GenericCommandController&lt;IAttackCommand&gt;&#10;    {&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyBehaviorController.cs">
           <value>
             <PendingDiffInfo>
@@ -104,33 +86,6 @@
             <PendingDiffInfo>
               <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyController.cs" />
               <option name="updatedContent" value="using UnityEngine;&#10;using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Wires up modular behaviors. Attach this to any enemy prefab.&#10;    public class EnemyController : MonoBehaviour&#10;    {&#10;        private IMovementBehavior[] _movementBehaviors;&#10;        private IAttackBehavior[] _attackBehaviors;&#10;        private ITriggerBehavior[] _triggerBehaviors;&#10;&#10;        private void Awake()&#10;        {&#10;            _movementBehaviors = GetComponents&lt;IMovementBehavior&gt;();&#10;            _attackBehaviors = GetComponents&lt;IAttackBehavior&gt;();&#10;            _triggerBehaviors = GetComponents&lt;ITriggerBehavior&gt;();&#10;        }&#10;&#10;        private void Update()&#10;        {&#10;            foreach (var trigger in _triggerBehaviors) trigger.CheckTrigger();&#10;            foreach (var move in _movementBehaviors) move.Move();&#10;            foreach (var attack in _attackBehaviors) attack.Attack();&#10;        }&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyMovementController.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/EnemyMovementController.cs" />
-              <option name="originalContent" value="using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Handles all movement behaviors for an enemy&#10;    public class EnemyMovementController : GenericCommandController&lt;IMovementCommand&gt;&#10;    {&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Handles all movement behaviors for an enemy&#10;    public class EnemyMovementController : GenericCommandController&lt;IMovementCommand&gt;&#10;    {&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/GenericCommandController.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/GenericCommandController.cs" />
-              <option name="originalContent" value="using System.Collections.Generic;&#10;using Enemies.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Generic controller for handling triggers and commands&#10;    public class GenericCommandController&lt;TCommand&gt; : MonoBehaviour where TCommand : ICommand&#10;    {&#10;        [SerializeField] private TriggerCondition defaultTriggerCondition = TriggerCondition.Any;&#10;        private List&lt;TriggerGroup&gt; _triggerGroups;&#10;        private bool _isEmpty;&#10;        private List&lt;TCommand&gt; _commands;&#10;        private void Awake()&#10;        {&#10;            _triggerGroups = new List&lt;TriggerGroup&gt;();&#10;            var triggers = GetComponents&lt;ITrigger&gt;();&#10;            _commands = new List&lt;TCommand&gt;(GetComponents&lt;TCommand&gt;());&#10;&#10;            if (triggers.Length == 0 || _commands.Count == 0)&#10;            {&#10;                _isEmpty = true;&#10;                return;&#10;            }&#10;&#10;            foreach (ITrigger trigger in triggers)&#10;            {&#10;                TriggerGroup triggerGroup = new(new[] { trigger }, defaultTriggerCondition,&#10;                    () =&gt; ExecuteCommands(_commands));&#10;&#10;                _triggerGroups.Add(triggerGroup);&#10;            }&#10;        }&#10;&#10;        private void Update()&#10;        {&#10;            if (_isEmpty)&#10;            {&#10;                ExecuteCommands(_commands);&#10;                return;&#10;            }&#10;            &#10;            foreach (TriggerGroup triggerGroup in _triggerGroups)&#10;            {&#10;                triggerGroup.Update();&#10;            }&#10;        }&#10;&#10;        private void ExecuteCommands(IEnumerable&lt;TCommand&gt; commands)&#10;        {&#10;            foreach (TCommand command in commands)&#10;            {&#10;                command.Execute();&#10;            }&#10;        }&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="using System.Collections.Generic;&#10;using Enemies.Interfaces;&#10;using UnityEngine;&#10;&#10;namespace Enemies.Core&#10;{&#10;    // Generic controller for handling triggers and commands&#10;    public class GenericCommandController&lt;TCommand&gt; : MonoBehaviour where TCommand : ICommand&#10;    {&#10;        [SerializeField] private TriggerCondition defaultTriggerCondition = TriggerCondition.Any;&#10;        private List&lt;TriggerGroup&gt; _triggerGroups;&#10;        private bool _isEmpty;&#10;        private List&lt;TCommand&gt; _commands;&#10;        private void Awake()&#10;        {&#10;            _triggerGroups = new List&lt;TriggerGroup&gt;();&#10;            var triggers = GetComponents&lt;ITrigger&gt;();&#10;            _commands = new List&lt;TCommand&gt;(GetComponents&lt;TCommand&gt;());&#10;&#10;            if (triggers.Length == 0 || _commands.Count == 0)&#10;            {&#10;                _isEmpty = true;&#10;                return;&#10;            }&#10;&#10;            foreach (ITrigger trigger in triggers)&#10;            {&#10;                TriggerGroup triggerGroup = new(new[] { trigger }, defaultTriggerCondition,&#10;                    () =&gt; ExecuteCommands(_commands));&#10;&#10;                _triggerGroups.Add(triggerGroup);&#10;            }&#10;        }&#10;&#10;        private void Update()&#10;        {&#10;            if (_isEmpty)&#10;            {&#10;                ExecuteCommands(_commands);&#10;                return;&#10;            }&#10;            &#10;            foreach (TriggerGroup triggerGroup in _triggerGroups)&#10;            {&#10;                triggerGroup.Update();&#10;            }&#10;        }&#10;&#10;        private void ExecuteCommands(IEnumerable&lt;TCommand&gt; commands)&#10;        {&#10;            foreach (TCommand command in commands)&#10;            {&#10;                command.Execute();&#10;            }&#10;        }&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/TriggerGroup.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Core/TriggerGroup.cs" />
-              <option name="originalContent" value="using System;&#10;using System.Collections.Generic;&#10;using System.Linq;&#10;using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    public enum TriggerCondition&#10;    {&#10;        Any,&#10;        All&#10;    }&#10;&#10;    public class TriggerGroup&#10;    {&#10;        private readonly TriggerCondition _condition;&#10;        private readonly Action _onEvaluate;&#10;        private readonly List&lt;ITrigger&gt; _triggers;&#10;&#10;        public TriggerGroup(IEnumerable&lt;ITrigger&gt; triggers, TriggerCondition condition, Action onEvaluate)&#10;        {&#10;            _triggers = triggers.ToList();&#10;            _condition = condition;&#10;            _onEvaluate = onEvaluate;&#10;        }&#10;&#10;&#10;        public void Update()&#10;        {&#10;            foreach (ITrigger trigger in _triggers)&#10;            {&#10;                trigger.CheckTrigger();&#10;            }&#10;&#10;            Evaluate();&#10;        }&#10;&#10;        private void Evaluate()&#10;        {&#10;            bool isActivated = _condition switch&#10;            {&#10;                TriggerCondition.Any =&gt; _triggers.Any(t =&gt; t.IsTriggered),&#10;                TriggerCondition.All =&gt; _triggers.All(t =&gt; t.IsTriggered),&#10;                _ =&gt; false&#10;            };&#10;&#10;            if (isActivated)&#10;            {&#10;                _onEvaluate?.Invoke();&#10;            }&#10;        }&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="using System;&#10;using System.Collections.Generic;&#10;using System.Linq;&#10;using Enemies.Interfaces;&#10;&#10;namespace Enemies.Core&#10;{&#10;    public enum TriggerCondition&#10;    {&#10;        Any,&#10;        All&#10;    }&#10;&#10;    public class TriggerGroup&#10;    {&#10;        private readonly TriggerCondition _condition;&#10;        private readonly Action _onEvaluate;&#10;        private readonly List&lt;ITrigger&gt; _triggers;&#10;&#10;        public TriggerGroup(IEnumerable&lt;ITrigger&gt; triggers, TriggerCondition condition, Action onEvaluate)&#10;        {&#10;            _triggers = triggers.ToList();&#10;            _condition = condition;&#10;            _onEvaluate = onEvaluate;&#10;        }&#10;&#10;&#10;        public void Update()&#10;        {&#10;            foreach (ITrigger trigger in _triggers)&#10;            {&#10;                trigger.CheckTrigger();&#10;            }&#10;&#10;            Evaluate();&#10;        }&#10;&#10;        private void Evaluate()&#10;        {&#10;            bool isActivated = _condition switch&#10;            {&#10;                TriggerCondition.Any =&gt; _triggers.Any(t =&gt; t.IsTriggered),&#10;                TriggerCondition.All =&gt; _triggers.All(t =&gt; t.IsTriggered),&#10;                _ =&gt; false&#10;            };&#10;&#10;            if (isActivated)&#10;            {&#10;                _onEvaluate?.Invoke();&#10;            }&#10;        }&#10;    }&#10;}" />
             </PendingDiffInfo>
           </value>
         </entry>
@@ -149,15 +104,6 @@
               <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/IAttackBehavior.cs" />
               <option name="originalContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IAttackBehavior&#10;    {&#10;        void Attack();&#10;    }&#10;}&#10;" />
               <option name="updatedContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IAttackBehavior&#10;    {&#10;        void Attack();&#10;    }&#10;}&#10;" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/IAttackCommand.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/IAttackCommand.cs" />
-              <option name="originalContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IAttackCommand&#10;    {&#10;        void Execute();&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IAttackCommand : ICommand&#10;    {&#10;        void Execute();&#10;    }&#10;}" />
             </PendingDiffInfo>
           </value>
         </entry>
@@ -184,14 +130,6 @@
               <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/IMovementCommand.cs" />
               <option name="originalContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IMovementCommand&#10;    {&#10;        void Execute();&#10;    }&#10;}&#10;" />
               <option name="updatedContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface IMovementCommand : ICommand&#10;    {&#10;    }&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/ITrigger.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Enemies/Interfaces/ITrigger.cs" />
-              <option name="updatedContent" value="namespace Enemies.Interfaces&#10;{&#10;    public interface ITrigger&#10;    {&#10;        event System.Action Triggered;&#10;    }&#10;}" />
             </PendingDiffInfo>
           </value>
         </entry>

@@ -14,11 +14,11 @@ GameObject:
   - component: {fileID: 4560330453678295201}
   - component: {fileID: 3098536523815256506}
   - component: {fileID: 5353848078543620254}
+  - component: {fileID: 3815750972643168207}
   - component: {fileID: 981475402144263797}
   - component: {fileID: 3744587582622976137}
   - component: {fileID: 7982048941854167187}
   - component: {fileID: 5182394233092950252}
-  - component: {fileID: 3815750972643168207}
   m_Layer: 7
   m_Name: Pre_Crow
   m_TagString: Untagged
@@ -186,6 +186,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f6bfe01db6b413c9d09c13dd61b83b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultTriggerCondition: 0
+--- !u!114 &3815750972643168207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7904293596482943042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b77168989d03400fb0f4806b2dd9b330, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 4
+  amplitude: 1
+  frequency: 1.11
 --- !u!114 &981475402144263797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,18 +256,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 3
---- !u!114 &3815750972643168207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7904293596482943042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b77168989d03400fb0f4806b2dd9b330, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 4
-  amplitude: 1
-  frequency: 1.11

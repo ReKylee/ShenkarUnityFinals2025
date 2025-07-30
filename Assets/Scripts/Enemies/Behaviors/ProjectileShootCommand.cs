@@ -8,9 +8,6 @@ namespace Enemies.Behaviors
     public class ProjectileShootCommand : MonoBehaviour, IAttackCommand
     {
         [SerializeField] private FireballWeapon fireballWeapon;
-        [SerializeField] private float fireInterval = 2f;
-
-        private float _lastFireTime;
 
         private void Start()
         {
@@ -22,11 +19,7 @@ namespace Enemies.Behaviors
             if (!fireballWeapon)
                 return;
 
-            if (Time.time - _lastFireTime < fireInterval)
-                return;
-
             fireballWeapon.Shoot();
-            _lastFireTime = Time.time;
 
         }
 
