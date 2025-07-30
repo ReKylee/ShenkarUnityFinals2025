@@ -355,7 +355,7 @@ MonoBehaviour:
   groundCheckSize: {x: 0.7, y: 0.2}
   drawGizmos: 1
   slopeThreshold: 10
-  deepSlopeThreshold: 35
+  deepSlopeThreshold: 45
 --- !u!114 &3392466676958509593
 MonoBehaviour:
   m_ObjectHideFlags: 0
