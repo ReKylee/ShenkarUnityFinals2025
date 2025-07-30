@@ -9,20 +9,18 @@ namespace Enemies.Behaviors
     {
         [SerializeField] private LayerMask groundLayer;
 
-        private bool _isGrounded;
-
-        public bool IsTriggered => _isGrounded;
+        public bool IsTriggered { get; private set; }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if ((1 << collision.gameObject.layer & groundLayer) != 0)
-                _isGrounded = true;
+                IsTriggered = true;
         }
 
         private void OnCollisionExit2D(Collision2D collision)
         {
             if ((1 << collision.gameObject.layer & groundLayer) != 0)
-                _isGrounded = false;
+                IsTriggered = false;
         }
 
         public void CheckTrigger()

@@ -8,29 +8,45 @@ namespace Enemies.Core
     public class GenericCommandController<TCommand> : MonoBehaviour where TCommand : ICommand
     {
         [SerializeField] private TriggerCondition defaultTriggerCondition = TriggerCondition.Any;
-        private List<TriggerGroup> _triggerGroups;
+        private TriggerGroup _triggerGroup;
+        private List<TCommand> _commands;
+        private bool _noTriggers;
+        private bool _noCommands;
         private void Awake()
         {
-            _triggerGroups = new List<TriggerGroup>();
-
-            // Dynamically assign triggers and commands
             var triggers = GetComponents<ITrigger>();
-            foreach (ITrigger trigger in triggers)
-            {
-                var commands = new List<TCommand>(GetComponents<TCommand>());
-                TriggerGroup triggerGroup = new(new[] { trigger }, defaultTriggerCondition,
-                    () => ExecuteCommands(commands));
+            _commands = new List<TCommand>(GetComponents<TCommand>());
 
-                _triggerGroups.Add(triggerGroup);
+            if (triggers.Length == 0)
+            {
+                _noTriggers = true;
+                return;
             }
+            if (_commands.Count == 0)
+            {
+                _noCommands = true;
+                return;
+            }
+
+            _triggerGroup = new TriggerGroup(triggers, defaultTriggerCondition,
+                () => ExecuteCommands(_commands));
         }
 
         private void Update()
         {
-            foreach (TriggerGroup triggerGroup in _triggerGroups)
+            if (_noCommands)
             {
-                triggerGroup.Update();
+                Debug.LogWarning("No commands found in GenericCommandController. Ensure you have added command components.");
+                return;
             }
+            
+            if (_noTriggers)
+            {
+                ExecuteCommands(_commands);
+                return;
+            }
+
+            _triggerGroup.Update();
         }
 
         private void ExecuteCommands(IEnumerable<TCommand> commands)

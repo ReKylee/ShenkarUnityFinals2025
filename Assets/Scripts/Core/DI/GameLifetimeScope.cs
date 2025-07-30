@@ -2,6 +2,7 @@
 using Core.Data;
 using Core.Events;
 using Core.Services;
+using Extensions;
 using Player.Components;
 using Player.Interfaces;
 using Player.Services;
@@ -10,6 +11,7 @@ using Pooling;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using Weapons.Interfaces;
 using Weapons.Models;
 using Weapons.Services;
 

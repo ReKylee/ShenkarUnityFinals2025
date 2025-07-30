@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 7284944555033648113}
   - component: {fileID: 5817843299186238420}
   - component: {fileID: 2211063208904339301}
+  - component: {fileID: 6310099080849782519}
   m_Layer: 7
   m_Name: Pre_Snake
   m_TagString: Untagged
@@ -186,6 +187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f6bfe01db6b413c9d09c13dd61b83b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultTriggerCondition: 0
 --- !u!114 &1651480070968522827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,9 +254,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c88813a6a33943c6ac7963a14fd68b58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpForceX: 3
+  jumpForceY: 4
+--- !u!114 &6310099080849782519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5616782057871130307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3776b7a5fdf48bcb0c8dd7faac7d6c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  jumpForceX: 3
-  jumpForceY: 4
-  jumpInterval: 2

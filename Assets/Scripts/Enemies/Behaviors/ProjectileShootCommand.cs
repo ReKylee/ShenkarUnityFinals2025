@@ -27,11 +27,8 @@ namespace Enemies.Behaviors
 
             fireballWeapon.Shoot();
             _lastFireTime = Time.time;
+
         }
 
-        public void ResetCooldown()
-        {
-            _lastFireTime = 0f;
-        }
     }
 }

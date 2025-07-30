@@ -7,7 +7,6 @@ namespace Enemies.Behaviors
     [RequireComponent(typeof(Rigidbody2D))]
     public class JumpCommand : MonoBehaviour, IMovementCommand
     {
-        [SerializeField] private LayerMask groundLayer;
         [SerializeField] private float jumpForceX = 2f;
         [SerializeField] private float jumpForceY = 5f;
 
