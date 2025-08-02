@@ -174,7 +174,7 @@ namespace Core
             }
             if (isGameOver || lostLife)
             {
-                Time.timeScale = 0;
+                Time.timeScale = 0.01f;
                 RestartLevelAfterDelayAsync(restartDelay);
             }
         }

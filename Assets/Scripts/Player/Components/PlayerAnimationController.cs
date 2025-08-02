@@ -1,4 +1,6 @@
-﻿using Core.Events;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Core.Events;
 using GabrielBigardi.SpriteAnimator;
 using ModularCharacterController.Core;
 using ModularCharacterController.Core.Components;
@@ -138,11 +140,40 @@ namespace Player.Components
             _eventBus?.Unsubscribe<PlayerDeathEvent>(OnPlayerDeath);
         }
 
+        private IEnumerator PlayDeathSequence()
+        {
+            _spriteAnimator.Play("Death");
+
+            const float moveUpUnits = 42f / 16f;
+            Vector3 startPos = transform.position;
+            Vector3 upPos = startPos + Vector3.up * moveUpUnits;
+            float duration = 0.4f;
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                transform.position = Vector3.Lerp(startPos, upPos, elapsed / duration);
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            transform.position = upPos;
+            yield return new WaitForSecondsRealtime(0.6f);
+            float moveDownUnits = 10f;
+            Vector3 downPos = upPos + Vector3.down * moveDownUnits;
+            duration = 0.6f;
+            elapsed = 0f;
+            while (elapsed < duration)
+            {
+                transform.position = Vector3.Lerp(upPos, downPos, elapsed / duration);
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            transform.position = downPos;
+        }
+
         private void OnPlayerDeath(PlayerDeathEvent evt)
         {
-            Debug.Log("[PlayerAnimationController] Player death event received", gameObject);
             _isDead = true;
-            _spriteAnimator.Play("Death");
+            StartCoroutine(PlayDeathSequence());
         }
     }
 }

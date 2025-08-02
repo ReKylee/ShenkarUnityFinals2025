@@ -41,7 +41,7 @@ MonoBehaviour:
     - {fileID: 939905761, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0
   - Name: Death
-    FPS: 10
+    FPS: 1000
     Frames:
     - {fileID: -956875666, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: -1537913727, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
