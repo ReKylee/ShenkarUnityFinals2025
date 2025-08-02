@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 1769666}
   - component: {fileID: 1769668}
   - component: {fileID: 1769667}
-  - component: {fileID: 1769669}
+  - component: {fileID: 1769671}
   - component: {fileID: 1769670}
   m_Layer: 5
   m_Name: Txt_Lives
@@ -257,19 +257,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1769665}
   m_CullTransparentMesh: 1
---- !u!114 &1769669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1769665}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65f3c8d85ce14a2384111ccca2ca3210, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  text: {fileID: 1769667}
 --- !u!114 &1769670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,7 +269,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24264110d93a4d448d320e2b5d66a5e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  livesHealthView: {fileID: 1769669}
+  livesHealthView: {fileID: 1769671}
+--- !u!114 &1769671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 643c799fd62547fc80fe12fb48552ee2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 1769667}
+  totalWidth: 2
 --- !u!1 &8103577
 GameObject:
   m_ObjectHideFlags: 0
@@ -5484,7 +5485,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2278558222976509200, guid: 8466d7f095a6a0045aedc157e155569f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -107.96875
+      value: -118
       objectReference: {fileID: 0}
     - target: {fileID: 2278558222976509200, guid: 8466d7f095a6a0045aedc157e155569f, type: 3}
       propertyPath: m_LocalPosition.y

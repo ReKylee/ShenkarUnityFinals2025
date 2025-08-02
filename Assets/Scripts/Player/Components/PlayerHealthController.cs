@@ -3,6 +3,7 @@ using Core.Events;
 using Health;
 using Health.Core;
 using Health.Interfaces;
+using Health.Views;
 using Player.Interfaces;
 using UnityEngine;
 using VContainer;
@@ -12,6 +13,7 @@ namespace Player.Components
     public class PlayerHealthController : HealthComponent, IBypassableDamageable
     {
         [SerializeField] private BarsHealthView healthView;
+        private IHealthView _healthView;
         private IEventBus _eventBus;
         private GameFlowManager _gameFlowManager;
         private IInvincibility _invincibility;
@@ -35,13 +37,14 @@ namespace Player.Components
         private new void Awake()
         {
             base.Awake();
+            _healthView = healthView;
             _shield = GetComponent<IShield>();
             _invincibility = GetComponent<IInvincibility>();
         }
 
         protected void Start()
         {
-            healthView.UpdateDisplay(CurrentHp, MaxHp);
+            _healthView.UpdateDisplay(CurrentHp, MaxHp);
             OnHealthChanged += HandleHealthChanged;
             OnDeath += HandleHealthEmpty;
         }
@@ -58,7 +61,7 @@ namespace Player.Components
 
         private void HandleHealthChanged(int hp, int maxHp)
         {
-            healthView.UpdateDisplay(hp, maxHp);
+            _healthView.UpdateDisplay(hp, maxHp);
             _eventBus?.Publish(new PlayerHealthChangedEvent
             {
                 CurrentHp = hp,
@@ -95,7 +98,6 @@ namespace Player.Components
         }
 
         #endregion
-
 
         #region Damage Handling
 

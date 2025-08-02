@@ -6,8 +6,8 @@ namespace Core.Data
     [Serializable]
     public class GameData
     {
-        [Header("Player Data")] public int lives = 3;
         [Header("Player Data")] public const int MaxLives = 3;
+        [Header("Player Data")] public int lives = 3;
 
         public int score;
 
@@ -23,8 +23,7 @@ namespace Core.Data
 
         public float sfxVolume = 1.0f;
 
-        [Header("Collectables")]
-        public int fruitCollected = 0;
+        [Header("Collectables")] public int fruitCollected;
 
         // Constructor for easy initialization
         public GameData()

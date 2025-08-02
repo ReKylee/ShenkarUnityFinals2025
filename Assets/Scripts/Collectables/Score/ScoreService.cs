@@ -7,9 +7,9 @@ namespace Collectables.Score
 {
     public class ScoreService : IScoreService
     {
+        private const int OneUpThreshold = 30;
         private IGameDataService _gameDataService;
         private IPlayerLivesService _livesService;
-        private const int OneUpThreshold = 30;
         public int CurrentScore => _gameDataService?.CurrentData?.score ?? 0;
         public void AddScore(int amount)
         {

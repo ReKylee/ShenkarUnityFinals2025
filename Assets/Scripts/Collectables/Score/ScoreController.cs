@@ -1,4 +1,5 @@
-﻿using Collectables.Counter;
+﻿using System;
+using Collectables.Counter;
 using UnityEngine;
 using VContainer;
 
@@ -8,18 +9,25 @@ namespace Collectables.Score
     {
         [SerializeField] private PaddedTextView scoreTextView;
         [SerializeField] private PaddedTextView fruitCountHealthView;
-
+        private ICounterView _scoreTextView;
+        private ICounterView _fruitCountHealthView;
+        
         private IScoreService _scoreService;
-
+        private void Awake()
+        {
+            _scoreTextView = scoreTextView;
+            _fruitCountHealthView = fruitCountHealthView;
+        }
         private void Start()
         {
             if (scoreTextView)
             {
-                scoreTextView.UpdateCountDisplay(_scoreService.CurrentScore);
+                _scoreTextView.UpdateCountDisplay(_scoreService.CurrentScore);
             }
+
             if (fruitCountHealthView)
             {
-                fruitCountHealthView.UpdateCountDisplay(_scoreService.FruitCollectedCount);
+                _fruitCountHealthView.UpdateCountDisplay(_scoreService.FruitCollectedCount);
             }
         }
 
@@ -49,11 +57,12 @@ namespace Collectables.Score
             _scoreService.AddFruitCollected(position);
             if (scoreTextView)
             {
-                scoreTextView.UpdateCountDisplay(_scoreService.CurrentScore);
+                _scoreTextView.UpdateCountDisplay(_scoreService.CurrentScore);
             }
+
             if (fruitCountHealthView)
             {
-                fruitCountHealthView.UpdateCountDisplay(_scoreService.FruitCollectedCount);
+                _fruitCountHealthView.UpdateCountDisplay(_scoreService.FruitCollectedCount);
             }
         }
     }

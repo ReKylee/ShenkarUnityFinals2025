@@ -9,18 +9,17 @@ namespace Health.Damage
     public class TakeDamageOnCollision : MonoBehaviour
     {
         [SerializeField] private LayerMask sourceLayers = ~0;
+        private bool _active = true;
         private IDamageable _damageable;
         private DamageConditionsComponent _damageConditions;
-        private bool _active = true;
         private void Awake()
         {
             TryGetComponent(out _damageable);
             TryGetComponent(out _damageConditions);
         }
-        public void SetActive(bool value) => _active = value;
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if(!_active) return;
+            if (!_active) return;
             GameObject source = collision.gameObject;
             if (_damageable is null) return;
             if ((1 << source.layer & sourceLayers) == 0) return;
@@ -35,5 +34,6 @@ namespace Health.Damage
             _damageable.Damage(maxAmount, source);
             Debug.Log("[TakeDamageOnCollision] Damage taken: " + maxAmount + " from " + source.name);
         }
+        public void SetActive(bool value) => _active = value;
     }
 }

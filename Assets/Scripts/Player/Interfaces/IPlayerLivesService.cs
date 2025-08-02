@@ -14,6 +14,7 @@ namespace Player.Interfaces
         void AddLife(Vector3 collectPosition);
 
         event Action<int> OnLivesChanged;
+        event Action<Vector3> OnOneUpAwarded;
     }
 
 }

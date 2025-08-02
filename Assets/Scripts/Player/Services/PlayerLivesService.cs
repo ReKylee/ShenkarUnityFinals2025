@@ -18,6 +18,7 @@ namespace Player.Services
             MaxLives = GameData.MaxLives;
 
             Debug.Log("[PlayerLivesService] Initialized with max lives: " + MaxLives);
+            
             if (_gameDataService == null)
             {
                 Debug.LogError("[PlayerLivesService] _gameDataService is null.");
@@ -35,8 +36,7 @@ namespace Player.Services
         public bool HasLivesRemaining => CurrentLives > 0;
 
         public event Action<int> OnLivesChanged;
-        public static event Action<Vector3> OnOneUpAwarded;
-
+        public event Action<Vector3> OnOneUpAwarded;
         public bool TryUseLife()
         {
             if (CurrentLives <= 0) return false;

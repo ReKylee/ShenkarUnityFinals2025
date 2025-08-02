@@ -1,4 +1,6 @@
-﻿using Health.Views;
+﻿using System;
+using Collectables.Counter;
+using Health.Views;
 using Player.Interfaces;
 using UnityEngine;
 using VContainer;
@@ -7,10 +9,13 @@ namespace Player.UI
 {
     public class PlayerLivesUIController : MonoBehaviour
     {
-        [SerializeField] private TextHealthView livesHealthView;
-
+        [SerializeField] private PaddedTextView livesHealthView;
+        private ICounterView _livesHealthView;
         private IPlayerLivesService _livesService;
-
+        private void Awake()
+        {
+            _livesHealthView = livesHealthView;
+        }
         private void Start()
         {
             if (_livesService != null)
@@ -36,7 +41,7 @@ namespace Player.UI
 
         private void UpdateDisplay(int lives)
         {
-            livesHealthView?.UpdateDisplay(lives, _livesService.MaxLives);
+            _livesHealthView?.UpdateCountDisplay(lives);
         }
     }
 }

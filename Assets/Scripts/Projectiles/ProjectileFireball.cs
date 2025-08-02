@@ -9,7 +9,7 @@ namespace Projectiles
     {
         public float destroyTime = 5f;
         [NonSerialized] public float Direction;
-  
+
         private void OnBecameInvisible()
         {
             DestroyProjectile();

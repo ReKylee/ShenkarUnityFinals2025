@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Health
+namespace Health.Views
 {
     public class BarsHealthView : MonoBehaviour, IHealthView
     {

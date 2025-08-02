@@ -20,17 +20,12 @@ MonoBehaviour:
     - {fileID: 1773726258, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0
   - Name: Walk
-    FPS: 8
+    FPS: 12
     Frames:
     - {fileID: 323053547, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 981406571, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 323053547, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: -1764474346, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    SpriteAnimationType: 0
-  - Name: Skid
-    FPS: 0
-    Frames:
-    - {fileID: -947951102, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0
   - Name: Attacking
     FPS: 8
@@ -44,4 +39,10 @@ MonoBehaviour:
     - {fileID: 939905761, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 939905761, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 939905761, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    SpriteAnimationType: 0
+  - Name: Death
+    FPS: 10
+    Frames:
+    - {fileID: -956875666, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -1537913727, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 0

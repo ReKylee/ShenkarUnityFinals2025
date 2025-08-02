@@ -1,9 +1,11 @@
-﻿using GabrielBigardi.SpriteAnimator;
+﻿using Core.Events;
+using GabrielBigardi.SpriteAnimator;
 using ModularCharacterController.Core;
 using ModularCharacterController.Core.Components;
 using UnityEngine;
+using VContainer;
 
-namespace Player
+namespace Player.Components
 {
     /// <summary>
     ///     Handles basic player animation operations
@@ -15,6 +17,10 @@ namespace Player
         private SpriteAnimator _spriteAnimator;
         private SpriteRenderer _spriteRenderer;
         public SpriteAnimationObject OriginalAnimationObject { get; private set; }
+
+        private IEventBus _eventBus;
+
+        private bool _isDead = false;
 
         public Sprite CurrentSprite
         {
@@ -33,6 +39,7 @@ namespace Player
 
         private void Update()
         {
+            if (_isDead) return;
             if (!_inputHandler || !_groundCheck || Mathf.Approximately(Time.timeScale, 0)) return;
 
             InputContext input = _inputHandler.CurrentInput;
@@ -117,12 +124,25 @@ namespace Player
             _spriteAnimator?.Pause();
         }
 
-        /// <summary>
-        ///     Resume animation playback
-        /// </summary>
-        public void ResumeAnimation()
+
+        
+        [Inject]
+        public void Construct(IEventBus eventBus)
         {
-            _spriteAnimator?.Resume();
+            _eventBus = eventBus;
+            _eventBus.Subscribe<PlayerDeathEvent>(OnPlayerDeath);
+        }
+
+        private void OnDisable()
+        {
+            _eventBus?.Unsubscribe<PlayerDeathEvent>(OnPlayerDeath);
+        }
+
+        private void OnPlayerDeath(PlayerDeathEvent evt)
+        {
+            Debug.Log("[PlayerAnimationController] Player death event received", gameObject);
+            _isDead = true;
+            _spriteAnimator.Play("Death");
         }
     }
 }

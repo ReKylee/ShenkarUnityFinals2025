@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Collectables.Score;
+﻿using Collectables.Score;
 using Core.Data;
 using Core.Events;
 using Core.Services;
@@ -18,6 +17,12 @@ namespace Core.DI
 {
     public class GameLifetimeScope : LifetimeScope
     {
+        protected override void Awake()
+        {
+            Debug.Log("[GameLifetimeScope] Awake called.");
+            AddToAutoInject<FireballWeapon>();
+            base.Awake();
+        }
 
         public void AddToAutoInject<T>() where T : Component
         {
@@ -28,12 +33,6 @@ namespace Core.DI
             {
                 autoInjectGameObjects.Add(comp.gameObject);
             }
-        }
-        protected override void Awake()
-        {
-            Debug.Log("[GameLifetimeScope] Awake called.");
-            AddToAutoInject<FireballWeapon>();
-            base.Awake();
         }
 
         protected override void Configure(IContainerBuilder builder)
@@ -71,6 +70,7 @@ namespace Core.DI
             // Health
             builder.RegisterComponentInHierarchy<PlayerHealthController>();
             builder.RegisterComponentInHierarchy<PlayerLivesUIController>();
+            builder.RegisterComponentInHierarchy<PlayerAnimationController>();
 
             // Score System
             builder.RegisterComponentInHierarchy<ScoreController>();

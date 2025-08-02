@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using Health.Damage;
-using Health.Interfaces;
-using Health.Invincibility;
 using UnityEngine;
 using Weapons.Interfaces;
 
@@ -20,16 +18,8 @@ namespace Weapons.Models
         {
             if (!IsEquipped || !meleeCollider)
                 return;
-            StartCoroutine(ActivateCollider());
-        }
 
-        private IEnumerator ActivateCollider()
-        {
-            meleeCollider?.SetActive(true);
-            takeDamageOnCollision.SetActive(false);
-            yield return new WaitForSeconds(activeTime);
-            meleeCollider?.SetActive(false);
-            takeDamageOnCollision.SetActive(true);
+            StartCoroutine(ActivateCollider());
         }
 
         public void Equip()
@@ -42,6 +32,14 @@ namespace Weapons.Models
             IsEquipped = false;
             meleeCollider?.SetActive(false);
         }
+
+        private IEnumerator ActivateCollider()
+        {
+            meleeCollider?.SetActive(true);
+            takeDamageOnCollision.SetActive(false);
+            yield return new WaitForSeconds(activeTime);
+            meleeCollider?.SetActive(false);
+            takeDamageOnCollision.SetActive(true);
+        }
     }
 }
-

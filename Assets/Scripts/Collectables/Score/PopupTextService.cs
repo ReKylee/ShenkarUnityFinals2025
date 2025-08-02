@@ -1,4 +1,6 @@
-﻿using Player.Services;
+﻿using Core.Data;
+using Player.Interfaces;
+using Player.Services;
 using Pooling;
 using UnityEngine;
 using VContainer;
@@ -10,23 +12,25 @@ namespace Collectables.Score
         [SerializeField] private GameObject scoreTextPrefab;
         [SerializeField] private GameObject oneUpTextPrefab;
         private IPoolService _scoreTextPool;
+        private IPlayerLivesService _playerLivesService;
 
         private void OnEnable()
         {
             ScoreCollectable.OnScoreCollected += HandleScoreCollected;
-            PlayerLivesService.OnOneUpAwarded += HandleOneUpAwarded;
+            _playerLivesService.OnOneUpAwarded += HandleOneUpAwarded;
         }
 
         private void OnDisable()
         {
             ScoreCollectable.OnScoreCollected -= HandleScoreCollected;
-            PlayerLivesService.OnOneUpAwarded -= HandleOneUpAwarded;
+            _playerLivesService.OnOneUpAwarded -= HandleOneUpAwarded;
         }
 
         [Inject]
-        private void Configure(IPoolService poolService)
+        private void Configure(IPoolService poolService, IPlayerLivesService playerLivesService)
         {
             _scoreTextPool = poolService;
+            _playerLivesService = playerLivesService;
         }
 
         private void HandleScoreCollected(int scoreAmount, Vector3 position)

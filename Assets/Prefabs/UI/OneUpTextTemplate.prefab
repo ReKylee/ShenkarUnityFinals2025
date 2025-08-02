@@ -53,7 +53,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ppu: 16
   floatDistance: 64
-  duration: 0.5
+  duration: 0.3
 --- !u!23 &2458346544229023922
 MeshRenderer:
   m_ObjectHideFlags: 0
