@@ -67,12 +67,17 @@ namespace Core
 
         #region Public API - Game State Control
 
-        public void StartGame()
+        private void StartGame()
         {
+            Time.timeScale = 1;
             ChangeState(GameState.Playing);
             _levelStartTime = Time.time;
 
-            PublishLevelStartedEvent();
+            _eventBus?.Publish(new LevelStartedEvent
+            {
+                LevelName = _currentLevelName,
+                Timestamp = Time.time
+            });
         }
 
         public void PauseGame()
@@ -206,15 +211,6 @@ namespace Core
         }
 
         private string GetCurrentLevelName() => SceneManager.GetActiveScene().name;
-
-        private void PublishLevelStartedEvent()
-        {
-            _eventBus?.Publish(new LevelStartedEvent
-            {
-                LevelName = _currentLevelName,
-                Timestamp = Time.time
-            });
-        }
 
         #endregion
 
