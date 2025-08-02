@@ -10,10 +10,10 @@ namespace Utilities
     public class ProximityLauncher : MonoBehaviour
     {
         [Tooltip("Vertical distance above container at which it triggers launch.")]
-        public float triggerHeight = 1f;
+        public float triggerHeight = 2f;
 
         [Tooltip("Horizontal distance within which the launcher can be triggered.")]
-        public float triggerProximity = 2f;
+        public float triggerProximity = 1f;
 
         [Tooltip("Launch velocity applied when triggered.")]
         public Vector2 launchVel = new(0f, 12f);
