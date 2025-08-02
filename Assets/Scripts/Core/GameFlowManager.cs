@@ -1,4 +1,7 @@
-﻿using Core.Events;
+﻿using System;
+using System.Threading.Tasks;
+using Core.Events;
+using Player.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
@@ -95,28 +98,14 @@ namespace Core
 
         public void HandlePlayerDeath(Vector3 deathPosition)
         {
-
-            // Publish player death event
             _eventBus?.Publish(new PlayerDeathEvent
             {
                 DeathPosition = deathPosition,
                 Timestamp = Time.time
             });
-
-            HandleLevelFailureInternal("Player died");
         }
 
 
-        // Internal method to handle level failure without relying on events
-        private void HandleLevelFailureInternal(string reason)
-        {
-
-            // Change state if we're not already in GameOver
-            ChangeState(GameState.GameOver);
-
-            // Schedule the restart
-            Invoke(nameof(RestartLevel), restartDelay);
-        }
 
         public void CompleteLevel(float completionTime)
         {
@@ -136,27 +125,66 @@ namespace Core
         {
             _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
             _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
+            _eventBus?.Subscribe<PlayerLivesChangedEvent>(OnPlayerLivesChanged);
         }
 
         private void UnsubscribeFromEvents()
         {
             _eventBus?.Unsubscribe<GameOverEvent>(OnGameOver);
             _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
+            _eventBus?.Unsubscribe<PlayerLivesChangedEvent>(OnPlayerLivesChanged);
         }
 
         private void OnGameOver(GameOverEvent gameOverEvent)
         {
             ChangeState(GameState.GameOver);
-            Invoke(nameof(RestartLevel), restartDelay * 2f);
+            RestartLevelAfterDelayAsync(restartDelay);
         }
 
 
         private void OnLevelCompleted(LevelCompletedEvent levelEvent)
         {
             ChangeState(GameState.Victory);
-            // Load next level or show victory screen logic would go here
         }
 
+        private void OnPlayerLivesChanged(PlayerLivesChangedEvent livesEvent)
+        {
+            bool lostLife = livesEvent.PreviousLives > livesEvent.CurrentLives;
+            bool isGameOver = livesEvent.CurrentLives == 0;
+
+            if (isGameOver)
+            {
+                ChangeState(GameState.GameOver);
+                Debug.Log($"[GameFlowManager] Game Over: Player is out of lives");
+                _eventBus?.Publish(new GameOverEvent { Timestamp = Time.time });
+            }
+            if (lostLife)
+            {
+                Debug.Log($"[GameFlowManager] Player lost a life. Remaining lives: {livesEvent.CurrentLives}");
+                _eventBus?.Publish(new PlayerDeathEvent
+                {
+                    DeathPosition = PlayerLocator.PlayerTransform.position,
+                    Timestamp = Time.time
+                });
+            }
+            if (isGameOver || lostLife)
+            {
+                Time.timeScale = 0;
+                RestartLevelAfterDelayAsync(restartDelay);
+            }
+        }
+        private static async void RestartLevelAfterDelayAsync(float delay)
+        {
+            try
+            {
+                await Task.Delay((int)(delay * 1000));
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[GameFlowManager] Failed to restart level after delay: {e}");
+            }
+        }
         #endregion
 
         #region Private Methods
@@ -175,12 +203,6 @@ namespace Core
                 NewState = newState,
                 Timestamp = Time.time
             });
-
-            // If we're changing to GameOver state, also publish a GameOverEvent for backward compatibility
-            if (newState == GameState.GameOver)
-            {
-                _eventBus?.Publish(new GameOverEvent { Timestamp = Time.time });
-            }
         }
 
         private string GetCurrentLevelName() => SceneManager.GetActiveScene().name;

@@ -30,6 +30,7 @@ namespace Core.Events
 
     public struct PlayerLivesChangedEvent
     {
+        public int PreviousLives;
         public int CurrentLives;
         public int MaxLives;
         public float Timestamp;

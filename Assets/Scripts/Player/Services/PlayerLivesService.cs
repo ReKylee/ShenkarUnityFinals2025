@@ -41,13 +41,17 @@ namespace Player.Services
         {
             if (CurrentLives <= 0) return false;
 
-            int newLives = CurrentLives - 1;
+            int previousLives = CurrentLives;
+            int newLives = previousLives - 1;
+
+            // Update lives before publishing the event
             _gameDataService.UpdateLives(newLives);
 
             OnLivesChanged?.Invoke(newLives);
 
             _eventBus?.Publish(new PlayerLivesChangedEvent
             {
+                PreviousLives = previousLives,
                 CurrentLives = newLives,
                 MaxLives = MaxLives,
                 Timestamp = Time.time
@@ -64,12 +68,17 @@ namespace Player.Services
 
         public void AddLife(Vector3 collectPosition)
         {
-            int newLives = CurrentLives + 1;
+            int previousLives = CurrentLives;
+            int newLives = previousLives + 1;
+
+            // Update lives before publishing the event
             _gameDataService.UpdateLives(newLives);
+
             OnLivesChanged?.Invoke(newLives);
             OnOneUpAwarded?.Invoke(collectPosition);
             _eventBus?.Publish(new PlayerLivesChangedEvent
             {
+                PreviousLives = previousLives,
                 CurrentLives = newLives,
                 MaxLives = MaxLives,
                 Timestamp = Time.time
