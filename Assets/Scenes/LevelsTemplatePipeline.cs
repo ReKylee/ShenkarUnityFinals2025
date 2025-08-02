@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor.SceneTemplate;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,22 +17,15 @@ public class LevelsTemplatePipeline : ISceneTemplatePipeline
 
     public virtual void AfterTemplateInstantiation(SceneTemplateAsset sceneTemplateAsset, Scene scene, bool isAdditive, string sceneName)
     {
-        // Find all scenes in the Scenes folder that match the pattern "Level{number}.unity"
-        var sceneFolder = "Assets/Scenes";
+        var sceneFolder = System.IO.Path.Combine("Assets", "Scenes");
         var sceneFiles = System.IO.Directory.GetFiles(sceneFolder, "Level*.unity");
-        int maxLevel = 0;
-        foreach (var file in sceneFiles)
-        {
-            var fileName = System.IO.Path.GetFileNameWithoutExtension(file);
-            if (fileName.StartsWith("Level"))
-            {
-                if (int.TryParse(fileName.Substring(5), out int num))
-                {
-                    if (num > maxLevel) maxLevel = num;
-                }
-            }
-        }
-        // Set the new scene name to Level{maxLevel+1}
+        int levelPrefixLength = "Level".Length;
+        int maxLevel = sceneFiles
+            .Select(System.IO.Path.GetFileNameWithoutExtension)
+            .Where(fileName => fileName.StartsWith("Level"))
+            .Select(fileName => int.TryParse(fileName[levelPrefixLength..], out int num) ? num : 0)
+            .DefaultIfEmpty(0)
+            .Max();
         string newLevelName = $"Level{maxLevel + 1}";
         scene.name = newLevelName;
         SceneManager.SetActiveScene(scene);
