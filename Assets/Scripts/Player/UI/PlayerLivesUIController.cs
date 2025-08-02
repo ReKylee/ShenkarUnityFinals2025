@@ -7,7 +7,7 @@ namespace Player.UI
 {
     public class PlayerLivesUIController : MonoBehaviour
     {
-        [SerializeField] private TextHealthView livesView;
+        [SerializeField] private TextHealthView livesHealthView;
 
         private IPlayerLivesService _livesService;
 
@@ -36,7 +36,7 @@ namespace Player.UI
 
         private void UpdateDisplay(int lives)
         {
-            livesView?.UpdateDisplay(lives, _livesService.MaxLives);
+            livesHealthView?.UpdateDisplay(lives, _livesService.MaxLives);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Player.Interfaces
 {
@@ -10,6 +11,7 @@ namespace Player.Interfaces
 
         bool TryUseLife();
         void ResetLives();
+        void AddLife(Vector3 collectPosition);
 
         event Action<int> OnLivesChanged;
     }

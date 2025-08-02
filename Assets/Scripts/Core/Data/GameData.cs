@@ -7,6 +7,7 @@ namespace Core.Data
     public class GameData
     {
         [Header("Player Data")] public int lives = 3;
+        [Header("Player Data")] public const int MaxLives = 3;
 
         public int score;
 
@@ -21,6 +22,9 @@ namespace Core.Data
         [Header("Settings")] public float musicVolume = 1.0f;
 
         public float sfxVolume = 1.0f;
+
+        [Header("Collectables")]
+        public int fruitCollected = 0;
 
         // Constructor for easy initialization
         public GameData()
@@ -39,12 +43,13 @@ namespace Core.Data
             hasAxe = other.hasAxe;
             musicVolume = other.musicVolume;
             sfxVolume = other.sfxVolume;
+            fruitCollected = other.fruitCollected;
         }
 
         // Reset to default values
         public void Reset()
         {
-            lives = 3;
+            lives = MaxLives;
             score = 0;
             currentLevel = "Level_01";
             bestTime = float.MaxValue;
@@ -52,6 +57,21 @@ namespace Core.Data
             hasAxe = false;
             musicVolume = 1.0f;
             sfxVolume = 1.0f;
+            fruitCollected = 0;
         }
+
+        private static GameData CreateDefaultData() =>
+            new()
+            {
+                lives = MaxLives,
+                score = 0,
+                currentLevel = "Level_01",
+                bestTime = float.MaxValue,
+                hasFireball = false,
+                hasAxe = false,
+                musicVolume = 1.0f,
+                sfxVolume = 1.0f,
+                fruitCollected = 0
+            };
     }
 }

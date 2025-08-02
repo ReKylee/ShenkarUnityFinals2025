@@ -15,7 +15,7 @@ namespace Player.Services
         {
             _gameDataService = gameDataService;
             _eventBus = eventBus;
-            MaxLives = _gameDataService.CurrentData.lives;
+            MaxLives = GameData.MaxLives;
 
             Debug.Log("[PlayerLivesService] Initialized with max lives: " + MaxLives);
             if (_gameDataService == null)
@@ -35,6 +35,7 @@ namespace Player.Services
         public bool HasLivesRemaining => CurrentLives > 0;
 
         public event Action<int> OnLivesChanged;
+        public static event Action<Vector3> OnOneUpAwarded;
 
         public bool TryUseLife()
         {
@@ -59,6 +60,20 @@ namespace Player.Services
         {
             _gameDataService.UpdateLives(MaxLives);
             OnLivesChanged?.Invoke(MaxLives);
+        }
+
+        public void AddLife(Vector3 collectPosition)
+        {
+            int newLives = CurrentLives + 1;
+            _gameDataService.UpdateLives(newLives);
+            OnLivesChanged?.Invoke(newLives);
+            OnOneUpAwarded?.Invoke(collectPosition);
+            _eventBus?.Publish(new PlayerLivesChangedEvent
+            {
+                CurrentLives = newLives,
+                MaxLives = MaxLives,
+                Timestamp = Time.time
+            });
         }
     }
 }

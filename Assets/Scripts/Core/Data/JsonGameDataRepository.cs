@@ -58,7 +58,7 @@ namespace Core.Data
 
         public string GetSaveFilePath() => SaveFilePath;
 
-        private GameData CreateDefaultData() =>
+        private static GameData CreateDefaultData() =>
             new()
             {
                 lives = 3,

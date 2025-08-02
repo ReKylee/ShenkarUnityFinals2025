@@ -146,7 +146,7 @@ namespace Core
         private void OnGameStateChanged(GameStateChangedEvent stateEvent)
         {
             // Handle data operations based on state changes
-            if (stateEvent.NewState == GameState.Victory || stateEvent.NewState == GameState.GameOver)
+            if (stateEvent.NewState is GameState.Victory or GameState.GameOver)
             {
                 _autoSaveService?.ForceSave();
             }

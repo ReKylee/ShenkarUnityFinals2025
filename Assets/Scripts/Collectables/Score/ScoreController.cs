@@ -1,19 +1,25 @@
-﻿using UnityEngine;
+﻿using Collectables.Counter;
+using UnityEngine;
 using VContainer;
 
 namespace Collectables.Score
 {
     public class ScoreController : MonoBehaviour
     {
-        [SerializeField] private ScoreView view;
+        [SerializeField] private PaddedTextView scoreTextView;
+        [SerializeField] private PaddedTextView fruitCountHealthView;
 
         private IScoreService _scoreService;
 
         private void Start()
         {
-            if (view)
+            if (scoreTextView)
             {
-                view.UpdateCountDisplay(_scoreService.CurrentScore);
+                scoreTextView.UpdateCountDisplay(_scoreService.CurrentScore);
+            }
+            if (fruitCountHealthView)
+            {
+                fruitCountHealthView.UpdateCountDisplay(_scoreService.FruitCollectedCount);
             }
         }
 
@@ -39,12 +45,16 @@ namespace Collectables.Score
 
         private void HandleScoreCollected(int scoreAmount, Vector3 position)
         {
-            if (view)
-            {
-                view.UpdateCountDisplay(_scoreService.CurrentScore + scoreAmount);
-            }
-
             _scoreService.AddScore(scoreAmount);
+            _scoreService.AddFruitCollected(position);
+            if (scoreTextView)
+            {
+                scoreTextView.UpdateCountDisplay(_scoreService.CurrentScore);
+            }
+            if (fruitCountHealthView)
+            {
+                fruitCountHealthView.UpdateCountDisplay(_scoreService.FruitCollectedCount);
+            }
         }
     }
 }

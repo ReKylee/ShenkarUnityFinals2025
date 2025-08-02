@@ -57,29 +57,11 @@ namespace Core.Data
         {
             _repository.SaveData(CurrentData);
         }
-        public void UpdatePowerUp(string powerUpName, bool unlocked)
+       
+        public void AddFruitCollected()
         {
-            switch (powerUpName.ToLower())
-            {
-                case "fireball":
-                    CurrentData.hasFireball = unlocked;
-                    break;
-                case "axe":
-                    CurrentData.hasAxe = unlocked;
-                    break;
-            }
-
+            CurrentData.fruitCollected++;
             NotifyDataChanged();
-        }
-
-        public bool HasPowerUp(string powerUpName)
-        {
-            return powerUpName.ToLower() switch
-            {
-                "fireball" => CurrentData.hasFireball,
-                "axe" => CurrentData.hasAxe,
-                _ => false
-            };
         }
 
         private void NotifyDataChanged()

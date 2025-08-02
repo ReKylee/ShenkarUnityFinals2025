@@ -2862,7 +2862,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -2871,6 +2871,28 @@ TextureImporter:
       bones: []
       spriteID: 1ca4b1c47f94b4342bfe9c996c31dde9
       internalID: 214407942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: NES - Adventure Island 3 - Master Higgins_124
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 544
+        width: 8
+        height: 10
+      alignment: 9
+      pivot: {x: 0.5, y: 0.4}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9cdc0f20d8bfc64ca3c817271739e0e
+      internalID: -935521960
       vertices: []
       indices: 
       edges: []
@@ -2923,6 +2945,7 @@ TextureImporter:
       NES - Adventure Island 3 - Master Higgins_121: 550614604
       NES - Adventure Island 3 - Master Higgins_122: 1060450863
       NES - Adventure Island 3 - Master Higgins_123: 620900558
+      NES - Adventure Island 3 - Master Higgins_124: -935521960
       NES - Adventure Island 3 - Master Higgins_13: -323462004
       NES - Adventure Island 3 - Master Higgins_14: 1135327933
       NES - Adventure Island 3 - Master Higgins_15: 1310683816

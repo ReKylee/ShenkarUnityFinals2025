@@ -7,6 +7,7 @@ namespace Core.Data
         GameData CurrentData { get; }
         void UpdateLives(int lives);
         void UpdateScore(int score);
+        void AddFruitCollected();
         void UpdateBestTime(float time);
         void UpdateCurrentLevel(string levelName);
         void ResetAllData();
