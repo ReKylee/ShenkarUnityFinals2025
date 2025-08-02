@@ -195,7 +195,7 @@ MonoBehaviour:
   projectileLayers:
     serializedVersion: 2
     m_Bits: 64
-  allowedWeaponTypesArray: 0200000004000000
+  allowedWeaponTypesArray: 020000000400000005000000
 --- !u!114 &1358734936208528288
 MonoBehaviour:
   m_ObjectHideFlags: 0

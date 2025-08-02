@@ -9,6 +9,7 @@
         Axe,
         Boomerang,
         Fireball,
-        Spark
+        Spark,
+        Melee
     }
 }

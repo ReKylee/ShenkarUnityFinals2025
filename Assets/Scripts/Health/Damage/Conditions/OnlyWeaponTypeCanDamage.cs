@@ -7,10 +7,10 @@ using Weapons.Interfaces;
 namespace Health.Damage.Conditions
 {
     [DisallowMultipleComponent]
-    public class OnlyProjectileCanDamage : MonoBehaviour, IDamageCondition
+    public class OnlyWeaponTypeCanDamage : MonoBehaviour, IDamageCondition
     {
         [SerializeField] private LayerMask projectileLayers = ~0;
-        [SerializeField] private WeaponType[] allowedWeaponTypesArray = { WeaponType.Boomerang, WeaponType.Spark };
+        [SerializeField] private WeaponType[] allowedWeaponTypesArray = { WeaponType.Boomerang, WeaponType.Spark, WeaponType.Melee };
         private bool _allowAllWeaponTypes;
         private int _allowedWeaponMask;
 

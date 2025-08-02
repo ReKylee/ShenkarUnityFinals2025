@@ -34,13 +34,25 @@ MonoBehaviour:
     - {fileID: -667408708, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     SpriteAnimationType: 1
   - Name: Attacking
-    FPS: 10
+    FPS: 12
     Frames:
     - {fileID: 1135821679, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 1187232006, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: 452415010, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
     - {fileID: -667408708, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
-    SpriteAnimationType: 0
+    - {fileID: 1135821679, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1187232006, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 452415010, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -667408708, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1135821679, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1187232006, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 452415010, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -667408708, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1135821679, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 1187232006, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: 452415010, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    - {fileID: -667408708, guid: ca0eddf2630082840b5c75f619aceb35, type: 3}
+    SpriteAnimationType: 1
   - Name: Jump
     FPS: 8
     Frames:

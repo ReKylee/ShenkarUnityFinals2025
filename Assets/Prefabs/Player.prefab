@@ -139,6 +139,7 @@ Transform:
   - {fileID: 8740184567830207716}
   - {fileID: 388501036162216537}
   - {fileID: 7237753358535429823}
+  - {fileID: 5758475653655398949}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6599342503957296432
@@ -489,6 +490,7 @@ GameObject:
   - component: {fileID: 5692119513404325601}
   - component: {fileID: 3354482609634551655}
   - component: {fileID: 4855835521647181485}
+  - component: {fileID: 5013252729562714988}
   - component: {fileID: 5372833804394028595}
   - component: {fileID: 6944014089907720284}
   m_Layer: 6
@@ -577,6 +579,22 @@ MonoBehaviour:
   boomerang: {fileID: 2685813220447095671, guid: 21d2b53bc3e8a8d4eb3cdb06c74f0012, type: 3}
   spawnPoint: {fileID: 8740184567830207716}
   cooldownTime: 0
+--- !u!114 &5013252729562714988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5139845219191842715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d955d1a544eb4cda8955485ba6b94891, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponType: 5
+  meleeCollider: {fileID: 7940245740324647259}
+  activeTime: 1.33
+  takeDamageOnCollision: {fileID: 3058566569831002630}
 --- !u!114 &5372833804394028595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,6 +623,10 @@ MonoBehaviour:
   - weaponName: Spark
     weaponComponent: {fileID: 5692119513404325601}
     weaponType: 4
+    actionName: Attack
+  - weaponName: Melee
+    weaponComponent: {fileID: 5013252729562714988}
+    weaponType: 5
     actionName: Attack
 --- !u!114 &6944014089907720284
 MonoBehaviour:
@@ -680,3 +702,85 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3890553521520257432}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7940245740324647259
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5758475653655398949}
+  - component: {fileID: 7963803815755746532}
+  - component: {fileID: 5461457715049931287}
+  m_Layer: 6
+  m_Name: MeleeCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &5758475653655398949
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7940245740324647259}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3890553521520257432}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &7963803815755746532
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7940245740324647259}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.8
+--- !u!114 &5461457715049931287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7940245740324647259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 729e404b12034676a74a8356426fffd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 1
