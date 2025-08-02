@@ -10,10 +10,13 @@ namespace Utilities
     public class ProximityLauncher : MonoBehaviour
     {
         [Tooltip("Vertical distance above container at which it triggers launch.")]
-        public float triggerHeight;
+        public float triggerHeight = 1f;
+
+        [Tooltip("Horizontal distance within which the launcher can be triggered.")]
+        public float triggerProximity = 2f;
 
         [Tooltip("Launch velocity applied when triggered.")]
-        public Vector2 launchVel = new(0f, 5f);
+        public Vector2 launchVel = new(0f, 12f);
 
         private Collider2D _col;
         private Transform _player;
@@ -21,21 +24,21 @@ namespace Utilities
         private SpriteRenderer _sr;
 
         private bool _triggered;
+        private float _originalGravityScale;
 
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
             _sr = GetComponent<SpriteRenderer>();
             _col = GetComponent<Collider2D>();
+            _originalGravityScale = _rb.gravityScale;
         }
 
         private void Start()
         {
             _player = PlayerLocator.PlayerTransform;
-            // Hide until triggered
             _sr.enabled = false;
             _col.enabled = false;
-            // Disable gravity until launch
             _rb.gravityScale = 0f;
         }
 
@@ -44,15 +47,19 @@ namespace Utilities
             if (_triggered || !_player)
                 return;
 
-            if (_player.position.y - transform.position.y > triggerHeight)
+            // Check if player is above and close horizontally
+            float verticalDist = _player.position.y - transform.position.y;
+            float horizontalDist = Mathf.Abs(_player.position.x - transform.position.x);
+            if (verticalDist > triggerHeight && horizontalDist < triggerProximity)
             {
                 _triggered = true;
-                // Show and launch
                 _sr.enabled = true;
                 _col.enabled = true;
-                _rb.gravityScale = 1f;
-                _rb.linearVelocity = new Vector2(launchVel.x, launchVel.y);
+                _rb.gravityScale = _originalGravityScale;
+                _rb.linearVelocity = launchVel;
             }
         }
+
+   
     }
 }

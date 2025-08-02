@@ -107,8 +107,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a44186176054471ba48e8dcbe20d720, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  horizontalSpeed: 6
-  verticalSpeed: 12
+  horizontalSpeed: 4
+  verticalSpeed: 20
   ignoreDuration: 3
 --- !u!114 &4026916297320648317
 MonoBehaviour:
@@ -142,7 +142,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

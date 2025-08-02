@@ -157,7 +157,7 @@ namespace Player.Components
             }
             transform.position = upPos;
             yield return new WaitForSecondsRealtime(0.6f);
-            float moveDownUnits = 10f;
+            const float moveDownUnits = 10f;
             Vector3 downPos = upPos + Vector3.down * moveDownUnits;
             duration = 0.6f;
             elapsed = 0f;
