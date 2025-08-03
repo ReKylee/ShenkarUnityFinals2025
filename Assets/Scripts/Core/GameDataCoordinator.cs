@@ -164,11 +164,6 @@ namespace Core
             }
         }
 
-        private void OnLivesChanged(PlayerLivesChangedEvent livesEvent)
-        {
-            _gameDataService?.UpdateLives(livesEvent.CurrentLives);
-        }
-
         private void OnLevelNavigation(LevelNavigationEvent navigationEvent)
         {
             GameData gameData = _gameDataService?.CurrentData;
@@ -181,31 +176,38 @@ namespace Core
         // Public API for other systems to request data operations
         public void UpdateLives(int lives)
         {
+            if (!_isInitialized) return;
             _gameDataService?.UpdateLives(lives);
         }
 
         public void UpdateCurrentLevel(string levelName)
         {
+            if (!_isInitialized) return;
             _gameDataService?.UpdateCurrentLevel(levelName);
         }
 
         public void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime)
         {
+            if (!_isInitialized) return;
             _gameDataService?.UpdateLevelProgress(levelName, isCompleted, completionTime);
         }
 
         public async Task<List<LevelData>> DiscoverLevelsAsync()
         {
-            return await _gameDataService?.GetLevelDataAsync(_levelDiscoveryService) ?? new List<LevelData>();
+            if (!_isInitialized || _gameDataService == null || _levelDiscoveryService == null)
+                return new List<LevelData>();
+            return await _gameDataService.GetLevelDataAsync(_levelDiscoveryService);
         }
 
         public GameData GetCurrentData()
         {
+            if (!_isInitialized) return null;
             return _gameDataService?.CurrentData;
         }
 
         public void ResetAllData()
         {
+            if (!_isInitialized) return;
             _gameDataService?.ResetAllData();
         }
     }
