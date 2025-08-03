@@ -18,16 +18,9 @@ MonoBehaviour:
   groundDeceleration: 70
   airAcceleration: 30
   airDeceleration: 30
-  jumpVelocity: 14
+  jumpVelocity: 19
   jumpReleaseVelocityMultiplier: 0.5
-  maxFallSpeed: 15
+  maxFallSpeed: 18
   coyoteTime: 0.08
   jumpBufferTime: 0.4
-  flapImpulse: 5.5
-  floatDescentSpeed: 1
-  gravityScale: 3
-  attackDamage: 10
-  attackRange: 0.5
-  attackSpeed: 1
-  inhaleRange: 2.5
-  inhalePower: 5
+  gravityScale: 4
