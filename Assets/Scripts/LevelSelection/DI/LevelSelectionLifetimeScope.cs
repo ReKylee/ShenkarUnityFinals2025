@@ -8,6 +8,9 @@ using VContainer.Unity;
 
 namespace LevelSelection.DI
 {
+    /// <summary>
+    /// VContainer lifetime scope for Level Selection services
+    /// </summary>
     public class LevelSelectionLifetimeScope : LifetimeScope
     {
         protected override void Configure(IContainerBuilder builder)
@@ -21,16 +24,23 @@ namespace LevelSelection.DI
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
 
             // Register the new service-based architecture
-            builder.Register<ILevelDiscoveryService, LevelDiscoveryService>(Lifetime.Singleton);
-            builder.Register<ILevelNavigationService, LevelNavigationService>(Lifetime.Singleton);
-            builder.Register<ILevelDisplayService, LevelDisplayService>(Lifetime.Singleton);
+            builder.Register<ILevelDiscoveryService, LevelDiscoveryService>(Lifetime.Scoped);
+            builder.Register<ILevelNavigationService, LevelNavigationService>(Lifetime.Scoped);
+            builder.Register<ILevelDisplayService, LevelDisplayService>(Lifetime.Scoped);
+
+            // Register NEW focused services following SOLID principles
+            builder.Register<ISelectorService, SelectorService>(Lifetime.Scoped);
+            builder.Register<IInputFilterService, InputFilterService>(Lifetime.Scoped);
+            builder.Register<IAudioFeedbackService, AudioFeedbackService>(Lifetime.Scoped);
+            builder.Register<IItemSelectService, ItemSelectService>(Lifetime.Scoped);
+            builder.Register<ISceneLoadService, SceneLoadService>(Lifetime.Scoped);
 
             // Register the main controller
             builder.RegisterComponentInHierarchy<LevelSelectionController>();
 
             // Register supporting components that are still used
             builder.RegisterComponentInHierarchy<ItemSelectScreen>();
-            builder.RegisterComponentInHierarchy<NESCrossfade>();
+            builder.RegisterComponentInHierarchy<NesCrossfade>();
             
             // Register the scene transition manager
             builder.RegisterComponentInHierarchy<SceneTransitionManager>();

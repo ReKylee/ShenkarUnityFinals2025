@@ -3,53 +3,44 @@ using System.Threading.Tasks;
 using Core.Events;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using VContainer;
+using LevelSelection.Services;
 
 namespace LevelSelection
 {
     /// <summary>
-    ///     Centralized controller that manages all level selection functionality
-    ///     Uses inspector assignments and input module instead of complex auto-discovery
+    /// Orchestrates level selection functionality using focused services (SOLID principles)
     /// </summary>
     public class LevelSelectionController : MonoBehaviour
     {
-        private const float InputCooldownTime = 0.2f; // Prevent input spam
-        private const float InputDeadzone = 0.5f; // Input threshold
-
-        [Header("Auto Configuration")] [SerializeField]
-        private bool autoActivateOnStart = true;
-
+        [Header("Auto Configuration")] 
+        [SerializeField] private bool autoActivateOnStart = true;
         [SerializeField] private LevelSelectionConfig config;
 
-        [Header("UI Components")] [SerializeField]
-        private GameObject selectorObject;
-
+        [Header("UI Components")] 
+        [SerializeField] private GameObject selectorObject;
         [SerializeField] private ItemSelectScreen itemSelectScreen;
-        [SerializeField] private NESCrossfade crossfade;
+        [SerializeField] private NesCrossfade crossfade;
 
-        [Header("Input Actions")] [SerializeField]
-        private InputActionReference navigateAction;
-
+        [Header("Input Actions")] 
+        [SerializeField] private InputActionReference navigateAction;
         [SerializeField] private InputActionReference submitAction;
 
-        // Audio support
-        private AudioSource _audioSource;
-
+        // Core services - injected via DI
         private ILevelDiscoveryService _discoveryService;
+        private ILevelNavigationService _navigationService;
         private ILevelDisplayService _displayService;
         private IEventBus _eventBus;
 
-        // Selector movement
-        private bool _isMovingSelector;
-        private bool _isItemSelectActive; // Track if item select screen is active
+        // New focused services
+        private ISelectorService _selectorService;
+        private IInputFilterService _inputFilterService;
+        private IAudioFeedbackService _audioFeedbackService;
+        private IItemSelectService _itemSelectService;
+        private ISceneLoadService _sceneLoadService;
 
-        // Input filtering
-        private Vector2 _lastInputDirection;
-        private float _lastInputTime;
-        private ILevelNavigationService _navigationService;
-        private Vector3 _selectorTargetPosition;
-        private List<LevelPoint> _sortedLevelPoints; 
+        private AudioSource _audioSource;
+        private List<LevelPoint> _sortedLevelPoints;
 
         public bool IsActive { get; private set; }
         public LevelSelectionConfig Config => config;
@@ -66,7 +57,8 @@ namespace LevelSelection
 
         private void Update()
         {
-            UpdateSelectorMovement();
+            // Delegate selector movement to the service
+            _selectorService?.Update();
         }
 
         private void OnEnable()
@@ -114,109 +106,106 @@ namespace LevelSelection
             ILevelDiscoveryService discoveryService,
             ILevelNavigationService navigationService,
             ILevelDisplayService displayService,
-            IEventBus eventBus)
+            IEventBus eventBus,
+            ISelectorService selectorService,
+            IInputFilterService inputFilterService,
+            IAudioFeedbackService audioFeedbackService,
+            IItemSelectService itemSelectService,
+            ISceneLoadService sceneLoadService)
         {
             _discoveryService = discoveryService;
             _navigationService = navigationService;
             _displayService = displayService;
             _eventBus = eventBus;
+            _selectorService = selectorService;
+            _inputFilterService = inputFilterService;
+            _audioFeedbackService = audioFeedbackService;
+            _itemSelectService = itemSelectService;
+            _sceneLoadService = sceneLoadService;
 
             SubscribeToEvents();
         }
 
         private async Task InitializeAsync()
         {
-            // Setup audio source for config sounds
+            // Setup audio source
             _audioSource = GetComponent<AudioSource>();
             if (_audioSource == null)
             {
                 _audioSource = gameObject.AddComponent<AudioSource>();
             }
 
+            // Initialize services
+            InitializeServices();
+
             var levelData = await _discoveryService.DiscoverLevelsAsync();
             await _navigationService.InitializeAsync(levelData);
             await _displayService.InitializeAsync(levelData);
 
-            // Get sorted level points from the discovery service - NO DUPLICATION!
             _sortedLevelPoints = _discoveryService.GetSortedLevelPoints();
-
-            // Pass the sorted level points to the display service using DI pattern
             _displayService.SetLevelPoints(_sortedLevelPoints);
 
-            // Pass config to services that need it
+            // Configure services with sorted level points
+            _selectorService.SetLevelPoints(_sortedLevelPoints);
+
+            // Pass config to legacy services
             if (config != null)
             {
                 _displayService.SetConfig(config);
-
-                // Set grid width for navigation using the interface method
                 _navigationService.SetGridWidth(config.gridWidth);
 
-                // Pass config to ItemSelectScreen if available
                 if (itemSelectScreen)
                 {
                     itemSelectScreen.SetConfig(config);
                 }
 
-                // Pass config to crossfade if available
                 if (crossfade)
                 {
                     crossfade.SetConfig(config);
                 }
             }
 
-            Debug.Log(
-                $"[LevelSelectionController] Initialized with {levelData.Count} levels using discovery service sorted data");
+            Debug.Log($"[LevelSelectionController] Initialized with {levelData.Count} levels using SOLID architecture");
         }
 
-        private void UpdateSelectorMovement()
+        private void InitializeServices()
         {
-            if (!_isMovingSelector || selectorObject == null) return;
+            // Initialize all services with their dependencies
+            _selectorService.Initialize(selectorObject, config);
+            _inputFilterService.Initialize(config);
+            _audioFeedbackService.Initialize(_audioSource, config);
+            _itemSelectService.Initialize(itemSelectScreen);
 
-            float moveSpeed = config?.selectorMoveSpeed ?? 5f;
-            float snapThreshold = config?.snapThreshold ?? 0.1f;
+            // Subscribe to service events
+            _itemSelectService.OnStateChanged += OnItemSelectStateChanged;
+        }
 
-            selectorObject.transform.position = Vector3.MoveTowards(
-                selectorObject.transform.position,
-                _selectorTargetPosition,
-                moveSpeed * Time.deltaTime
-            );
-
-            if (Vector3.Distance(selectorObject.transform.position, _selectorTargetPosition) < snapThreshold)
-            {
-                selectorObject.transform.position = _selectorTargetPosition;
-                _isMovingSelector = false;
-            }
+        private void OnItemSelectStateChanged(bool isActive)
+        {
+            // When item select becomes active, hide selector and disable input
+            _selectorService.SetVisible(!isActive);
+            _inputFilterService.SetEnabled(!isActive);
+            
+            Debug.Log($"[LevelSelectionController] Item select state changed: {isActive}");
         }
 
         private void OnNavigate(InputAction.CallbackContext context)
         {
-            if (!IsActive || _isItemSelectActive) return; // Block navigation when item select is active
+            if (!IsActive || _itemSelectService.IsActive) return; // Block navigation when item select is active
 
             Vector2 direction = context.ReadValue<Vector2>();
 
-            // Apply deadzone filtering
-            if (direction.magnitude < InputDeadzone) return;
-
-            // Apply input cooldown to prevent spam
-            if (Time.time - _lastInputTime < InputCooldownTime) return;
-
-            // Normalize direction for consistent behavior
-            direction = direction.normalized;
-
-            // Check if this is the same direction as last input (prevent repeats)
-            if (Vector2.Dot(direction, _lastInputDirection) > 0.8f &&
-                Time.time - _lastInputTime < InputCooldownTime * 2f) return;
-
-            _lastInputDirection = direction;
-            _lastInputTime = Time.time;
-
-            Debug.Log($"[LevelSelectionController] Processing navigation input: {direction}");
-            _navigationService.NavigateInDirection(direction);
+            // Delegate to input filter service for processing
+            if (_inputFilterService.ProcessNavigationInput(direction, out Vector2 filteredDirection))
+            {
+                Debug.Log($"[LevelSelectionController] Processing navigation input: {filteredDirection}");
+                _navigationService.NavigateInDirection(filteredDirection);
+            }
         }
 
         private void OnSubmit(InputAction.CallbackContext context)
         {
-            if (!IsActive || _isItemSelectActive) return; // Block submit when item select is active
+            if (!IsActive || _itemSelectService.IsActive) return; // Block submit when item select is active
 
             _navigationService.SelectCurrentLevel();
         }
@@ -231,10 +220,7 @@ namespace LevelSelection
         private void OnLevelNavigation(LevelNavigationEvent navigationEvent)
         {
             // Play navigation sound from config
-            if (config?.navigationSound && _audioSource)
-            {
-                _audioSource.PlayOneShot(config.navigationSound);
-            }
+            _audioFeedbackService.PlayNavigationSound();
 
             // Only move selector if the index actually changed
             MoveSelectorToCurrentLevel();
@@ -249,20 +235,13 @@ namespace LevelSelection
             if (levelData != null && !levelData.isUnlocked)
             {
                 // Play locked sound from config
-                if (config?.lockedSound != null && _audioSource != null)
-                {
-                    _audioSource.PlayOneShot(config.lockedSound);
-                }
-
+                _audioFeedbackService.PlayLockedSound();
                 Debug.Log($"[LevelSelectionController] Level {selectionEvent.LevelName} is locked");
                 return;
             }
 
             // Play selection sound from config
-            if (config?.selectionSound != null && _audioSource != null)
-            {
-                _audioSource.PlayOneShot(config.selectionSound);
-            }
+            _audioFeedbackService.PlaySelectionSound();
 
             // Get the scene name from the level data directly
             string sceneName = GetSceneNameForLevel(levelData);
@@ -271,10 +250,7 @@ namespace LevelSelection
             // Show ItemSelectScreen if available, otherwise load directly
             if (itemSelectScreen != null)
             {
-                SetItemSelectActive(true); // Activate item select mode
-                itemSelectScreen.ShowItemSelect(selectionEvent.LevelName, sceneName, () => {
-                    SetItemSelectActive(false); // Deactivate when complete
-                });
+                _itemSelectService.ShowItemSelect(selectionEvent.LevelName, sceneName);
             }
             else
             {
@@ -285,22 +261,16 @@ namespace LevelSelection
 
         private string GetSceneNameForLevel(LevelData levelData)
         {
-            // Use the scene name from level data if available
-            if (!string.IsNullOrEmpty(levelData?.sceneName))
-            {
-                return levelData.sceneName;
-            }
-
-            // Fallback to level name conversion
-            return levelData?.levelName?.Replace(" ", "").Replace("_", "") ?? "DefaultLevel";
+            // Delegate to scene load service
+            return _sceneLoadService.GetSceneNameForLevel(levelData);
         }
 
         private void LoadLevel(string sceneName)
         {
             Debug.Log($"[LevelSelectionController] Loading scene: {sceneName}");
 
-            // Use standalone SceneTransitionManager first
-            SceneTransitionManager.TransitionTo(sceneName);
+            // Use scene load service
+            _sceneLoadService.LoadLevel(sceneName);
         }
 
         private void OnLevelLoadRequested(LevelLoadRequestedEvent loadEvent)
@@ -316,7 +286,7 @@ namespace LevelSelection
             if (selectorObject == null || _sortedLevelPoints == null) return;
 
             // Don't move if already moving to avoid redundant calls
-            if (_isMovingSelector) return;
+            if (_selectorService.IsMoving) return;
 
             // Use the sorted level points from the discovery service
             if (_navigationService.CurrentIndex >= 0 && _navigationService.CurrentIndex < _sortedLevelPoints.Count)
@@ -326,11 +296,10 @@ namespace LevelSelection
                 // Only start moving if we're not already at the target position
                 if (Vector3.Distance(selectorObject.transform.position, targetPosition) > 0.01f)
                 {
-                    _selectorTargetPosition = targetPosition;
-                    _isMovingSelector = true;
+                    _selectorService.MoveToPosition(targetPosition);
 
                     Debug.Log(
-                        $"[LevelSelectionController] Moving selector to level {_navigationService.CurrentIndex} at position {_selectorTargetPosition}");
+                        $"[LevelSelectionController] Moving selector to level {_navigationService.CurrentIndex} at position {targetPosition}");
                 }
                 else
                 {
@@ -380,21 +349,6 @@ namespace LevelSelection
         {
             Debug.Log($"[LevelSelectionController] SetCurrentLevel called with index: {levelIndex}");
             _navigationService?.SetCurrentIndex(levelIndex);
-        }
-
-        /// <summary>
-        /// Set the item select screen active state and control selector visibility
-        /// </summary>
-        private void SetItemSelectActive(bool isActive)
-        {
-            _isItemSelectActive = isActive;
-            
-            if (selectorObject != null)
-            {
-                selectorObject.SetActive(!isActive); // Hide selector when item select is active
-            }
-            
-            Debug.Log($"[LevelSelectionController] Item select active: {isActive}, Selector visible: {!isActive}");
         }
     }
 }

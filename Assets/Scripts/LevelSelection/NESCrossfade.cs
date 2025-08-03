@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace LevelSelection
 {
-    public class NESCrossfade : MonoBehaviour
+    public class NesCrossfade : MonoBehaviour
     {
         [Header("Crossfade Configuration")] 
         public Image fadeImage;
@@ -26,7 +26,7 @@ namespace LevelSelection
         {
             SetupFadeImage();
             // Start with image disabled (hidden)
-            if (fadeImage != null)
+            if (fadeImage)
             {
                 fadeImage.enabled = false;
             }

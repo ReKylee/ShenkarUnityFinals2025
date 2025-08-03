@@ -15,7 +15,7 @@ namespace LevelSelection
 
         #region Private Fields
 
-        private NESCrossfade _activeCrossfade;
+        private NesCrossfade _activeCrossfade;
 
         #endregion
 
@@ -142,7 +142,7 @@ namespace LevelSelection
             fadeImage.enabled = false;
 
             // Store reference for crossfade component
-            _activeCrossfade = gameObject.AddComponent<NESCrossfade>();
+            _activeCrossfade = gameObject.AddComponent<NesCrossfade>();
             _activeCrossfade.fadeImage = fadeImage;
         }
 
