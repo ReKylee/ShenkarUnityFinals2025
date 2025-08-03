@@ -5,6 +5,7 @@ namespace Core.Events
     public enum GameState
     {
         MainMenu,
+        LevelSelection, // Added LevelSelection state
         Loading,
         Playing,
         Paused,
@@ -72,5 +73,34 @@ namespace Core.Events
     public struct GameOverEvent : IGameEvent
     {
         public float Timestamp { get; set; }
+    }
+
+    // Level Selection Events
+    public struct LevelSelectedEvent : IGameEvent
+    {
+        public float Timestamp { get; set; }
+        public string LevelName;
+        public int LevelIndex;
+    }
+
+    public struct LevelNavigationEvent : IGameEvent
+    {
+        public float Timestamp { get; set; }
+        public int PreviousIndex;
+        public int NewIndex;
+        public Vector2 Direction;
+    }
+
+    public struct ItemSelectScreenRequestedEvent : IGameEvent
+    {
+        public float Timestamp { get; set; }
+        public string LevelName;
+    }
+
+    public struct LevelLoadRequestedEvent : IGameEvent
+    {
+        public float Timestamp { get; set; }
+        public string LevelName;
+        public string SceneName;
     }
 }

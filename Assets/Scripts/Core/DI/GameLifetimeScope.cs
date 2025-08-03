@@ -50,6 +50,8 @@ namespace Core.DI
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
             builder.Register<IScoreService, ScoreService>(Lifetime.Singleton);
 
+            // Level Selection components are now handled by LevelSelectionLifetimeScope
+
             // Register Player Services
             builder.Register<IPlayerLivesService>(resolver
                 => new PlayerLivesService(

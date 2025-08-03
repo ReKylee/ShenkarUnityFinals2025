@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Core.Data
@@ -12,6 +13,12 @@ namespace Core.Data
         public int score;
 
         [Header("Level Progress")] public string currentLevel = "Level_01";
+        
+        // Level Selection Data
+        public List<string> unlockedLevels = new List<string> { "Level_01" };
+        public int selectedLevelIndex = 0;
+        public Dictionary<string, float> levelBestTimes = new Dictionary<string, float>();
+        public Dictionary<string, bool> levelCompleted = new Dictionary<string, bool>();
 
         public float bestTime = float.MaxValue;
 
@@ -43,6 +50,10 @@ namespace Core.Data
             musicVolume = other.musicVolume;
             sfxVolume = other.sfxVolume;
             fruitCollected = other.fruitCollected;
+            unlockedLevels = new List<string>(other.unlockedLevels);
+            selectedLevelIndex = other.selectedLevelIndex;
+            levelBestTimes = new Dictionary<string, float>(other.levelBestTimes);
+            levelCompleted = new Dictionary<string, bool>(other.levelCompleted);
         }
 
         // Reset to default values
@@ -57,6 +68,12 @@ namespace Core.Data
             musicVolume = 1.0f;
             sfxVolume = 1.0f;
             fruitCollected = 0;
+            
+            // Reset level selection data
+            unlockedLevels = new List<string> { "Level_01" };
+            selectedLevelIndex = 0;
+            levelBestTimes = new Dictionary<string, float>();
+            levelCompleted = new Dictionary<string, bool>();
         }
 
         private static GameData CreateDefaultData() =>
@@ -70,7 +87,11 @@ namespace Core.Data
                 hasAxe = false,
                 musicVolume = 1.0f,
                 sfxVolume = 1.0f,
-                fruitCollected = 0
+                fruitCollected = 0,
+                unlockedLevels = new List<string> { "Level_01" },
+                selectedLevelIndex = 0,
+                levelBestTimes = new Dictionary<string, float>(),
+                levelCompleted = new Dictionary<string, bool>()
             };
     }
 }

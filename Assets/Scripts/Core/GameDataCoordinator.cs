@@ -50,6 +50,10 @@ namespace Core
 
             _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
 
+            // Level Selection Events
+            _eventBus?.Subscribe<LevelSelectedEvent>(OnLevelSelected);
+            _eventBus?.Subscribe<LevelNavigationEvent>(OnLevelNavigation);
+
             if (_gameDataService != null)
                 _gameDataService.OnDataChanged += OnGameDataChanged;
 
@@ -167,6 +171,29 @@ namespace Core
         private void OnGameDataChanged(GameData newData)
         {
             _autoSaveService?.RequestSave();
+        }
+
+        private void OnLevelSelected(LevelSelectedEvent levelEvent)
+        {
+            // Update selected level index in game data
+            var gameData = _gameDataService?.CurrentData;
+            if (gameData != null)
+            {
+                gameData.selectedLevelIndex = levelEvent.LevelIndex;
+                gameData.currentLevel = levelEvent.LevelName;
+            }
+            Debug.Log($"[GameDataCoordinator] Level selected: {levelEvent.LevelName}");
+        }
+
+        private void OnLevelNavigation(LevelNavigationEvent navigationEvent)
+        {
+            // Update selected level index in game data
+            var gameData = _gameDataService?.CurrentData;
+            if (gameData != null)
+            {
+                gameData.selectedLevelIndex = navigationEvent.NewIndex;
+            }
+            Debug.Log($"[GameDataCoordinator] Level navigation: from {navigationEvent.PreviousIndex} to {navigationEvent.NewIndex}");
         }
 
         #endregion
