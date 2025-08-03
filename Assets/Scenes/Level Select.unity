@@ -316,6 +316,7 @@ MonoBehaviour:
   displayDuration: 2
   waitForInput: 1
   confirmSound: {fileID: 0}
+  submitAction: {fileID: 0}
 --- !u!1 &427069344
 GameObject:
   m_ObjectHideFlags: 0
@@ -325,36 +326,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 427069346}
-  - component: {fileID: 427069345}
+  - component: {fileID: 427069347}
   m_Layer: 0
-  m_Name: LevelSelectionManager
+  m_Name: LevelSelectionController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &427069345
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 427069344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bc02d28f35a42d9b24bd13e4aef76da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  levelGameObjects: []
-  levelContainer: {fileID: 945917331}
-  levelSelector: {fileID: 791875362}
-  itemSelectScreen: {fileID: 341388796}
-  crossfade: {fileID: 1511533101}
-  upKey: 273
-  downKey: 274
-  leftKey: 276
-  rightKey: 275
-  confirmKey: 13
 --- !u!4 &427069346
 Transform:
   m_ObjectHideFlags: 0
@@ -370,57 +349,46 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &791875360
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 791875361}
-  - component: {fileID: 791875362}
-  m_Layer: 0
-  m_Name: LevelSelector
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &791875361
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 791875360}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.20367, y: -1.30722, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &791875362
+--- !u!114 &427069347
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 791875360}
+  m_GameObject: {fileID: 427069344}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: feb396c4d784426e890fe10a0da57d19, type: 3}
+  m_Script: {fileID: 11500000, guid: 6867750598b244228539f4ea930512e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoActivateOnStart: 1
+  config:
+    gridWidth: 4
+    selectorMoveSpeed: 5
+    snapThreshold: 0.1
+    unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+    lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    navigationSound: {fileID: 0}
+    selectionSound: {fileID: 0}
+    lockedSound: {fileID: 0}
+    selectorNames:
+    - Selector
+    - Level Selector
+    - LevelSelector
+    selectorTag: LevelSelector
+    itemSelectDisplayDuration: 2
+    waitForInputOnItemSelect: 1
+    transitionDuration: 1
+    nesTransitionColors:
+    - {r: 0, g: 0, b: 0, a: 1}
+    - {r: 0.2, g: 0.2, b: 0.3, a: 1}
+    - {r: 0.1, g: 0.1, b: 0.2, a: 1}
   selectorObject: {fileID: 1557029093}
-  moveSpeed: 5
-  navigationSound: {fileID: 0}
-  selectionSound: {fileID: 0}
-  lockedSound: {fileID: 0}
-  gridWidth: 4
-  snapThreshold: 0.1
+  itemSelectScreen: {fileID: 341388796}
+  crossfade: {fileID: 1511533101}
+  navigateAction: {fileID: 0}
+  submitAction: {fileID: 0}
 --- !u!1 &945917330
 GameObject:
   m_ObjectHideFlags: 0
@@ -946,6 +914,7 @@ GameObject:
   - component: {fileID: 1686904643}
   - component: {fileID: 1686904642}
   - component: {fileID: 1686904641}
+  - component: {fileID: 1686904645}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -1087,6 +1056,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &1686904645
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686904639}
+  m_Enabled: 1
 --- !u!1 &1780130825
 GameObject:
   m_ObjectHideFlags: 0
@@ -1152,4 +1129,3 @@ SceneRoots:
   - {fileID: 1557029096}
   - {fileID: 1608564214}
   - {fileID: 427069346}
-  - {fileID: 791875361}

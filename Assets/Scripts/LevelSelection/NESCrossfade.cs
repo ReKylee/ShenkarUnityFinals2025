@@ -17,10 +17,10 @@ namespace LevelSelection
 
         public Color[] nesColors = { Color.black, new(0.2f, 0.2f, 0.3f), new(0.1f, 0.1f, 0.2f) };
         public float colorFlickerSpeed = 10f;
+        private LevelSelectionConfig _config;
 
+        private bool _isFading;
         private Action _onFadeComplete;
-
-        public bool IsFading { get; private set; }
 
         private void Awake()
         {
@@ -50,9 +50,21 @@ namespace LevelSelection
             SetAlpha(0f);
         }
 
+        public void SetConfig(LevelSelectionConfig config)
+        {
+            _config = config;
+
+            // Update fade settings from config
+            if (_config != null)
+            {
+                fadeDuration = _config.transitionDuration;
+                nesColors = _config.nesTransitionColors;
+            }
+        }
+
         public void FadeOut(Action onComplete = null)
         {
-            if (IsFading) return;
+            if (_isFading) return;
 
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(0f, 1f));
@@ -60,7 +72,7 @@ namespace LevelSelection
 
         public void FadeIn(Action onComplete = null)
         {
-            if (IsFading) return;
+            if (_isFading) return;
 
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(1f, 0f));
@@ -68,14 +80,14 @@ namespace LevelSelection
 
         public void FadeOutAndIn(Action onMiddle = null, Action onComplete = null)
         {
-            if (IsFading) return;
+            if (_isFading) return;
 
             StartCoroutine(FadeOutAndInCoroutine(onMiddle, onComplete));
         }
 
         private IEnumerator FadeCoroutine(float from, float to)
         {
-            IsFading = true;
+            _isFading = true;
             float elapsed = 0f;
 
             while (elapsed < fadeDuration)
@@ -106,7 +118,7 @@ namespace LevelSelection
                 SetAlpha(to);
             }
 
-            IsFading = false;
+            _isFading = false;
             _onFadeComplete?.Invoke();
             _onFadeComplete = null;
         }

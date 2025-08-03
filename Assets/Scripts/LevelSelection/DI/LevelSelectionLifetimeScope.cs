@@ -1,6 +1,7 @@
 ﻿using Core.Data;
 using Core.Events;
 using Core.Services;
+using LevelSelection.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -12,18 +13,22 @@ namespace LevelSelection.DI
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("[LevelSelectionLifetimeScope] Configuring level selection DI container...");
-            // Register Core Services
+
+            // Register core services that level selection depends on
             builder.Register<IEventBus, EventBus>(Lifetime.Singleton);
-
-            // Register EventBus as IEventPublisher as well (since EventBus implements IEventPublisher)
-            builder.Register<IEventPublisher>(resolver => resolver.Resolve<IEventBus>(), Lifetime.Singleton);
-
             builder.Register<IGameDataRepository, JsonGameDataRepository>(Lifetime.Singleton);
             builder.Register<IGameDataService, GameDataService>(Lifetime.Singleton);
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
-            // Register level selection specific components using RegisterComponentInHierarchy
-            builder.RegisterComponentInHierarchy<LevelSelectionManager>();
-            builder.RegisterComponentInHierarchy<LevelSelector>();
+
+            // Register the new service-based architecture
+            builder.Register<ILevelDiscoveryService, LevelDiscoveryService>(Lifetime.Singleton);
+            builder.Register<ILevelNavigationService, LevelNavigationService>(Lifetime.Singleton);
+            builder.Register<ILevelDisplayService, LevelDisplayService>(Lifetime.Singleton);
+
+            // Register the main controller
+            builder.RegisterComponentInHierarchy<LevelSelectionController>();
+
+            // Register supporting components that are still used
             builder.RegisterComponentInHierarchy<ItemSelectScreen>();
             builder.RegisterComponentInHierarchy<NESCrossfade>();
 

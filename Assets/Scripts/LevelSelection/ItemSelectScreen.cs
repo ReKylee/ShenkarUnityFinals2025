@@ -20,15 +20,15 @@ namespace LevelSelection
 
         [Header("Audio")] public AudioClip confirmSound;
 
-        [Header("Input Actions")]
-        [SerializeField] private InputActionReference submitAction;
+        [Header("Input Actions")] [SerializeField]
+        private InputActionReference submitAction;
 
-        private IEventBus _eventBus;
         private AudioSource _audioSource;
-        private bool _isWaitingForInput = false;
+        private LevelSelectionConfig _config;
+        private IEventBus _eventBus;
+        private Action _onComplete;
         private string _pendingLevelName;
         private string _pendingSceneName;
-        private System.Action _onComplete;
 
         public bool IsWaitingForInput { get; private set; }
 
@@ -69,6 +69,18 @@ namespace LevelSelection
             {
                 submitAction.action.performed -= OnConfirmInput;
                 submitAction.action.Disable();
+            }
+        }
+
+        public void SetConfig(LevelSelectionConfig config)
+        {
+            _config = config;
+
+            // Update display duration and wait behavior from config
+            if (_config != null)
+            {
+                displayDuration = _config.itemSelectDisplayDuration;
+                waitForInput = _config.waitForInputOnItemSelect;
             }
         }
 
