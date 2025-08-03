@@ -152,14 +152,49 @@ namespace LevelSelection
 
         private void SetNESStyleAlpha(float alpha)
         {
-            if (fadeImage != null && nesColors.Length > 0)
+            if (fadeImage == null || nesColors == null || nesColors.Length == 0) return;
+
+            // Create NES-style flickering effect
+            int colorIndex = Mathf.FloorToInt(Time.time * colorFlickerSpeed) % nesColors.Length;
+            Color nesColor = nesColors[colorIndex];
+            nesColor.a = alpha;
+            fadeImage.color = nesColor;
+        }
+
+        /// <summary>
+        /// Set fade color programmatically
+        /// </summary>
+        public void SetFadeColor(Color color)
+        {
+            fadeColor = color;
+        }
+
+        /// <summary>
+        /// Get current fade progress (0 = transparent, 1 = opaque)
+        /// </summary>
+        public float GetFadeProgress()
+        {
+            return fadeImage ? fadeImage.color.a : 0f;
+        }
+
+        /// <summary>
+        /// Instantly set fade to specific alpha without animation
+        /// </summary>
+        public void SetInstantFade(float alpha)
+        {
+            if (useNESEffect)
             {
-                // Use NES-style color flickering for more authentic feel
-                int colorIndex = Mathf.FloorToInt(Time.time * colorFlickerSpeed) % nesColors.Length;
-                Color color = nesColors[colorIndex];
-                color.a = alpha;
-                fadeImage.color = color;
+                SetNESStyleAlpha(alpha);
+            }
+            else
+            {
+                SetAlpha(alpha);
             }
         }
+
+        /// <summary>
+        /// Check if currently fading
+        /// </summary>
+        public bool IsFading => _isFading;
     }
 }

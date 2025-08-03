@@ -14,6 +14,7 @@ namespace LevelSelection.Services
     {
         private readonly LevelSelectionDirector _director = new();
         private List<LevelData> _cachedLevelData;
+        private List<LevelPoint> _sortedLevelPoints;
 
         public async Task<List<LevelData>> DiscoverLevelsAsync()
         {
@@ -49,10 +50,18 @@ namespace LevelSelection.Services
                 return posA.x.CompareTo(posB.x); // Left to right
             });
 
+            // Cache sorted level points for external use
+            _sortedLevelPoints = levelObjects.Select(obj => obj.GetComponent<LevelPoint>()).ToList();
+
             _cachedLevelData = _director.BuildLevelData(levelObjects);
 
-            Debug.Log($"[LevelDiscoveryService] Discovered {_cachedLevelData.Count} levels");
+            Debug.Log($"[LevelDiscoveryService] Discovered {_cachedLevelData.Count} levels and cached {_sortedLevelPoints.Count} sorted level points");
             return _cachedLevelData;
+        }
+
+        public List<LevelPoint> GetSortedLevelPoints()
+        {
+            return _sortedLevelPoints;
         }
     }
 }

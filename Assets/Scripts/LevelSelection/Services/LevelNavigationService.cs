@@ -126,5 +126,12 @@ namespace LevelSelection.Services
             _gridWidth = gridWidth;
             Debug.Log($"[LevelNavigationService] Grid width set to {_gridWidth}");
         }
+
+        public void SetCurrentIndex(int index)
+        {
+            if (_levelData == null || index < 0 || index >= _levelData.Count) return;
+            
+            UpdateSelection(index);
+        }
     }
 }

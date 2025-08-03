@@ -107,6 +107,11 @@ namespace LevelSelection.Services
             UpdateSelection(navigationEvent.NewIndex);
         }
 
+        public void RefreshVisuals()
+        {
+            UpdateAllVisuals();
+        }
+
         public void Dispose()
         {
             _eventBus?.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);

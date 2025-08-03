@@ -11,6 +11,7 @@ namespace LevelSelection
     public interface ILevelDiscoveryService
     {
         Task<List<LevelData>> DiscoverLevelsAsync();
+        List<LevelPoint> GetSortedLevelPoints();
     }
 
     /// <summary>
@@ -26,6 +27,8 @@ namespace LevelSelection
         void Deactivate();
         void NavigateInDirection(Vector2 direction);
         void SelectCurrentLevel();
+        void SetGridWidth(int gridWidth);
+        void SetCurrentIndex(int index);
     }
 
     /// <summary>
@@ -39,5 +42,7 @@ namespace LevelSelection
         void Deactivate();
         void UpdateSelection(int newIndex);
         void SetConfig(LevelSelectionConfig config);
+        void RefreshVisuals();
+        void Dispose();
     }
 }

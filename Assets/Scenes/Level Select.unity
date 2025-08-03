@@ -372,11 +372,6 @@ MonoBehaviour:
     navigationSound: {fileID: 0}
     selectionSound: {fileID: 0}
     lockedSound: {fileID: 0}
-    selectorNames:
-    - Selector
-    - Level Selector
-    - LevelSelector
-    selectorTag: LevelSelector
     itemSelectDisplayDuration: 2
     waitForInputOnItemSelect: 1
     transitionDuration: 1
@@ -387,8 +382,8 @@ MonoBehaviour:
   selectorObject: {fileID: 1557029093}
   itemSelectScreen: {fileID: 341388796}
   crossfade: {fileID: 1511533101}
-  navigateAction: {fileID: 0}
-  submitAction: {fileID: 0}
+  navigateAction: {fileID: -8784545083839296357, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  submitAction: {fileID: 392368643174621059, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!1 &945917330
 GameObject:
   m_ObjectHideFlags: 0

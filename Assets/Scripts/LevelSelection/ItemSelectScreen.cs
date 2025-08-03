@@ -81,6 +81,12 @@ namespace LevelSelection
             {
                 displayDuration = _config.itemSelectDisplayDuration;
                 waitForInput = _config.waitForInputOnItemSelect;
+                
+                // Update audio clip from config if available
+                if (_config.selectionSound != null && confirmSound == null)
+                {
+                    confirmSound = _config.selectionSound;
+                }
             }
         }
 
@@ -124,9 +130,12 @@ namespace LevelSelection
 
         private void ConfirmAndProceed()
         {
-            if (_audioSource && confirmSound)
+            // Use config sound first, then fallback to assigned sound
+            AudioClip soundToPlay = _config?.selectionSound ?? confirmSound;
+            
+            if (_audioSource && soundToPlay)
             {
-                _audioSource.PlayOneShot(confirmSound);
+                _audioSource.PlayOneShot(soundToPlay);
             }
 
             IsWaitingForInput = false;
