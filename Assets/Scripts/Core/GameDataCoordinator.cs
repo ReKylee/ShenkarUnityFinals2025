@@ -1,6 +1,9 @@
-﻿using Core.Data;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Core.Data;
 using Core.Events;
 using Core.Services;
+using LevelSelection;
 using UnityEngine;
 using VContainer;
 
@@ -171,17 +174,34 @@ namespace Core
             }
         }
 
+        // Public API for other systems to request data operations
+        public void UpdateLives(int lives)
+        {
+            _gameDataService?.UpdateLives(lives);
+        }
+
+        public void UpdateCurrentLevel(string levelName)
+        {
+            _gameDataService?.UpdateCurrentLevel(levelName);
+        }
+
+        public void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime)
+        {
+            _gameDataService?.UpdateLevelProgress(levelName, isCompleted, completionTime);
+        }
+
+        public async Task<List<LevelData>> DiscoverLevelsAsync()
+        {
+            return await _gameDataService?.DiscoverLevelsAsync() ?? new List<LevelData>();
+        }
+
         public GameData GetCurrentData()
         {
-            if (!_isInitialized || _gameDataService == null) return null;
-
-            return _gameDataService.CurrentData;
+            return _gameDataService?.CurrentData;
         }
 
         public void ResetAllData()
         {
-            if (!_isInitialized) return;
-
             _gameDataService?.ResetAllData();
         }
     }

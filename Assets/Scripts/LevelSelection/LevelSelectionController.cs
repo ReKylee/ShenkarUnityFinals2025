@@ -30,7 +30,7 @@ namespace LevelSelection
         private IItemSelectService _itemSelectService;
         private ISceneLoadService _sceneLoadService;
         private GameFlowManager _gameFlowManager;
-        private IGameDataService _gameDataService;
+        private GameDataCoordinator _gameDataCoordinator;
         private ISelectorService _selectorService;
 
         public bool IsActive { get; private set; }
@@ -97,7 +97,7 @@ namespace LevelSelection
             IItemSelectService itemSelectService,
             ISceneLoadService sceneLoadService,
             GameFlowManager gameFlowManager,
-            IGameDataService gameDataService)
+            GameDataCoordinator gameDataCoordinator)
         {
             _navigationService = navigationService;
             _eventBus = eventBus;
@@ -107,7 +107,7 @@ namespace LevelSelection
             _itemSelectService = itemSelectService;
             _sceneLoadService = sceneLoadService;
             _gameFlowManager = gameFlowManager;
-            _gameDataService = gameDataService;
+            _gameDataCoordinator = gameDataCoordinator;
 
             SubscribeToEvents();
         }
@@ -121,7 +121,7 @@ namespace LevelSelection
                 _gameFlowManager.PauseGame();
             }
 
-            var levelData = await _gameDataService.DiscoverLevelsAsync();
+            var levelData = await _gameDataCoordinator.DiscoverLevelsAsync();
             await _navigationService.InitializeAsync(levelData);
 
             // Configure navigation service with grid width (hardcoded since config removed)
@@ -199,10 +199,7 @@ namespace LevelSelection
 
         private void OnLevelLoadRequested(LevelLoadRequestedEvent loadEvent)
         {
-            if (_gameDataService != null)
-            {
-                _gameDataService.UpdateCurrentLevel(loadEvent.LevelName);
-            }
+            _gameDataCoordinator?.UpdateCurrentLevel(loadEvent.LevelName);
 
             if (_gameFlowManager != null)
             {

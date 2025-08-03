@@ -14,15 +14,15 @@ namespace LevelSelection.Services
     {
 
         private readonly GameFlowManager _gameFlowManager;
-        private readonly IGameDataService _gameDataService;
+        private readonly GameDataCoordinator _gameDataCoordinator;
         private int _gridWidth = 4; // Default value, will be updated from config
         private bool _isActive;
         private List<LevelData> _levelData;
 
-        public LevelNavigationService(GameFlowManager gameFlowManager, IGameDataService gameDataService)
+        public LevelNavigationService(GameFlowManager gameFlowManager, GameDataCoordinator gameDataCoordinator)
         {
             _gameFlowManager = gameFlowManager;
-            _gameDataService = gameDataService;
+            _gameDataCoordinator = gameDataCoordinator;
         }
 
         public int CurrentIndex { get; private set; }
@@ -33,8 +33,8 @@ namespace LevelSelection.Services
         {
             _levelData = levelData;
 
-            // Load saved selection from game data
-            GameData gameData = _gameDataService?.CurrentData;
+            // Load saved selection from game data coordinator
+            GameData gameData = _gameDataCoordinator?.GetCurrentData();
             int savedIndex = gameData?.selectedLevelIndex ?? 0;
             CurrentIndex = Mathf.Clamp(savedIndex, 0, levelData.Count - 1);
 

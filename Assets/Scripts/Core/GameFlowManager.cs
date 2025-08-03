@@ -23,16 +23,16 @@ namespace Core
         private string _currentLevelName = "Unknown";
         private float _levelStartTime;
         private IEventBus _eventBus;
-        private IGameDataService _gameDataService;
+        private GameDataCoordinator _gameDataCoordinator;
 
         public GameState CurrentState { get; private set; } = GameState.MainMenu;
         public bool IsPlaying => CurrentState == GameState.Playing;
 
         [Inject]
-        public void Construct(IEventBus eventBus, IGameDataService gameDataService)
+        public void Construct(IEventBus eventBus, GameDataCoordinator gameDataCoordinator)
         {
             _eventBus = eventBus;
-            _gameDataService = gameDataService;
+            _gameDataCoordinator = gameDataCoordinator;
             SubscribeToEvents();
         }
 
@@ -167,11 +167,11 @@ namespace Core
         {
             ChangeState(GameState.Victory);
             
-            // Update level progress in the data service
-            _gameDataService?.UpdateLevelProgress(levelEvent.LevelName, true, levelEvent.CompletionTime);
+            // Update level progress through GameDataCoordinator
+            _gameDataCoordinator?.UpdateLevelProgress(levelEvent.LevelName, true, levelEvent.CompletionTime);
             
             // Also update it in GameData for immediate checking
-            var gameData = _gameDataService?.CurrentData;
+            var gameData = _gameDataCoordinator?.GetCurrentData();
             if (gameData != null && !gameData.completedLevels.Contains(levelEvent.LevelName))
             {
                 gameData.completedLevels.Add(levelEvent.LevelName);
@@ -223,12 +223,12 @@ namespace Core
         {
             try
             {
-                // Check using GameData completed levels instead of level discovery data
-                var gameData = _gameDataService?.CurrentData;
+                // Check using GameData completed levels through GameDataCoordinator
+                var gameData = _gameDataCoordinator?.GetCurrentData();
                 if (gameData == null) return false;
 
-                // Get all available levels
-                var allLevels = await _gameDataService.DiscoverLevelsAsync();
+                // Get all available levels through GameDataCoordinator
+                var allLevels = await _gameDataCoordinator.DiscoverLevelsAsync();
                 
                 if (allLevels == null || allLevels.Count == 0)
                 {
@@ -307,7 +307,7 @@ namespace Core
             if (isGameOver)
             {
                 ChangeState(GameState.GameOver);
-                _gameDataService?.ResetAllData();
+                _gameDataCoordinator?.ResetAllData();
                 _eventBus?.Publish(new GameOverEvent { Timestamp = Time.time });
             }
 
