@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Core;
+using ModularCharacterController.Core;
 using UnityEngine;
 using VContainer;
 
@@ -12,19 +13,21 @@ namespace LevelSelection
     [RequireComponent(typeof(Collider2D))]
     public class EndLevelZone : MonoBehaviour
     {
-        [Header("Level Completion Settings")]
-        [SerializeField] private string currentLevelName;
+        [Header("Level Completion Settings")] [SerializeField]
+        private string currentLevelName;
+
         [SerializeField] private string nextLevelName;
         [SerializeField] private bool autoReturnToLevelSelect = true;
         [SerializeField] private float completionDelay = 2f;
 
-        [Header("Audio Feedback")]
-        [SerializeField] private AudioClip completionSound;
+        [Header("Audio Feedback")] [SerializeField]
+        private AudioClip completionSound;
 
-        [Header("UI Feedback")]
-        [SerializeField] private GameObject completionUI;
+        [Header("UI Feedback")] [SerializeField]
+        private GameObject completionUI;
+
         [SerializeField] private float uiDisplayDuration = 3f;
-        
+
         private AudioSource _audioSource;
         private GameFlowManager _gameFlowManager;
         private bool _hasTriggered;
@@ -54,7 +57,9 @@ namespace LevelSelection
             // Check if player entered
             if (other.CompareTag("Player") && !_hasTriggered)
             {
-                StartCoroutine(CompleteLevel());
+                Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
+                InputHandler input = other.GetComponent<InputHandler>();
+                StartCoroutine(CompleteLevel(rb, input));
             }
         }
 
@@ -64,14 +69,32 @@ namespace LevelSelection
             _gameFlowManager = gameFlowManager;
         }
 
-        private IEnumerator CompleteLevel()
+        private IEnumerator CompleteLevel(Rigidbody2D rb, InputHandler input)
         {
             _hasTriggered = true;
+
+            // Take control from the player
+            if(input)
+            {
+                input.enabled = false; // Disable player input
+            }
+            // Make the player walk right
+            const float walkDuration = 1f;
+            float timer = 0f;
+            while (timer < walkDuration)
+            {
+                if (rb)
+                {
+                    rb.velocity = new Vector2(2f, rb.velocity.y);
+                }
+                timer += Time.deltaTime;
+                yield return null;
+            }
 
             Debug.Log($"[EndLevelZone] Player completed level: {currentLevelName}");
 
             // Play completion sound
-            if (completionSound != null && _audioSource != null)
+            if (completionSound && _audioSource)
             {
                 _audioSource.PlayOneShot(completionSound);
             }
