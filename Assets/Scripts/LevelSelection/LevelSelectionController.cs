@@ -48,7 +48,7 @@ namespace LevelSelection
         private float _lastInputTime;
         private ILevelNavigationService _navigationService;
         private Vector3 _selectorTargetPosition;
-        private List<LevelPoint> _sortedLevelPoints; // Cache sorted level points
+        private List<LevelPoint> _sortedLevelPoints; 
 
         public bool IsActive { get; private set; }
         public LevelSelectionConfig Config => config;
@@ -377,5 +377,7 @@ namespace LevelSelection
             Debug.Log($"[LevelSelectionController] SetCurrentLevel called with index: {levelIndex}");
             _navigationService?.SetCurrentIndex(levelIndex);
         }
+
+        
     }
 }
