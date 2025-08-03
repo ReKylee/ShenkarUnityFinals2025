@@ -159,6 +159,9 @@ namespace Editor
         private static GUIStyle _headerStyle;
         private static GUIStyle _cardStyle;
         private static GUIStyle _buttonStyle;
+        private static readonly int Color1 = Shader.PropertyToID("_Color");
+        private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+        private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
         #endregion
 
@@ -285,7 +288,7 @@ namespace Editor
                 padding = new RectOffset(8, 8, 4, 4)
             };
 
-           
+
         }
 
         private void DrawHeader()
@@ -651,12 +654,9 @@ namespace Editor
             if (!_settings.enablePreviewCache) return;
 
             _previewLoadQueue.Clear();
-            foreach (PrefabInfo prefabInfo in _prefabInfos)
+            foreach (PrefabInfo prefabInfo in _prefabInfos.Where(prefabInfo => prefabInfo.prefab && !_previewCache.ContainsKey(prefabInfo.prefab)))
             {
-                if (prefabInfo.prefab != null && !_previewCache.ContainsKey(prefabInfo.prefab))
-                {
-                    _previewLoadQueue.Enqueue(prefabInfo.prefab);
-                }
+                _previewLoadQueue.Enqueue(prefabInfo.prefab);
             }
         }
 
@@ -752,7 +752,7 @@ namespace Editor
             Bounds prefabBounds = GetPrefabBounds(_selectedPrefabForPlacement);
             Vector3 worldSize = prefabBounds.size;
             Vector3 pivotOffset = GetPrefabPivotOffset(_selectedPrefabForPlacement, prefabBounds);
-            
+
             // If bounds are too small or invalid, use default size
             if (worldSize.magnitude < 0.1f)
             {
@@ -774,29 +774,25 @@ namespace Editor
             // Convert the snapped world position back to screen coordinates for the preview
             Vector2 previewScreenPos = mousePos;
             Camera sceneCamera = SceneView.lastActiveSceneView?.camera;
-            if (sceneCamera != null)
+            if (sceneCamera)
             {
-                // Account for pivot offset when converting to screen coordinates
-                Vector3 pivotWorldPos = previewWorldPos + pivotOffset;
-                Vector3 screenPoint = sceneCamera.WorldToScreenPoint(pivotWorldPos);
-                // Convert Unity screen coordinates to GUI coordinates
-                previewScreenPos = new Vector2(screenPoint.x, SceneView.lastActiveSceneView.position.height - screenPoint.y);
+                previewScreenPos = mousePos;
             }
 
             // Calculate accurate GUI preview size based on actual world size and camera
             float screenSize = 80f; // Base size in pixels
-            
-            if (sceneCamera != null)
+
+            if (sceneCamera)
             {
                 if (sceneCamera.orthographic)
                 {
                     // For orthographic camera, calculate screen size directly
                     float orthographicSize = sceneCamera.orthographicSize;
                     float screenHeight = SceneView.lastActiveSceneView.position.height;
-                    
+
                     // Calculate pixels per world unit
                     float pixelsPerWorldUnit = screenHeight / (orthographicSize * 2f);
-                    
+
                     // Use the larger dimension of the sprite for accurate representation
                     float largestWorldDimension = Mathf.Max(worldSize.x, worldSize.y, worldSize.z);
                     screenSize = largestWorldDimension * pixelsPerWorldUnit;
@@ -807,35 +803,35 @@ namespace Editor
                     float distance = Vector3.Distance(sceneCamera.transform.position, previewWorldPos);
                     float fieldOfViewRad = sceneCamera.fieldOfView * Mathf.Deg2Rad;
                     float screenHeight = SceneView.lastActiveSceneView.position.height;
-                    
+
                     // Calculate how many world units fit in screen height at this distance
                     float worldUnitsInScreenHeight = 2f * distance * Mathf.Tan(fieldOfViewRad * 0.5f);
                     float pixelsPerWorldUnit = screenHeight / worldUnitsInScreenHeight;
-                    
+
                     // Use the larger dimension of the sprite for accurate representation
                     float largestWorldDimension = Mathf.Max(worldSize.x, worldSize.y, worldSize.z);
                     screenSize = largestWorldDimension * pixelsPerWorldUnit;
                 }
-                
+
                 // Clamp to reasonable bounds but allow larger sizes for bigger sprites
                 screenSize = Mathf.Clamp(screenSize, 20f, 400f);
             }
 
             // Get the prefab preview texture
             Texture2D preview = GetPrefabPreview(_selectedPrefabForPlacement);
-            
+
             if (preview != null)
             {
                 Handles.BeginGUI();
-                
+
                 // Calculate preview rect centered on the snapped position with accurate size
-                Rect previewRect = new Rect(
-                    previewScreenPos.x - screenSize * 0.5f, 
-                    previewScreenPos.y - screenSize * 0.5f, 
-                    screenSize, 
+                Rect previewRect = new(
+                    previewScreenPos.x - screenSize * 0.5f,
+                    previewScreenPos.y - screenSize * 0.5f,
+                    screenSize,
                     screenSize
                 );
-                
+
                 // Draw the preview image with transparency support
                 Color originalColor = GUI.color;
                 GUI.color = new Color(1f, 1f, 1f, 1f); // Ensure full alpha for transparency
@@ -846,34 +842,39 @@ namespace Editor
                 Vector2 center = previewScreenPos;
                 float crosshairSize = 6f;
                 Color crosshairColor = Color.red;
-                EditorGUI.DrawRect(new Rect(center.x - crosshairSize, center.y - 0.5f, crosshairSize * 2, 1), crosshairColor);
-                EditorGUI.DrawRect(new Rect(center.x - 0.5f, center.y - crosshairSize, 1, crosshairSize * 2), crosshairColor);
-                
+                EditorGUI.DrawRect(new Rect(center.x - crosshairSize, center.y - 0.5f, crosshairSize * 2, 1),
+                    crosshairColor);
+
+                EditorGUI.DrawRect(new Rect(center.x - 0.5f, center.y - crosshairSize, 1, crosshairSize * 2),
+                    crosshairColor);
+
                 // Show prefab info below the preview
                 string infoText = _selectedPrefabForPlacement.name;
                 if (Event.current.shift && _settings.pixelsPerUnit > 0)
                 {
                     infoText += " (Grid Snap)";
                 }
-                
+
                 // Add size info for debugging
                 infoText += $" | Size: {worldSize.x:F1}x{worldSize.y:F1} | Screen: {screenSize:F0}px";
-                
-                GUIContent infoContent = new GUIContent(infoText);
+
+                GUIContent infoContent = new(infoText);
                 Vector2 infoSize = EditorStyles.miniLabel.CalcSize(infoContent);
-                Rect infoRect = new Rect(
-                    previewScreenPos.x - infoSize.x * 0.5f, 
-                    previewRect.y + previewRect.height + 5, 
-                    infoSize.x, 
+                Rect infoRect = new(
+                    previewScreenPos.x - infoSize.x * 0.5f,
+                    previewRect.y + previewRect.height + 5,
+                    infoSize.x,
                     infoSize.y
                 );
-                Color backgroundColor = new Color(0, 0, 0, 0.7f);
+
+                Color backgroundColor = new(0, 0, 0, 0.7f);
                 // Draw info background
-                EditorGUI.DrawRect(new Rect(infoRect.x - 2, infoRect.y - 1, infoRect.width + 4, infoRect.height + 2), backgroundColor);
-                
+                EditorGUI.DrawRect(new Rect(infoRect.x - 2, infoRect.y - 1, infoRect.width + 4, infoRect.height + 2),
+                    backgroundColor);
+
                 // Draw info text
                 GUI.Label(infoRect, infoContent, EditorStyles.miniLabel);
-                
+
                 Handles.EndGUI();
             }
 
@@ -882,7 +883,7 @@ namespace Editor
             {
                 Handles.color = Color.yellow;
                 float gridSize = 1.0f / _settings.pixelsPerUnit;
-                
+
                 // Draw snap grid around cursor
                 for (int i = -1; i <= 1; i++)
                 {
@@ -893,50 +894,53 @@ namespace Editor
                     }
                 }
             }
-            
+
             Handles.color = Color.white;
         }
 
         private Bounds GetPrefabBounds(GameObject prefab)
         {
             if (prefab == null) return new Bounds();
-            
+
             // Try to get bounds from renderers
             var renderers = prefab.GetComponentsInChildren<Renderer>();
             if (renderers != null && renderers.Length > 0)
             {
                 Bounds bounds = renderers[0].bounds;
-                foreach (var renderer in renderers)
+                foreach (Renderer renderer in renderers)
                 {
                     bounds.Encapsulate(renderer.bounds);
                 }
+
                 return bounds;
             }
-            
+
             // Try to get bounds from colliders
             var colliders = prefab.GetComponentsInChildren<Collider>();
             if (colliders != null && colliders.Length > 0)
             {
                 Bounds bounds = colliders[0].bounds;
-                foreach (var collider in colliders)
+                foreach (Collider collider in colliders)
                 {
                     bounds.Encapsulate(collider.bounds);
                 }
+
                 return bounds;
             }
-            
+
             // Try to get bounds from colliders 2D
             var colliders2D = prefab.GetComponentsInChildren<Collider2D>();
-            if (colliders2D != null && colliders2D.Length > 0)
+            if (colliders2D is { Length: > 0 })
             {
                 Bounds bounds = colliders2D[0].bounds;
-                foreach (var collider in colliders2D)
+                foreach (Collider2D collider in colliders2D)
                 {
                     bounds.Encapsulate(collider.bounds);
                 }
+
                 return bounds;
             }
-            
+
             // Fallback to transform bounds
             return new Bounds(prefab.transform.position, Vector3.one);
         }
@@ -944,38 +948,32 @@ namespace Editor
         private Vector3 GetPrefabPivotOffset(GameObject prefab, Bounds bounds)
         {
             if (prefab == null) return Vector3.zero;
-            
-            // Get the prefab's transform position (which represents its pivot)
-            Vector3 pivotPosition = prefab.transform.position;
-            
-            // Calculate the offset from the bounds center to the pivot position
-            Vector3 pivotOffset = pivotPosition - bounds.center;
-            
-            // For 2D sprites, we might need to consider the sprite's pivot settings
-            var spriteRenderer = prefab.GetComponent<SpriteRenderer>();
+
+            // For 2D sprites, we need to consider the sprite's pivot settings
+            SpriteRenderer spriteRenderer = prefab.GetComponent<SpriteRenderer>();
             if (spriteRenderer != null && spriteRenderer.sprite != null)
             {
                 Sprite sprite = spriteRenderer.sprite;
-                
-                // Get the sprite's pivot in world space
+
+                // Get the sprite's pivot in normalized coordinates (0-1)
                 Vector2 spritePivot = sprite.pivot;
                 Vector2 spriteSize = sprite.rect.size;
-                Vector2 pixelsPerUnit = Vector2.one * sprite.pixelsPerUnit;
-                
-                // Convert pivot from pixel coordinates to normalized coordinates (0-1)
-                Vector2 normalizedPivot = new Vector2(spritePivot.x / spriteSize.x, spritePivot.y / spriteSize.y);
-                
-                // Calculate the offset based on sprite pivot
-                Vector3 spriteOffset = new Vector3(
-                    (0.5f - normalizedPivot.x) * bounds.size.x,
-                    (0.5f - normalizedPivot.y) * bounds.size.y,
+                Vector2 normalizedPivot = new(spritePivot.x / spriteSize.x, spritePivot.y / spriteSize.y);
+
+                // Calculate the offset from center to pivot in world space
+                // This offset should move the preview so the pivot point is at the mouse cursor
+                Vector3 spriteOffset = new(
+                    (normalizedPivot.x - 0.5f) * bounds.size.x,
+                    (normalizedPivot.y - 0.5f) * bounds.size.y,
                     0f
                 );
-                
+
                 return spriteOffset;
             }
-            
-            // For non-sprite objects, return the calculated pivot offset
+
+            // For non-sprite objects, calculate offset from bounds center to transform position
+            Vector3 pivotPosition = prefab.transform.position;
+            Vector3 pivotOffset = pivotPosition - bounds.center;
             return pivotOffset;
         }
 
@@ -1009,10 +1007,10 @@ namespace Editor
                 float angle = i / (float)prefabCount * 360f - 90f;
                 Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
                 Vector2 itemPos = center + direction * (radius * 0.75f);
-                
+
                 bool isHovered = i == _hoveredRadialIndex;
                 float iconSize = isHovered ? 55f : 45f;
-                
+
                 // Enhanced highlighting for hovered item
                 if (isHovered)
                 {
@@ -1020,26 +1018,27 @@ namespace Editor
                     float pulseScale = 1f + Mathf.Sin((float)EditorApplication.timeSinceStartup * 8f) * 0.1f;
                     Handles.color = new Color(0, 1, 1, 0.6f); // Cyan with transparency
                     Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.7f * pulseScale);
-                    
+
                     // Draw bright border
                     Handles.color = Color.cyan;
                     Handles.DrawWireDisc(itemPos, Vector3.forward, iconSize * 0.7f);
                     Handles.color = Color.white;
 
                     // Show enhanced name display
-                    GUIContent nameContent = new GUIContent(prefab.name);
+                    GUIContent nameContent = new(prefab.name);
                     Vector2 nameSize = EditorStyles.boldLabel.CalcSize(nameContent);
-                    Rect nameRect = new Rect(
-                        center.x - nameSize.x * 0.5f, 
-                        center.y + radius + 10, 
-                        nameSize.x, 
+                    Rect nameRect = new(
+                        center.x - nameSize.x * 0.5f,
+                        center.y + radius + 10,
+                        nameSize.x,
                         nameSize.y
                     );
-                    
+
                     // Draw name background
-                    EditorGUI.DrawRect(new Rect(nameRect.x - 4, nameRect.y - 2, nameRect.width + 8, nameRect.height + 4), 
+                    EditorGUI.DrawRect(
+                        new Rect(nameRect.x - 4, nameRect.y - 2, nameRect.width + 8, nameRect.height + 4),
                         new Color(0, 0, 0, 0.8f));
-                    
+
                     // Draw name with highlight color
                     GUI.color = Color.cyan;
                     GUI.Label(nameRect, nameContent, EditorStyles.boldLabel);
@@ -1054,10 +1053,10 @@ namespace Editor
                 }
 
                 // Draw icon rect
-                Rect iconRect = new Rect(
-                    itemPos.x - iconSize * 0.5f, 
-                    itemPos.y - iconSize * 0.5f, 
-                    iconSize, 
+                Rect iconRect = new(
+                    itemPos.x - iconSize * 0.5f,
+                    itemPos.y - iconSize * 0.5f,
+                    iconSize,
                     iconSize
                 );
 
@@ -1068,9 +1067,10 @@ namespace Editor
                     if (isHovered)
                     {
                         // Draw glowing border for hovered item
-                        Rect borderRect = new Rect(iconRect.x - 2, iconRect.y - 2, iconRect.width + 4, iconRect.height + 4);
+                        Rect borderRect = new(iconRect.x - 2, iconRect.y - 2, iconRect.width + 4, iconRect.height + 4);
                         EditorGUI.DrawRect(borderRect, Color.cyan);
                     }
+
                     GUI.DrawTexture(iconRect, preview, ScaleMode.ScaleToFit);
                 }
                 else
@@ -1078,7 +1078,7 @@ namespace Editor
                     // Draw placeholder with proper highlighting
                     Color placeholderColor = isHovered ? new Color(0.6f, 0.6f, 0.6f) : new Color(0.3f, 0.3f, 0.3f);
                     EditorGUI.DrawRect(iconRect, placeholderColor);
-                    
+
                     // Draw loading text
                     GUI.color = isHovered ? Color.white : Color.gray;
                     GUI.Label(iconRect, "...", EditorStyles.centeredGreyMiniLabel);
@@ -1116,10 +1116,10 @@ namespace Editor
             // Improved angle calculation for better selection accuracy
             Vector2 direction = (mousePosition - _radialMenuPosition).normalized;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            
+
             // Normalize angle to 0-360 range and adjust for starting at top
             angle = (angle + 90f + 360f) % 360f;
-            
+
             float segmentAngle = 360f / prefabCount;
             int index = Mathf.FloorToInt((angle + segmentAngle * 0.5f) / segmentAngle) % prefabCount;
 
@@ -1453,26 +1453,25 @@ namespace Editor
                 {
                     return cachedPreview;
                 }
-                else
-                {
-                    // Remove invalid cache entry
-                    _previewCache.Remove(prefab);
-                }
+
+                // Remove invalid cache entry
+                _previewCache.Remove(prefab);
             }
 
             // Try to get preview from Unity's AssetPreview system
             Texture2D preview = AssetPreview.GetAssetPreview(prefab);
-            
+
             if (preview != null)
             {
                 // Process the preview to make background transparent
                 Texture2D processedPreview = MakePreviewTransparent(preview);
-                
+
                 // Cache the processed preview
                 if (_settings.enablePreviewCache)
                 {
                     _previewCache[prefab] = processedPreview;
                 }
+
                 return processedPreview;
             }
 
@@ -1481,12 +1480,13 @@ namespace Editor
             {
                 // Force refresh to potentially generate preview
                 AssetPreview.GetAssetPreview(prefab);
-                
+
                 // Queue for later retry if not already queued
                 if (_settings.enablePreviewCache && !_previewLoadQueue.Contains(prefab))
                 {
                     _previewLoadQueue.Enqueue(prefab);
                 }
+
                 return null;
             }
 
@@ -1501,12 +1501,15 @@ namespace Editor
             try
             {
                 // Create a new readable texture
-                Texture2D readableTexture = new Texture2D(originalTexture.width, originalTexture.height, TextureFormat.RGBA32, false);
-                
+                Texture2D readableTexture =
+                    new(originalTexture.width, originalTexture.height, TextureFormat.RGBA32, false);
+
                 // Create a RenderTexture to copy the original texture
-                RenderTexture renderTexture = RenderTexture.GetTemporary(originalTexture.width, originalTexture.height, 0, RenderTextureFormat.ARGB32);
+                RenderTexture renderTexture = RenderTexture.GetTemporary(originalTexture.width, originalTexture.height,
+                    0, RenderTextureFormat.ARGB32);
+
                 Graphics.Blit(originalTexture, renderTexture);
-                
+
                 // Read the pixels from the RenderTexture
                 RenderTexture.active = renderTexture;
                 readableTexture.ReadPixels(new Rect(0, 0, originalTexture.width, originalTexture.height), 0, 0);
@@ -1515,19 +1518,19 @@ namespace Editor
                 RenderTexture.ReleaseTemporary(renderTexture);
 
                 // Process pixels to make background transparent
-                Color[] pixels = readableTexture.GetPixels();
+                var pixels = readableTexture.GetPixels();
                 Color backgroundColor = pixels[0]; // Assume top-left corner is background
-                
+
                 for (int i = 0; i < pixels.Length; i++)
                 {
                     Color pixel = pixels[i];
-                    
+
                     // If pixel is very similar to background color, make it transparent
                     float colorDistance = Vector3.Distance(
                         new Vector3(pixel.r, pixel.g, pixel.b),
                         new Vector3(backgroundColor.r, backgroundColor.g, backgroundColor.b)
                     );
-                    
+
                     if (colorDistance < 0.1f) // Threshold for background detection
                     {
                         pixels[i] = new Color(pixel.r, pixel.g, pixel.b, 0f); // Make transparent
@@ -1538,13 +1541,13 @@ namespace Editor
                         pixels[i] = new Color(pixel.r, pixel.g, pixel.b, pixel.a * 0.9f);
                     }
                 }
-                
+
                 readableTexture.SetPixels(pixels);
                 readableTexture.Apply();
-                
+
                 return readableTexture;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Debug.LogWarning($"Failed to make preview transparent: {e.Message}");
                 return originalTexture; // Return original if processing fails
@@ -1561,31 +1564,35 @@ namespace Editor
                     return null;
 
                 // Create a simple colored texture based on the prefab's main material
-                var mainRenderer = renderers[0];
+                Renderer mainRenderer = renderers[0];
                 if (mainRenderer.sharedMaterial != null)
                 {
                     Color materialColor = Color.white;
-                    
+
                     // Try to get color from various shader properties
-                    var material = mainRenderer.sharedMaterial;
-                    if (material.HasProperty("_Color"))
-                        materialColor = material.GetColor("_Color");
-                    else if (material.HasProperty("_BaseColor"))
-                        materialColor = material.GetColor("_BaseColor");
-                    else if (material.HasProperty("_MainTex") && material.mainTexture != null)
+                    Material material = mainRenderer.sharedMaterial;
+                    if (material.HasProperty(Color1))
+                    {
+                        materialColor = material.GetColor(Color1);
+                    }
+                    else if (material.HasProperty(BaseColor))
+                    {
+                        materialColor = material.GetColor(BaseColor);
+                    }
+                    else if (material.HasProperty(MainTex) && material.mainTexture)
                     {
                         // Use a sample from the main texture
-                        var texture = material.mainTexture as Texture2D;
-                        if (texture != null && texture.isReadable)
+                        Texture2D texture = material.mainTexture as Texture2D;
+                        if (texture && texture.isReadable)
                         {
                             materialColor = texture.GetPixel(texture.width / 2, texture.height / 2);
                         }
                     }
 
                     // Create a simple 64x64 preview texture
-                    Texture2D customPreview = new Texture2D(64, 64, TextureFormat.RGBA32, false);
-                    Color[] pixels = new Color[64 * 64];
-                    
+                    Texture2D customPreview = new(64, 64, TextureFormat.RGBA32, false);
+                    var pixels = new Color[64 * 64];
+
                     // Create a simple gradient/pattern
                     for (int y = 0; y < 64; y++)
                     {
@@ -1593,19 +1600,20 @@ namespace Editor
                         {
                             float distance = Vector2.Distance(new Vector2(x, y), new Vector2(32, 32));
                             float alpha = Mathf.Clamp01(1.0f - distance / 32.0f);
-                            pixels[y * 64 + x] = new Color(materialColor.r, materialColor.g, materialColor.b, alpha * materialColor.a);
+                            pixels[y * 64 + x] = new Color(materialColor.r, materialColor.g, materialColor.b,
+                                alpha * materialColor.a);
                         }
                     }
-                    
+
                     customPreview.SetPixels(pixels);
                     customPreview.Apply();
-                    
+
                     // Cache the custom preview
                     if (_settings.enablePreviewCache)
                     {
                         _previewCache[prefab] = customPreview;
                     }
-                    
+
                     return customPreview;
                 }
             }
@@ -1619,13 +1627,14 @@ namespace Editor
 
         private void ClearPreviews()
         {
-            foreach (var preview in _previewCache.Values)
+            foreach (Texture2D preview in _previewCache.Values)
             {
                 if (preview != null)
                 {
                     DestroyImmediate(preview);
                 }
             }
+
             _previewCache.Clear();
             _previewLoadQueue.Clear();
         }
@@ -1634,10 +1643,10 @@ namespace Editor
         {
             // Clear existing cache
             ClearPreviews();
-            
+
             // Restart preview loading
             StartPreviewLoading();
-            
+
             // Force repaint
         }
 
