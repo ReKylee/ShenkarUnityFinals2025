@@ -42,6 +42,7 @@ namespace LevelSelection
 
         // Selector movement
         private bool _isMovingSelector;
+        private bool _isItemSelectActive; // Track if item select screen is active
 
         // Input filtering
         private Vector2 _lastInputDirection;
@@ -189,7 +190,7 @@ namespace LevelSelection
 
         private void OnNavigate(InputAction.CallbackContext context)
         {
-            if (!IsActive) return;
+            if (!IsActive || _isItemSelectActive) return; // Block navigation when item select is active
 
             Vector2 direction = context.ReadValue<Vector2>();
 
@@ -215,7 +216,7 @@ namespace LevelSelection
 
         private void OnSubmit(InputAction.CallbackContext context)
         {
-            if (!IsActive) return;
+            if (!IsActive || _isItemSelectActive) return; // Block submit when item select is active
 
             _navigationService.SelectCurrentLevel();
         }
@@ -270,7 +271,10 @@ namespace LevelSelection
             // Show ItemSelectScreen if available, otherwise load directly
             if (itemSelectScreen != null)
             {
-                itemSelectScreen.ShowItemSelect(selectionEvent.LevelName, sceneName);
+                SetItemSelectActive(true); // Activate item select mode
+                itemSelectScreen.ShowItemSelect(selectionEvent.LevelName, sceneName, () => {
+                    SetItemSelectActive(false); // Deactivate when complete
+                });
             }
             else
             {
@@ -378,6 +382,19 @@ namespace LevelSelection
             _navigationService?.SetCurrentIndex(levelIndex);
         }
 
-        
+        /// <summary>
+        /// Set the item select screen active state and control selector visibility
+        /// </summary>
+        private void SetItemSelectActive(bool isActive)
+        {
+            _isItemSelectActive = isActive;
+            
+            if (selectorObject != null)
+            {
+                selectorObject.SetActive(!isActive); // Hide selector when item select is active
+            }
+            
+            Debug.Log($"[LevelSelectionController] Item select active: {isActive}, Selector visible: {!isActive}");
+        }
     }
 }
