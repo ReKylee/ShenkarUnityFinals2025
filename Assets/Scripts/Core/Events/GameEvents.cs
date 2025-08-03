@@ -69,7 +69,6 @@ namespace Core.Events
         public float CompletionTime;
     }
 
-
     public struct GameOverEvent : IGameEvent
     {
         public float Timestamp { get; set; }
@@ -102,5 +101,12 @@ namespace Core.Events
         public float Timestamp { get; set; }
         public string LevelName;
         public string SceneName;
+    }
+
+    public struct LevelUnlockedEvent : IGameEvent
+    {
+        public float Timestamp { get; set; }
+        public string CompletedLevelName;
+        public string UnlockedLevelName;
     }
 }

@@ -12,7 +12,6 @@ namespace LevelSelection
         public bool isUnlocked;
         public bool isCompleted;
         public float bestTime;
-        public Sprite levelIcon;
         public string displayName;
         public int levelIndex;
 
@@ -63,12 +62,6 @@ namespace LevelSelection
             return this;
         }
 
-        public LevelDataBuilder WithIcon(Sprite icon)
-        {
-            _levelData.levelIcon = icon;
-            return this;
-        }
-
         public LevelDataBuilder Unlocked(bool unlocked = true)
         {
             _levelData.isUnlocked = unlocked;
@@ -101,25 +94,72 @@ namespace LevelSelection
                 return null;
             }
 
+            // Determine unlock status based on inspector settings and game data
+            bool isUnlocked = DetermineUnlockStatus(levelPoint, index);
+
             return new LevelDataBuilder()
                 .WithName(levelPoint.levelName)
                 .WithDisplayName(levelPoint.displayName)
                 .WithScene(levelPoint.sceneName)
-                .AtPosition(levelObject.transform.position) // Uses the actual GameObject position from scene
+                .AtPosition(levelObject.transform.position)
                 .WithIndex(index)
-                .WithIcon(levelPoint.levelIcon)
+                .Unlocked(isUnlocked)
                 .Build();
         }
 
-        public static LevelData CreateDefault(string name, string scene, Vector2 position, int index) =>
-            new LevelDataBuilder()
-                .WithName(name)
-                .WithDisplayName(name)
-                .WithScene(scene)
-                .AtPosition(position) // Uses the provided position (from transform)
+        public static LevelData CreateFromGameObjectWithGameData(GameObject levelObject, int index, Core.Data.GameData gameData)
+        {
+            LevelPoint levelPoint = levelObject.GetComponent<LevelPoint>();
+            if (levelPoint == null)
+            {
+                Debug.LogWarning($"GameObject {levelObject.name} doesn't have a LevelPoint component");
+                return null;
+            }
+
+            // Determine unlock status using game data
+            bool isUnlocked = DetermineUnlockStatusWithGameData(levelPoint, index, gameData);
+            bool isCompleted = gameData?.completedLevels?.Contains(levelPoint.levelName) ?? false;
+
+            return new LevelDataBuilder()
+                .WithName(levelPoint.levelName)
+                .WithDisplayName(levelPoint.displayName)
+                .WithScene(levelPoint.sceneName)
+                .AtPosition(levelObject.transform.position)
                 .WithIndex(index)
-                .Unlocked(index == 0) // First level is always unlocked
+                .Unlocked(isUnlocked)
+                .Completed(isCompleted)
                 .Build();
+        }
+
+        private static bool DetermineUnlockStatus(LevelPoint levelPoint, int index)
+        {
+            // If level point overrides game data, use inspector setting
+            if (levelPoint.OverrideGameData)
+            {
+                return levelPoint.StartUnlocked;
+            }
+
+            // Default behavior: first level is always unlocked
+            return index == 0;
+        }
+
+        private static bool DetermineUnlockStatusWithGameData(LevelPoint levelPoint, int index, Core.Data.GameData gameData)
+        {
+            // If level point overrides game data, use inspector setting
+            if (levelPoint.OverrideGameData)
+            {
+                return levelPoint.StartUnlocked;
+            }
+
+            // Check if level is in unlocked levels list
+            if (gameData?.unlockedLevels != null && gameData.unlockedLevels.Contains(levelPoint.levelName))
+            {
+                return true;
+            }
+
+            // Default behavior: first level is always unlocked
+            return index == 0;
+        }
 
         /// <summary>
         ///     Creates level data using only the GameObject's transform position and name

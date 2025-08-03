@@ -12,9 +12,14 @@ namespace LevelSelection.Services
     /// </summary>
     public class LevelDiscoveryService : ILevelDiscoveryService
     {
-        private readonly LevelSelectionDirector _director = new();
+        private readonly Core.Data.IGameDataService _gameDataService;
         private List<LevelData> _cachedLevelData;
         private List<LevelPoint> _sortedLevelPoints;
+
+        public LevelDiscoveryService(Core.Data.IGameDataService gameDataService)
+        {
+            _gameDataService = gameDataService;
+        }
 
         public async Task<List<LevelData>> DiscoverLevelsAsync()
         {
@@ -53,10 +58,52 @@ namespace LevelSelection.Services
             // Cache sorted level points for external use
             _sortedLevelPoints = levelObjects.Select(obj => obj.GetComponent<LevelPoint>()).ToList();
 
-            _cachedLevelData = _director.BuildLevelData(levelObjects);
+            // Build level data directly without director pattern
+            _cachedLevelData = BuildLevelDataWithGameData(levelObjects);
 
             Debug.Log($"[LevelDiscoveryService] Discovered {_cachedLevelData.Count} levels and cached {_sortedLevelPoints.Count} sorted level points");
             return _cachedLevelData;
+        }
+
+        private List<LevelData> BuildLevelDataWithGameData(List<GameObject> levelObjects)
+        {
+            var levelDataList = new List<LevelData>();
+
+            // Use injected game data service instead of FindFirstObjectByType
+            Core.Data.GameData gameData = _gameDataService?.CurrentData;
+
+            for (int i = 0; i < levelObjects.Count; i++)
+            {
+                GameObject levelObject = levelObjects[i];
+                if (levelObject == null) continue;
+
+                LevelData levelData;
+                
+                if (gameData != null)
+                {
+                    // Use enhanced factory method with game data
+                    levelData = LevelDataFactory.CreateFromGameObjectWithGameData(levelObject, i, gameData);
+                }
+                else
+                {
+                    // Fallback to basic creation
+                    levelData = LevelDataFactory.CreateFromGameObject(levelObject, i);
+                }
+
+                if (levelData == null)
+                {
+                    // Final fallback - create from transform position and object name
+                    levelData = LevelDataFactory.CreateFromTransform(levelObject, i);
+                }
+
+                if (levelData != null)
+                {
+                    Debug.Log($"Level {i}: {levelData.levelName} at position {levelData.mapPosition} (Unlocked: {levelData.isUnlocked}, Completed: {levelData.isCompleted})");
+                    levelDataList.Add(levelData);
+                }
+            }
+
+            return levelDataList;
         }
 
         public List<LevelPoint> GetSortedLevelPoints()

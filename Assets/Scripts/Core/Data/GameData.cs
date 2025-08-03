@@ -16,6 +16,7 @@ namespace Core.Data
         
         // Level Selection Data
         public List<string> unlockedLevels = new List<string> { "Level_01" };
+        public List<string> completedLevels = new List<string>(); // Added for EndLevelZone
         public int selectedLevelIndex = 0;
         public Dictionary<string, float> levelBestTimes = new Dictionary<string, float>();
         public Dictionary<string, bool> levelCompleted = new Dictionary<string, bool>();

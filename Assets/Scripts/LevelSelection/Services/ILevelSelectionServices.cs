@@ -42,6 +42,7 @@ namespace LevelSelection
         void Deactivate();
         void UpdateSelection(int newIndex);
         void SetConfig(LevelSelectionConfig config);
+        void SetLevelPoints(List<LevelPoint> sortedLevelPoints);
         void RefreshVisuals();
         void Dispose();
     }

@@ -8,12 +8,11 @@ using Object = UnityEngine.Object;
 namespace LevelSelection.Services
 {
     /// <summary>
-    ///     Display service that manages visual components
-    ///     Components are assigned via inspector instead of auto-discovery
+    ///     Display service that manages level state without visuals
+    ///     Since levels are invisible points, this focuses on data management
     /// </summary>
     public class LevelDisplayService : ILevelDisplayService
     {
-
         private readonly IEventBus _eventBus;
         private LevelSelectionConfig _config;
         private int _currentSelection;
@@ -30,28 +29,27 @@ namespace LevelSelection.Services
         public async Task InitializeAsync(List<LevelData> levelData)
         {
             _levelData = levelData;
-
-            // Find level points and sort them to match level data order
-            var levelPointComponents = Object.FindObjectsByType<LevelPoint>(FindObjectsSortMode.None);
-            _levelPoints = new List<LevelPoint>(levelPointComponents);
-            _levelPoints.Sort((a, b) => string.Compare(a.gameObject.name, b.gameObject.name, StringComparison.Ordinal));
-
-            Debug.Log($"[LevelDisplayService] Found {_levelPoints.Count} level points");
-
-            UpdateAllVisuals();
+            Debug.Log($"[LevelDisplayService] Initialized with {_levelData.Count} level data entries");
             await Task.CompletedTask;
+        }
+
+        public void SetLevelPoints(List<LevelPoint> sortedLevelPoints)
+        {
+            _levelPoints = sortedLevelPoints;
+            Debug.Log($"[LevelDisplayService] Received {_levelPoints?.Count ?? 0} sorted level points");
+            UpdateLevelStates();
         }
 
         public void SetConfig(LevelSelectionConfig config)
         {
             _config = config;
-            UpdateAllVisuals(); // Refresh visuals with new config
+            // Config stored but no visual updates needed for invisible points
         }
 
         public void Activate()
         {
             _isActive = true;
-            UpdateAllVisuals();
+            UpdateLevelStates();
         }
 
         public void Deactivate()
@@ -64,35 +62,20 @@ namespace LevelSelection.Services
             if (!_isActive || newIndex == _currentSelection) return;
 
             _currentSelection = newIndex;
-            UpdateAllVisuals();
+            UpdateLevelStates();
         }
 
-        private void UpdateAllVisuals()
+        private void UpdateLevelStates()
         {
-            // Update all level point visuals using config colors
+            // Update level point states without visual changes
+            if (_levelPoints == null || _levelData == null) return;
+
             for (int i = 0; i < _levelPoints.Count && i < _levelData.Count; i++)
             {
                 if (_levelPoints[i] != null)
                 {
                     _levelPoints[i].SetUnlocked(_levelData[i].isUnlocked);
                     _levelPoints[i].SetSelected(i == _currentSelection);
-
-                    // Apply config colors if available
-                    if (_config != null && _levelPoints[i].iconRenderer != null)
-                    {
-                        if (i == _currentSelection)
-                        {
-                            _levelPoints[i].iconRenderer.color = _config.selectedColor;
-                        }
-                        else if (_levelData[i].isUnlocked)
-                        {
-                            _levelPoints[i].iconRenderer.color = _config.unlockedColor;
-                        }
-                        else
-                        {
-                            _levelPoints[i].iconRenderer.color = _config.lockedColor;
-                        }
-                    }
                 }
             }
         }
@@ -109,7 +92,8 @@ namespace LevelSelection.Services
 
         public void RefreshVisuals()
         {
-            UpdateAllVisuals();
+            // Renamed to RefreshStates since no visuals
+            UpdateLevelStates();
         }
 
         public void Dispose()

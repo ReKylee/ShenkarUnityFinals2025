@@ -45,6 +45,12 @@ namespace LevelSelection
         private Vector3 _selectorTargetPosition;
         private List<LevelPoint> _sortedLevelPoints; // Cache sorted level points
 
+        // Input filtering
+        private Vector2 _lastInputDirection;
+        private const float InputCooldownTime = 0.2f; // Prevent input spam
+        private float _lastInputTime;
+        private const float InputDeadzone = 0.5f; // Input threshold
+
         public bool IsActive { get; private set; }
         public LevelSelectionConfig Config => config;
 
@@ -133,6 +139,9 @@ namespace LevelSelection
 
             // Get sorted level points from the discovery service - NO DUPLICATION!
             _sortedLevelPoints = _discoveryService.GetSortedLevelPoints();
+            
+            // Pass the sorted level points to the display service using DI pattern
+            _displayService.SetLevelPoints(_sortedLevelPoints);
 
             // Pass config to services that need it
             if (config != null)
@@ -183,6 +192,24 @@ namespace LevelSelection
             if (!IsActive) return;
 
             Vector2 direction = context.ReadValue<Vector2>();
+            
+            // Apply deadzone filtering
+            if (direction.magnitude < InputDeadzone) return;
+            
+            // Apply input cooldown to prevent spam
+            if (Time.time - _lastInputTime < InputCooldownTime) return;
+            
+            // Normalize direction for consistent behavior
+            direction = direction.normalized;
+            
+            // Check if this is the same direction as last input (prevent repeats)
+            if (Vector2.Dot(direction, _lastInputDirection) > 0.8f && 
+                Time.time - _lastInputTime < InputCooldownTime * 2f) return;
+            
+            _lastInputDirection = direction;
+            _lastInputTime = Time.time;
+            
+            Debug.Log($"[LevelSelectionController] Processing navigation input: {direction}");
             _navigationService.NavigateInDirection(direction);
         }
 
@@ -203,11 +230,12 @@ namespace LevelSelection
         private void OnLevelNavigation(LevelNavigationEvent navigationEvent)
         {
             // Play navigation sound from config
-            if (config?.navigationSound != null && _audioSource != null)
+            if (config?.navigationSound && _audioSource)
             {
                 _audioSource.PlayOneShot(config.navigationSound);
             }
 
+            // Only move selector if the index actually changed
             MoveSelectorToCurrentLevel();
         }
 
@@ -254,14 +282,27 @@ namespace LevelSelection
         private void MoveSelectorToCurrentLevel()
         {
             if (selectorObject == null || _sortedLevelPoints == null) return;
+            
+            // Don't move if already moving to avoid redundant calls
+            if (_isMovingSelector) return;
 
             // Use the sorted level points from the discovery service
             if (_navigationService.CurrentIndex >= 0 && _navigationService.CurrentIndex < _sortedLevelPoints.Count)
             {
-                _selectorTargetPosition = _sortedLevelPoints[_navigationService.CurrentIndex].transform.position;
-                _isMovingSelector = true;
+                Vector3 targetPosition = _sortedLevelPoints[_navigationService.CurrentIndex].transform.position;
                 
-                Debug.Log($"[LevelSelectionController] Moving selector to level {_navigationService.CurrentIndex} at position {_selectorTargetPosition}");
+                // Only start moving if we're not already at the target position
+                if (Vector3.Distance(selectorObject.transform.position, targetPosition) > 0.01f)
+                {
+                    _selectorTargetPosition = targetPosition;
+                    _isMovingSelector = true;
+                    
+                    Debug.Log($"[LevelSelectionController] Moving selector to level {_navigationService.CurrentIndex} at position {_selectorTargetPosition}");
+                }
+                else
+                {
+                    Debug.Log($"[LevelSelectionController] Selector already at level {_navigationService.CurrentIndex} position");
+                }
             }
             else
             {
@@ -271,6 +312,8 @@ namespace LevelSelection
 
         public void Activate()
         {
+            Debug.Log($"[LevelSelectionController] Activating - Current navigation index: {_navigationService?.CurrentIndex}");
+            
             IsActive = true;
             _navigationService?.Activate();
             _displayService?.Activate();
@@ -299,6 +342,7 @@ namespace LevelSelection
         /// </summary>
         public void SetCurrentLevel(int levelIndex)
         {
+            Debug.Log($"[LevelSelectionController] SetCurrentLevel called with index: {levelIndex}");
             _navigationService?.SetCurrentIndex(levelIndex);
         }
     }

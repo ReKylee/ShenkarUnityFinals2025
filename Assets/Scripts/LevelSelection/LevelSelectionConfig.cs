@@ -15,11 +15,6 @@ namespace LevelSelection
         public float selectorMoveSpeed = 5f;
         public float snapThreshold = 0.1f;
 
-        [Header("Visual Settings")] public Color unlockedColor = Color.white;
-
-        public Color lockedColor = Color.gray;
-        public Color selectedColor = Color.yellow;
-
         [Header("Audio Settings")] public AudioClip navigationSound;
 
         public AudioClip selectionSound;

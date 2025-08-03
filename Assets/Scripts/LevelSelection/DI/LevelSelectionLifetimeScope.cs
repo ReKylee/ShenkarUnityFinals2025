@@ -32,9 +32,6 @@ namespace LevelSelection.DI
             builder.RegisterComponentInHierarchy<ItemSelectScreen>();
             builder.RegisterComponentInHierarchy<NESCrossfade>();
 
-            // Register level selection director as singleton for this scope
-            builder.Register<LevelSelectionDirector>(Lifetime.Singleton);
-
             Debug.Log("[LevelSelectionLifetimeScope] Level selection DI container configured successfully.");
         }
     }

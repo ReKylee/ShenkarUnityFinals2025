@@ -35,7 +35,10 @@ namespace LevelSelection.Services
 
             // Load saved selection from game data
             GameData gameData = _gameDataService?.CurrentData;
-            CurrentIndex = Mathf.Clamp(gameData?.selectedLevelIndex ?? 0, 0, levelData.Count - 1);
+            int savedIndex = gameData?.selectedLevelIndex ?? 0;
+            CurrentIndex = Mathf.Clamp(savedIndex, 0, levelData.Count - 1);
+
+            Debug.Log($"[LevelNavigationService] Initialized with CurrentIndex: {CurrentIndex} (saved: {savedIndex}, total levels: {levelData.Count})");
 
             await Task.CompletedTask;
         }
@@ -98,7 +101,13 @@ namespace LevelSelection.Services
 
         private void UpdateSelection(int newIndex)
         {
-            if (newIndex == CurrentIndex) return;
+            Debug.Log($"[LevelNavigationService] UpdateSelection called: {CurrentIndex} -> {newIndex}");
+            
+            if (newIndex == CurrentIndex) 
+            {
+                Debug.Log($"[LevelNavigationService] No change needed, staying at index {CurrentIndex}");
+                return;
+            }
 
             int previousIndex = CurrentIndex;
             CurrentIndex = newIndex;
@@ -110,6 +119,8 @@ namespace LevelSelection.Services
                 gameData.selectedLevelIndex = CurrentIndex;
                 _gameDataService?.SaveData();
             }
+
+            Debug.Log($"[LevelNavigationService] Publishing navigation event: {previousIndex} -> {CurrentIndex}");
 
             // Publish navigation event
             _eventBus?.Publish(new LevelNavigationEvent
