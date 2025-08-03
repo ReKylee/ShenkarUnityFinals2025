@@ -44,6 +44,590 @@ namespace Editor
 
         #endregion
 
+        private void HandlePlacementMode(Event currentEvent, SceneView sceneView)
+        {
+            if (!_placementMode || _selectedPrefabForPlacement == null) return;
+
+            int controlId = GUIUtility.GetControlID(FocusType.Passive);
+            HandleUtility.AddDefaultControl(controlId);
+
+            Vector3 worldPos = GetMouseWorldPosition(currentEvent);
+
+            if (currentEvent.shift && _settings.pixelsPerUnit > 0)
+            {
+                worldPos = SnapToGrid(worldPos);
+            }
+
+            if (currentEvent.type is EventType.MouseMove or EventType.Repaint)
+            {
+                DrawPlacementPreview(currentEvent.mousePosition, worldPos);
+                sceneView.Repaint();
+            }
+            else if (currentEvent.type == EventType.MouseDown && currentEvent.button == 0)
+            {
+                PlacePrefabAtPosition(_selectedPrefabForPlacement, worldPos);
+                currentEvent.Use();
+            }
+            else if (currentEvent.type == EventType.KeyDown && currentEvent.keyCode == KeyCode.Escape)
+            {
+                ExitPlacementMode();
+                currentEvent.Use();
+            }
+        }
+
+        private void DrawPlacementPreview(Vector2 mousePos, Vector3 worldPos)
+        {
+            // Get prefab bounds for accurate sizing
+            Bounds prefabBounds = GetPrefabBounds(_selectedPrefabForPlacement);
+            Vector3 worldSize = prefabBounds.size;
+
+            // If bounds are too small or invalid, use default size
+            if (worldSize.magnitude < 0.1f)
+            {
+                worldSize = Vector3.one * 0.5f;
+            }
+
+            // Scale the world size to compensate for asset preview padding BEFORE any calculations
+            // Unity's asset previews have internal padding, so we scale up the world size to compensate
+            worldSize *= 1.4f;
+
+            // Apply grid snapping to the preview position if enabled
+            Vector3 previewWorldPos = worldPos;
+            if (Event.current.shift && _settings.pixelsPerUnit > 0)
+            {
+                previewWorldPos = SnapToGrid(worldPos);
+            }
+
+            // Convert the snapped world position back to screen coordinates for the preview
+            Vector2 previewScreenPos = mousePos;
+            Camera sceneCamera = SceneView.lastActiveSceneView?.camera;
+            if (sceneCamera)
+            {
+                previewScreenPos = mousePos;
+            }
+
+            // Calculate accurate GUI preview size based on actual world size and camera
+            float screenSize = 80f; // Base size in pixels
+
+            if (sceneCamera)
+            {
+                if (sceneCamera.orthographic)
+                {
+                    // For orthographic camera, calculate screen size directly
+                    float orthographicSize = sceneCamera.orthographicSize;
+                    float screenHeight = SceneView.lastActiveSceneView.position.height;
+
+                    // Calculate pixels per world unit
+                    float pixelsPerWorldUnit = screenHeight / (orthographicSize * 2f);
+
+                    // Use the larger dimension of the sprite for accurate representation
+                    float largestWorldDimension = Mathf.Max(worldSize.x, worldSize.y, worldSize.z);
+                    screenSize = largestWorldDimension * pixelsPerWorldUnit;
+                }
+                else
+                {
+                    // For perspective camera, factor in distance
+                    float distance = Vector3.Distance(sceneCamera.transform.position, previewWorldPos);
+                    float fieldOfViewRad = sceneCamera.fieldOfView * Mathf.Deg2Rad;
+                    float screenHeight = SceneView.lastActiveSceneView.position.height;
+
+                    // Calculate how many world units fit in screen height at this distance
+                    float worldUnitsInScreenHeight = 2f * distance * Mathf.Tan(fieldOfViewRad * 0.5f);
+                    float pixelsPerWorldUnit = screenHeight / worldUnitsInScreenHeight;
+
+                    // Use the larger dimension of the sprite for accurate representation
+                    float largestWorldDimension = Mathf.Max(worldSize.x, worldSize.y, worldSize.z);
+                    screenSize = largestWorldDimension * pixelsPerWorldUnit;
+                }
+
+                // Clamp to reasonable bounds but allow larger sizes for bigger sprites
+                screenSize = Mathf.Clamp(screenSize, 20f, 400f);
+            }
+
+            // Get the prefab preview texture
+            Texture2D preview = GetPrefabPreview(_selectedPrefabForPlacement);
+
+            if (preview != null)
+            {
+                Handles.BeginGUI();
+
+                // Calculate preview rect centered on the snapped position with accurate size
+                Rect previewRect = new(
+                    previewScreenPos.x - screenSize * 0.5f,
+                    previewScreenPos.y - screenSize * 0.5f,
+                    screenSize,
+                    screenSize
+                );
+
+                // Draw the preview image with transparency support
+                Color originalColor = GUI.color;
+                GUI.color = new Color(1f, 1f, 1f, 1f); // Ensure full alpha for transparency
+                GUI.DrawTexture(previewRect, preview, ScaleMode.ScaleToFit, true); // Enable alpha blending
+                GUI.color = originalColor;
+
+                // Draw center crosshair for precise placement (use snapped position)
+                Vector2 center = previewScreenPos;
+                float crosshairSize = 6f;
+                Color crosshairColor = Color.red;
+                EditorGUI.DrawRect(new Rect(center.x - crosshairSize, center.y - 0.5f, crosshairSize * 2, 1),
+                    crosshairColor);
+
+                EditorGUI.DrawRect(new Rect(center.x - 0.5f, center.y - crosshairSize, 1, crosshairSize * 2),
+                    crosshairColor);
+
+                // Show prefab info below the preview
+                string infoText = _selectedPrefabForPlacement.name;
+                if (Event.current.shift && _settings.pixelsPerUnit > 0)
+                {
+                    infoText += " (Grid Snap)";
+                }
+
+                GUIContent infoContent = new(infoText);
+                Vector2 infoSize = EditorStyles.miniLabel.CalcSize(infoContent);
+                Rect infoRect = new(
+                    previewScreenPos.x - infoSize.x * 0.5f,
+                    previewRect.y + previewRect.height + 5,
+                    infoSize.x,
+                    infoSize.y
+                );
+
+                Color backgroundColor = new(0, 0, 0, 0.7f);
+                // Draw info background
+                EditorGUI.DrawRect(new Rect(infoRect.x - 2, infoRect.y - 1, infoRect.width + 4, infoRect.height + 2),
+                    backgroundColor);
+
+                // Draw info text
+                GUI.Label(infoRect, infoContent, EditorStyles.miniLabel);
+
+                Handles.EndGUI();
+            }
+
+            // Grid snap visualization (using the snapped world position)
+            if (Event.current.shift && _settings.pixelsPerUnit > 0)
+            {
+                Handles.color = Color.yellow;
+                float gridSize = 1.0f / _settings.pixelsPerUnit;
+
+                // Draw snap grid around cursor
+                for (int i = -1; i <= 1; i++)
+                {
+                    for (int j = -1; j <= 1; j++)
+                    {
+                        Vector3 gridPoint = previewWorldPos + new Vector3(i * gridSize, j * gridSize, 0);
+                        Handles.DrawWireCube(gridPoint, Vector3.one * gridSize * 0.2f);
+                    }
+                }
+            }
+
+            Handles.color = Color.white;
+        }
+
+        private Bounds GetPrefabBounds(GameObject prefab)
+        {
+            if (prefab == null) return new Bounds();
+
+            // Try to get bounds from renderers
+            var renderers = prefab.GetComponentsInChildren<Renderer>();
+            if (renderers != null && renderers.Length > 0)
+            {
+                Bounds bounds = renderers[0].bounds;
+                foreach (Renderer renderer in renderers)
+                {
+                    bounds.Encapsulate(renderer.bounds);
+                }
+
+                return bounds;
+            }
+
+            // Try to get bounds from colliders
+            var colliders = prefab.GetComponentsInChildren<Collider>();
+            if (colliders != null && colliders.Length > 0)
+            {
+                Bounds bounds = colliders[0].bounds;
+                foreach (Collider collider in colliders)
+                {
+                    bounds.Encapsulate(collider.bounds);
+                }
+
+                return bounds;
+            }
+
+            // Try to get bounds from colliders 2D
+            var colliders2D = prefab.GetComponentsInChildren<Collider2D>();
+            if (colliders2D is { Length: > 0 })
+            {
+                Bounds bounds = colliders2D[0].bounds;
+                foreach (Collider2D collider in colliders2D)
+                {
+                    bounds.Encapsulate(collider.bounds);
+                }
+
+                return bounds;
+            }
+
+            // Fallback to transform bounds
+            return new Bounds(prefab.transform.position, Vector3.one);
+        }
+
+        private void DrawRadialMenu()
+        {
+            Handles.BeginGUI();
+
+            Vector2 center = _radialMenuPosition;
+            float elapsedTime = (float)EditorApplication.timeSinceStartup - _radialMenuOpenTime;
+            float growProgress = Mathf.SmoothStep(0, 1, Mathf.Clamp01(elapsedTime / RadialMenuAnimationTime));
+            float radius = RadialMenuRadius * growProgress;
+
+            var prefabsToShow = _frequentPrefabs.Count > 0
+                ? _frequentPrefabs
+                : _filteredPrefabs.Take(MaxFrequentPrefabs).Select(p => p.prefab).ToList();
+
+            int prefabCount = Mathf.Min(prefabsToShow.Count, MaxFrequentPrefabs);
+            if (prefabCount == 0)
+            {
+                Handles.EndGUI();
+                return;
+            }
+
+            float segmentAngle = 360f / prefabCount;
+
+            // Layer 1: Background and outer ring
+            DrawRadialBackground(center, radius, growProgress);
+
+            // Layer 2: Segment highlights (if any item is hovered)
+            if (_hoveredRadialIndex >= 0 && _hoveredRadialIndex < prefabCount)
+            {
+                DrawSegmentHighlight(center, radius, _hoveredRadialIndex, segmentAngle);
+            }
+
+            // Layer 3: Segment dividers
+            DrawSegmentDividers(center, radius, prefabCount, segmentAngle);
+
+            // Layer 4: Prefab items
+            DrawPrefabItems(center, radius, prefabsToShow, prefabCount, segmentAngle);
+
+            // Layer 5: Center indicator
+            DrawCenterIndicator(center, growProgress);
+
+            // Layer 6: Hovered item tooltip
+            if (_hoveredRadialIndex >= 0 && _hoveredRadialIndex < prefabCount)
+            {
+                DrawItemTooltip(center, radius, prefabsToShow[_hoveredRadialIndex]);
+            }
+
+            Handles.color = Color.white;
+            Handles.EndGUI();
+        }
+
+        private void DrawRadialBackground(Vector2 center, float radius, float growProgress)
+        {
+            // Outer glow effect
+            for (int i = 0; i < 3; i++)
+            {
+                float glowRadius = radius + (i + 1) * 8f;
+                float glowAlpha = (0.1f - i * 0.03f) * growProgress;
+                Handles.color = new Color(0.4f, 0.7f, 1f, glowAlpha);
+                Handles.DrawSolidDisc(center, Vector3.forward, glowRadius);
+            }
+
+            // Main background with gradient effect
+            Handles.color = new Color(0.15f, 0.15f, 0.2f, 0.9f * growProgress);
+            Handles.DrawSolidDisc(center, Vector3.forward, radius);
+
+            // Subtle inner shadow
+            Handles.color = new Color(0.05f, 0.05f, 0.1f, 0.4f * growProgress);
+            Handles.DrawSolidDisc(center, Vector3.forward, radius * 0.95f);
+
+            // Main background again for clean appearance
+            Handles.color = new Color(0.2f, 0.2f, 0.25f, 0.85f * growProgress);
+            Handles.DrawSolidDisc(center, Vector3.forward, radius * 0.9f);
+
+            // Outer border with animation
+            Handles.color = new Color(0.6f, 0.6f, 0.7f, 0.8f * growProgress);
+            Handles.DrawWireDisc(center, Vector3.forward, radius);
+
+            // Inner ring for depth
+            float innerRadius = radius * 0.3f;
+            Handles.color = new Color(0.4f, 0.4f, 0.5f, 0.6f * growProgress);
+            Handles.DrawWireDisc(center, Vector3.forward, innerRadius);
+
+            // Very subtle inner fill
+            Handles.color = new Color(0.25f, 0.25f, 0.3f, 0.3f * growProgress);
+            Handles.DrawSolidDisc(center, Vector3.forward, innerRadius);
+        }
+
+        private void DrawSegmentHighlight(Vector2 center, float radius, int hoveredIndex, float segmentAngle)
+        {
+            float startAngle = hoveredIndex * segmentAngle - 90f - segmentAngle * 0.5f;
+            float endAngle = startAngle + segmentAngle;
+
+            // Create segment shape for highlight
+            var highlightPoints = new List<Vector3>();
+
+            // Add center point
+            highlightPoints.Add(new Vector3(center.x, center.y, 0));
+
+            // Add arc points from inner to outer radius
+            int arcResolution = 20;
+            for (int i = 0; i <= arcResolution; i++)
+            {
+                float angle = Mathf.Lerp(startAngle, endAngle, i / (float)arcResolution) * Mathf.Deg2Rad;
+                Vector2 outerPoint = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius * 0.9f;
+                highlightPoints.Add(new Vector3(outerPoint.x, outerPoint.y, 0));
+            }
+
+            // Multi-layer highlight for depth
+            // Outer glow
+            Handles.color = new Color(0.4f, 0.7f, 1f, 0.08f);
+            Handles.DrawAAConvexPolygon(highlightPoints.ToArray());
+
+            // Main highlight
+            Handles.color = new Color(0.5f, 0.8f, 1f, 0.15f);
+            var mainHighlightPoints = new List<Vector3> { new(center.x, center.y, 0) };
+            for (int i = 0; i <= arcResolution; i++)
+            {
+                float angle = Mathf.Lerp(startAngle, endAngle, i / (float)arcResolution) * Mathf.Deg2Rad;
+                Vector2 point = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius * 0.85f;
+                mainHighlightPoints.Add(new Vector3(point.x, point.y, 0));
+            }
+
+            Handles.DrawAAConvexPolygon(mainHighlightPoints.ToArray());
+
+            // Bright edge highlight
+            Handles.color = new Color(0.7f, 0.9f, 1f, 0.6f);
+            for (int i = 0; i <= arcResolution; i++)
+            {
+                float angle = Mathf.Lerp(startAngle, endAngle, i / (float)arcResolution) * Mathf.Deg2Rad;
+                Vector2 point = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius * 0.88f;
+
+                if (i < arcResolution)
+                {
+                    float nextAngle = Mathf.Lerp(startAngle, endAngle, (i + 1) / (float)arcResolution) * Mathf.Deg2Rad;
+                    Vector2 nextPoint =
+                        center + new Vector2(Mathf.Cos(nextAngle), Mathf.Sin(nextAngle)) * radius * 0.88f;
+
+                    Handles.DrawLine(point, nextPoint);
+                }
+            }
+        }
+
+        private void DrawSegmentDividers(Vector2 center, float radius, int prefabCount, float segmentAngle)
+        {
+            for (int i = 0; i < prefabCount; i++)
+            {
+                float angle = i * segmentAngle - 90f + segmentAngle * 0.5f;
+                Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
+
+                Vector2 lineStart = center + direction * (radius * 0.32f);
+                Vector2 lineEnd = center + direction * (radius * 0.88f);
+
+                // Subtle shadow line
+                Handles.color = new Color(0.1f, 0.1f, 0.15f, 0.8f);
+                Vector2 shadowOffset = Vector2.one * 0.5f;
+                Handles.DrawLine(lineStart + shadowOffset, lineEnd + shadowOffset);
+
+                // Main divider line - only highlight the dividers that border the hovered segment
+                bool isAdjacentToHovered = _hoveredRadialIndex >= 0 &&
+                                           i ==
+                                           _hoveredRadialIndex; // Only highlight the current segment's starting divider
+
+                Handles.color = isAdjacentToHovered
+                    ? new Color(0.7f, 0.9f, 1f, 0.8f)
+                    : new Color(0.4f, 0.4f, 0.5f, 0.5f);
+
+                Handles.DrawLine(lineStart, lineEnd);
+            }
+        }
+
+        private void DrawPrefabItems(Vector2 center, float radius, List<GameObject> prefabsToShow, int prefabCount,
+            float segmentAngle)
+        {
+            for (int i = 0; i < prefabCount; i++)
+            {
+                GameObject prefab = prefabsToShow[i];
+                if (prefab == null) continue;
+
+                float angle = i * segmentAngle - 90f;
+                Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
+                Vector2 itemPos = center + direction * (radius * 0.65f);
+
+                bool isHovered = i == _hoveredRadialIndex;
+                float baseIconSize = 48f;
+                float iconSize = isHovered ? baseIconSize * 1.2f : baseIconSize;
+
+                // Item background with subtle animation
+                if (isHovered)
+                {
+                    // Pulsing background
+                    float pulseScale = 1f + Mathf.Sin(Time.realtimeSinceStartup * 3f) * 0.1f;
+                    float bgRadius = iconSize * 0.5f * pulseScale;
+
+                    // Background glow
+                    Handles.color = new Color(0.4f, 0.7f, 1f, 0.2f);
+                    Handles.DrawSolidDisc(itemPos, Vector3.forward, bgRadius * 1.3f);
+
+                    // Main background
+                    Handles.color = new Color(0.6f, 0.8f, 1f, 0.3f);
+                    Handles.DrawSolidDisc(itemPos, Vector3.forward, bgRadius);
+
+                    // Border ring
+                    Handles.color = new Color(0.7f, 0.9f, 1f, 0.9f);
+                    Handles.DrawWireDisc(itemPos, Vector3.forward, bgRadius);
+                }
+
+                // Icon container
+                Rect iconRect = new(
+                    itemPos.x - iconSize * 0.5f,
+                    itemPos.y - iconSize * 0.5f,
+                    iconSize,
+                    iconSize
+                );
+
+                // Draw prefab preview
+                Texture2D preview = GetPrefabPreview(prefab);
+                if (preview != null)
+                {
+                    Color originalColor = GUI.color;
+
+                    if (isHovered)
+                    {
+                        // Enhanced brightness and slight scale animation
+                        float brightness = 1.2f + Mathf.Sin(Time.realtimeSinceStartup * 4f) * 0.1f;
+                        GUI.color = new Color(brightness, brightness, brightness, 1f);
+                    }
+                    else
+                    {
+                        GUI.color = new Color(0.9f, 0.9f, 0.9f, 0.9f);
+                    }
+
+                    GUI.DrawTexture(iconRect, preview, ScaleMode.ScaleToFit, true);
+                    GUI.color = originalColor;
+                }
+                else
+                {
+                    // Loading state with animated dots
+                    Color bgColor = isHovered ? new Color(0.9f, 0.95f, 1f, 0.6f) : new Color(0.7f, 0.7f, 0.8f, 0.4f);
+                    EditorGUI.DrawRect(iconRect, bgColor);
+
+                    // Animated loading indicator
+                    int dotCount = Mathf.FloorToInt(Time.realtimeSinceStartup * 2f) % 4;
+                    string dots = new string('●', dotCount) + new string('○', 3 - dotCount);
+
+                    GUIStyle loadingStyle = new(EditorStyles.centeredGreyMiniLabel)
+                    {
+                        fontSize = 10,
+                        normal = { textColor = isHovered ? Color.white : Color.gray }
+                    };
+
+                    GUI.Label(iconRect, dots, loadingStyle);
+                }
+
+                // Usage indicator
+                if (_prefabUsageCount.ContainsKey(prefab) && _prefabUsageCount[prefab] > 0)
+                {
+                    Vector2 badgePos = itemPos + new Vector2(iconSize * 0.3f, -iconSize * 0.3f);
+                    float badgeSize = 16f;
+
+                    Rect badgeRect = new(badgePos.x - badgeSize * 0.5f, badgePos.y - badgeSize * 0.5f, badgeSize,
+                        badgeSize);
+
+                    // Badge background
+                    Handles.color = new Color(1f, 0.6f, 0.2f, 0.9f);
+                    Handles.DrawSolidDisc(badgePos, Vector3.forward, badgeSize * 0.5f);
+
+                    // Badge border
+                    Handles.color = new Color(1f, 0.8f, 0.4f, 1f);
+                    Handles.DrawWireDisc(badgePos, Vector3.forward, badgeSize * 0.5f);
+
+                    // Usage count
+                    GUIStyle badgeStyle = new(EditorStyles.miniLabel)
+                    {
+                        fontSize = 8,
+                        fontStyle = FontStyle.Bold,
+                        alignment = TextAnchor.MiddleCenter,
+                        normal = { textColor = Color.white }
+                    };
+
+                    GUI.Label(badgeRect, _prefabUsageCount[prefab].ToString(), badgeStyle);
+                }
+            }
+        }
+
+        private void DrawCenterIndicator(Vector2 center, float growProgress)
+        {
+            float centerRadius = 6f * growProgress;
+
+            // Center shadow
+            Handles.color = new Color(0f, 0f, 0f, 0.5f * growProgress);
+            Handles.DrawSolidDisc(center + Vector2.one, Vector3.forward, centerRadius);
+
+            // Center background
+            Handles.color = new Color(0.3f, 0.5f, 0.8f, 0.9f * growProgress);
+            Handles.DrawSolidDisc(center, Vector3.forward, centerRadius);
+
+            // Center highlight
+            Handles.color = new Color(0.8f, 0.9f, 1f, 1f * growProgress);
+            Handles.DrawSolidDisc(center, Vector3.forward, centerRadius * 0.6f);
+
+            // Center dot
+            Handles.color = new Color(1f, 1f, 1f, 0.8f * growProgress);
+            Handles.DrawSolidDisc(center, Vector3.forward, centerRadius * 0.3f);
+        }
+
+        private void DrawItemTooltip(Vector2 center, float radius, GameObject prefab)
+        {
+            if (prefab == null) return;
+
+            GUIContent nameContent = new(prefab.name);
+            Vector2 nameSize = EditorStyles.boldLabel.CalcSize(nameContent);
+
+            Rect nameRect = new(
+                center.x - nameSize.x * 0.5f,
+                center.y + radius + 15,
+                nameSize.x,
+                nameSize.y
+            );
+
+            // Tooltip background with rounded corners effect
+            Rect tooltipBg = new(nameRect.x - 8, nameRect.y - 3, nameRect.width + 16, nameRect.height + 6);
+
+            // Shadow
+            Rect shadowRect = new(tooltipBg.x + 1, tooltipBg.y + 1, tooltipBg.width, tooltipBg.height);
+            EditorGUI.DrawRect(shadowRect, new Color(0f, 0f, 0f, 0.3f));
+
+            // Background
+            EditorGUI.DrawRect(tooltipBg, new Color(0.1f, 0.1f, 0.15f, 0.95f));
+
+            // Border
+            Rect borderRect = new(tooltipBg.x - 1, tooltipBg.y - 1, tooltipBg.width + 2, tooltipBg.height + 2);
+            EditorGUI.DrawRect(borderRect, new Color(0.5f, 0.8f, 1f, 0.8f));
+            EditorGUI.DrawRect(tooltipBg, new Color(0.1f, 0.1f, 0.15f, 0.95f));
+
+            // Text with subtle glow effect
+            GUI.color = new Color(0.95f, 0.95f, 1f, 1f);
+            GUI.Label(nameRect, nameContent, EditorStyles.boldLabel);
+
+            // Usage info
+            if (_prefabUsageCount.ContainsKey(prefab) && _prefabUsageCount[prefab] > 0)
+            {
+                string usageText = $"Used {_prefabUsageCount[prefab]} times";
+                GUIContent usageContent = new(usageText);
+                Vector2 usageSize = EditorStyles.miniLabel.CalcSize(usageContent);
+
+                Rect usageRect = new(
+                    center.x - usageSize.x * 0.5f,
+                    nameRect.y + nameRect.height + 2,
+                    usageSize.x,
+                    usageSize.y
+                );
+
+                GUI.color = new Color(0.7f, 0.8f, 0.9f, 0.9f);
+                GUI.Label(usageRect, usageContent, EditorStyles.miniLabel);
+            }
+
+            GUI.color = Color.white;
+        }
+
         #region Serialized Settings
 
         [Serializable]
@@ -74,7 +658,6 @@ namespace Editor
             public FilterType category;
             public bool isValid;
             public long fileSize;
-            public DateTime lastModified;
 
             public PrefabInfo(GameObject prefab)
             {
@@ -83,13 +666,12 @@ namespace Editor
                 path = AssetDatabase.GetAssetPath(prefab);
                 guid = AssetDatabase.AssetPathToGUID(path);
                 category = DetermineCategory(prefab);
-                isValid = prefab != null;
+                isValid = prefab;
 
                 if (File.Exists(path))
                 {
                     FileInfo fileInfo = new(path);
                     fileSize = fileInfo.Length;
-                    lastModified = fileInfo.LastWriteTime;
                 }
             }
 
@@ -99,7 +681,7 @@ namespace Editor
                     return FilterType.Enemies;
 
                 if (prefab.layer == LayerMask.NameToLayer("Collectibles") &&
-                    prefab.GetComponent<PowerUpContainer>() != null)
+                    prefab.GetComponent<PowerUpContainer>())
                     return FilterType.Containers;
 
                 return FilterType.Others;
@@ -714,425 +1296,6 @@ namespace Editor
             }
 
             return true;
-        }
-
-        private void HandlePlacementMode(Event currentEvent, SceneView sceneView)
-        {
-            if (!_placementMode || _selectedPrefabForPlacement == null) return;
-
-            int controlId = GUIUtility.GetControlID(FocusType.Passive);
-            HandleUtility.AddDefaultControl(controlId);
-
-            Vector3 worldPos = GetMouseWorldPosition(currentEvent);
-
-            if (currentEvent.shift && _settings.pixelsPerUnit > 0)
-            {
-                worldPos = SnapToGrid(worldPos);
-            }
-
-            if (currentEvent.type is EventType.MouseMove or EventType.Repaint)
-            {
-                DrawPlacementPreview(currentEvent.mousePosition, worldPos);
-                sceneView.Repaint();
-            }
-            else if (currentEvent.type == EventType.MouseDown && currentEvent.button == 0)
-            {
-                PlacePrefabAtPosition(_selectedPrefabForPlacement, worldPos);
-                currentEvent.Use();
-            }
-            else if (currentEvent.type == EventType.KeyDown && currentEvent.keyCode == KeyCode.Escape)
-            {
-                ExitPlacementMode();
-                currentEvent.Use();
-            }
-        }
-
-        private void DrawPlacementPreview(Vector2 mousePos, Vector3 worldPos)
-        {
-            // Get prefab bounds for accurate sizing
-            Bounds prefabBounds = GetPrefabBounds(_selectedPrefabForPlacement);
-            Vector3 worldSize = prefabBounds.size;
-
-            // If bounds are too small or invalid, use default size
-            if (worldSize.magnitude < 0.1f)
-            {
-                worldSize = Vector3.one * 0.5f;
-            }
-
-            // Scale the world size to compensate for asset preview padding BEFORE any calculations
-            // Unity's asset previews have internal padding, so we scale up the world size to compensate
-            worldSize *= 1.4f;
-
-            // Apply grid snapping to the preview position if enabled
-            Vector3 previewWorldPos = worldPos;
-            if (Event.current.shift && _settings.pixelsPerUnit > 0)
-            {
-                previewWorldPos = SnapToGrid(worldPos);
-            }
-
-            // Convert the snapped world position back to screen coordinates for the preview
-            Vector2 previewScreenPos = mousePos;
-            Camera sceneCamera = SceneView.lastActiveSceneView?.camera;
-            if (sceneCamera)
-            {
-                previewScreenPos = mousePos;
-            }
-
-            // Calculate accurate GUI preview size based on actual world size and camera
-            float screenSize = 80f; // Base size in pixels
-
-            if (sceneCamera)
-            {
-                if (sceneCamera.orthographic)
-                {
-                    // For orthographic camera, calculate screen size directly
-                    float orthographicSize = sceneCamera.orthographicSize;
-                    float screenHeight = SceneView.lastActiveSceneView.position.height;
-
-                    // Calculate pixels per world unit
-                    float pixelsPerWorldUnit = screenHeight / (orthographicSize * 2f);
-
-                    // Use the larger dimension of the sprite for accurate representation
-                    float largestWorldDimension = Mathf.Max(worldSize.x, worldSize.y, worldSize.z);
-                    screenSize = largestWorldDimension * pixelsPerWorldUnit;
-                }
-                else
-                {
-                    // For perspective camera, factor in distance
-                    float distance = Vector3.Distance(sceneCamera.transform.position, previewWorldPos);
-                    float fieldOfViewRad = sceneCamera.fieldOfView * Mathf.Deg2Rad;
-                    float screenHeight = SceneView.lastActiveSceneView.position.height;
-
-                    // Calculate how many world units fit in screen height at this distance
-                    float worldUnitsInScreenHeight = 2f * distance * Mathf.Tan(fieldOfViewRad * 0.5f);
-                    float pixelsPerWorldUnit = screenHeight / worldUnitsInScreenHeight;
-
-                    // Use the larger dimension of the sprite for accurate representation
-                    float largestWorldDimension = Mathf.Max(worldSize.x, worldSize.y, worldSize.z);
-                    screenSize = largestWorldDimension * pixelsPerWorldUnit;
-                }
-
-                // Clamp to reasonable bounds but allow larger sizes for bigger sprites
-                screenSize = Mathf.Clamp(screenSize, 20f, 400f);
-            }
-
-            // Get the prefab preview texture
-            Texture2D preview = GetPrefabPreview(_selectedPrefabForPlacement);
-
-            if (preview != null)
-            {
-                Handles.BeginGUI();
-
-                // Calculate preview rect centered on the snapped position with accurate size
-                Rect previewRect = new(
-                    previewScreenPos.x - screenSize * 0.5f,
-                    previewScreenPos.y - screenSize * 0.5f,
-                    screenSize,
-                    screenSize
-                );
-
-                // Draw the preview image with transparency support
-                Color originalColor = GUI.color;
-                GUI.color = new Color(1f, 1f, 1f, 1f); // Ensure full alpha for transparency
-                GUI.DrawTexture(previewRect, preview, ScaleMode.ScaleToFit, true); // Enable alpha blending
-                GUI.color = originalColor;
-
-                // Draw center crosshair for precise placement (use snapped position)
-                Vector2 center = previewScreenPos;
-                float crosshairSize = 6f;
-                Color crosshairColor = Color.red;
-                EditorGUI.DrawRect(new Rect(center.x - crosshairSize, center.y - 0.5f, crosshairSize * 2, 1),
-                    crosshairColor);
-
-                EditorGUI.DrawRect(new Rect(center.x - 0.5f, center.y - crosshairSize, 1, crosshairSize * 2),
-                    crosshairColor);
-
-                // Show prefab info below the preview
-                string infoText = _selectedPrefabForPlacement.name;
-                if (Event.current.shift && _settings.pixelsPerUnit > 0)
-                {
-                    infoText += " (Grid Snap)";
-                }
-
-                GUIContent infoContent = new(infoText);
-                Vector2 infoSize = EditorStyles.miniLabel.CalcSize(infoContent);
-                Rect infoRect = new(
-                    previewScreenPos.x - infoSize.x * 0.5f,
-                    previewRect.y + previewRect.height + 5,
-                    infoSize.x,
-                    infoSize.y
-                );
-
-                Color backgroundColor = new(0, 0, 0, 0.7f);
-                // Draw info background
-                EditorGUI.DrawRect(new Rect(infoRect.x - 2, infoRect.y - 1, infoRect.width + 4, infoRect.height + 2),
-                    backgroundColor);
-
-                // Draw info text
-                GUI.Label(infoRect, infoContent, EditorStyles.miniLabel);
-
-                Handles.EndGUI();
-            }
-
-            // Grid snap visualization (using the snapped world position)
-            if (Event.current.shift && _settings.pixelsPerUnit > 0)
-            {
-                Handles.color = Color.yellow;
-                float gridSize = 1.0f / _settings.pixelsPerUnit;
-
-                // Draw snap grid around cursor
-                for (int i = -1; i <= 1; i++)
-                {
-                    for (int j = -1; j <= 1; j++)
-                    {
-                        Vector3 gridPoint = previewWorldPos + new Vector3(i * gridSize, j * gridSize, 0);
-                        Handles.DrawWireCube(gridPoint, Vector3.one * gridSize * 0.2f);
-                    }
-                }
-            }
-
-            Handles.color = Color.white;
-        }
-
-        private Bounds GetPrefabBounds(GameObject prefab)
-        {
-            if (prefab == null) return new Bounds();
-
-            // Try to get bounds from renderers
-            var renderers = prefab.GetComponentsInChildren<Renderer>();
-            if (renderers != null && renderers.Length > 0)
-            {
-                Bounds bounds = renderers[0].bounds;
-                foreach (Renderer renderer in renderers)
-                {
-                    bounds.Encapsulate(renderer.bounds);
-                }
-
-                return bounds;
-            }
-
-            // Try to get bounds from colliders
-            var colliders = prefab.GetComponentsInChildren<Collider>();
-            if (colliders != null && colliders.Length > 0)
-            {
-                Bounds bounds = colliders[0].bounds;
-                foreach (Collider collider in colliders)
-                {
-                    bounds.Encapsulate(collider.bounds);
-                }
-
-                return bounds;
-            }
-
-            // Try to get bounds from colliders 2D
-            var colliders2D = prefab.GetComponentsInChildren<Collider2D>();
-            if (colliders2D is { Length: > 0 })
-            {
-                Bounds bounds = colliders2D[0].bounds;
-                foreach (Collider2D collider in colliders2D)
-                {
-                    bounds.Encapsulate(collider.bounds);
-                }
-
-                return bounds;
-            }
-
-            // Fallback to transform bounds
-            return new Bounds(prefab.transform.position, Vector3.one);
-        }
-
-
-        private void DrawRadialMenu()
-        {
-            Handles.BeginGUI();
-
-            Vector2 center = _radialMenuPosition;
-            float elapsedTime = (float)EditorApplication.timeSinceStartup - _radialMenuOpenTime;
-            float growProgress = Mathf.Clamp01(elapsedTime / RadialMenuAnimationTime);
-            float radius = RadialMenuRadius * Mathf.SmoothStep(0, 1, growProgress);
-
-            var prefabsToShow = _frequentPrefabs.Count > 0
-                ? _frequentPrefabs
-                : _filteredPrefabs.Take(MaxFrequentPrefabs).Select(p => p.prefab).ToList();
-
-            int prefabCount = Mathf.Min(prefabsToShow.Count, MaxFrequentPrefabs);
-
-            // Clean background circle with subtle transparency
-            Handles.color = new Color(0.2f, 0.2f, 0.25f, 0.85f);
-            Handles.DrawSolidDisc(center, Vector3.forward, radius);
-
-            // Simple outer border
-            Handles.color = new Color(0.6f, 0.6f, 0.7f, 0.8f);
-            Handles.DrawWireDisc(center, Vector3.forward, radius);
-
-            // Inner ring for depth
-            Handles.color = new Color(0.3f, 0.3f, 0.35f, 0.6f);
-            Handles.DrawWireDisc(center, Vector3.forward, radius * 0.3f);
-
-            // Draw segment highlight first (behind everything else)
-            if (_hoveredRadialIndex >= 0 && _hoveredRadialIndex < prefabCount)
-            {
-                float startAngle = (_hoveredRadialIndex - 0.5f) / prefabCount * 360f - 90f;
-                float endAngle = (_hoveredRadialIndex + 0.5f) / prefabCount * 360f - 90f;
-
-                // Draw highlighted segment area
-                var segmentPoints = new Vector3[32];
-                for (int i = 0; i < 32; i++)
-                {
-                    float angle = Mathf.Lerp(startAngle, endAngle, i / 31f) * Mathf.Deg2Rad;
-                    Vector2 point = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius * 0.95f;
-                    segmentPoints[i] = new Vector3(point.x, point.y, 0);
-                }
-
-                // Create a subtle highlight for the entire segment
-                Handles.color = new Color(0.4f, 0.7f, 1f, 0.15f);
-                Handles.DrawAAConvexPolygon(segmentPoints);
-            }
-            // Draw segment dividers that separate items cleanly
-            for (int i = 0; i < prefabCount; i++)
-            {
-                float angle = (i + 0.5f) / prefabCount * 360f - 90f; // Offset by half to separate items
-                Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
-
-                Vector2 lineStart = center + direction * (radius * 0.25f);
-                Vector2 lineEnd = center + direction * (radius * 0.98f);
-
-                Handles.color = new Color(0.5f, 0.5f, 0.6f, 0.6f);
-                Handles.DrawLine(lineStart, lineEnd);
-            }
-
-            // Draw prefab items with clean, modern styling
-            for (int i = 0; i < prefabCount; i++)
-            {
-                GameObject prefab = prefabsToShow[i];
-                if (prefab == null) continue;
-
-                float angle = i / (float)prefabCount * 360f - 90f;
-                Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
-                Vector2 itemPos = center + direction * (radius * 0.65f);
-
-                bool isHovered = i == _hoveredRadialIndex;
-                float iconSize = isHovered ? 56f : 48f;
-
-                // Clean selection indicator with subtle preview highlight
-                if (isHovered)
-                {
-                    // Larger highlight circle for the item area
-                    Handles.color = new Color(0.4f, 0.7f, 1f, 0.25f);
-                    Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.8f);
-
-                    // Clean border
-                    Handles.color = new Color(0.5f, 0.8f, 1f, 0.7f);
-                    Handles.DrawWireDisc(itemPos, Vector3.forward, iconSize * 0.8f);
-                }
-
-                // Icon background with subtle transparency
-                Rect iconRect = new(
-                    itemPos.x - iconSize * 0.4f,
-                    itemPos.y - iconSize * 0.4f,
-                    iconSize * 0.8f,
-                    iconSize * 0.8f
-                );
-
-                // Draw prefab preview with transparent background
-                Texture2D preview = GetPrefabPreview(prefab);
-                if (preview != null)
-                {
-                    // Use the cached transparent preview directly
-                    Color originalColor = GUI.color;
-                    if (isHovered)
-                    {
-                        // Add subtle brightness boost for hovered items
-                        GUI.color = new Color(1.1f, 1.1f, 1.1f, 1f);
-                    }
-
-                    GUI.DrawTexture(iconRect, preview, ScaleMode.ScaleToFit, true);
-                    GUI.color = originalColor;
-                }
-                else
-                {
-                    // Simple background for loading state
-                    Color bgColor = isHovered ? new Color(0.9f, 0.95f, 1f, 0.4f) : new Color(0.8f, 0.8f, 0.85f, 0.3f);
-                    EditorGUI.DrawRect(iconRect, bgColor);
-
-                    // Simple loading indicator
-                    GUI.color = isHovered ? new Color(0.3f, 0.3f, 0.3f) : new Color(0.6f, 0.6f, 0.6f);
-                    GUI.Label(iconRect, "●●●", new GUIStyle(EditorStyles.centeredGreyMiniLabel) { fontSize = 12 });
-                    GUI.color = Color.white;
-                }
-
-                // Add subtle border around preview for definition
-                if (isHovered)
-                {
-                    Color borderColor = new(0.4f, 0.7f, 1f, 0.8f);
-                    Rect borderRect = new(iconRect.x - 1, iconRect.y - 1, iconRect.width + 2, iconRect.height + 2);
-
-                    // Draw border using GUI lines
-                    EditorGUI.DrawRect(new Rect(borderRect.x, borderRect.y, borderRect.width, 1), borderColor);
-                    EditorGUI.DrawRect(
-                        new Rect(borderRect.x, borderRect.y + borderRect.height - 1, borderRect.width, 1), borderColor);
-
-                    EditorGUI.DrawRect(new Rect(borderRect.x, borderRect.y, 1, borderRect.height), borderColor);
-                    EditorGUI.DrawRect(
-                        new Rect(borderRect.x + borderRect.width - 1, borderRect.y, 1, borderRect.height), borderColor);
-                }
-
-                // Clean name display
-                if (isHovered)
-                {
-                    GUIContent nameContent = new(prefab.name);
-                    Vector2 nameSize = EditorStyles.boldLabel.CalcSize(nameContent);
-
-                    Rect nameRect = new(
-                        center.x - nameSize.x * 0.5f,
-                        center.y + radius + 12,
-                        nameSize.x,
-                        nameSize.y
-                    );
-
-                    // Clean tooltip background
-                    Rect tooltipBg = new(nameRect.x - 6, nameRect.y - 2, nameRect.width + 12, nameRect.height + 4);
-                    EditorGUI.DrawRect(tooltipBg, new Color(0.15f, 0.15f, 0.2f, 0.9f));
-
-                    // Simple border
-                    Rect borderBg = new(tooltipBg.x - 1, tooltipBg.y - 1, tooltipBg.width + 2, tooltipBg.height + 2);
-                    EditorGUI.DrawRect(borderBg, new Color(0.5f, 0.8f, 1f, 0.8f));
-                    EditorGUI.DrawRect(tooltipBg, new Color(0.15f, 0.15f, 0.2f, 0.9f));
-
-                    // Clean text
-                    GUI.color = new Color(0.95f, 0.95f, 1f, 1f);
-                    GUI.Label(nameRect, nameContent, EditorStyles.boldLabel);
-                    GUI.color = Color.white;
-
-                    // Usage indicator (minimal)
-                    if (_prefabUsageCount.ContainsKey(prefab) && _prefabUsageCount[prefab] > 0)
-                    {
-                        string usageText = $"({_prefabUsageCount[prefab]}x)";
-                        GUIContent usageContent = new(usageText);
-                        Vector2 usageSize = EditorStyles.miniLabel.CalcSize(usageContent);
-
-                        Rect usageRect = new(
-                            center.x - usageSize.x * 0.5f,
-                            nameRect.y + nameRect.height + 1,
-                            usageSize.x,
-                            usageSize.y
-                        );
-
-                        GUI.color = new Color(0.7f, 0.8f, 0.9f, 0.9f);
-                        GUI.Label(usageRect, usageContent, EditorStyles.miniLabel);
-                        GUI.color = Color.white;
-                    }
-                }
-            }
-
-            // Simple center dot
-            Handles.color = new Color(0.6f, 0.8f, 1f, 0.9f);
-            Handles.DrawSolidDisc(center, Vector3.forward, 4f);
-            Handles.color = new Color(0.9f, 0.9f, 1f, 1f);
-            Handles.DrawSolidDisc(center, Vector3.forward, 2f);
-
-            Handles.color = Color.white;
-            Handles.EndGUI();
         }
 
         private GameObject GetPrefabFromRadialMenu(Vector2 mousePosition)
