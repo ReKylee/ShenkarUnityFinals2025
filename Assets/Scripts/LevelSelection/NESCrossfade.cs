@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,28 +7,29 @@ namespace LevelSelection
 {
     public class NESCrossfade : MonoBehaviour
     {
-        [Header("Crossfade Configuration")]
-        public Image fadeImage;
+        [Header("Crossfade Configuration")] public Image fadeImage;
+
         public float fadeDuration = 1f;
         public Color fadeColor = Color.black;
         public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-        
-        [Header("NES Style Effect")]
-        public bool useNESEffect = true;
-        public Color[] nesColors = { Color.black, new Color(0.2f, 0.2f, 0.3f), new Color(0.1f, 0.1f, 0.2f) };
+
+        [Header("NES Style Effect")] public bool useNESEffect = true;
+
+        public Color[] nesColors = { Color.black, new(0.2f, 0.2f, 0.3f), new(0.1f, 0.1f, 0.2f) };
         public float colorFlickerSpeed = 10f;
-        
-        private bool _isFading = false;
-        private System.Action _onFadeComplete;
+
+        private Action _onFadeComplete;
+
+        public bool IsFading { get; private set; }
 
         private void Awake()
         {
             if (fadeImage == null)
             {
                 // Create fade image if not assigned
-                GameObject fadeGO = new GameObject("FadeImage");
+                GameObject fadeGO = new("FadeImage");
                 fadeGO.transform.SetParent(transform, false);
-                
+
                 Canvas canvas = GetComponent<Canvas>();
                 if (canvas == null)
                 {
@@ -35,7 +37,7 @@ namespace LevelSelection
                     canvas.sortingOrder = 1000;
                     canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 }
-                
+
                 fadeImage = fadeGO.AddComponent<Image>();
                 RectTransform rect = fadeImage.rectTransform;
                 rect.anchorMin = Vector2.zero;
@@ -43,46 +45,46 @@ namespace LevelSelection
                 rect.sizeDelta = Vector2.zero;
                 rect.anchoredPosition = Vector2.zero;
             }
-            
+
             // Start with transparent
             SetAlpha(0f);
         }
 
-        public void FadeOut(System.Action onComplete = null)
+        public void FadeOut(Action onComplete = null)
         {
-            if (_isFading) return;
-            
+            if (IsFading) return;
+
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(0f, 1f));
         }
 
-        public void FadeIn(System.Action onComplete = null)
+        public void FadeIn(Action onComplete = null)
         {
-            if (_isFading) return;
-            
+            if (IsFading) return;
+
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(1f, 0f));
         }
 
-        public void FadeOutAndIn(System.Action onMiddle = null, System.Action onComplete = null)
+        public void FadeOutAndIn(Action onMiddle = null, Action onComplete = null)
         {
-            if (_isFading) return;
-            
+            if (IsFading) return;
+
             StartCoroutine(FadeOutAndInCoroutine(onMiddle, onComplete));
         }
 
         private IEnumerator FadeCoroutine(float from, float to)
         {
-            _isFading = true;
+            IsFading = true;
             float elapsed = 0f;
-            
+
             while (elapsed < fadeDuration)
             {
                 elapsed += Time.deltaTime;
                 float progress = elapsed / fadeDuration;
                 float curveValue = fadeCurve.Evaluate(progress);
                 float alpha = Mathf.Lerp(from, to, curveValue);
-                
+
                 if (useNESEffect)
                 {
                     SetNESStyleAlpha(alpha);
@@ -91,10 +93,10 @@ namespace LevelSelection
                 {
                     SetAlpha(alpha);
                 }
-                
+
                 yield return null;
             }
-            
+
             if (useNESEffect)
             {
                 SetNESStyleAlpha(to);
@@ -103,26 +105,26 @@ namespace LevelSelection
             {
                 SetAlpha(to);
             }
-            
-            _isFading = false;
+
+            IsFading = false;
             _onFadeComplete?.Invoke();
             _onFadeComplete = null;
         }
 
-        private IEnumerator FadeOutAndInCoroutine(System.Action onMiddle, System.Action onComplete)
+        private IEnumerator FadeOutAndInCoroutine(Action onMiddle, Action onComplete)
         {
             // Fade out
             yield return StartCoroutine(FadeCoroutine(0f, 1f));
-            
+
             // Middle action (like loading scene)
             onMiddle?.Invoke();
-            
+
             // Small delay to ensure scene is loaded
             yield return new WaitForSeconds(0.1f);
-            
+
             // Fade in
             yield return StartCoroutine(FadeCoroutine(1f, 0f));
-            
+
             onComplete?.Invoke();
         }
 
@@ -147,7 +149,5 @@ namespace LevelSelection
                 fadeImage.color = color;
             }
         }
-
-        public bool IsFading => _isFading;
     }
 }

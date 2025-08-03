@@ -1,7 +1,6 @@
 ﻿using Core.Data;
 using Core.Events;
 using Core.Services;
-using LevelSelection;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -33,6 +32,5 @@ namespace LevelSelection.DI
 
             Debug.Log("[LevelSelectionLifetimeScope] Level selection DI container configured successfully.");
         }
-
     }
 }

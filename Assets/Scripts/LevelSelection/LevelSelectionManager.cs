@@ -3,6 +3,7 @@ using System.Linq;
 using Core.Data;
 using Core.Events;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using VContainer;
 
@@ -10,22 +11,19 @@ namespace LevelSelection
 {
     public class LevelSelectionManager : MonoBehaviour
     {
-        [Header("Level Configuration")]
-        public List<GameObject> levelGameObjects = new List<GameObject>();
+        [Header("Level Configuration")] public List<GameObject> levelGameObjects = new();
+
         public Transform levelContainer;
-        
-        [Header("Components")]
-        public LevelSelector levelSelector;
+
+        [Header("Components")] public LevelSelector levelSelector;
+
         public ItemSelectScreen itemSelectScreen;
         public NESCrossfade crossfade;
-        
-        [Header("Input Settings")]
-        public KeyCode upKey = KeyCode.UpArrow;
-        public KeyCode downKey = KeyCode.DownArrow;
-        public KeyCode leftKey = KeyCode.LeftArrow;
-        public KeyCode rightKey = KeyCode.RightArrow;
-        public KeyCode confirmKey = KeyCode.Return;
-        
+
+        [Header("Input Actions")]
+        [SerializeField] private InputActionReference navigateAction;
+        [SerializeField] private InputActionReference submitAction;
+
         private List<LevelData> _levelData;
         private List<LevelPoint> _levelPoints;
         private IEventBus _eventBus;
@@ -33,13 +31,10 @@ namespace LevelSelection
         private bool _isActive = false;
         private LevelSelectionDirector _director;
 
-        [Inject]
-        public void Construct(IEventBus eventBus, IGameDataService gameDataService)
+        public bool IsActive
         {
-            _eventBus = eventBus;
-            _gameDataService = gameDataService;
-            
-            SubscribeToEvents();
+            get => _isActive;
+            private set => _isActive = value;
         }
 
         private void Awake()
@@ -48,11 +43,34 @@ namespace LevelSelection
             InitializeLevelSelection();
         }
 
-        private void SubscribeToEvents()
+        private void OnEnable()
         {
-            _eventBus?.Subscribe<LevelSelectedEvent>(OnLevelSelected);
-            _eventBus?.Subscribe<LevelLoadRequestedEvent>(OnLevelLoadRequested);
-            _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
+            if (navigateAction != null)
+            {
+                navigateAction.action.Enable();
+                navigateAction.action.performed += OnNavigate;
+            }
+
+            if (submitAction != null)
+            {
+                submitAction.action.Enable();
+                submitAction.action.performed += OnConfirm;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (navigateAction != null)
+            {
+                navigateAction.action.performed -= OnNavigate;
+                navigateAction.action.Disable();
+            }
+
+            if (submitAction != null)
+            {
+                submitAction.action.performed -= OnConfirm;
+                submitAction.action.Disable();
+            }
         }
 
         private void OnDestroy()
@@ -62,6 +80,22 @@ namespace LevelSelection
             _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
         }
 
+        [Inject]
+        public void Construct(IEventBus eventBus, IGameDataService gameDataService)
+        {
+            _eventBus = eventBus;
+            _gameDataService = gameDataService;
+
+            SubscribeToEvents();
+        }
+
+        private void SubscribeToEvents()
+        {
+            _eventBus?.Subscribe<LevelSelectedEvent>(OnLevelSelected);
+            _eventBus?.Subscribe<LevelLoadRequestedEvent>(OnLevelLoadRequested);
+            _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
+        }
+
         private void InitializeLevelSelection()
         {
             // Auto-discover level objects if container is specified
@@ -69,7 +103,7 @@ namespace LevelSelection
             {
                 for (int i = 0; i < levelContainer.childCount; i++)
                 {
-                    var child = levelContainer.GetChild(i);
+                    Transform child = levelContainer.GetChild(i);
                     if (child.GetComponent<LevelPoint>() != null)
                     {
                         levelGameObjects.Add(child.gameObject);
@@ -80,31 +114,31 @@ namespace LevelSelection
             // Use director pattern to build level data
             _levelData = _director.BuildLevelData(levelGameObjects);
             _levelPoints = levelGameObjects.Select(go => go.GetComponent<LevelPoint>()).ToList();
-            
+
             LoadLevelProgressFromGameData();
-            
-            var gameData = _gameDataService?.CurrentData;
+
+            GameData gameData = _gameDataService?.CurrentData;
             int selectedIndex = gameData?.selectedLevelIndex ?? 0;
-            
+
             levelSelector?.Initialize(_levelData, _levelPoints, selectedIndex);
         }
 
         private void LoadLevelProgressFromGameData()
         {
-            var gameData = _gameDataService?.CurrentData;
+            GameData gameData = _gameDataService?.CurrentData;
             if (gameData == null) return;
 
             // Update unlock status based on game data
             for (int i = 0; i < _levelData.Count; i++)
             {
-                var level = _levelData[i];
+                LevelData level = _levelData[i];
                 level.isUnlocked = gameData.unlockedLevels.Contains(level.levelName);
-                
+
                 if (gameData.levelCompleted.TryGetValue(level.levelName, out bool completed))
                 {
                     level.isCompleted = completed;
                 }
-                
+
                 if (gameData.levelBestTimes.TryGetValue(level.levelName, out float bestTime))
                 {
                     level.bestTime = bestTime;
@@ -112,53 +146,25 @@ namespace LevelSelection
             }
         }
 
-        public void ActivateLevelSelection()
+        private void OnNavigate(InputAction.CallbackContext context)
         {
-            _isActive = true;
-            gameObject.SetActive(true);
+            if (!IsActive || levelSelector == null) return;
+
+            Vector2 direction = context.ReadValue<Vector2>();
+            levelSelector.Navigate(direction);
+            SaveSelectedLevel();
         }
 
-        public void DeactivateLevelSelection()
+        private void OnConfirm(InputAction.CallbackContext context)
         {
-            _isActive = false;
-            gameObject.SetActive(false);
-        }
+            if (!IsActive || levelSelector == null) return;
 
-        private void Update()
-        {
-            if (!_isActive || levelSelector == null) return;
-
-            HandleInput();
-        }
-
-        private void HandleInput()
-        {
-            Vector2 direction = Vector2.zero;
-            
-            if (Input.GetKeyDown(upKey))
-                direction = Vector2.up;
-            else if (Input.GetKeyDown(downKey))
-                direction = Vector2.down;
-            else if (Input.GetKeyDown(leftKey))
-                direction = Vector2.left;
-            else if (Input.GetKeyDown(rightKey))
-                direction = Vector2.right;
-            
-            if (direction != Vector2.zero)
-            {
-                levelSelector.Navigate(direction);
-                SaveSelectedLevel();
-            }
-            
-            if (Input.GetKeyDown(confirmKey))
-            {
-                levelSelector.SelectCurrentLevel();
-            }
+            levelSelector.SelectCurrentLevel();
         }
 
         private void SaveSelectedLevel()
         {
-            var gameData = _gameDataService?.CurrentData;
+            GameData gameData = _gameDataService?.CurrentData;
             if (gameData != null)
             {
                 gameData.selectedLevelIndex = levelSelector.CurrentIndex;
@@ -166,13 +172,25 @@ namespace LevelSelection
             }
         }
 
+        public void ActivateLevelSelection()
+        {
+            IsActive = true;
+            gameObject.SetActive(true);
+        }
+
+        public void DeactivateLevelSelection()
+        {
+            IsActive = false;
+            gameObject.SetActive(false);
+        }
+
         private void OnLevelSelected(LevelSelectedEvent levelEvent)
         {
-            var selectedLevel = _levelData.FirstOrDefault(l => l.levelName == levelEvent.LevelName);
+            LevelData selectedLevel = _levelData.FirstOrDefault(l => l.levelName == levelEvent.LevelName);
             if (selectedLevel == null) return;
 
             // Update current level in game data
-            var gameData = _gameDataService?.CurrentData;
+            GameData gameData = _gameDataService?.CurrentData;
             if (gameData != null)
             {
                 gameData.currentLevel = selectedLevel.levelName;
@@ -194,11 +212,13 @@ namespace LevelSelection
         {
             // Start crossfade and load scene
             crossfade?.FadeOutAndIn(
-                onMiddle: () => {
+                () =>
+                {
                     // Load the scene
                     SceneManager.LoadScene(loadEvent.SceneName);
                 },
-                onComplete: () => {
+                () =>
+                {
                     // Publish level started event
                     _eventBus?.Publish(new LevelStartedEvent
                     {
@@ -212,14 +232,14 @@ namespace LevelSelection
         private void OnLevelCompleted(LevelCompletedEvent completedEvent)
         {
             // Update level completion status and unlock next level
-            var gameData = _gameDataService?.CurrentData;
+            GameData gameData = _gameDataService?.CurrentData;
             if (gameData == null) return;
 
             // Mark level as completed
             gameData.levelCompleted[completedEvent.LevelName] = true;
-            
+
             // Update best time
-            if (!gameData.levelBestTimes.ContainsKey(completedEvent.LevelName) || 
+            if (!gameData.levelBestTimes.ContainsKey(completedEvent.LevelName) ||
                 completedEvent.CompletionTime < gameData.levelBestTimes[completedEvent.LevelName])
             {
                 gameData.levelBestTimes[completedEvent.LevelName] = completedEvent.CompletionTime;
@@ -237,9 +257,9 @@ namespace LevelSelection
             }
 
             _gameDataService?.SaveData();
-            
+
             // Refresh level data if we're still in level selection
-            if (_isActive)
+            if (IsActive)
             {
                 LoadLevelProgressFromGameData();
                 levelSelector?.Initialize(_levelData, _levelPoints, levelSelector.CurrentIndex);
@@ -247,6 +267,5 @@ namespace LevelSelection
         }
 
         public List<LevelData> GetLevelData() => _levelData;
-        public bool IsActive => _isActive;
     }
 }

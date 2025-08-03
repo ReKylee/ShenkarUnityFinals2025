@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Core.Events;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using VContainer;
 
@@ -8,17 +10,19 @@ namespace LevelSelection
 {
     public class ItemSelectScreen : MonoBehaviour
     {
-        [Header("UI References")]
-        public Image itemSelectImage;
+        [Header("UI References")] public Image itemSelectImage;
+
         public string itemSelectSpritePath = "item select screen";
-        
-        [Header("Display Settings")]
-        public float displayDuration = 2f;
+
+        [Header("Display Settings")] public float displayDuration = 2f;
+
         public bool waitForInput = true;
-        
-        [Header("Audio")]
-        public AudioClip confirmSound;
-        
+
+        [Header("Audio")] public AudioClip confirmSound;
+
+        [Header("Input Actions")]
+        [SerializeField] private InputActionReference submitAction;
+
         private IEventBus _eventBus;
         private AudioSource _audioSource;
         private bool _isWaitingForInput = false;
@@ -26,11 +30,7 @@ namespace LevelSelection
         private string _pendingSceneName;
         private System.Action _onComplete;
 
-        [Inject]
-        public void Construct(IEventBus eventBus)
-        {
-            _eventBus = eventBus;
-        }
+        public bool IsWaitingForInput { get; private set; }
 
         private void Awake()
         {
@@ -39,7 +39,7 @@ namespace LevelSelection
             {
                 _audioSource = gameObject.AddComponent<AudioSource>();
             }
-            
+
             // Load the item select screen sprite
             if (itemSelectImage != null && string.IsNullOrEmpty(itemSelectSpritePath) == false)
             {
@@ -49,22 +49,46 @@ namespace LevelSelection
                     itemSelectImage.sprite = itemSelectSprite;
                 }
             }
-            
+
             // Start hidden
             gameObject.SetActive(false);
         }
 
-        public void ShowItemSelect(string levelName, string sceneName, System.Action onComplete = null)
+        private void OnEnable()
+        {
+            if (submitAction != null)
+            {
+                submitAction.action.Enable();
+                submitAction.action.performed += OnConfirmInput;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (submitAction != null)
+            {
+                submitAction.action.performed -= OnConfirmInput;
+                submitAction.action.Disable();
+            }
+        }
+
+        [Inject]
+        public void Construct(IEventBus eventBus)
+        {
+            _eventBus = eventBus;
+        }
+
+        public void ShowItemSelect(string levelName, string sceneName, Action onComplete = null)
         {
             _pendingLevelName = levelName;
             _pendingSceneName = sceneName;
             _onComplete = onComplete;
-            
+
             gameObject.SetActive(true);
-            
+
             if (waitForInput)
             {
-                _isWaitingForInput = true;
+                IsWaitingForInput = true;
             }
             else
             {
@@ -78,15 +102,11 @@ namespace LevelSelection
             ConfirmAndProceed();
         }
 
-        private void Update()
+        private void OnConfirmInput(InputAction.CallbackContext context)
         {
-            if (_isWaitingForInput)
+            if (IsWaitingForInput)
             {
-                // Check for Enter/Confirm input
-                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.KeypadEnter))
-                {
-                    ConfirmAndProceed();
-                }
+                ConfirmAndProceed();
             }
         }
 
@@ -96,10 +116,10 @@ namespace LevelSelection
             {
                 _audioSource.PlayOneShot(confirmSound);
             }
-            
-            _isWaitingForInput = false;
+
+            IsWaitingForInput = false;
             gameObject.SetActive(false);
-            
+
             // Publish level load request event
             _eventBus?.Publish(new LevelLoadRequestedEvent
             {
@@ -107,10 +127,8 @@ namespace LevelSelection
                 LevelName = _pendingLevelName,
                 SceneName = _pendingSceneName
             });
-            
+
             _onComplete?.Invoke();
         }
-
-        public bool IsWaitingForInput => _isWaitingForInput;
     }
 }

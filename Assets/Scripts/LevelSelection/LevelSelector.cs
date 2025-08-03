@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Core.Events;
 using UnityEngine;
 using VContainer;
@@ -9,30 +7,27 @@ namespace LevelSelection
 {
     public class LevelSelector : MonoBehaviour
     {
-        [Header("Selector Configuration")]
-        public GameObject selectorObject;
+        [Header("Selector Configuration")] public GameObject selectorObject;
+
         public float moveSpeed = 5f;
         public AudioClip navigationSound;
         public AudioClip selectionSound;
         public AudioClip lockedSound;
-        
-        [Header("Grid Navigation")]
-        public int gridWidth = 4;
+
+        [Header("Grid Navigation")] public int gridWidth = 4;
+
         public float snapThreshold = 0.1f;
-        
-        private List<LevelData> _availableLevels;
-        private List<LevelPoint> _levelPoints;
-        private int _currentIndex = 0;
-        private bool _isMoving = false;
-        private Vector3 _targetPosition;
-        private IEventBus _eventBus;
         private AudioSource _audioSource;
 
-        [Inject]
-        public void Construct(IEventBus eventBus)
-        {
-            _eventBus = eventBus;
-        }
+        private List<LevelData> _availableLevels;
+        private IEventBus _eventBus;
+        private List<LevelPoint> _levelPoints;
+        private Vector3 _targetPosition;
+
+        public int CurrentIndex { get; private set; }
+
+        public LevelData CurrentLevel => _availableLevels?[CurrentIndex];
+        public bool IsMoving { get; private set; }
 
         private void Awake()
         {
@@ -43,37 +38,61 @@ namespace LevelSelection
             }
         }
 
+        private void Update()
+        {
+            if (IsMoving && selectorObject != null)
+            {
+                selectorObject.transform.position = Vector3.MoveTowards(
+                    selectorObject.transform.position,
+                    _targetPosition,
+                    moveSpeed * Time.deltaTime
+                );
+
+                if (Vector3.Distance(selectorObject.transform.position, _targetPosition) < snapThreshold)
+                {
+                    selectorObject.transform.position = _targetPosition;
+                    IsMoving = false;
+                }
+            }
+        }
+
+        [Inject]
+        public void Construct(IEventBus eventBus)
+        {
+            _eventBus = eventBus;
+        }
+
         public void Initialize(List<LevelData> levels, List<LevelPoint> levelPoints, int selectedIndex = 0)
         {
             _availableLevels = levels;
             _levelPoints = levelPoints;
-            _currentIndex = Mathf.Clamp(selectedIndex, 0, levels.Count - 1);
-            
+            CurrentIndex = Mathf.Clamp(selectedIndex, 0, levels.Count - 1);
+
             UpdateLevelStates();
             MoveToCurrentLevel(true); // Instant move on initialization
         }
 
         public void Navigate(Vector2 direction)
         {
-            if (_isMoving || _availableLevels == null || _availableLevels.Count == 0)
+            if (IsMoving || _availableLevels == null || _availableLevels.Count == 0)
                 return;
 
             int newIndex = CalculateNewIndex(direction);
-            
-            if (newIndex != _currentIndex && newIndex >= 0 && newIndex < _availableLevels.Count)
+
+            if (newIndex != CurrentIndex && newIndex >= 0 && newIndex < _availableLevels.Count)
             {
-                int previousIndex = _currentIndex;
-                _currentIndex = newIndex;
-                
+                int previousIndex = CurrentIndex;
+                CurrentIndex = newIndex;
+
                 PlaySound(navigationSound);
                 UpdateSelection();
                 MoveToCurrentLevel();
-                
+
                 _eventBus?.Publish(new LevelNavigationEvent
                 {
                     Timestamp = Time.time,
                     PreviousIndex = previousIndex,
-                    NewIndex = _currentIndex,
+                    NewIndex = CurrentIndex,
                     Direction = direction
                 });
             }
@@ -82,44 +101,41 @@ namespace LevelSelection
         private int CalculateNewIndex(Vector2 direction)
         {
             // Adventure Island III style navigation - mostly horizontal with some vertical
-            int currentRow = _currentIndex / gridWidth;
-            int currentCol = _currentIndex % gridWidth;
-            
+            int currentRow = CurrentIndex / gridWidth;
+            int currentCol = CurrentIndex % gridWidth;
+
             if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
             {
                 // Horizontal movement
                 if (direction.x > 0) // Right
                 {
-                    return Mathf.Min(_currentIndex + 1, _availableLevels.Count - 1);
+                    return Mathf.Min(CurrentIndex + 1, _availableLevels.Count - 1);
                 }
-                else // Left
-                {
-                    return Mathf.Max(_currentIndex - 1, 0);
-                }
+
+                // Left
+                return Mathf.Max(CurrentIndex - 1, 0);
             }
-            else
+
+            // Vertical movement
+            if (direction.y > 0) // Up
             {
-                // Vertical movement
-                if (direction.y > 0) // Up
-                {
-                    int newIndex = _currentIndex - gridWidth;
-                    return newIndex >= 0 ? newIndex : _currentIndex;
-                }
-                else // Down
-                {
-                    int newIndex = _currentIndex + gridWidth;
-                    return newIndex < _availableLevels.Count ? newIndex : _currentIndex;
-                }
+                int newIndex = CurrentIndex - gridWidth;
+                return newIndex >= 0 ? newIndex : CurrentIndex;
+            }
+            else // Down
+            {
+                int newIndex = CurrentIndex + gridWidth;
+                return newIndex < _availableLevels.Count ? newIndex : CurrentIndex;
             }
         }
 
         public void SelectCurrentLevel()
         {
-            if (_availableLevels == null || _currentIndex >= _availableLevels.Count)
+            if (_availableLevels == null || CurrentIndex >= _availableLevels.Count)
                 return;
 
-            var selectedLevel = _availableLevels[_currentIndex];
-            
+            LevelData selectedLevel = _availableLevels[CurrentIndex];
+
             if (!selectedLevel.isUnlocked)
             {
                 PlaySound(lockedSound);
@@ -127,12 +143,12 @@ namespace LevelSelection
             }
 
             PlaySound(selectionSound);
-            
+
             _eventBus?.Publish(new LevelSelectedEvent
             {
                 Timestamp = Time.time,
                 LevelName = selectedLevel.levelName,
-                LevelIndex = _currentIndex
+                LevelIndex = CurrentIndex
             });
         }
 
@@ -142,7 +158,7 @@ namespace LevelSelection
             {
                 if (_levelPoints[i] != null)
                 {
-                    _levelPoints[i].SetSelected(i == _currentIndex);
+                    _levelPoints[i].SetSelected(i == CurrentIndex);
                 }
             }
         }
@@ -154,44 +170,26 @@ namespace LevelSelection
                 if (_levelPoints[i] != null)
                 {
                     _levelPoints[i].SetUnlocked(_availableLevels[i].isUnlocked);
-                    _levelPoints[i].SetSelected(i == _currentIndex);
+                    _levelPoints[i].SetSelected(i == CurrentIndex);
                 }
             }
         }
 
         private void MoveToCurrentLevel(bool instant = false)
         {
-            if (_currentIndex >= _levelPoints.Count || _levelPoints[_currentIndex] == null)
+            if (CurrentIndex >= _levelPoints.Count || _levelPoints[CurrentIndex] == null)
                 return;
 
-            _targetPosition = _levelPoints[_currentIndex].transform.position;
-            
+            _targetPosition = _levelPoints[CurrentIndex].transform.position;
+
             if (instant)
             {
                 selectorObject.transform.position = _targetPosition;
-                _isMoving = false;
+                IsMoving = false;
             }
             else
             {
-                _isMoving = true;
-            }
-        }
-
-        private void Update()
-        {
-            if (_isMoving && selectorObject != null)
-            {
-                selectorObject.transform.position = Vector3.MoveTowards(
-                    selectorObject.transform.position, 
-                    _targetPosition, 
-                    moveSpeed * Time.deltaTime
-                );
-                
-                if (Vector3.Distance(selectorObject.transform.position, _targetPosition) < snapThreshold)
-                {
-                    selectorObject.transform.position = _targetPosition;
-                    _isMoving = false;
-                }
+                IsMoving = true;
             }
         }
 
@@ -202,9 +200,5 @@ namespace LevelSelection
                 _audioSource.PlayOneShot(clip);
             }
         }
-
-        public int CurrentIndex => _currentIndex;
-        public LevelData CurrentLevel => _availableLevels?[_currentIndex];
-        public bool IsMoving => _isMoving;
     }
 }

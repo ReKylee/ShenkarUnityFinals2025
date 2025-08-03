@@ -26,7 +26,7 @@ namespace LevelSelection
 
     public class LevelDataBuilder
     {
-        private LevelData _levelData;
+        private readonly LevelData _levelData;
 
         public LevelDataBuilder()
         {
@@ -87,17 +87,14 @@ namespace LevelSelection
             return this;
         }
 
-        public LevelData Build()
-        {
-            return _levelData;
-        }
+        public LevelData Build() => _levelData;
     }
 
     public static class LevelDataFactory
     {
         public static LevelData CreateFromGameObject(GameObject levelObject, int index)
         {
-            var levelPoint = levelObject.GetComponent<LevelPoint>();
+            LevelPoint levelPoint = levelObject.GetComponent<LevelPoint>();
             if (levelPoint == null)
             {
                 Debug.LogWarning($"GameObject {levelObject.name} doesn't have a LevelPoint component");
@@ -114,9 +111,8 @@ namespace LevelSelection
                 .Build();
         }
 
-        public static LevelData CreateDefault(string name, string scene, Vector2 position, int index)
-        {
-            return new LevelDataBuilder()
+        public static LevelData CreateDefault(string name, string scene, Vector2 position, int index) =>
+            new LevelDataBuilder()
                 .WithName(name)
                 .WithDisplayName(name)
                 .WithScene(scene)
@@ -124,15 +120,13 @@ namespace LevelSelection
                 .WithIndex(index)
                 .Unlocked(index == 0) // First level is always unlocked
                 .Build();
-        }
 
         /// <summary>
-        /// Creates level data using only the GameObject's transform position and name
-        /// Useful when LevelPoint component is not available
+        ///     Creates level data using only the GameObject's transform position and name
+        ///     Useful when LevelPoint component is not available
         /// </summary>
-        public static LevelData CreateFromTransform(GameObject levelObject, int index, string sceneName = null)
-        {
-            return new LevelDataBuilder()
+        public static LevelData CreateFromTransform(GameObject levelObject, int index, string sceneName = null) =>
+            new LevelDataBuilder()
                 .WithName(levelObject.name)
                 .WithDisplayName(levelObject.name)
                 .WithScene(sceneName ?? levelObject.name) // Use object name as scene if not provided
@@ -140,6 +134,5 @@ namespace LevelSelection
                 .WithIndex(index)
                 .Unlocked(index == 0)
                 .Build();
-        }
     }
 }
