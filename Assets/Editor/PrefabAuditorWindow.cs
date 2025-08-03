@@ -549,9 +549,9 @@ namespace Editor
                         StartPlacementMode(prefabInfo.prefab);
                     }
 
-                    if (GUILayout.Button("📍", GUILayout.Width(25), GUILayout.Height(25)))
+                    if (GUILayout.Button("📂", GUILayout.Width(25), GUILayout.Height(25)))
                     {
-                        PlacePrefabAtPosition(prefabInfo.prefab, Vector3.zero);
+                        EditorGUIUtility.PingObject(prefabInfo.prefab);
                     }
                 }
             }
@@ -678,6 +678,17 @@ namespace Editor
 
             if (!_showRadialMenu) return false;
 
+            // Always update hover state when mouse is moving or during repaint
+            if (currentEvent.type is EventType.MouseMove or EventType.Repaint)
+            {
+                int newHoveredIndex = GetRadialMenuIndex(currentEvent.mousePosition);
+                if (newHoveredIndex != _hoveredRadialIndex)
+                {
+                    _hoveredRadialIndex = newHoveredIndex;
+                    sceneView.Repaint();
+                }
+            }
+
             DrawRadialMenu();
 
             if (currentEvent.type == EventType.MouseUp && currentEvent.button == 1)
@@ -689,18 +700,15 @@ namespace Editor
                 }
 
                 _showRadialMenu = false;
+                _hoveredRadialIndex = -1;
                 currentEvent.Use();
                 return true;
             }
 
-            if (currentEvent.type == EventType.MouseMove)
-            {
-                _hoveredRadialIndex = GetRadialMenuIndex(currentEvent.mousePosition);
-                sceneView.Repaint();
-            }
-            else if (currentEvent.type == EventType.KeyDown && currentEvent.keyCode == KeyCode.Escape)
+            if (currentEvent.type == EventType.KeyDown && currentEvent.keyCode == KeyCode.Escape)
             {
                 _showRadialMenu = false;
+                _hoveredRadialIndex = -1;
                 currentEvent.Use();
             }
 
@@ -743,29 +751,74 @@ namespace Editor
             // Get prefab bounds for accurate sizing
             Bounds prefabBounds = GetPrefabBounds(_selectedPrefabForPlacement);
             Vector3 worldSize = prefabBounds.size;
+            Vector3 pivotOffset = GetPrefabPivotOffset(_selectedPrefabForPlacement, prefabBounds);
             
             // If bounds are too small or invalid, use default size
             if (worldSize.magnitude < 0.1f)
             {
                 worldSize = Vector3.one * 0.5f;
+                pivotOffset = Vector3.zero;
             }
 
-            // Calculate GUI preview size based on actual prefab size
-            // Convert world size to screen pixels for accurate representation
+            // Scale the world size to compensate for asset preview padding BEFORE any calculations
+            // Unity's asset previews have internal padding, so we scale up the world size to compensate
+            worldSize *= 1.2f; // Scale up by 20% to account for internal padding
+
+            // Apply grid snapping to the preview position if enabled
+            Vector3 previewWorldPos = worldPos;
+            if (Event.current.shift && _settings.pixelsPerUnit > 0)
+            {
+                previewWorldPos = SnapToGrid(worldPos);
+            }
+
+            // Convert the snapped world position back to screen coordinates for the preview
+            Vector2 previewScreenPos = mousePos;
             Camera sceneCamera = SceneView.lastActiveSceneView?.camera;
+            if (sceneCamera != null)
+            {
+                // Account for pivot offset when converting to screen coordinates
+                Vector3 pivotWorldPos = previewWorldPos + pivotOffset;
+                Vector3 screenPoint = sceneCamera.WorldToScreenPoint(pivotWorldPos);
+                // Convert Unity screen coordinates to GUI coordinates
+                previewScreenPos = new Vector2(screenPoint.x, SceneView.lastActiveSceneView.position.height - screenPoint.y);
+            }
+
+            // Calculate accurate GUI preview size based on actual world size and camera
             float screenSize = 80f; // Base size in pixels
             
             if (sceneCamera != null)
             {
-                // Calculate how big the prefab would appear on screen
-                float distance = Vector3.Distance(sceneCamera.transform.position, worldPos);
-                float worldToScreenScale = sceneCamera.orthographic ? 
-                    sceneCamera.orthographicSize * 2f / Screen.height :
-                    distance * Mathf.Tan(sceneCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * 2f / Screen.height;
+                if (sceneCamera.orthographic)
+                {
+                    // For orthographic camera, calculate screen size directly
+                    float orthographicSize = sceneCamera.orthographicSize;
+                    float screenHeight = SceneView.lastActiveSceneView.position.height;
+                    
+                    // Calculate pixels per world unit
+                    float pixelsPerWorldUnit = screenHeight / (orthographicSize * 2f);
+                    
+                    // Use the larger dimension of the sprite for accurate representation
+                    float largestWorldDimension = Mathf.Max(worldSize.x, worldSize.y, worldSize.z);
+                    screenSize = largestWorldDimension * pixelsPerWorldUnit;
+                }
+                else
+                {
+                    // For perspective camera, factor in distance
+                    float distance = Vector3.Distance(sceneCamera.transform.position, previewWorldPos);
+                    float fieldOfViewRad = sceneCamera.fieldOfView * Mathf.Deg2Rad;
+                    float screenHeight = SceneView.lastActiveSceneView.position.height;
+                    
+                    // Calculate how many world units fit in screen height at this distance
+                    float worldUnitsInScreenHeight = 2f * distance * Mathf.Tan(fieldOfViewRad * 0.5f);
+                    float pixelsPerWorldUnit = screenHeight / worldUnitsInScreenHeight;
+                    
+                    // Use the larger dimension of the sprite for accurate representation
+                    float largestWorldDimension = Mathf.Max(worldSize.x, worldSize.y, worldSize.z);
+                    screenSize = largestWorldDimension * pixelsPerWorldUnit;
+                }
                 
-                // Scale GUI preview to match world representation
-                screenSize = Mathf.Max(worldSize.x, worldSize.y) / worldToScreenScale;
-                screenSize = Mathf.Clamp(screenSize, 40f, 150f); // Keep within reasonable bounds
+                // Clamp to reasonable bounds but allow larger sizes for bigger sprites
+                screenSize = Mathf.Clamp(screenSize, 20f, 400f);
             }
 
             // Get the prefab preview texture
@@ -775,36 +828,22 @@ namespace Editor
             {
                 Handles.BeginGUI();
                 
-                // Calculate preview rect centered on mouse with actual size
+                // Calculate preview rect centered on the snapped position with accurate size
                 Rect previewRect = new Rect(
-                    mousePos.x - screenSize * 0.5f, 
-                    mousePos.y - screenSize * 0.5f, 
+                    previewScreenPos.x - screenSize * 0.5f, 
+                    previewScreenPos.y - screenSize * 0.5f, 
                     screenSize, 
                     screenSize
                 );
                 
-                // Draw semi-transparent background
-                Rect backgroundRect = new Rect(
-                    previewRect.x - 3, 
-                    previewRect.y - 3, 
-                    previewRect.width + 6, 
-                    previewRect.height + 6
-                );
-                
-                Color backgroundColor = new Color(0, 0, 0, 0.7f);
-                EditorGUI.DrawRect(backgroundRect, backgroundColor);
-                
-                // Draw thin white border
-                EditorGUI.DrawRect(new Rect(backgroundRect.x, backgroundRect.y, backgroundRect.width, 1), Color.white);
-                EditorGUI.DrawRect(new Rect(backgroundRect.x, backgroundRect.y + backgroundRect.height - 1, backgroundRect.width, 1), Color.white);
-                EditorGUI.DrawRect(new Rect(backgroundRect.x, backgroundRect.y, 1, backgroundRect.height), Color.white);
-                EditorGUI.DrawRect(new Rect(backgroundRect.x + backgroundRect.width - 1, backgroundRect.y, 1, backgroundRect.height), Color.white);
-                
-                // Draw the preview image
-                GUI.DrawTexture(previewRect, preview, ScaleMode.ScaleToFit);
-                
-                // Draw center crosshair for precise placement
-                Vector2 center = mousePos;
+                // Draw the preview image with transparency support
+                Color originalColor = GUI.color;
+                GUI.color = new Color(1f, 1f, 1f, 1f); // Ensure full alpha for transparency
+                GUI.DrawTexture(previewRect, preview, ScaleMode.ScaleToFit, true); // Enable alpha blending
+                GUI.color = originalColor;
+
+                // Draw center crosshair for precise placement (use snapped position)
+                Vector2 center = previewScreenPos;
                 float crosshairSize = 6f;
                 Color crosshairColor = Color.red;
                 EditorGUI.DrawRect(new Rect(center.x - crosshairSize, center.y - 0.5f, crosshairSize * 2, 1), crosshairColor);
@@ -817,15 +856,18 @@ namespace Editor
                     infoText += " (Grid Snap)";
                 }
                 
+                // Add size info for debugging
+                infoText += $" | Size: {worldSize.x:F1}x{worldSize.y:F1} | Screen: {screenSize:F0}px";
+                
                 GUIContent infoContent = new GUIContent(infoText);
                 Vector2 infoSize = EditorStyles.miniLabel.CalcSize(infoContent);
                 Rect infoRect = new Rect(
-                    mousePos.x - infoSize.x * 0.5f, 
+                    previewScreenPos.x - infoSize.x * 0.5f, 
                     previewRect.y + previewRect.height + 5, 
                     infoSize.x, 
                     infoSize.y
                 );
-                
+                Color backgroundColor = new Color(0, 0, 0, 0.7f);
                 // Draw info background
                 EditorGUI.DrawRect(new Rect(infoRect.x - 2, infoRect.y - 1, infoRect.width + 4, infoRect.height + 2), backgroundColor);
                 
@@ -835,11 +877,7 @@ namespace Editor
                 Handles.EndGUI();
             }
 
-            // World space preview (simplified to avoid conflicts)
-            Handles.color = new Color(0, 1, 0, 0.8f);
-            Handles.DrawWireCube(worldPos, worldSize);
-            
-            // Grid snap visualization
+            // Grid snap visualization (using the snapped world position)
             if (Event.current.shift && _settings.pixelsPerUnit > 0)
             {
                 Handles.color = Color.yellow;
@@ -850,7 +888,7 @@ namespace Editor
                 {
                     for (int j = -1; j <= 1; j++)
                     {
-                        Vector3 gridPoint = worldPos + new Vector3(i * gridSize, j * gridSize, 0);
+                        Vector3 gridPoint = previewWorldPos + new Vector3(i * gridSize, j * gridSize, 0);
                         Handles.DrawWireCube(gridPoint, Vector3.one * gridSize * 0.2f);
                     }
                 }
@@ -902,6 +940,45 @@ namespace Editor
             // Fallback to transform bounds
             return new Bounds(prefab.transform.position, Vector3.one);
         }
+
+        private Vector3 GetPrefabPivotOffset(GameObject prefab, Bounds bounds)
+        {
+            if (prefab == null) return Vector3.zero;
+            
+            // Get the prefab's transform position (which represents its pivot)
+            Vector3 pivotPosition = prefab.transform.position;
+            
+            // Calculate the offset from the bounds center to the pivot position
+            Vector3 pivotOffset = pivotPosition - bounds.center;
+            
+            // For 2D sprites, we might need to consider the sprite's pivot settings
+            var spriteRenderer = prefab.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null && spriteRenderer.sprite != null)
+            {
+                Sprite sprite = spriteRenderer.sprite;
+                
+                // Get the sprite's pivot in world space
+                Vector2 spritePivot = sprite.pivot;
+                Vector2 spriteSize = sprite.rect.size;
+                Vector2 pixelsPerUnit = Vector2.one * sprite.pixelsPerUnit;
+                
+                // Convert pivot from pixel coordinates to normalized coordinates (0-1)
+                Vector2 normalizedPivot = new Vector2(spritePivot.x / spriteSize.x, spritePivot.y / spriteSize.y);
+                
+                // Calculate the offset based on sprite pivot
+                Vector3 spriteOffset = new Vector3(
+                    (0.5f - normalizedPivot.x) * bounds.size.x,
+                    (0.5f - normalizedPivot.y) * bounds.size.y,
+                    0f
+                );
+                
+                return spriteOffset;
+            }
+            
+            // For non-sprite objects, return the calculated pivot offset
+            return pivotOffset;
+        }
+
         private void DrawRadialMenu()
         {
             Handles.BeginGUI();
@@ -1388,12 +1465,15 @@ namespace Editor
             
             if (preview != null)
             {
-                // Cache successful preview
+                // Process the preview to make background transparent
+                Texture2D processedPreview = MakePreviewTransparent(preview);
+                
+                // Cache the processed preview
                 if (_settings.enablePreviewCache)
                 {
-                    _previewCache[prefab] = preview;
+                    _previewCache[prefab] = processedPreview;
                 }
-                return preview;
+                return processedPreview;
             }
 
             // If no preview available, check if it's still loading
@@ -1412,6 +1492,63 @@ namespace Editor
 
             // Try to generate a mini preview from the prefab's renderer
             return GenerateCustomPreview(prefab);
+        }
+
+        private Texture2D MakePreviewTransparent(Texture2D originalTexture)
+        {
+            if (originalTexture == null) return null;
+
+            try
+            {
+                // Create a new readable texture
+                Texture2D readableTexture = new Texture2D(originalTexture.width, originalTexture.height, TextureFormat.RGBA32, false);
+                
+                // Create a RenderTexture to copy the original texture
+                RenderTexture renderTexture = RenderTexture.GetTemporary(originalTexture.width, originalTexture.height, 0, RenderTextureFormat.ARGB32);
+                Graphics.Blit(originalTexture, renderTexture);
+                
+                // Read the pixels from the RenderTexture
+                RenderTexture.active = renderTexture;
+                readableTexture.ReadPixels(new Rect(0, 0, originalTexture.width, originalTexture.height), 0, 0);
+                readableTexture.Apply();
+                RenderTexture.active = null;
+                RenderTexture.ReleaseTemporary(renderTexture);
+
+                // Process pixels to make background transparent
+                Color[] pixels = readableTexture.GetPixels();
+                Color backgroundColor = pixels[0]; // Assume top-left corner is background
+                
+                for (int i = 0; i < pixels.Length; i++)
+                {
+                    Color pixel = pixels[i];
+                    
+                    // If pixel is very similar to background color, make it transparent
+                    float colorDistance = Vector3.Distance(
+                        new Vector3(pixel.r, pixel.g, pixel.b),
+                        new Vector3(backgroundColor.r, backgroundColor.g, backgroundColor.b)
+                    );
+                    
+                    if (colorDistance < 0.1f) // Threshold for background detection
+                    {
+                        pixels[i] = new Color(pixel.r, pixel.g, pixel.b, 0f); // Make transparent
+                    }
+                    else
+                    {
+                        // Keep original alpha or make slightly transparent for blending
+                        pixels[i] = new Color(pixel.r, pixel.g, pixel.b, pixel.a * 0.9f);
+                    }
+                }
+                
+                readableTexture.SetPixels(pixels);
+                readableTexture.Apply();
+                
+                return readableTexture;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"Failed to make preview transparent: {e.Message}");
+                return originalTexture; // Return original if processing fails
+            }
         }
 
         private Texture2D GenerateCustomPreview(GameObject prefab)
