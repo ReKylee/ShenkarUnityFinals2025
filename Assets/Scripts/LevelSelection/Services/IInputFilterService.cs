@@ -10,7 +10,6 @@ namespace LevelSelection.Services
         void Initialize(LevelSelectionConfig config);
         void SetEnabled(bool enabled);
         bool ProcessNavigationInput(Vector2 direction, out Vector2 filteredDirection);
-        void TriggerSubmit();
     }
 
     /// <summary>
@@ -60,11 +59,6 @@ namespace LevelSelection.Services
 
             filteredDirection = direction;
             return true;
-        }
-
-        public void TriggerSubmit()
-        {
-            // Implementation for submit if needed
         }
     }
 }

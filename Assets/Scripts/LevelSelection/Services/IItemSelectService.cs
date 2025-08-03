@@ -10,7 +10,7 @@ namespace LevelSelection.Services
         bool IsActive { get; }
         event Action<bool> OnStateChanged;
         
-        void Initialize(ItemSelectScreen itemSelectScreen);
+        void Initialize(ItemSelectScreen itemSelectScreen, ISceneLoadService sceneLoadService);
         void ShowItemSelect(string levelName, string sceneName, Action onComplete = null);
         void SetActive(bool isActive);
     }
@@ -24,15 +24,29 @@ namespace LevelSelection.Services
         public event Action<bool> OnStateChanged;
 
         private ItemSelectScreen _itemSelectScreen;
+        private ISceneLoadService _sceneLoadService;
 
         public void Initialize(ItemSelectScreen itemSelectScreen)
         {
+            Initialize(itemSelectScreen, null);
+        }
+
+        public void Initialize(ItemSelectScreen itemSelectScreen, ISceneLoadService sceneLoadService)
+        {
             _itemSelectScreen = itemSelectScreen;
+            _sceneLoadService = sceneLoadService;
         }
 
         public void ShowItemSelect(string levelName, string sceneName, Action onComplete = null)
         {
-            if (_itemSelectScreen == null) return;
+            // If no item select screen is available, load directly
+            if (_itemSelectScreen == null)
+            {
+                UnityEngine.Debug.Log($"[ItemSelectService] No ItemSelectScreen available, loading level directly: {sceneName}");
+                _sceneLoadService?.LoadLevel(sceneName);
+                onComplete?.Invoke();
+                return;
+            }
 
             SetActive(true);
             _itemSelectScreen.ShowItemSelect(levelName, sceneName, () => {
