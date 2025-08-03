@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Data;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -12,11 +13,11 @@ namespace LevelSelection.Services
     /// </summary>
     public class LevelDiscoveryService : ILevelDiscoveryService
     {
-        private readonly Core.Data.IGameDataService _gameDataService;
+        private readonly IGameDataService _gameDataService;
         private List<LevelData> _cachedLevelData;
         private List<LevelPoint> _sortedLevelPoints;
 
-        public LevelDiscoveryService(Core.Data.IGameDataService gameDataService)
+        public LevelDiscoveryService(IGameDataService gameDataService)
         {
             _gameDataService = gameDataService;
         }
@@ -61,16 +62,20 @@ namespace LevelSelection.Services
             // Build level data directly without director pattern
             _cachedLevelData = BuildLevelDataWithGameData(levelObjects);
 
-            Debug.Log($"[LevelDiscoveryService] Discovered {_cachedLevelData.Count} levels and cached {_sortedLevelPoints.Count} sorted level points");
+            Debug.Log(
+                $"[LevelDiscoveryService] Discovered {_cachedLevelData.Count} levels and cached {_sortedLevelPoints.Count} sorted level points");
+
             return _cachedLevelData;
         }
+
+        public List<LevelPoint> GetSortedLevelPoints() => _sortedLevelPoints;
 
         private List<LevelData> BuildLevelDataWithGameData(List<GameObject> levelObjects)
         {
             var levelDataList = new List<LevelData>();
 
             // Use injected game data service instead of FindFirstObjectByType
-            Core.Data.GameData gameData = _gameDataService?.CurrentData;
+            GameData gameData = _gameDataService?.CurrentData;
 
             for (int i = 0; i < levelObjects.Count; i++)
             {
@@ -78,7 +83,7 @@ namespace LevelSelection.Services
                 if (levelObject == null) continue;
 
                 LevelData levelData;
-                
+
                 if (gameData != null)
                 {
                     // Use enhanced factory method with game data
@@ -98,17 +103,14 @@ namespace LevelSelection.Services
 
                 if (levelData != null)
                 {
-                    Debug.Log($"Level {i}: {levelData.levelName} at position {levelData.mapPosition} (Unlocked: {levelData.isUnlocked}, Completed: {levelData.isCompleted})");
+                    Debug.Log(
+                        $"Level {i}: {levelData.levelName} at position {levelData.mapPosition} (Unlocked: {levelData.isUnlocked}, Completed: {levelData.isCompleted})");
+
                     levelDataList.Add(levelData);
                 }
             }
 
             return levelDataList;
-        }
-
-        public List<LevelPoint> GetSortedLevelPoints()
-        {
-            return _sortedLevelPoints;
         }
     }
 }

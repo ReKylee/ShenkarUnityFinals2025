@@ -18,7 +18,7 @@ namespace Player.Services
             MaxLives = GameData.MaxLives;
 
             Debug.Log("[PlayerLivesService] Initialized with max lives: " + MaxLives);
-            
+
             if (_gameDataService == null)
             {
                 Debug.LogError("[PlayerLivesService] _gameDataService is null.");

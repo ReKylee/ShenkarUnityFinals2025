@@ -24,4 +24,3 @@ namespace Enemies.Behaviors
         }
     }
 }
-

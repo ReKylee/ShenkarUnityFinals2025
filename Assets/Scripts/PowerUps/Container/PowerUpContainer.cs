@@ -1,4 +1,5 @@
 ﻿using Health.Interfaces;
+using UnityEditor;
 using UnityEngine;
 
 namespace PowerUps.Container
@@ -85,7 +86,7 @@ namespace PowerUps.Container
 
             }
         }
-        
+
 
         private void DrawIcon(Vector3 position)
         {
@@ -95,16 +96,16 @@ namespace PowerUps.Container
             if (!sr || !sr.sprite?.texture) return;
 
             Sprite sprite = sr.sprite;
-            UnityEditor.Handles.BeginGUI();
+            Handles.BeginGUI();
 
-            Vector2 guiPos = UnityEditor.HandleUtility.WorldToGUIPoint(position);
+            Vector2 guiPos = HandleUtility.WorldToGUIPoint(position);
             const float size = 40f;
-            Rect iconRect = new Rect(guiPos.x - size * 0.5f, guiPos.y - size * 0.5f, size, size);
+            Rect iconRect = new(guiPos.x - size * 0.5f, guiPos.y - size * 0.5f, size, size);
 
 
             // Draw sprite
             Rect spriteRect = sprite.rect;
-            Rect uvRect = new Rect(
+            Rect uvRect = new(
                 spriteRect.x / sprite.texture.width,
                 spriteRect.y / sprite.texture.height,
                 spriteRect.width / sprite.texture.width,
@@ -114,44 +115,44 @@ namespace PowerUps.Container
             GUI.DrawTextureWithTexCoords(iconRect, sprite.texture, uvRect);
             GUI.color = Color.white;
 
-            UnityEditor.Handles.EndGUI();
+            Handles.EndGUI();
         }
         private void DrawLabel(Vector3 position, string text, Color textColor)
         {
-            UnityEditor.Handles.BeginGUI();
-    
-            Vector2 guiPos = UnityEditor.HandleUtility.WorldToGUIPoint(position);
-    
-            var style = new GUIStyle(GUI.skin.label)
+            Handles.BeginGUI();
+
+            Vector2 guiPos = HandleUtility.WorldToGUIPoint(position);
+
+            GUIStyle style = new(GUI.skin.label)
             {
                 fontSize = 12,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 normal = { textColor = textColor }
             };
-    
+
             Vector2 textSize = style.CalcSize(new GUIContent(text));
             const float padding = 8f;
-    
-            Rect labelRect = new Rect(
+
+            Rect labelRect = new(
                 guiPos.x - textSize.x * 0.5f - padding * 0.5f,
                 guiPos.y - textSize.y * 0.5f - 2f,
                 textSize.x + padding,
                 textSize.y + 4f
             );
-    
+
             // Draw background
             Color prevBg = GUI.backgroundColor;
-            GUI.backgroundColor = new Color(0f, 0f, 0f, 0.8f); 
+            GUI.backgroundColor = new Color(0f, 0f, 0f, 0.8f);
             GUI.Box(labelRect, "");
             GUI.backgroundColor = prevBg;
-    
+
             // Draw text
             GUI.Label(labelRect, text, style);
-    
-            UnityEditor.Handles.EndGUI();
+
+            Handles.EndGUI();
         }
-     
+
 #endif
 
         #endregion

@@ -8,10 +8,10 @@ namespace Enemies.Core
     public class GenericCommandController<TCommand> : MonoBehaviour where TCommand : ICommand
     {
         [SerializeField] private TriggerCondition defaultTriggerCondition = TriggerCondition.Any;
-        private TriggerGroup _triggerGroup;
         private List<TCommand> _commands;
-        private bool _noTriggers;
         private bool _noCommands;
+        private bool _noTriggers;
+        private TriggerGroup _triggerGroup;
         private void Awake()
         {
             var triggers = GetComponents<ITrigger>();
@@ -22,6 +22,7 @@ namespace Enemies.Core
                 _noTriggers = true;
                 return;
             }
+
             if (_commands.Count == 0)
             {
                 _noCommands = true;
@@ -36,10 +37,12 @@ namespace Enemies.Core
         {
             if (_noCommands)
             {
-                Debug.LogWarning("No commands found in GenericCommandController. Ensure you have added command components.");
+                Debug.LogWarning(
+                    "No commands found in GenericCommandController. Ensure you have added command components.");
+
                 return;
             }
-            
+
             if (_noTriggers)
             {
                 ExecuteCommands(_commands);

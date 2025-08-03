@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Events;
-using LevelSelection.Services;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -16,6 +14,9 @@ namespace LevelSelection
     /// </summary>
     public class LevelSelectionController : MonoBehaviour
     {
+        private const float InputCooldownTime = 0.2f; // Prevent input spam
+        private const float InputDeadzone = 0.5f; // Input threshold
+
         [Header("Auto Configuration")] [SerializeField]
         private bool autoActivateOnStart = true;
 
@@ -41,15 +42,13 @@ namespace LevelSelection
 
         // Selector movement
         private bool _isMovingSelector;
-        private ILevelNavigationService _navigationService;
-        private Vector3 _selectorTargetPosition;
-        private List<LevelPoint> _sortedLevelPoints; // Cache sorted level points
 
         // Input filtering
         private Vector2 _lastInputDirection;
-        private const float InputCooldownTime = 0.2f; // Prevent input spam
         private float _lastInputTime;
-        private const float InputDeadzone = 0.5f; // Input threshold
+        private ILevelNavigationService _navigationService;
+        private Vector3 _selectorTargetPosition;
+        private List<LevelPoint> _sortedLevelPoints; // Cache sorted level points
 
         public bool IsActive { get; private set; }
         public LevelSelectionConfig Config => config;
@@ -104,7 +103,7 @@ namespace LevelSelection
             _eventBus?.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
             _eventBus?.Unsubscribe<LevelSelectedEvent>(OnLevelSelected);
             _eventBus?.Unsubscribe<LevelLoadRequestedEvent>(OnLevelLoadRequested);
-            
+
             // Properly dispose of display service
             _displayService?.Dispose();
         }
@@ -139,7 +138,7 @@ namespace LevelSelection
 
             // Get sorted level points from the discovery service - NO DUPLICATION!
             _sortedLevelPoints = _discoveryService.GetSortedLevelPoints();
-            
+
             // Pass the sorted level points to the display service using DI pattern
             _displayService.SetLevelPoints(_sortedLevelPoints);
 
@@ -164,7 +163,8 @@ namespace LevelSelection
                 }
             }
 
-            Debug.Log($"[LevelSelectionController] Initialized with {levelData.Count} levels using discovery service sorted data");
+            Debug.Log(
+                $"[LevelSelectionController] Initialized with {levelData.Count} levels using discovery service sorted data");
         }
 
         private void UpdateSelectorMovement()
@@ -192,23 +192,23 @@ namespace LevelSelection
             if (!IsActive) return;
 
             Vector2 direction = context.ReadValue<Vector2>();
-            
+
             // Apply deadzone filtering
             if (direction.magnitude < InputDeadzone) return;
-            
+
             // Apply input cooldown to prevent spam
             if (Time.time - _lastInputTime < InputCooldownTime) return;
-            
+
             // Normalize direction for consistent behavior
             direction = direction.normalized;
-            
+
             // Check if this is the same direction as last input (prevent repeats)
-            if (Vector2.Dot(direction, _lastInputDirection) > 0.8f && 
+            if (Vector2.Dot(direction, _lastInputDirection) > 0.8f &&
                 Time.time - _lastInputTime < InputCooldownTime * 2f) return;
-            
+
             _lastInputDirection = direction;
             _lastInputTime = Time.time;
-            
+
             Debug.Log($"[LevelSelectionController] Processing navigation input: {direction}");
             _navigationService.NavigateInDirection(direction);
         }
@@ -265,11 +265,9 @@ namespace LevelSelection
             itemSelectScreen?.ShowItemSelect(selectionEvent.LevelName, sceneName);
         }
 
-        private string GetSceneNameForLevel(string levelName)
-        {
+        private string GetSceneNameForLevel(string levelName) =>
             // Default mapping - can be enhanced with a dictionary or config
-            return levelName.Replace(" ", "").Replace("Level", "Level");
-        }
+            levelName.Replace(" ", "").Replace("Level", "Level");
 
         private void OnLevelLoadRequested(LevelLoadRequestedEvent loadEvent)
         {
@@ -282,7 +280,7 @@ namespace LevelSelection
         private void MoveSelectorToCurrentLevel()
         {
             if (selectorObject == null || _sortedLevelPoints == null) return;
-            
+
             // Don't move if already moving to avoid redundant calls
             if (_isMovingSelector) return;
 
@@ -290,34 +288,38 @@ namespace LevelSelection
             if (_navigationService.CurrentIndex >= 0 && _navigationService.CurrentIndex < _sortedLevelPoints.Count)
             {
                 Vector3 targetPosition = _sortedLevelPoints[_navigationService.CurrentIndex].transform.position;
-                
+
                 // Only start moving if we're not already at the target position
                 if (Vector3.Distance(selectorObject.transform.position, targetPosition) > 0.01f)
                 {
                     _selectorTargetPosition = targetPosition;
                     _isMovingSelector = true;
-                    
-                    Debug.Log($"[LevelSelectionController] Moving selector to level {_navigationService.CurrentIndex} at position {_selectorTargetPosition}");
+
+                    Debug.Log(
+                        $"[LevelSelectionController] Moving selector to level {_navigationService.CurrentIndex} at position {_selectorTargetPosition}");
                 }
                 else
                 {
-                    Debug.Log($"[LevelSelectionController] Selector already at level {_navigationService.CurrentIndex} position");
+                    Debug.Log(
+                        $"[LevelSelectionController] Selector already at level {_navigationService.CurrentIndex} position");
                 }
             }
             else
             {
-                Debug.LogWarning($"[LevelSelectionController] Invalid level index: {_navigationService.CurrentIndex} (max: {_sortedLevelPoints.Count - 1})");
+                Debug.LogWarning(
+                    $"[LevelSelectionController] Invalid level index: {_navigationService.CurrentIndex} (max: {_sortedLevelPoints.Count - 1})");
             }
         }
 
         public void Activate()
         {
-            Debug.Log($"[LevelSelectionController] Activating - Current navigation index: {_navigationService?.CurrentIndex}");
-            
+            Debug.Log(
+                $"[LevelSelectionController] Activating - Current navigation index: {_navigationService?.CurrentIndex}");
+
             IsActive = true;
             _navigationService?.Activate();
             _displayService?.Activate();
-            
+
             // Move selector to current position when activating
             MoveSelectorToCurrentLevel();
         }
@@ -330,7 +332,7 @@ namespace LevelSelection
         }
 
         /// <summary>
-        /// Public method to refresh all visuals - useful for external calls
+        ///     Public method to refresh all visuals - useful for external calls
         /// </summary>
         public void RefreshVisuals()
         {
@@ -338,7 +340,7 @@ namespace LevelSelection
         }
 
         /// <summary>
-        /// Public method to set level selection programmatically
+        ///     Public method to set level selection programmatically
         /// </summary>
         public void SetCurrentLevel(int levelIndex)
         {

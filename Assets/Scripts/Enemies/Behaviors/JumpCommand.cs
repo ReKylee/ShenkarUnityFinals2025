@@ -22,6 +22,5 @@ namespace Enemies.Behaviors
             Vector2 jumpDir = new(transform.localScale.x * jumpForceX, jumpForceY);
             _rb.linearVelocity = jumpDir;
         }
-
     }
 }

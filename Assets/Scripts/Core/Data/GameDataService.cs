@@ -57,7 +57,7 @@ namespace Core.Data
         {
             _repository.SaveData(CurrentData);
         }
-       
+
         public void AddFruitCollected()
         {
             CurrentData.fruitCollected++;

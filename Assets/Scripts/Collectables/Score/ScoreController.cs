@@ -1,5 +1,4 @@
-﻿using System;
-using Collectables.Counter;
+﻿using Collectables.Counter;
 using UnityEngine;
 using VContainer;
 
@@ -9,10 +8,10 @@ namespace Collectables.Score
     {
         [SerializeField] private PaddedTextView scoreTextView;
         [SerializeField] private PaddedTextView fruitCountHealthView;
-        private ICounterView _scoreTextView;
         private ICounterView _fruitCountHealthView;
-        
+
         private IScoreService _scoreService;
+        private ICounterView _scoreTextView;
         private void Awake()
         {
             _scoreTextView = scoreTextView;

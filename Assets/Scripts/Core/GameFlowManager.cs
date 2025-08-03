@@ -111,7 +111,6 @@ namespace Core
         }
 
 
-
         public void CompleteLevel(float completionTime)
         {
             _eventBus?.Publish(new LevelCompletedEvent
@@ -160,9 +159,10 @@ namespace Core
             if (isGameOver)
             {
                 ChangeState(GameState.GameOver);
-                Debug.Log($"[GameFlowManager] Game Over: Player is out of lives");
+                Debug.Log("[GameFlowManager] Game Over: Player is out of lives");
                 _eventBus?.Publish(new GameOverEvent { Timestamp = Time.time });
             }
+
             if (lostLife)
             {
                 Debug.Log($"[GameFlowManager] Player lost a life. Remaining lives: {livesEvent.CurrentLives}");
@@ -172,6 +172,7 @@ namespace Core
                     Timestamp = Time.time
                 });
             }
+
             if (isGameOver || lostLife)
             {
                 Time.timeScale = 0.01f;
@@ -190,6 +191,7 @@ namespace Core
                 Debug.LogError($"[GameFlowManager] Failed to restart level after delay: {e}");
             }
         }
+
         #endregion
 
         #region Private Methods

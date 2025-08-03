@@ -1,6 +1,5 @@
 ﻿using Core;
 using Core.Events;
-using Health;
 using Health.Core;
 using Health.Interfaces;
 using Health.Views;
@@ -13,9 +12,9 @@ namespace Player.Components
     public class PlayerHealthController : HealthComponent, IBypassableDamageable
     {
         [SerializeField] private BarsHealthView healthView;
-        private IHealthView _healthView;
         private IEventBus _eventBus;
         private GameFlowManager _gameFlowManager;
+        private IHealthView _healthView;
         private IInvincibility _invincibility;
         private IPlayerLivesService _livesService;
         private IShield _shield;

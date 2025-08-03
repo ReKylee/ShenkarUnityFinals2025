@@ -1,6 +1,4 @@
-﻿using System;
-using Collectables.Counter;
-using Health.Views;
+﻿using Collectables.Counter;
 using Player.Interfaces;
 using UnityEngine;
 using VContainer;

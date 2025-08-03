@@ -1,4 +1,5 @@
 ﻿using System;
+using Core.Data;
 using UnityEngine;
 
 namespace LevelSelection
@@ -107,7 +108,7 @@ namespace LevelSelection
                 .Build();
         }
 
-        public static LevelData CreateFromGameObjectWithGameData(GameObject levelObject, int index, Core.Data.GameData gameData)
+        public static LevelData CreateFromGameObjectWithGameData(GameObject levelObject, int index, GameData gameData)
         {
             LevelPoint levelPoint = levelObject.GetComponent<LevelPoint>();
             if (levelPoint == null)
@@ -143,7 +144,7 @@ namespace LevelSelection
             return index == 0;
         }
 
-        private static bool DetermineUnlockStatusWithGameData(LevelPoint levelPoint, int index, Core.Data.GameData gameData)
+        private static bool DetermineUnlockStatusWithGameData(LevelPoint levelPoint, int index, GameData gameData)
         {
             // If level point overrides game data, use inspector setting
             if (levelPoint.OverrideGameData)

@@ -25,6 +25,5 @@ namespace Enemies.Behaviors
         {
             gameObject.SetActive(false);
         }
-
     }
 }

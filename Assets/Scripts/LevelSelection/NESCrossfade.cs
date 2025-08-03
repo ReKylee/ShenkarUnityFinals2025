@@ -19,8 +19,12 @@ namespace LevelSelection
         public float colorFlickerSpeed = 10f;
         private LevelSelectionConfig _config;
 
-        private bool _isFading;
         private Action _onFadeComplete;
+
+        /// <summary>
+        ///     Check if currently fading
+        /// </summary>
+        public bool IsFading { get; private set; }
 
         private void Awake()
         {
@@ -64,7 +68,7 @@ namespace LevelSelection
 
         public void FadeOut(Action onComplete = null)
         {
-            if (_isFading) return;
+            if (IsFading) return;
 
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(0f, 1f));
@@ -72,7 +76,7 @@ namespace LevelSelection
 
         public void FadeIn(Action onComplete = null)
         {
-            if (_isFading) return;
+            if (IsFading) return;
 
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(1f, 0f));
@@ -80,14 +84,14 @@ namespace LevelSelection
 
         public void FadeOutAndIn(Action onMiddle = null, Action onComplete = null)
         {
-            if (_isFading) return;
+            if (IsFading) return;
 
             StartCoroutine(FadeOutAndInCoroutine(onMiddle, onComplete));
         }
 
         private IEnumerator FadeCoroutine(float from, float to)
         {
-            _isFading = true;
+            IsFading = true;
             float elapsed = 0f;
 
             while (elapsed < fadeDuration)
@@ -118,7 +122,7 @@ namespace LevelSelection
                 SetAlpha(to);
             }
 
-            _isFading = false;
+            IsFading = false;
             _onFadeComplete?.Invoke();
             _onFadeComplete = null;
         }
@@ -162,7 +166,7 @@ namespace LevelSelection
         }
 
         /// <summary>
-        /// Set fade color programmatically
+        ///     Set fade color programmatically
         /// </summary>
         public void SetFadeColor(Color color)
         {
@@ -170,15 +174,12 @@ namespace LevelSelection
         }
 
         /// <summary>
-        /// Get current fade progress (0 = transparent, 1 = opaque)
+        ///     Get current fade progress (0 = transparent, 1 = opaque)
         /// </summary>
-        public float GetFadeProgress()
-        {
-            return fadeImage ? fadeImage.color.a : 0f;
-        }
+        public float GetFadeProgress() => fadeImage ? fadeImage.color.a : 0f;
 
         /// <summary>
-        /// Instantly set fade to specific alpha without animation
+        ///     Instantly set fade to specific alpha without animation
         /// </summary>
         public void SetInstantFade(float alpha)
         {
@@ -191,10 +192,5 @@ namespace LevelSelection
                 SetAlpha(alpha);
             }
         }
-
-        /// <summary>
-        /// Check if currently fading
-        /// </summary>
-        public bool IsFading => _isFading;
     }
 }

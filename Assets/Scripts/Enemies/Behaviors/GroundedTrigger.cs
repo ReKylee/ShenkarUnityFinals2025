@@ -9,8 +9,6 @@ namespace Enemies.Behaviors
     {
         [SerializeField] private LayerMask groundLayer;
 
-        public bool IsTriggered { get; private set; }
-
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if ((1 << collision.gameObject.layer & groundLayer) != 0)
@@ -22,6 +20,8 @@ namespace Enemies.Behaviors
             if ((1 << collision.gameObject.layer & groundLayer) != 0)
                 IsTriggered = false;
         }
+
+        public bool IsTriggered { get; private set; }
 
         public void CheckTrigger()
         {

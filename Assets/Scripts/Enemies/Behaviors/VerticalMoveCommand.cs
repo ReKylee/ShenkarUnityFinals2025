@@ -25,6 +25,5 @@ namespace Enemies.Behaviors
             float y = _startY + (triangle - 0.5f) * 2f * amplitude;
             _rb.linearVelocityY = (y - _rb.position.y) / Time.fixedDeltaTime;
         }
-
     }
 }

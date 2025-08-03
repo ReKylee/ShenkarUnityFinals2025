@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Health.Shield
 {
     [DisallowMultipleComponent]
-    public class ShieldComponent : MonoBehaviour, IShield, IDamageDealer 
+    public class ShieldComponent : MonoBehaviour, IShield, IDamageDealer
     {
         public int GetDamageAmount() => IsActive ? 1 : 0;
         public bool IsActive { get; private set; }

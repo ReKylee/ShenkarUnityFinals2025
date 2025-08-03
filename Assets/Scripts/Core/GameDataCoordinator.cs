@@ -176,24 +176,27 @@ namespace Core
         private void OnLevelSelected(LevelSelectedEvent levelEvent)
         {
             // Update selected level index in game data
-            var gameData = _gameDataService?.CurrentData;
+            GameData gameData = _gameDataService?.CurrentData;
             if (gameData != null)
             {
                 gameData.selectedLevelIndex = levelEvent.LevelIndex;
                 gameData.currentLevel = levelEvent.LevelName;
             }
+
             Debug.Log($"[GameDataCoordinator] Level selected: {levelEvent.LevelName}");
         }
 
         private void OnLevelNavigation(LevelNavigationEvent navigationEvent)
         {
             // Update selected level index in game data
-            var gameData = _gameDataService?.CurrentData;
+            GameData gameData = _gameDataService?.CurrentData;
             if (gameData != null)
             {
                 gameData.selectedLevelIndex = navigationEvent.NewIndex;
             }
-            Debug.Log($"[GameDataCoordinator] Level navigation: from {navigationEvent.PreviousIndex} to {navigationEvent.NewIndex}");
+
+            Debug.Log(
+                $"[GameDataCoordinator] Level navigation: from {navigationEvent.PreviousIndex} to {navigationEvent.NewIndex}");
         }
 
         #endregion

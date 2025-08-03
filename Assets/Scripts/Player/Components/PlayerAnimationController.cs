@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Core.Events;
 using GabrielBigardi.SpriteAnimator;
 using ModularCharacterController.Core;
@@ -14,15 +13,15 @@ namespace Player.Components
     /// </summary>
     public class PlayerAnimationController : MonoBehaviour
     {
+
+        private IEventBus _eventBus;
         private MccGroundCheck _groundCheck;
         private InputHandler _inputHandler;
+
+        private bool _isDead;
         private SpriteAnimator _spriteAnimator;
         private SpriteRenderer _spriteRenderer;
         public SpriteAnimationObject OriginalAnimationObject { get; private set; }
-
-        private IEventBus _eventBus;
-
-        private bool _isDead = false;
 
         public Sprite CurrentSprite
         {
@@ -100,6 +99,11 @@ namespace Player.Components
             _spriteAnimator.PlayIfNotPlaying("Idle");
         }
 
+        private void OnDisable()
+        {
+            _eventBus?.Unsubscribe<PlayerDeathEvent>(OnPlayerDeath);
+        }
+
 
         /// <summary>
         ///     Change to a new animation object
@@ -127,17 +131,11 @@ namespace Player.Components
         }
 
 
-        
         [Inject]
         public void Construct(IEventBus eventBus)
         {
             _eventBus = eventBus;
             _eventBus.Subscribe<PlayerDeathEvent>(OnPlayerDeath);
-        }
-
-        private void OnDisable()
-        {
-            _eventBus?.Unsubscribe<PlayerDeathEvent>(OnPlayerDeath);
         }
 
         private IEnumerator PlayDeathSequence()
@@ -155,6 +153,7 @@ namespace Player.Components
                 elapsed += Time.unscaledDeltaTime;
                 yield return null;
             }
+
             transform.position = upPos;
             yield return new WaitForSecondsRealtime(0.6f);
             const float moveDownUnits = 10f;
@@ -167,6 +166,7 @@ namespace Player.Components
                 elapsed += Time.unscaledDeltaTime;
                 yield return null;
             }
+
             transform.position = downPos;
         }
 

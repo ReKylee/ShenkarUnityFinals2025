@@ -8,7 +8,7 @@ namespace Collectables.Counter
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private int totalWidth = 2;
 
-        public void UpdateCountDisplay(int count)   
+        public void UpdateCountDisplay(int count)
         {
             if (text)
             {

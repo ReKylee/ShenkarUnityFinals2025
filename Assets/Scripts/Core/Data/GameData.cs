@@ -13,13 +13,11 @@ namespace Core.Data
         public int score;
 
         [Header("Level Progress")] public string currentLevel = "Level_01";
-        
+
         // Level Selection Data
-        public List<string> unlockedLevels = new List<string> { "Level_01" };
-        public List<string> completedLevels = new List<string>(); // Added for EndLevelZone
-        public int selectedLevelIndex = 0;
-        public Dictionary<string, float> levelBestTimes = new Dictionary<string, float>();
-        public Dictionary<string, bool> levelCompleted = new Dictionary<string, bool>();
+        public List<string> unlockedLevels = new() { "Level_01" };
+        public List<string> completedLevels = new(); // Added for EndLevelZone
+        public int selectedLevelIndex;
 
         public float bestTime = float.MaxValue;
 
@@ -32,6 +30,8 @@ namespace Core.Data
         public float sfxVolume = 1.0f;
 
         [Header("Collectables")] public int fruitCollected;
+        public Dictionary<string, float> levelBestTimes = new();
+        public Dictionary<string, bool> levelCompleted = new();
 
         // Constructor for easy initialization
         public GameData()
@@ -69,7 +69,7 @@ namespace Core.Data
             musicVolume = 1.0f;
             sfxVolume = 1.0f;
             fruitCollected = 0;
-            
+
             // Reset level selection data
             unlockedLevels = new List<string> { "Level_01" };
             selectedLevelIndex = 0;

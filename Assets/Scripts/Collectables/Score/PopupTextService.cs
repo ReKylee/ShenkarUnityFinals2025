@@ -1,6 +1,4 @@
-﻿using Core.Data;
-using Player.Interfaces;
-using Player.Services;
+﻿using Player.Interfaces;
 using Pooling;
 using UnityEngine;
 using VContainer;
@@ -11,8 +9,8 @@ namespace Collectables.Score
     {
         [SerializeField] private GameObject scoreTextPrefab;
         [SerializeField] private GameObject oneUpTextPrefab;
-        private IPoolService _scoreTextPool;
         private IPlayerLivesService _playerLivesService;
+        private IPoolService _scoreTextPool;
 
         private void OnEnable()
         {

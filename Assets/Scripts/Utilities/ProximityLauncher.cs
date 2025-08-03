@@ -19,12 +19,12 @@ namespace Utilities
         public Vector2 launchVel = new(0f, 12f);
 
         private Collider2D _col;
+        private float _originalGravityScale;
         private Transform _player;
         private Rigidbody2D _rb;
         private SpriteRenderer _sr;
 
         private bool _triggered;
-        private float _originalGravityScale;
 
         private void Awake()
         {
@@ -59,7 +59,5 @@ namespace Utilities
                 _rb.linearVelocity = launchVel;
             }
         }
-
-   
     }
 }

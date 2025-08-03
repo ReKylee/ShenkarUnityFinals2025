@@ -38,7 +38,8 @@ namespace LevelSelection.Services
             int savedIndex = gameData?.selectedLevelIndex ?? 0;
             CurrentIndex = Mathf.Clamp(savedIndex, 0, levelData.Count - 1);
 
-            Debug.Log($"[LevelNavigationService] Initialized with CurrentIndex: {CurrentIndex} (saved: {savedIndex}, total levels: {levelData.Count})");
+            Debug.Log(
+                $"[LevelNavigationService] Initialized with CurrentIndex: {CurrentIndex} (saved: {savedIndex}, total levels: {levelData.Count})");
 
             await Task.CompletedTask;
         }
@@ -81,6 +82,19 @@ namespace LevelSelection.Services
             });
         }
 
+        public void SetGridWidth(int gridWidth)
+        {
+            _gridWidth = gridWidth;
+            Debug.Log($"[LevelNavigationService] Grid width set to {_gridWidth}");
+        }
+
+        public void SetCurrentIndex(int index)
+        {
+            if (_levelData == null || index < 0 || index >= _levelData.Count) return;
+
+            UpdateSelection(index);
+        }
+
         private int CalculateNewIndex(Vector2 direction)
         {
             if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
@@ -102,8 +116,8 @@ namespace LevelSelection.Services
         private void UpdateSelection(int newIndex)
         {
             Debug.Log($"[LevelNavigationService] UpdateSelection called: {CurrentIndex} -> {newIndex}");
-            
-            if (newIndex == CurrentIndex) 
+
+            if (newIndex == CurrentIndex)
             {
                 Debug.Log($"[LevelNavigationService] No change needed, staying at index {CurrentIndex}");
                 return;
@@ -130,19 +144,6 @@ namespace LevelSelection.Services
                 NewIndex = CurrentIndex,
                 Direction = Vector2.zero
             });
-        }
-
-        public void SetGridWidth(int gridWidth)
-        {
-            _gridWidth = gridWidth;
-            Debug.Log($"[LevelNavigationService] Grid width set to {_gridWidth}");
-        }
-
-        public void SetCurrentIndex(int index)
-        {
-            if (_levelData == null || index < 0 || index >= _levelData.Count) return;
-            
-            UpdateSelection(index);
         }
     }
 }

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Events;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace LevelSelection.Services
 {
@@ -65,6 +63,17 @@ namespace LevelSelection.Services
             UpdateLevelStates();
         }
 
+        public void RefreshVisuals()
+        {
+            // Renamed to RefreshStates since no visuals
+            UpdateLevelStates();
+        }
+
+        public void Dispose()
+        {
+            _eventBus?.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
+        }
+
         private void UpdateLevelStates()
         {
             // Update level point states without visual changes
@@ -88,17 +97,6 @@ namespace LevelSelection.Services
         private void OnLevelNavigation(LevelNavigationEvent navigationEvent)
         {
             UpdateSelection(navigationEvent.NewIndex);
-        }
-
-        public void RefreshVisuals()
-        {
-            // Renamed to RefreshStates since no visuals
-            UpdateLevelStates();
-        }
-
-        public void Dispose()
-        {
-            _eventBus?.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
         }
     }
 }
