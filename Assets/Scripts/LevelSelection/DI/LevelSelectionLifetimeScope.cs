@@ -13,7 +13,15 @@ namespace LevelSelection.DI
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("[LevelSelectionLifetimeScope] Configuring level selection DI container...");
+            // Register Core Services
+            builder.Register<IEventBus, EventBus>(Lifetime.Singleton);
 
+            // Register EventBus as IEventPublisher as well (since EventBus implements IEventPublisher)
+            builder.Register<IEventPublisher>(resolver => resolver.Resolve<IEventBus>(), Lifetime.Singleton);
+
+            builder.Register<IGameDataRepository, JsonGameDataRepository>(Lifetime.Singleton);
+            builder.Register<IGameDataService, GameDataService>(Lifetime.Singleton);
+            builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
             // Register level selection specific components using RegisterComponentInHierarchy
             builder.RegisterComponentInHierarchy<LevelSelectionManager>();
             builder.RegisterComponentInHierarchy<LevelSelector>();

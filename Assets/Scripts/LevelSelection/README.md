@@ -15,13 +15,15 @@ This level selection system integrates with your existing GameFlowManager, GameD
 7. **NESCrossfade.cs** - NES-style crossfade transitions between scenes
 
 ## Setup Instructions
- for 
+
 ### 1. Scene Setup
 Create a level selection scene with the following hierarchy:
 
+**Option A: Child Scope (Recommended)**
 ```
 LevelSelectionScene
-├── LevelSelectionManager (with LevelSelectionManager script)
+├── GameManager (with GameLifetimeScope)
+│   └── LevelSelectionManager (with LevelSelectionLifetimeScope)
 ├── LevelContainer (empty GameObject to hold level points)
 │   ├── Level_01 (with LevelPoint script)
 │   ├── Level_02 (with LevelPoint script)
@@ -34,7 +36,15 @@ LevelSelectionScene
 └── LevelSelector (with LevelSelector script)
 ```
 
-### 2. Level Point Configuration
+**Option B: Separate Scopes**
+If you need separate scopes, make sure both GameLifetimeScope and LevelSelectionLifetimeScope are at the root level, and the level selection scope will inherit from the game scope.
+
+### 2. VContainer Setup
+- Ensure your main scene has a `GameLifetimeScope` that registers core services
+- The `LevelSelectionLifetimeScope` should be either a child of the GameLifetimeScope GameObject or set up to inherit from it
+- This allows the level selection components to access `IEventBus`, `IGameDataService`, etc.
+
+### 3. Level Point Configuration
 For each level GameObject:
 1. Add the **LevelPoint** component
 2. Configure:
@@ -45,23 +55,23 @@ For each level GameObject:
    - Icon Renderer (SpriteRenderer for the icon)
    - Lock Renderer (SpriteRenderer for lock overlay)
 
-### 3. Level Selection Manager Configuration
+### 4. Level Selection Manager Configuration
 1. Assign all level GameObjects to the levelGameObjects list
 2. Set the levelContainer reference
 3. Assign the LevelSelector, ItemSelectScreen, and NESCrossfade components
 4. Configure input keys (defaults to arrow keys + Enter)
 
-### 4. Selector Configuration
+### 5. Selector Configuration
 1. Assign the selector GameObject (this moves between levels)
 2. Set move speed and grid width for navigation
 3. Add audio clips for navigation, selection, and locked sounds
 
-### 5. Item Select Screen Setup
+### 6. Item Select Screen Setup
 1. Create a UI Image for the item select screen
 2. Place your "item select screen.png" sprite in Resources folder
 3. Configure display duration and input settings
 
-### 6. Crossfade Setup
+### 7. Crossfade Setup
 1. Create a UI Image that covers the full screen
 2. Configure fade colors and NES-style effect settings
 
