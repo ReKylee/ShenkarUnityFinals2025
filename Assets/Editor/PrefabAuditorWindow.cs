@@ -853,9 +853,6 @@ namespace Editor
                     infoText += " (Grid Snap)";
                 }
 
-                // Add size info for debugging
-                infoText += $" | Size: {worldSize.x:F1}x{worldSize.y:F1} | Screen: {screenSize:F0}px";
-
                 GUIContent infoContent = new(infoText);
                 Vector2 infoSize = EditorStyles.miniLabel.CalcSize(infoContent);
                 Rect infoRect = new(
@@ -953,19 +950,39 @@ namespace Editor
             float growProgress = Mathf.Clamp01(elapsedTime / RadialMenuAnimationTime);
             float radius = RadialMenuRadius * Mathf.SmoothStep(0, 1, growProgress);
 
-            // Background with gradient
-            Handles.color = new Color(0.1f, 0.1f, 0.1f, 0.9f);
-            Handles.DrawSolidDisc(center, Vector3.forward, radius);
-            Handles.color = new Color(0.3f, 0.3f, 0.3f, 0.8f);
-            Handles.DrawWireDisc(center, Vector3.forward, radius);
-            Handles.color = Color.white;
-
             var prefabsToShow = _frequentPrefabs.Count > 0
                 ? _frequentPrefabs
                 : _filteredPrefabs.Take(MaxFrequentPrefabs).Select(p => p.prefab).ToList();
 
             int prefabCount = Mathf.Min(prefabsToShow.Count, MaxFrequentPrefabs);
 
+            // Clean background circle with subtle transparency
+            Handles.color = new Color(0.2f, 0.2f, 0.25f, 0.85f);
+            Handles.DrawSolidDisc(center, Vector3.forward, radius);
+            
+            // Simple outer border
+            Handles.color = new Color(0.6f, 0.6f, 0.7f, 0.8f);
+            Handles.DrawWireDisc(center, Vector3.forward, radius);
+            
+            // Inner ring for depth
+            Handles.color = new Color(0.3f, 0.3f, 0.35f, 0.6f);
+            Handles.DrawWireDisc(center, Vector3.forward, radius * 0.3f);
+
+            // Draw clean segment dividers
+            for (int i = 0; i < prefabCount; i++)
+            {
+                float angle = i / (float)prefabCount * 360f - 90f;
+                Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
+                
+                Vector2 lineStart = center + direction * (radius * 0.35f);
+                Vector2 lineEnd = center + direction * (radius * 0.95f);
+                
+                bool isHovered = i == _hoveredRadialIndex;
+                Handles.color = isHovered ? new Color(0.8f, 0.9f, 1f, 0.8f) : new Color(0.5f, 0.5f, 0.6f, 0.4f);
+                Handles.DrawLine(lineStart, lineEnd);
+            }
+
+            // Draw prefab items with clean, modern styling
             for (int i = 0; i < prefabCount; i++)
             {
                 GameObject prefab = prefabsToShow[i];
@@ -973,86 +990,110 @@ namespace Editor
 
                 float angle = i / (float)prefabCount * 360f - 90f;
                 Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
-                Vector2 itemPos = center + direction * (radius * 0.75f);
+                Vector2 itemPos = center + direction * (radius * 0.65f);
 
                 bool isHovered = i == _hoveredRadialIndex;
-                float iconSize = isHovered ? 55f : 45f;
+                float iconSize = isHovered ? 56f : 48f;
 
-                // Enhanced highlighting for hovered item
+                // Clean selection indicator
                 if (isHovered)
                 {
-                    // Draw pulsing highlight background
-                    float pulseScale = 1f + Mathf.Sin((float)EditorApplication.timeSinceStartup * 8f) * 0.1f;
-                    Handles.color = new Color(0, 1, 1, 0.6f); // Cyan with transparency
-                    Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.7f * pulseScale);
-
-                    // Draw bright border
-                    Handles.color = Color.cyan;
+                    // Simple highlight circle
+                    Handles.color = new Color(0.4f, 0.7f, 1f, 0.3f);
+                    Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.7f);
+                    
+                    // Clean border
+                    Handles.color = new Color(0.5f, 0.8f, 1f, 0.9f);
                     Handles.DrawWireDisc(itemPos, Vector3.forward, iconSize * 0.7f);
-                    Handles.color = Color.white;
+                }
 
-                    // Show enhanced name display
+                // Clean icon background
+                Rect iconRect = new(
+                    itemPos.x - iconSize * 0.4f,
+                    itemPos.y - iconSize * 0.4f,
+                    iconSize * 0.8f,
+                    iconSize * 0.8f
+                );
+
+                // Simple background
+                Color bgColor = isHovered ? new Color(0.9f, 0.95f, 1f, 0.95f) : new Color(0.8f, 0.8f, 0.85f, 0.9f);
+                EditorGUI.DrawRect(iconRect, bgColor);
+                
+                // Clean border
+                Color borderColor = isHovered ? new Color(0.4f, 0.7f, 1f, 1f) : new Color(0.6f, 0.6f, 0.7f, 0.8f);
+                Rect borderRect = new(iconRect.x - 1, iconRect.y - 1, iconRect.width + 2, iconRect.height + 2);
+                EditorGUI.DrawRect(borderRect, borderColor);
+                EditorGUI.DrawRect(iconRect, bgColor);
+
+                // Draw prefab preview
+                Texture2D preview = GetPrefabPreview(prefab);
+                if (preview != null)
+                {
+                    GUI.DrawTexture(iconRect, preview, ScaleMode.ScaleToFit, true);
+                }
+                else
+                {
+                    // Simple loading indicator
+                    GUI.color = isHovered ? new Color(0.3f, 0.3f, 0.3f) : new Color(0.6f, 0.6f, 0.6f);
+                    GUI.Label(iconRect, "●●●", new GUIStyle(EditorStyles.centeredGreyMiniLabel) { fontSize = 12 });
+                    GUI.color = Color.white;
+                }
+
+                // Clean name display
+                if (isHovered)
+                {
                     GUIContent nameContent = new(prefab.name);
                     Vector2 nameSize = EditorStyles.boldLabel.CalcSize(nameContent);
+                    
                     Rect nameRect = new(
                         center.x - nameSize.x * 0.5f,
-                        center.y + radius + 10,
+                        center.y + radius + 12,
                         nameSize.x,
                         nameSize.y
                     );
 
-                    // Draw name background
-                    EditorGUI.DrawRect(
-                        new Rect(nameRect.x - 4, nameRect.y - 2, nameRect.width + 8, nameRect.height + 4),
-                        new Color(0, 0, 0, 0.8f));
+                    // Clean tooltip background
+                    Rect tooltipBg = new(nameRect.x - 6, nameRect.y - 2, nameRect.width + 12, nameRect.height + 4);
+                    EditorGUI.DrawRect(tooltipBg, new Color(0.15f, 0.15f, 0.2f, 0.9f));
+                    
+                    // Simple border
+                    Rect borderBg = new(tooltipBg.x - 1, tooltipBg.y - 1, tooltipBg.width + 2, tooltipBg.height + 2);
+                    EditorGUI.DrawRect(borderBg, new Color(0.5f, 0.8f, 1f, 0.8f));
+                    EditorGUI.DrawRect(tooltipBg, new Color(0.15f, 0.15f, 0.2f, 0.9f));
 
-                    // Draw name with highlight color
-                    GUI.color = Color.cyan;
+                    // Clean text
+                    GUI.color = new Color(0.95f, 0.95f, 1f, 1f);
                     GUI.Label(nameRect, nameContent, EditorStyles.boldLabel);
                     GUI.color = Color.white;
-                }
-                else
-                {
-                    // Subtle highlight for non-hovered items
-                    Handles.color = new Color(0.4f, 0.4f, 0.4f, 0.3f);
-                    Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.6f);
-                    Handles.color = Color.white;
-                }
 
-                // Draw icon rect
-                Rect iconRect = new(
-                    itemPos.x - iconSize * 0.5f,
-                    itemPos.y - iconSize * 0.5f,
-                    iconSize,
-                    iconSize
-                );
-
-                // Draw preview with enhanced border for hovered items
-                Texture2D preview = GetPrefabPreview(prefab);
-                if (preview != null)
-                {
-                    if (isHovered)
+                    // Usage indicator (minimal)
+                    if (_prefabUsageCount.ContainsKey(prefab) && _prefabUsageCount[prefab] > 0)
                     {
-                        // Draw glowing border for hovered item
-                        Rect borderRect = new(iconRect.x - 2, iconRect.y - 2, iconRect.width + 4, iconRect.height + 4);
-                        EditorGUI.DrawRect(borderRect, Color.cyan);
+                        string usageText = $"({_prefabUsageCount[prefab]}x)";
+                        GUIContent usageContent = new(usageText);
+                        Vector2 usageSize = EditorStyles.miniLabel.CalcSize(usageContent);
+                        
+                        Rect usageRect = new(
+                            center.x - usageSize.x * 0.5f,
+                            nameRect.y + nameRect.height + 1,
+                            usageSize.x,
+                            usageSize.y
+                        );
+
+                        GUI.color = new Color(0.7f, 0.8f, 0.9f, 0.9f);
+                        GUI.Label(usageRect, usageContent, EditorStyles.miniLabel);
+                        GUI.color = Color.white;
                     }
-
-                    GUI.DrawTexture(iconRect, preview, ScaleMode.ScaleToFit);
-                }
-                else
-                {
-                    // Draw placeholder with proper highlighting
-                    Color placeholderColor = isHovered ? new Color(0.6f, 0.6f, 0.6f) : new Color(0.3f, 0.3f, 0.3f);
-                    EditorGUI.DrawRect(iconRect, placeholderColor);
-
-                    // Draw loading text
-                    GUI.color = isHovered ? Color.white : Color.gray;
-                    GUI.Label(iconRect, "...", EditorStyles.centeredGreyMiniLabel);
-                    GUI.color = Color.white;
                 }
             }
 
+            // Simple center dot
+            Handles.color = new Color(0.6f, 0.8f, 1f, 0.9f);
+            Handles.DrawSolidDisc(center, Vector3.forward, 4f);
+            Handles.color = new Color(0.9f, 0.9f, 1f, 1f);
+            Handles.DrawSolidDisc(center, Vector3.forward, 2f);
+
+            Handles.color = Color.white;
             Handles.EndGUI();
         }
 
@@ -1128,9 +1169,16 @@ namespace Editor
                 // Get the currently selected GameObject in the hierarchy
                 GameObject selectedParent = Selection.activeGameObject;
                 
-                // If there's a selected GameObject, make the new instance a child of it
-                if (selectedParent != null)
+                // Check if the selected parent is a prefab instance - if so, don't parent to it
+                if (selectedParent != null && PrefabUtility.IsPartOfPrefabInstance(selectedParent))
                 {
+                    // Don't parent to prefab instances to avoid nesting prefabs
+                    instance.transform.position = placePosition;
+                    Debug.Log($"Placed {prefab.name} at world position {placePosition} (avoided parenting to prefab instance)");
+                }
+                else if (selectedParent != null)
+                {
+                    // Safe to parent to non-prefab GameObject
                     Undo.SetTransformParent(instance.transform, selectedParent.transform, $"Parent {prefab.name} to {selectedParent.name}");
                     
                     // Convert world position to local position relative to the parent
@@ -1147,7 +1195,8 @@ namespace Editor
                 }
                 
                 Undo.RegisterCreatedObjectUndo(instance, $"Place {prefab.name}");
-                Selection.activeGameObject = instance;
+                // Don't auto-select the new instance to avoid it becoming the new parent
+                // Selection.activeGameObject = instance;
             }
             catch (Exception e)
             {
@@ -1625,16 +1674,6 @@ namespace Editor
             _previewLoadQueue.Clear();
         }
 
-        private void RefreshPreviewCache()
-        {
-            // Clear existing cache
-            ClearPreviews();
-
-            // Restart preview loading
-            StartPreviewLoading();
-
-            // Force repaint
-        }
 
         #endregion
 
