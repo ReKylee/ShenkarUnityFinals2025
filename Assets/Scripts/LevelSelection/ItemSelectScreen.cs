@@ -12,7 +12,7 @@ namespace LevelSelection
     {
         [Header("UI References")] public Image itemSelectImage;
 
-        public string itemSelectSpritePath = "item select screen";
+        [SerializeField] private Sprite itemSelectSprite;
 
         [Header("Display Settings")] public float displayDuration = 2f;
 
@@ -30,24 +30,20 @@ namespace LevelSelection
         private string _pendingLevelName;
         private string _pendingSceneName;
 
-        public bool IsWaitingForInput { get; private set; }
+        private bool IsWaitingForInput { get; set; }
 
         private void Awake()
         {
             _audioSource = GetComponent<AudioSource>();
-            if (_audioSource == null)
+            if (!_audioSource)
             {
                 _audioSource = gameObject.AddComponent<AudioSource>();
             }
 
-            // Load the item select screen sprite
-            if (itemSelectImage != null && string.IsNullOrEmpty(itemSelectSpritePath) == false)
+
+            if (itemSelectSprite)
             {
-                Sprite itemSelectSprite = Resources.Load<Sprite>(itemSelectSpritePath);
-                if (itemSelectSprite != null)
-                {
-                    itemSelectImage.sprite = itemSelectSprite;
-                }
+                itemSelectImage.sprite = itemSelectSprite;
             }
 
             // Start hidden
@@ -56,7 +52,7 @@ namespace LevelSelection
 
         private void OnEnable()
         {
-            if (submitAction != null)
+            if (submitAction)
             {
                 submitAction.action.Enable();
                 submitAction.action.performed += OnConfirmInput;
@@ -65,7 +61,7 @@ namespace LevelSelection
 
         private void OnDisable()
         {
-            if (submitAction != null)
+            if (submitAction)
             {
                 submitAction.action.performed -= OnConfirmInput;
                 submitAction.action.Disable();

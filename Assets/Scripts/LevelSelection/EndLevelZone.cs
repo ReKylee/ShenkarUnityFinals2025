@@ -93,15 +93,17 @@ namespace LevelSelection
             // Wait for completion delay
             yield return new WaitForSeconds(completionDelay);
 
+            // Calculate completion time (should be tracked by GameFlowManager, but we'll use a simple calculation here)
+            float completionTime = Time.time; // This should be the actual level completion time
+
+            // Update game data with completion stats
+            UpdateCompletionStats(completionTime);
+
             // Unlock next level and save progress
             UnlockNextLevel();
 
-            // Calculate completion time
-            float completionTime =
-                Time.time - Time.realtimeSinceStartup; // This should be calculated properly by GameFlowManager
-
             // Publish level completion event (for GameFlowManager)
-            _eventBus?.Publish(new LevelCompletedEvent
+            _eventBus?.Publish(new Core.Events.LevelCompletedEvent
             {
                 Timestamp = Time.time,
                 LevelName = currentLevelName,
@@ -111,7 +113,7 @@ namespace LevelSelection
             // Publish level unlocked event (for level selection system)
             if (!string.IsNullOrEmpty(nextLevelName))
             {
-                _eventBus?.Publish(new LevelUnlockedEvent
+                _eventBus?.Publish(new Core.Events.LevelUnlockedEvent
                 {
                     Timestamp = Time.time,
                     CompletedLevelName = currentLevelName,
@@ -122,13 +124,31 @@ namespace LevelSelection
             // Return to level select if enabled
             if (autoReturnToLevelSelect)
             {
-                _eventBus?.Publish(new LevelLoadRequestedEvent
+                _eventBus?.Publish(new Core.Events.LevelLoadRequestedEvent
                 {
                     Timestamp = Time.time,
                     LevelName = "Level Select",
                     SceneName = "LevelSelection"
                 });
             }
+        }
+
+        private void UpdateCompletionStats(float completionTime)
+        {
+            GameData gameData = _gameDataService?.CurrentData;
+            if (gameData == null) return;
+
+            // Update best time for this level
+            gameData.UpdateLevelBestTime(currentLevelName, completionTime);
+
+            // Update best score for this level (assuming score is tracked elsewhere)
+            gameData.UpdateLevelBestScore(currentLevelName, gameData.score);
+
+            // Update overall max score
+            gameData.UpdateMaxScore(gameData.score);
+
+            Debug.Log(
+                $"[EndLevelZone] Updated stats - Time: {completionTime:F2}s, Score: {gameData.score}, Best Time: {gameData.GetLevelBestTime(currentLevelName):F2}s");
         }
 
         private void UnlockNextLevel()

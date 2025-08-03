@@ -7,26 +7,31 @@ namespace LevelSelection
 {
     public class NESCrossfade : MonoBehaviour
     {
-        [Header("Crossfade Configuration")] public Image fadeImage;
-
+        [Header("Crossfade Configuration")] 
+        public Image fadeImage;
         public float fadeDuration = 1f;
         public Color fadeColor = Color.black;
         public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-        [Header("NES Style Effect")] public bool useNESEffect = true;
-
+        [Header("NES Style Effect")] 
+        public bool useNESEffect = true;
         public Color[] nesColors = { Color.black, new(0.2f, 0.2f, 0.3f), new(0.1f, 0.1f, 0.2f) };
         public float colorFlickerSpeed = 10f;
+        
         private LevelSelectionConfig _config;
-
+        private bool _isFading;
         private Action _onFadeComplete;
 
-        /// <summary>
-        ///     Check if currently fading
-        /// </summary>
-        public bool IsFading { get; private set; }
-
         private void Awake()
+        {
+            SetupFadeImage();
+            // Start completely transparent (hidden)
+            SetAlpha(0f);
+            
+            Debug.Log("[NESCrossfade] Initialized and hidden");
+        }
+
+        private void SetupFadeImage()
         {
             if (fadeImage == null)
             {
@@ -34,12 +39,21 @@ namespace LevelSelection
                 GameObject fadeGO = new("FadeImage");
                 fadeGO.transform.SetParent(transform, false);
 
-                Canvas canvas = GetComponent<Canvas>();
+                // Ensure we have a Canvas component
+                Canvas canvas = GetComponentInParent<Canvas>();
                 if (canvas == null)
                 {
                     canvas = gameObject.AddComponent<Canvas>();
                     canvas.sortingOrder = 1000;
                     canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                    
+                    // Add CanvasScaler for proper scaling
+                    CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
+                    scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                    scaler.referenceResolution = new Vector2(1920, 1080);
+                    
+                    // Add GraphicRaycaster
+                    gameObject.AddComponent<GraphicRaycaster>();
                 }
 
                 fadeImage = fadeGO.AddComponent<Image>();
@@ -48,10 +62,20 @@ namespace LevelSelection
                 rect.anchorMax = Vector2.one;
                 rect.sizeDelta = Vector2.zero;
                 rect.anchoredPosition = Vector2.zero;
+                
+                // Set initial color
+                fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 0f);
             }
-
-            // Start with transparent
-            SetAlpha(0f);
+            
+            // Ensure the image covers the full screen
+            if (fadeImage != null)
+            {
+                RectTransform rect = fadeImage.rectTransform;
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.sizeDelta = Vector2.zero;
+                rect.anchoredPosition = Vector2.zero;
+            }
         }
 
         public void SetConfig(LevelSelectionConfig config)
@@ -68,7 +92,7 @@ namespace LevelSelection
 
         public void FadeOut(Action onComplete = null)
         {
-            if (IsFading) return;
+            if (_isFading) return;
 
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(0f, 1f));
@@ -76,7 +100,7 @@ namespace LevelSelection
 
         public void FadeIn(Action onComplete = null)
         {
-            if (IsFading) return;
+            if (_isFading) return;
 
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(1f, 0f));
@@ -84,14 +108,14 @@ namespace LevelSelection
 
         public void FadeOutAndIn(Action onMiddle = null, Action onComplete = null)
         {
-            if (IsFading) return;
+            if (_isFading) return;
 
             StartCoroutine(FadeOutAndInCoroutine(onMiddle, onComplete));
         }
 
         private IEnumerator FadeCoroutine(float from, float to)
         {
-            IsFading = true;
+            _isFading = true;
             float elapsed = 0f;
 
             while (elapsed < fadeDuration)
@@ -122,7 +146,7 @@ namespace LevelSelection
                 SetAlpha(to);
             }
 
-            IsFading = false;
+            _isFading = false;
             _onFadeComplete?.Invoke();
             _onFadeComplete = null;
         }
@@ -191,6 +215,27 @@ namespace LevelSelection
             {
                 SetAlpha(alpha);
             }
+        }
+
+        /// <summary>
+        ///     Check if currently fading
+        /// </summary>
+        public bool IsFading => _isFading;
+        
+        /// <summary>
+        /// Show the crossfade immediately (useful for scene start)
+        /// </summary>
+        public void Show()
+        {
+            SetAlpha(1f);
+        }
+        
+        /// <summary>
+        /// Hide the crossfade immediately
+        /// </summary>
+        public void Hide()
+        {
+            SetAlpha(0f);
         }
     }
 }
