@@ -120,6 +120,15 @@ namespace InputSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Crouch"",
+                    ""type"": ""Button"",
+                    ""id"": ""0471f5cd-b3eb-46e5-b017-a35ac68d2ab0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -298,6 +307,28 @@ namespace InputSystem
                     ""action"": ""Walk"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aa57ec21-191f-41c0-95aa-b9f15f95a635"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""41602be2-14dd-45f7-bd7d-84e5b8e7b4f9"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -886,6 +917,7 @@ namespace InputSystem
             m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Walk = m_Player.FindAction("Walk", throwIfNotFound: true);
+            m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -982,6 +1014,7 @@ namespace InputSystem
         private readonly InputAction m_Player_Attack;
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_Walk;
+        private readonly InputAction m_Player_Crouch;
         /// <summary>
         /// Provides access to input actions defined in input action map "Player".
         /// </summary>
@@ -1005,6 +1038,10 @@ namespace InputSystem
             /// Provides access to the underlying input action "Player/Walk".
             /// </summary>
             public InputAction @Walk => m_Wrapper.m_Player_Walk;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/Crouch".
+            /// </summary>
+            public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1040,6 +1077,9 @@ namespace InputSystem
                 @Walk.started += instance.OnWalk;
                 @Walk.performed += instance.OnWalk;
                 @Walk.canceled += instance.OnWalk;
+                @Crouch.started += instance.OnCrouch;
+                @Crouch.performed += instance.OnCrouch;
+                @Crouch.canceled += instance.OnCrouch;
             }
 
             /// <summary>
@@ -1060,6 +1100,9 @@ namespace InputSystem
                 @Walk.started -= instance.OnWalk;
                 @Walk.performed -= instance.OnWalk;
                 @Walk.canceled -= instance.OnWalk;
+                @Crouch.started -= instance.OnCrouch;
+                @Crouch.performed -= instance.OnCrouch;
+                @Crouch.canceled -= instance.OnCrouch;
             }
 
             /// <summary>
@@ -1381,6 +1424,13 @@ namespace InputSystem
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnWalk(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Crouch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnCrouch(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
