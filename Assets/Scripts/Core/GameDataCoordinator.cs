@@ -4,6 +4,7 @@ using Core.Data;
 using Core.Events;
 using Core.Services;
 using LevelSelection;
+using LevelSelection.Services;
 using UnityEngine;
 using VContainer;
 
@@ -15,6 +16,7 @@ namespace Core
         private IAutoSaveService _autoSaveService;
         private IEventBus _eventBus;
         private IGameDataService _gameDataService;
+        private ILevelDiscoveryService _levelDiscoveryService;
         private bool _isInitialized;
 
         // Track previous values to detect changes
@@ -24,11 +26,13 @@ namespace Core
         public void Construct(
             IGameDataService gameDataService,
             IEventBus eventBus,
-            IAutoSaveService autoSaveService)
+            IAutoSaveService autoSaveService,
+            ILevelDiscoveryService levelDiscoveryService)
         {
             _gameDataService = gameDataService;
             _eventBus = eventBus;
             _autoSaveService = autoSaveService;
+            _levelDiscoveryService = levelDiscoveryService;
             _isInitialized = true;
 
             Initialize();
@@ -192,7 +196,7 @@ namespace Core
 
         public async Task<List<LevelData>> DiscoverLevelsAsync()
         {
-            return await _gameDataService?.DiscoverLevelsAsync() ?? new List<LevelData>();
+            return await _gameDataService?.GetLevelDataAsync(_levelDiscoveryService) ?? new List<LevelData>();
         }
 
         public GameData GetCurrentData()

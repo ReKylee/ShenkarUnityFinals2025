@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LevelSelection;
+using LevelSelection.Services;
 
 namespace Core.Data
 {
@@ -19,7 +20,6 @@ namespace Core.Data
         
         // Level data operations that should go through GameDataService
         void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime);
-        Task<List<LevelData>> DiscoverLevelsAsync();
+        Task<List<LevelData>> GetLevelDataAsync(ILevelDiscoveryService discoveryService);
     }
-
 }

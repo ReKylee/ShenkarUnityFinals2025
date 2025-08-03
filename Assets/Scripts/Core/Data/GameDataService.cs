@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LevelSelection;
 using LevelSelection.Services;
@@ -10,13 +11,11 @@ namespace Core.Data
     public class GameDataService : IGameDataService
     {
         private readonly IGameDataRepository _repository;
-        private readonly ILevelDiscoveryService _levelDiscoveryService;
 
         [Inject]
-        public GameDataService(IGameDataRepository repository, ILevelDiscoveryService levelDiscoveryService)
+        public GameDataService(IGameDataRepository repository)
         {
             _repository = repository;
-            _levelDiscoveryService = levelDiscoveryService;
             CurrentData = _repository.LoadData();
         }
 
@@ -72,15 +71,62 @@ namespace Core.Data
 
         public void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime)
         {
-            // Update level progress and cache the data
-            _levelDiscoveryService?.UpdateLevelProgress(levelName, isCompleted, completionTime);
+            var gameData = CurrentData;
+            if (gameData?.cachedLevelData == null) return;
+
+            var level = gameData.cachedLevelData.FirstOrDefault(l => l.levelName == levelName);
+            if (level != null)
+            {
+                level.isCompleted = isCompleted;
+                if (completionTime < level.bestTime)
+                {
+                    level.bestTime = completionTime;
+                }
+            }
             NotifyDataChanged();
         }
 
-        public async Task<List<LevelData>> DiscoverLevelsAsync()
+        public async Task<List<LevelData>> GetLevelDataAsync(ILevelDiscoveryService discoveryService)
         {
-            // Delegate to the level discovery service but cache results in game data
-            return await _levelDiscoveryService?.DiscoverLevelsAsync() ?? new List<LevelData>();
+            if (CurrentData.levelDataCacheValid && CurrentData.cachedLevelData.Any())
+            {
+                return ApplyGameStateToLevelData(CurrentData.cachedLevelData);
+            }
+
+            var discoveredLevels = await discoveryService.DiscoverLevelsFromSceneAsync();
+            CacheLevelData(discoveredLevels);
+            return ApplyGameStateToLevelData(discoveredLevels);
+        }
+
+        private void CacheLevelData(List<LevelData> levelData)
+        {
+            CurrentData.cachedLevelData = new List<LevelData>(levelData);
+            CurrentData.levelDataCacheValid = true;
+            SaveData();
+        }
+
+        private List<LevelData> ApplyGameStateToLevelData(List<LevelData> baseLevelData)
+        {
+            var gameData = CurrentData;
+            if (gameData == null) return baseLevelData;
+
+            var result = new List<LevelData>();
+            foreach (var levelData in baseLevelData)
+            {
+                var copy = new LevelData
+                {
+                    levelName = levelData.levelName,
+                    sceneName = levelData.sceneName,
+                    mapPosition = levelData.mapPosition,
+                    displayName = levelData.displayName,
+                    levelIndex = levelData.levelIndex,
+                    isUnlocked = gameData.unlockedLevels.Contains(levelData.levelName),
+                    isCompleted = gameData.completedLevels.Contains(levelData.levelName),
+                    bestTime = gameData.LevelBestTimes.GetValueOrDefault(levelData.levelName, float.MaxValue)
+                };
+                result.Add(copy);
+            }
+            return result;
         }
 
         private void NotifyDataChanged()
