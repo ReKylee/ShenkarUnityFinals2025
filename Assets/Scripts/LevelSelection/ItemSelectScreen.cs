@@ -83,7 +83,7 @@ namespace LevelSelection
                 waitForInput = _config.waitForInputOnItemSelect;
 
                 // Update audio clip from config if available
-                if (_config.selectionSound != null && confirmSound == null)
+                if (_config.selectionSound && !confirmSound)
                 {
                     confirmSound = _config.selectionSound;
                 }

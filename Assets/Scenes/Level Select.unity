@@ -281,7 +281,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 48c4731028113304ab729f0c6fd9c362, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -316,7 +316,7 @@ MonoBehaviour:
   displayDuration: 2
   waitForInput: 1
   confirmSound: {fileID: 0}
-  submitAction: {fileID: 0}
+  submitAction: {fileID: 392368643174621059, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!1 &427069344
 GameObject:
   m_ObjectHideFlags: 0
@@ -343,7 +343,7 @@ Transform:
   m_GameObject: {fileID: 427069344}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.96989, y: -1.94948, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -366,9 +366,6 @@ MonoBehaviour:
     gridWidth: 4
     selectorMoveSpeed: 5
     snapThreshold: 0.1
-    unlockedColor: {r: 1, g: 1, b: 1, a: 1}
-    lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
     navigationSound: {fileID: 0}
     selectionSound: {fileID: 0}
     lockedSound: {fileID: 0}
@@ -618,13 +615,8 @@ MonoBehaviour:
   levelName: l2
   displayName: l2
   sceneName: Level2
-  levelIcon: {fileID: 0}
-  iconRenderer: {fileID: 0}
-  lockRenderer: {fileID: 0}
-  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
-  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  pulseSpeed: 2
-  pulseScale: 1.1
+  startUnlocked: 0
+  overrideGameData: 0
 --- !u!1 &1511533099
 GameObject:
   m_ObjectHideFlags: 0
@@ -1106,13 +1098,8 @@ MonoBehaviour:
   levelName: l1
   displayName: l1
   sceneName: Level1
-  levelIcon: {fileID: 0}
-  iconRenderer: {fileID: 0}
-  lockRenderer: {fileID: 0}
-  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
-  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  pulseSpeed: 2
-  pulseScale: 1.1
+  startUnlocked: 1
+  overrideGameData: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

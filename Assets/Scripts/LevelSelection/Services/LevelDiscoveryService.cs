@@ -44,16 +44,7 @@ namespace LevelSelection.Services
             {
                 // First by name (Level_01, Level_02, etc.)
                 int nameComparison = string.Compare(a.name, b.name, StringComparison.OrdinalIgnoreCase);
-                if (nameComparison != 0) return nameComparison;
-
-                // Then by position (left to right, top to bottom)
-                Vector3 posA = a.transform.position;
-                Vector3 posB = b.transform.position;
-
-                if (Mathf.Abs(posA.y - posB.y) > 0.1f)
-                    return posB.y.CompareTo(posA.y); // Higher Y first
-
-                return posA.x.CompareTo(posB.x); // Left to right
+                return nameComparison;
             });
 
             // Cache sorted level points for external use

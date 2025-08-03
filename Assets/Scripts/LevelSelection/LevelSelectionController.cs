@@ -241,6 +241,8 @@ namespace LevelSelection
 
         private void OnLevelSelected(LevelSelectedEvent selectionEvent)
         {
+            Debug.Log($"[LevelSelectionController] Level selected: {selectionEvent.LevelName}");
+
             // Check if level is unlocked for sound feedback
             LevelData levelData = _navigationService.CurrentLevel;
             if (levelData != null && !levelData.isUnlocked)
@@ -251,6 +253,7 @@ namespace LevelSelection
                     _audioSource.PlayOneShot(config.lockedSound);
                 }
 
+                Debug.Log($"[LevelSelectionController] Level {selectionEvent.LevelName} is locked");
                 return;
             }
 
@@ -260,21 +263,57 @@ namespace LevelSelection
                 _audioSource.PlayOneShot(config.selectionSound);
             }
 
-            // Pass the scene name to ItemSelectScreen - derive from level name or use mapping
-            string sceneName = GetSceneNameForLevel(selectionEvent.LevelName);
-            itemSelectScreen?.ShowItemSelect(selectionEvent.LevelName, sceneName);
+            // Get the scene name from the level data directly
+            string sceneName = GetSceneNameForLevel(levelData);
+            Debug.Log($"[LevelSelectionController] Loading level: {selectionEvent.LevelName} -> Scene: {sceneName}");
+
+            // Show ItemSelectScreen if available, otherwise load directly
+            if (itemSelectScreen != null)
+            {
+                itemSelectScreen.ShowItemSelect(selectionEvent.LevelName, sceneName);
+            }
+            else
+            {
+                // Load level directly if no ItemSelectScreen
+                LoadLevel(sceneName);
+            }
         }
 
-        private string GetSceneNameForLevel(string levelName) =>
-            // Default mapping - can be enhanced with a dictionary or config
-            levelName.Replace(" ", "").Replace("Level", "Level");
+        private string GetSceneNameForLevel(LevelData levelData)
+        {
+            // Use the scene name from level data if available
+            if (!string.IsNullOrEmpty(levelData?.sceneName))
+            {
+                return levelData.sceneName;
+            }
+
+            // Fallback to level name conversion
+            return levelData?.levelName?.Replace(" ", "").Replace("_", "") ?? "DefaultLevel";
+        }
+
+        private void LoadLevel(string sceneName)
+        {
+            Debug.Log($"[LevelSelectionController] Loading scene: {sceneName}");
+
+            if (crossfade != null)
+            {
+                crossfade.FadeOutAndIn(
+                    () => SceneManager.LoadScene(sceneName),
+                    () => Debug.Log($"Loaded scene: {sceneName}")
+                );
+            }
+            else
+            {
+                SceneManager.LoadScene(sceneName);
+            }
+        }
 
         private void OnLevelLoadRequested(LevelLoadRequestedEvent loadEvent)
         {
-            crossfade?.FadeOutAndIn(
-                () => SceneManager.LoadScene(loadEvent.SceneName),
-                () => Debug.Log($"Loaded scene: {loadEvent.SceneName}")
-            );
+            Debug.Log(
+                $"[LevelSelectionController] Level load requested: {loadEvent.LevelName} -> {loadEvent.SceneName}");
+
+            LoadLevel(loadEvent.SceneName);
         }
 
         private void MoveSelectorToCurrentLevel()
