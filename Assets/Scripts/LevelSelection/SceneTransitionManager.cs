@@ -101,7 +101,7 @@ namespace LevelSelection
         private void SetupCanvas()
         {
             // Ensure Canvas exists
-            if (GetComponent<Canvas>() == null)
+            if (!GetComponent<Canvas>())
             {
                 Canvas canvas = gameObject.AddComponent<Canvas>();
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -109,7 +109,7 @@ namespace LevelSelection
             }
 
             // Ensure CanvasScaler exists
-            if (GetComponent<CanvasScaler>() == null)
+            if (!GetComponent<CanvasScaler>())
             {
                 CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
                 scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

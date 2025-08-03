@@ -2,6 +2,7 @@
 using Core.Data;
 using Core.Events;
 using Core.Services;
+using LevelSelection;
 using Player.Components;
 using Player.Interfaces;
 using Player.Services;
@@ -50,7 +51,6 @@ namespace Core.DI
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
             builder.Register<IScoreService, ScoreService>(Lifetime.Singleton);
 
-            // Level Selection components are now handled by LevelSelectionLifetimeScope
 
             // Register Player Services
             builder.Register<IPlayerLivesService>(resolver
@@ -62,6 +62,7 @@ namespace Core.DI
             // Game Management
             builder.RegisterComponentInHierarchy<GameFlowManager>();
             builder.RegisterComponentInHierarchy<GameDataCoordinator>();
+            builder.RegisterComponentInHierarchy<EndLevelZone>();
             // Pooling System
             builder.RegisterComponentInHierarchy<PoolManager>().As<IPoolService>();
 

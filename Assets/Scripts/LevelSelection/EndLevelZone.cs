@@ -125,7 +125,7 @@ namespace LevelSelection
             if (autoReturnToLevelSelect)
             {
                 // Use standalone SceneTransitionManager
-                SceneTransitionManager.TransitionTo("LevelSelection");
+                SceneTransitionManager.TransitionTo("Level Select");
             }
         }
 
