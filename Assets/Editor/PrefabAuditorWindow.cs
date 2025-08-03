@@ -762,7 +762,7 @@ namespace Editor
 
             // Scale the world size to compensate for asset preview padding BEFORE any calculations
             // Unity's asset previews have internal padding, so we scale up the world size to compensate
-            worldSize *= 1.2f; // Scale up by 20% to account for internal padding
+            worldSize *= 1.4f; 
 
             // Apply grid snapping to the preview position if enabled
             Vector3 previewWorldPos = worldPos;
