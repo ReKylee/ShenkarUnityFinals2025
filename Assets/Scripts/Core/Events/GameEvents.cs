@@ -74,6 +74,12 @@ namespace Core.Events
         public float Timestamp { get; set; }
     }
 
+    public struct GameCompletedEvent : IGameEvent
+    {
+        public float Timestamp { get; set; }
+        public string FinalLevelName;
+    }
+
     // Level Selection Events
     public struct LevelSelectedEvent : IGameEvent
     {

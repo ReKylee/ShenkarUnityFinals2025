@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Core;
 using Core.Data;
-using Core.Events;
 using UnityEngine;
 
 namespace LevelSelection.Services
@@ -13,15 +13,15 @@ namespace LevelSelection.Services
     public class LevelNavigationService : ILevelNavigationService
     {
 
-        private readonly IEventBus _eventBus;
+        private readonly GameFlowManager _gameFlowManager;
         private readonly IGameDataService _gameDataService;
         private int _gridWidth = 4; // Default value, will be updated from config
         private bool _isActive;
         private List<LevelData> _levelData;
 
-        public LevelNavigationService(IEventBus eventBus, IGameDataService gameDataService)
+        public LevelNavigationService(GameFlowManager gameFlowManager, IGameDataService gameDataService)
         {
-            _eventBus = eventBus;
+            _gameFlowManager = gameFlowManager;
             _gameDataService = gameDataService;
         }
 
@@ -77,13 +77,8 @@ namespace LevelSelection.Services
                 return;
             }
 
-            Debug.Log($"[LevelNavigationService] Publishing LevelSelectedEvent for: {selectedLevel.levelName}");
-            _eventBus?.Publish(new LevelSelectedEvent
-            {
-                Timestamp = Time.time,
-                LevelName = selectedLevel.levelName,
-                LevelIndex = CurrentIndex
-            });
+            Debug.Log($"[LevelNavigationService] Requesting level selection through GameFlowManager for: {selectedLevel.levelName}");
+            _gameFlowManager?.SelectLevel(selectedLevel.levelName, CurrentIndex);
         }
 
         public void SetGridWidth(int gridWidth)
@@ -138,16 +133,10 @@ namespace LevelSelection.Services
                 _gameDataService?.SaveData();
             }
 
-            Debug.Log($"[LevelNavigationService] Publishing navigation event: {previousIndex} -> {CurrentIndex}");
+            Debug.Log($"[LevelNavigationService] Publishing navigation event through GameFlowManager: {previousIndex} -> {CurrentIndex}");
 
-            // Publish navigation event
-            _eventBus?.Publish(new LevelNavigationEvent
-            {
-                Timestamp = Time.time,
-                PreviousIndex = previousIndex,
-                NewIndex = CurrentIndex,
-                Direction = Vector2.zero
-            });
+            // Publish navigation event through GameFlowManager
+            _gameFlowManager?.NavigateLevel(previousIndex, CurrentIndex, Vector2.zero);
         }
     }
 }

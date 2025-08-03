@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using Core.Events;
+using Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -25,7 +25,7 @@ namespace LevelSelection
 
         private AudioSource _audioSource;
         private LevelSelectionConfig _config;
-        private IEventBus _eventBus;
+        private GameFlowManager _gameFlowManager;
         private Action _onComplete;
         private string _pendingLevelName;
         private string _pendingSceneName;
@@ -95,9 +95,9 @@ namespace LevelSelection
         }
 
         [Inject]
-        public void Construct(IEventBus eventBus)
+        public void Construct(GameFlowManager gameFlowManager)
         {
-            _eventBus = eventBus;
+            _gameFlowManager = gameFlowManager;
         }
 
         public void ShowItemSelect(string levelName, string sceneName, Action onComplete = null)
@@ -148,6 +148,13 @@ namespace LevelSelection
                 _audioSource.PlayOneShot(soundToPlay);
             }
 
+            CompleteSelection();
+        }
+
+        private void CompleteSelection()
+        {
+            Debug.Log($"[ItemSelectScreen] Completing selection for level: {_pendingLevelName}");
+
             IsWaitingForInput = false;
 
             // Hide the image component
@@ -156,13 +163,8 @@ namespace LevelSelection
                 itemSelectImage.enabled = false;
             }
 
-            // Publish level load request event
-            _eventBus?.Publish(new LevelLoadRequestedEvent
-            {
-                Timestamp = Time.time,
-                LevelName = _pendingLevelName,
-                SceneName = _pendingSceneName
-            });
+            // Request level load through GameFlowManager instead of publishing directly
+            _gameFlowManager?.RequestLevelLoad(_pendingLevelName, _pendingSceneName);
 
             _onComplete?.Invoke();
         }

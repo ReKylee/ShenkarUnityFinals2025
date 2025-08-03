@@ -66,7 +66,7 @@ namespace ModularCharacterController.Core.Abilities.Modules
             float deceleration = isGrounded ? stats.groundDeceleration : stats.airDeceleration;
 
             // Calculate new horizontal velocity
-            if (hasMovementInput && !IsWallBlocking(_facingDirection))
+            if (hasMovementInput )
             {
 
                 // Accelerate towards target velocity
@@ -138,7 +138,7 @@ namespace ModularCharacterController.Core.Abilities.Modules
             Vector2 castSize = new(WALL_DETECTION_DISTANCE, _colliderBounds.size.y * WALL_CAST_HEIGHT_MULTIPLIER);
             Vector2 castDirection = direction > 0 ? Vector2.right : Vector2.left;
 
-            // Perform wall detection
+            // Use non-allocating boxcast - simple wall detection
             return Physics2D.BoxCast(
                 castOrigin,
                 castSize,

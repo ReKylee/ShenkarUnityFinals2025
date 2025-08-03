@@ -6,10 +6,6 @@ using VContainer;
 
 namespace Core
 {
-    /// <summary>
-    ///     Coordinates between game events and data storage.
-    ///     Responsible only for translating events into data updates and managing save operations.
-    /// </summary>
     public class GameDataCoordinator : MonoBehaviour
     {
         [SerializeField] private float autoSaveInterval = 30;
@@ -17,8 +13,6 @@ namespace Core
         private IEventBus _eventBus;
         private IGameDataService _gameDataService;
         private bool _isInitialized;
-
-        #region VContainer Injection
 
         [Inject]
         public void Construct(
@@ -31,26 +25,16 @@ namespace Core
             _autoSaveService = autoSaveService;
             _isInitialized = true;
 
-
-            // Initialize after dependencies are injected
             Initialize();
         }
 
-        #endregion
-
-        #region Initialization
-
         private void Initialize()
         {
-            // Subscribe to events - only subscribe to events that affect game data
-            _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted); // For best time tracking
-            _eventBus?.Subscribe<LevelStartedEvent>(OnLevelStarted); // For current level tracking
-            _eventBus?.Subscribe<PlayerLivesChangedEvent>(OnLivesChanged); // For lives tracking
-            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged); // For game state changes
-
+            _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
+            _eventBus?.Subscribe<LevelStartedEvent>(OnLevelStarted);
+            _eventBus?.Subscribe<PlayerLivesChangedEvent>(OnLivesChanged);
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
             _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
-
-            // Level Selection Events
             _eventBus?.Subscribe<LevelSelectedEvent>(OnLevelSelected);
             _eventBus?.Subscribe<LevelNavigationEvent>(OnLevelNavigation);
 
@@ -65,25 +49,9 @@ namespace Core
             }
         }
 
-        #endregion
-
-        #region Private Methods
-
         private void SaveData()
         {
             _gameDataService?.SaveData();
-        }
-
-        #endregion
-
-        #region Unity Lifecycle
-
-        private void Start()
-        {
-            // If not yet initialized (dependencies not injected), wait
-            if (!_isInitialized)
-            {
-            }
         }
 
         private void Update()
@@ -97,7 +65,6 @@ namespace Core
         {
             if (!_isInitialized) return;
 
-            // Unsubscribe from events
             if (_eventBus != null)
             {
                 _eventBus.Unsubscribe<PlayerDeathEvent>(OnPlayerDied);
@@ -105,8 +72,9 @@ namespace Core
                 _eventBus.Unsubscribe<LevelStartedEvent>(OnLevelStarted);
                 _eventBus.Unsubscribe<PlayerLivesChangedEvent>(OnLivesChanged);
                 _eventBus.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+                _eventBus.Unsubscribe<LevelSelectedEvent>(OnLevelSelected);
+                _eventBus.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
             }
-
 
             if (_gameDataService != null)
                 _gameDataService.OnDataChanged -= OnGameDataChanged;
@@ -132,10 +100,6 @@ namespace Core
             _autoSaveService.OnApplicationFocus(hasFocus);
         }
 
-        #endregion
-
-        #region Event Handlers
-
         private void OnPlayerDied(PlayerDeathEvent deathEvent)
         {
             _autoSaveService?.RequestSave();
@@ -149,23 +113,20 @@ namespace Core
 
         private void OnGameStateChanged(GameStateChangedEvent stateEvent)
         {
-            // Handle data operations based on state changes
             if (stateEvent.NewState is GameState.Victory or GameState.GameOver)
             {
                 _autoSaveService?.ForceSave();
             }
         }
+
         private void OnLevelStarted(LevelStartedEvent levelEvent)
         {
             _gameDataService?.UpdateCurrentLevel(levelEvent.LevelName);
         }
+
         private void OnLivesChanged(PlayerLivesChangedEvent livesEvent)
         {
-            Debug.Log(
-                $"[GameDataCoordinator] Received PlayerLivesChangedEvent: CurrentLives={livesEvent.CurrentLives}");
-
             _gameDataService?.UpdateLives(livesEvent.CurrentLives);
-            Debug.Log($"[GameDataCoordinator] Updated GameData lives to: {_gameDataService?.CurrentData.lives}");
         }
 
         private void OnGameDataChanged(GameData newData)
@@ -175,33 +136,22 @@ namespace Core
 
         private void OnLevelSelected(LevelSelectedEvent levelEvent)
         {
-            // Update selected level index in game data
             GameData gameData = _gameDataService?.CurrentData;
             if (gameData != null)
             {
                 gameData.selectedLevelIndex = levelEvent.LevelIndex;
                 gameData.currentLevel = levelEvent.LevelName;
             }
-
-            Debug.Log($"[GameDataCoordinator] Level selected: {levelEvent.LevelName}");
         }
 
         private void OnLevelNavigation(LevelNavigationEvent navigationEvent)
         {
-            // Update selected level index in game data
             GameData gameData = _gameDataService?.CurrentData;
             if (gameData != null)
             {
                 gameData.selectedLevelIndex = navigationEvent.NewIndex;
             }
-
-            Debug.Log(
-                $"[GameDataCoordinator] Level navigation: from {navigationEvent.PreviousIndex} to {navigationEvent.NewIndex}");
         }
-
-        #endregion
-
-        #region Public API
 
         public GameData GetCurrentData()
         {
@@ -216,8 +166,5 @@ namespace Core
 
             _gameDataService?.ResetAllData();
         }
-
-        #endregion
-
     }
 }

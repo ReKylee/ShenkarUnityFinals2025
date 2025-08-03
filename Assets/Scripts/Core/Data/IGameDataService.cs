@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using LevelSelection;
 
 namespace Core.Data
 {
@@ -13,6 +16,10 @@ namespace Core.Data
         void ResetAllData();
         void SaveData();
         event Action<GameData> OnDataChanged;
+        
+        // Level data operations that should go through GameDataService
+        void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime);
+        Task<List<LevelData>> DiscoverLevelsAsync();
     }
 
 }

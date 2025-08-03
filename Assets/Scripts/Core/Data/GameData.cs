@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LevelSelection;
 using UnityEngine;
 
 namespace Core.Data
@@ -22,9 +23,9 @@ namespace Core.Data
         public int selectedLevelIndex;
 
         // Enhanced timing and scoring data
-        public Dictionary<string, float> levelBestTimes = new();
-        public Dictionary<string, int> levelBestScores = new(); // Best score per level
-        public Dictionary<string, bool> levelCompleted = new();
+        public Dictionary<string, float> LevelBestTimes = new();
+        public Dictionary<string, int> LevelBestScores = new(); // Best score per level
+        public Dictionary<string, bool> LevelCompleted = new();
         
         public float bestTime = float.MaxValue; // Overall best time
 
@@ -38,6 +39,10 @@ namespace Core.Data
 
         [Header("Collectables")] 
         public int fruitCollected;
+
+        // Cached level discovery data
+        public List<LevelData> cachedLevelPoints = new();
+        public bool levelPointsCacheValid = false;
 
         // Constructor for easy initialization
         public GameData()
@@ -61,9 +66,11 @@ namespace Core.Data
             unlockedLevels = new List<string>(other.unlockedLevels);
             completedLevels = new List<string>(other.completedLevels);
             selectedLevelIndex = other.selectedLevelIndex;
-            levelBestTimes = new Dictionary<string, float>(other.levelBestTimes);
-            levelBestScores = new Dictionary<string, int>(other.levelBestScores);
-            levelCompleted = new Dictionary<string, bool>(other.levelCompleted);
+            LevelBestTimes = new Dictionary<string, float>(other.LevelBestTimes);
+            LevelBestScores = new Dictionary<string, int>(other.LevelBestScores);
+            LevelCompleted = new Dictionary<string, bool>(other.LevelCompleted);
+            cachedLevelPoints = new List<LevelData>(other.cachedLevelPoints);
+            levelPointsCacheValid = other.levelPointsCacheValid;
         }
 
         // Reset to default values
@@ -84,9 +91,11 @@ namespace Core.Data
             unlockedLevels = new List<string> { "Level_01" };
             completedLevels = new List<string>();
             selectedLevelIndex = 0;
-            levelBestTimes = new Dictionary<string, float>();
-            levelBestScores = new Dictionary<string, int>();
-            levelCompleted = new Dictionary<string, bool>();
+            LevelBestTimes = new Dictionary<string, float>();
+            LevelBestScores = new Dictionary<string, int>();
+            LevelCompleted = new Dictionary<string, bool>();
+            cachedLevelPoints = new List<LevelData>();
+            levelPointsCacheValid = false;
         }
 
         /// <summary>
@@ -96,9 +105,9 @@ namespace Core.Data
         {
             if (string.IsNullOrEmpty(levelName)) return;
             
-            if (!levelBestTimes.ContainsKey(levelName) || completionTime < levelBestTimes[levelName])
+            if (!LevelBestTimes.ContainsKey(levelName) || completionTime < LevelBestTimes[levelName])
             {
-                levelBestTimes[levelName] = completionTime;
+                LevelBestTimes[levelName] = completionTime;
                 
                 // Update overall best time if this is better
                 if (completionTime < bestTime)
@@ -115,9 +124,9 @@ namespace Core.Data
         {
             if (string.IsNullOrEmpty(levelName)) return;
             
-            if (!levelBestScores.ContainsKey(levelName) || levelScore > levelBestScores[levelName])
+            if (!LevelBestScores.ContainsKey(levelName) || levelScore > LevelBestScores[levelName])
             {
-                levelBestScores[levelName] = levelScore;
+                LevelBestScores[levelName] = levelScore;
             }
         }
 
@@ -137,7 +146,7 @@ namespace Core.Data
         /// </summary>
         public float GetLevelBestTime(string levelName)
         {
-            return levelBestTimes.TryGetValue(levelName, out float time) ? time : float.MaxValue;
+            return LevelBestTimes.TryGetValue(levelName, out float time) ? time : float.MaxValue;
         }
 
         /// <summary>
@@ -145,7 +154,7 @@ namespace Core.Data
         /// </summary>
         public int GetLevelBestScore(string levelName)
         {
-            return levelBestScores.TryGetValue(levelName, out int score) ? score : 0;
+            return LevelBestScores.TryGetValue(levelName, out int score) ? score : 0;
         }
 
         private static GameData CreateDefaultData() =>
@@ -162,8 +171,8 @@ namespace Core.Data
                 fruitCollected = 0,
                 unlockedLevels = new List<string> { "Level_01" },
                 selectedLevelIndex = 0,
-                levelBestTimes = new Dictionary<string, float>(),
-                levelCompleted = new Dictionary<string, bool>()
+                LevelBestTimes = new Dictionary<string, float>(),
+                LevelCompleted = new Dictionary<string, bool>()
             };
     }
 }

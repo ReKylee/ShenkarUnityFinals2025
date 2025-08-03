@@ -31,7 +31,6 @@ namespace LevelSelection.DI
             // Register the new service-based architecture
             builder.Register<ILevelDiscoveryService, LevelDiscoveryService>(Lifetime.Scoped);
             builder.Register<ILevelNavigationService, LevelNavigationService>(Lifetime.Scoped);
-            builder.Register<ILevelDisplayService, LevelDisplayService>(Lifetime.Scoped);
 
             // Register NEW focused services following SOLID principles
             builder.Register<ISelectorService, SelectorService>(Lifetime.Scoped);
@@ -45,7 +44,6 @@ namespace LevelSelection.DI
 
             // Register supporting components that are still used
             builder.RegisterComponentInHierarchy<ItemSelectScreen>();
-            builder.RegisterComponentInHierarchy<NesCrossfade>();
 
             // Register the scene transition manager
             builder.RegisterComponentInHierarchy<SceneTransitionManager>();

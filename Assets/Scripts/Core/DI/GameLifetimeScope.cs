@@ -3,6 +3,7 @@ using Core.Data;
 using Core.Events;
 using Core.Services;
 using LevelSelection;
+using LevelSelection.Services;
 using Player.Components;
 using Player.Interfaces;
 using Player.Services;
@@ -58,6 +59,9 @@ namespace Core.DI
                     resolver.Resolve<IGameDataService>(),
                     resolver.Resolve<IEventBus>()
                 ), Lifetime.Singleton);
+
+            // Register Level Discovery Service for caching
+            builder.Register<ILevelDiscoveryService, LevelDiscoveryService>(Lifetime.Singleton);
 
             // Game Management
             builder.RegisterComponentInHierarchy<GameFlowManager>();
