@@ -6,7 +6,7 @@ namespace Enemies.Behaviors
     // Handles dropping a prefab when the enemy dies
     public class EnemyDropOnDeath : MonoBehaviour
     {
-        [SerializeField] private GameObject dropPrefab;
+        public GameObject dropPrefab;
         private IHealthEvents _healthEvents;
 
         private void Awake()
