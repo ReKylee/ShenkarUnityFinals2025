@@ -14,7 +14,7 @@ namespace LevelSelection
         public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
         [Header("NES Style Effect")] 
-        public bool useNESEffect = true;
+        public bool useNesEffect = true;
         public Color[] nesColors = { Color.black, new(0.2f, 0.2f, 0.3f), new(0.1f, 0.1f, 0.2f) };
         public float colorFlickerSpeed = 10f;
 
@@ -128,7 +128,7 @@ namespace LevelSelection
                 float curveValue = fadeCurve.Evaluate(progress);
                 float alpha = Mathf.Lerp(from, to, curveValue);
 
-                if (useNESEffect)
+                if (useNesEffect)
                 {
                     SetNesStyleAlpha(alpha);
                 }
@@ -140,7 +140,7 @@ namespace LevelSelection
                 yield return null;
             }
 
-            if (useNESEffect)
+            if (useNesEffect)
             {
                 SetNesStyleAlpha(to);
             }
@@ -240,7 +240,7 @@ namespace LevelSelection
         /// </summary>
         public void SetInstantFade(float alpha)
         {
-            if (useNESEffect)
+            if (useNesEffect)
             {
                 SetNesStyleAlpha(alpha);
             }

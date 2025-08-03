@@ -140,7 +140,7 @@ namespace LevelSelection
         {
             _activeCrossfade.fadeDuration = fadeDuration;
             _activeCrossfade.fadeColor = fadeColor;
-            _activeCrossfade.useNESEffect = useNesEffect;
+            _activeCrossfade.useNesEffect = useNesEffect;
             _activeCrossfade.nesColors = nesColors;
         }
 

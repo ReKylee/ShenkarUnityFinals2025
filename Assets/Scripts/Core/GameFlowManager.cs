@@ -167,32 +167,96 @@ namespace Core
         {
             ChangeState(GameState.Victory);
             
+            // Update level progress in the data service
             _gameDataService?.UpdateLevelProgress(levelEvent.LevelName, true, levelEvent.CompletionTime);
+            
+            // Also update it in GameData for immediate checking
+            var gameData = _gameDataService?.CurrentData;
+            if (gameData != null && !gameData.completedLevels.Contains(levelEvent.LevelName))
+            {
+                gameData.completedLevels.Add(levelEvent.LevelName);
+                
+                // Unlock next level if it exists
+                UnlockNextLevel(levelEvent.LevelName, gameData);
+            }
             
             if (await IsGameCompletedAsync())
             {
+                Debug.Log("[GameFlowManager] All levels completed! Transitioning to YouWonScene...");
                 TransitionToVictorySceneAsync();
             }
             else
             {
+                Debug.Log($"[GameFlowManager] Level {levelEvent.LevelName} completed. Returning to level selection...");
                 ReturnToLevelSelectionAsync();
             }
+        }
+
+        private void UnlockNextLevel(string completedLevelName, GameData gameData)
+        {
+            // Simple next level unlocking logic - you can make this more sophisticated
+            if (completedLevelName.Contains("Level_"))
+            {
+                var levelNumber = ExtractLevelNumber(completedLevelName);
+                var nextLevelName = $"Level_{levelNumber + 1:D2}";
+                
+                if (!gameData.unlockedLevels.Contains(nextLevelName))
+                {
+                    gameData.unlockedLevels.Add(nextLevelName);
+                    Debug.Log($"[GameFlowManager] Unlocked next level: {nextLevelName}");
+                }
+            }
+        }
+
+        private int ExtractLevelNumber(string levelName)
+        {
+            // Extract number from level name like "Level_01" -> 1
+            var parts = levelName.Split('_');
+            if (parts.Length > 1 && int.TryParse(parts[1], out int levelNum))
+            {
+                return levelNum;
+            }
+            return 0;
         }
 
         private async Task<bool> IsGameCompletedAsync()
         {
             try
             {
+                // Check using GameData completed levels instead of level discovery data
+                var gameData = _gameDataService?.CurrentData;
+                if (gameData == null) return false;
+
+                // Get all available levels
                 var allLevels = await _gameDataService.DiscoverLevelsAsync();
                 
                 if (allLevels == null || allLevels.Count == 0)
                 {
+                    Debug.LogWarning("[GameFlowManager] No levels found in discovery service");
                     return false;
                 }
 
-                var uncompletedLevels = allLevels.Where(level => !level.isCompleted).ToList();
+                // Check if all levels are in the completed list
+                var completedCount = 0;
+                foreach (var level in allLevels)
+                {
+                    if (gameData.completedLevels.Contains(level.levelName))
+                    {
+                        completedCount++;
+                    }
+                }
                 
-                return uncompletedLevels.Count == 0;
+                Debug.Log($"[GameFlowManager] Game completion check: {completedCount}/{allLevels.Count} levels completed");
+                
+                if (completedCount >= allLevels.Count)
+                {
+                    Debug.Log("[GameFlowManager] All levels completed!");
+                    return true;
+                }
+
+                var remainingLevels = allLevels.Where(l => !gameData.completedLevels.Contains(l.levelName)).Select(l => l.levelName);
+                Debug.Log($"[GameFlowManager] Remaining levels: {string.Join(", ", remainingLevels)}");
+                return false;
             }
             catch (Exception e)
             {
