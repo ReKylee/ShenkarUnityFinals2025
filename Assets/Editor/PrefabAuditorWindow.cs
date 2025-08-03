@@ -654,7 +654,8 @@ namespace Editor
             if (!_settings.enablePreviewCache) return;
 
             _previewLoadQueue.Clear();
-            foreach (PrefabInfo prefabInfo in _prefabInfos.Where(prefabInfo => prefabInfo.prefab && !_previewCache.ContainsKey(prefabInfo.prefab)))
+            foreach (PrefabInfo prefabInfo in _prefabInfos.Where(prefabInfo =>
+                         prefabInfo.prefab && !_previewCache.ContainsKey(prefabInfo.prefab)))
             {
                 _previewLoadQueue.Enqueue(prefabInfo.prefab);
             }
@@ -760,7 +761,7 @@ namespace Editor
 
             // Scale the world size to compensate for asset preview padding BEFORE any calculations
             // Unity's asset previews have internal padding, so we scale up the world size to compensate
-            worldSize *= 1.4f; 
+            worldSize *= 1.4f;
 
             // Apply grid snapping to the preview position if enabled
             Vector3 previewWorldPos = worldPos;
@@ -959,26 +960,44 @@ namespace Editor
             // Clean background circle with subtle transparency
             Handles.color = new Color(0.2f, 0.2f, 0.25f, 0.85f);
             Handles.DrawSolidDisc(center, Vector3.forward, radius);
-            
+
             // Simple outer border
             Handles.color = new Color(0.6f, 0.6f, 0.7f, 0.8f);
             Handles.DrawWireDisc(center, Vector3.forward, radius);
-            
+
             // Inner ring for depth
             Handles.color = new Color(0.3f, 0.3f, 0.35f, 0.6f);
             Handles.DrawWireDisc(center, Vector3.forward, radius * 0.3f);
 
-            // Draw clean segment dividers
+            // Draw segment highlight first (behind everything else)
+            if (_hoveredRadialIndex >= 0 && _hoveredRadialIndex < prefabCount)
+            {
+                float startAngle = (_hoveredRadialIndex - 0.5f) / prefabCount * 360f - 90f;
+                float endAngle = (_hoveredRadialIndex + 0.5f) / prefabCount * 360f - 90f;
+
+                // Draw highlighted segment area
+                var segmentPoints = new Vector3[32];
+                for (int i = 0; i < 32; i++)
+                {
+                    float angle = Mathf.Lerp(startAngle, endAngle, i / 31f) * Mathf.Deg2Rad;
+                    Vector2 point = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius * 0.95f;
+                    segmentPoints[i] = new Vector3(point.x, point.y, 0);
+                }
+
+                // Create a subtle highlight for the entire segment
+                Handles.color = new Color(0.4f, 0.7f, 1f, 0.15f);
+                Handles.DrawAAConvexPolygon(segmentPoints);
+            }
+            // Draw segment dividers that separate items cleanly
             for (int i = 0; i < prefabCount; i++)
             {
-                float angle = i / (float)prefabCount * 360f - 90f;
+                float angle = (i + 0.5f) / prefabCount * 360f - 90f; // Offset by half to separate items
                 Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
-                
-                Vector2 lineStart = center + direction * (radius * 0.35f);
-                Vector2 lineEnd = center + direction * (radius * 0.95f);
-                
-                bool isHovered = i == _hoveredRadialIndex;
-                Handles.color = isHovered ? new Color(0.8f, 0.9f, 1f, 0.8f) : new Color(0.5f, 0.5f, 0.6f, 0.4f);
+
+                Vector2 lineStart = center + direction * (radius * 0.25f);
+                Vector2 lineEnd = center + direction * (radius * 0.98f);
+
+                Handles.color = new Color(0.5f, 0.5f, 0.6f, 0.6f);
                 Handles.DrawLine(lineStart, lineEnd);
             }
 
@@ -995,19 +1014,19 @@ namespace Editor
                 bool isHovered = i == _hoveredRadialIndex;
                 float iconSize = isHovered ? 56f : 48f;
 
-                // Clean selection indicator
+                // Clean selection indicator with subtle preview highlight
                 if (isHovered)
                 {
-                    // Simple highlight circle
-                    Handles.color = new Color(0.4f, 0.7f, 1f, 0.3f);
-                    Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.7f);
-                    
+                    // Larger highlight circle for the item area
+                    Handles.color = new Color(0.4f, 0.7f, 1f, 0.25f);
+                    Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.8f);
+
                     // Clean border
-                    Handles.color = new Color(0.5f, 0.8f, 1f, 0.9f);
-                    Handles.DrawWireDisc(itemPos, Vector3.forward, iconSize * 0.7f);
+                    Handles.color = new Color(0.5f, 0.8f, 1f, 0.7f);
+                    Handles.DrawWireDisc(itemPos, Vector3.forward, iconSize * 0.8f);
                 }
 
-                // Clean icon background
+                // Icon background with subtle transparency
                 Rect iconRect = new(
                     itemPos.x - iconSize * 0.4f,
                     itemPos.y - iconSize * 0.4f,
@@ -1015,28 +1034,47 @@ namespace Editor
                     iconSize * 0.8f
                 );
 
-                // Simple background
-                Color bgColor = isHovered ? new Color(0.9f, 0.95f, 1f, 0.95f) : new Color(0.8f, 0.8f, 0.85f, 0.9f);
-                EditorGUI.DrawRect(iconRect, bgColor);
-                
-                // Clean border
-                Color borderColor = isHovered ? new Color(0.4f, 0.7f, 1f, 1f) : new Color(0.6f, 0.6f, 0.7f, 0.8f);
-                Rect borderRect = new(iconRect.x - 1, iconRect.y - 1, iconRect.width + 2, iconRect.height + 2);
-                EditorGUI.DrawRect(borderRect, borderColor);
-                EditorGUI.DrawRect(iconRect, bgColor);
-
-                // Draw prefab preview
+                // Draw prefab preview with transparent background
                 Texture2D preview = GetPrefabPreview(prefab);
                 if (preview != null)
                 {
+                    // Use the cached transparent preview directly
+                    Color originalColor = GUI.color;
+                    if (isHovered)
+                    {
+                        // Add subtle brightness boost for hovered items
+                        GUI.color = new Color(1.1f, 1.1f, 1.1f, 1f);
+                    }
+
                     GUI.DrawTexture(iconRect, preview, ScaleMode.ScaleToFit, true);
+                    GUI.color = originalColor;
                 }
                 else
                 {
+                    // Simple background for loading state
+                    Color bgColor = isHovered ? new Color(0.9f, 0.95f, 1f, 0.4f) : new Color(0.8f, 0.8f, 0.85f, 0.3f);
+                    EditorGUI.DrawRect(iconRect, bgColor);
+
                     // Simple loading indicator
                     GUI.color = isHovered ? new Color(0.3f, 0.3f, 0.3f) : new Color(0.6f, 0.6f, 0.6f);
                     GUI.Label(iconRect, "●●●", new GUIStyle(EditorStyles.centeredGreyMiniLabel) { fontSize = 12 });
                     GUI.color = Color.white;
+                }
+
+                // Add subtle border around preview for definition
+                if (isHovered)
+                {
+                    Color borderColor = new(0.4f, 0.7f, 1f, 0.8f);
+                    Rect borderRect = new(iconRect.x - 1, iconRect.y - 1, iconRect.width + 2, iconRect.height + 2);
+
+                    // Draw border using GUI lines
+                    EditorGUI.DrawRect(new Rect(borderRect.x, borderRect.y, borderRect.width, 1), borderColor);
+                    EditorGUI.DrawRect(
+                        new Rect(borderRect.x, borderRect.y + borderRect.height - 1, borderRect.width, 1), borderColor);
+
+                    EditorGUI.DrawRect(new Rect(borderRect.x, borderRect.y, 1, borderRect.height), borderColor);
+                    EditorGUI.DrawRect(
+                        new Rect(borderRect.x + borderRect.width - 1, borderRect.y, 1, borderRect.height), borderColor);
                 }
 
                 // Clean name display
@@ -1044,7 +1082,7 @@ namespace Editor
                 {
                     GUIContent nameContent = new(prefab.name);
                     Vector2 nameSize = EditorStyles.boldLabel.CalcSize(nameContent);
-                    
+
                     Rect nameRect = new(
                         center.x - nameSize.x * 0.5f,
                         center.y + radius + 12,
@@ -1055,7 +1093,7 @@ namespace Editor
                     // Clean tooltip background
                     Rect tooltipBg = new(nameRect.x - 6, nameRect.y - 2, nameRect.width + 12, nameRect.height + 4);
                     EditorGUI.DrawRect(tooltipBg, new Color(0.15f, 0.15f, 0.2f, 0.9f));
-                    
+
                     // Simple border
                     Rect borderBg = new(tooltipBg.x - 1, tooltipBg.y - 1, tooltipBg.width + 2, tooltipBg.height + 2);
                     EditorGUI.DrawRect(borderBg, new Color(0.5f, 0.8f, 1f, 0.8f));
@@ -1072,7 +1110,7 @@ namespace Editor
                         string usageText = $"({_prefabUsageCount[prefab]}x)";
                         GUIContent usageContent = new(usageText);
                         Vector2 usageSize = EditorStyles.miniLabel.CalcSize(usageContent);
-                        
+
                         Rect usageRect = new(
                             center.x - usageSize.x * 0.5f,
                             nameRect.y + nameRect.height + 1,
@@ -1165,27 +1203,30 @@ namespace Editor
             {
                 Undo.IncrementCurrentGroup();
                 GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-                
+
                 // Get the currently selected GameObject in the hierarchy
                 GameObject selectedParent = Selection.activeGameObject;
-                
+
                 // Check if the selected parent is a prefab instance - if so, don't parent to it
                 if (selectedParent != null && PrefabUtility.IsPartOfPrefabInstance(selectedParent))
                 {
                     // Don't parent to prefab instances to avoid nesting prefabs
                     instance.transform.position = placePosition;
-                    Debug.Log($"Placed {prefab.name} at world position {placePosition} (avoided parenting to prefab instance)");
+                    Debug.Log(
+                        $"Placed {prefab.name} at world position {placePosition} (avoided parenting to prefab instance)");
                 }
                 else if (selectedParent != null)
                 {
                     // Safe to parent to non-prefab GameObject
-                    Undo.SetTransformParent(instance.transform, selectedParent.transform, $"Parent {prefab.name} to {selectedParent.name}");
-                    
+                    Undo.SetTransformParent(instance.transform, selectedParent.transform,
+                        $"Parent {prefab.name} to {selectedParent.name}");
+
                     // Convert world position to local position relative to the parent
                     Vector3 localPosition = selectedParent.transform.InverseTransformPoint(placePosition);
                     instance.transform.localPosition = localPosition;
-                    
-                    Debug.Log($"Placed {prefab.name} as child of {selectedParent.name} at local position {localPosition}");
+
+                    Debug.Log(
+                        $"Placed {prefab.name} as child of {selectedParent.name} at local position {localPosition}");
                 }
                 else
                 {
@@ -1193,7 +1234,7 @@ namespace Editor
                     instance.transform.position = placePosition;
                     Debug.Log($"Placed {prefab.name} at world position {placePosition}");
                 }
-                
+
                 Undo.RegisterCreatedObjectUndo(instance, $"Place {prefab.name}");
                 // Don't auto-select the new instance to avoid it becoming the new parent
                 // Selection.activeGameObject = instance;
@@ -1673,7 +1714,6 @@ namespace Editor
             _previewCache.Clear();
             _previewLoadQueue.Clear();
         }
-
 
         #endregion
 
