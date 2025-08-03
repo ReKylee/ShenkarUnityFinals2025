@@ -729,7 +729,7 @@ namespace Editor
                 worldPos = SnapToGrid(worldPos);
             }
 
-            if (currentEvent.type == EventType.MouseMove || currentEvent.type == EventType.Repaint)
+            if (currentEvent.type is EventType.MouseMove or EventType.Repaint)
             {
                 DrawPlacementPreview(currentEvent.mousePosition, worldPos);
                 sceneView.Repaint();
@@ -751,13 +751,11 @@ namespace Editor
             // Get prefab bounds for accurate sizing
             Bounds prefabBounds = GetPrefabBounds(_selectedPrefabForPlacement);
             Vector3 worldSize = prefabBounds.size;
-            Vector3 pivotOffset = GetPrefabPivotOffset(_selectedPrefabForPlacement, prefabBounds);
 
             // If bounds are too small or invalid, use default size
             if (worldSize.magnitude < 0.1f)
             {
                 worldSize = Vector3.one * 0.5f;
-                pivotOffset = Vector3.zero;
             }
 
             // Scale the world size to compensate for asset preview padding BEFORE any calculations
@@ -945,37 +943,6 @@ namespace Editor
             return new Bounds(prefab.transform.position, Vector3.one);
         }
 
-        private Vector3 GetPrefabPivotOffset(GameObject prefab, Bounds bounds)
-        {
-            if (prefab == null) return Vector3.zero;
-
-            // For 2D sprites, we need to consider the sprite's pivot settings
-            SpriteRenderer spriteRenderer = prefab.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null && spriteRenderer.sprite != null)
-            {
-                Sprite sprite = spriteRenderer.sprite;
-
-                // Get the sprite's pivot in normalized coordinates (0-1)
-                Vector2 spritePivot = sprite.pivot;
-                Vector2 spriteSize = sprite.rect.size;
-                Vector2 normalizedPivot = new(spritePivot.x / spriteSize.x, spritePivot.y / spriteSize.y);
-
-                // Calculate the offset from center to pivot in world space
-                // This offset should move the preview so the pivot point is at the mouse cursor
-                Vector3 spriteOffset = new(
-                    (normalizedPivot.x - 0.5f) * bounds.size.x,
-                    (normalizedPivot.y - 0.5f) * bounds.size.y,
-                    0f
-                );
-
-                return spriteOffset;
-            }
-
-            // For non-sprite objects, calculate offset from bounds center to transform position
-            Vector3 pivotPosition = prefab.transform.position;
-            Vector3 pivotOffset = pivotPosition - bounds.center;
-            return pivotOffset;
-        }
 
         private void DrawRadialMenu()
         {
@@ -1157,11 +1124,30 @@ namespace Editor
             {
                 Undo.IncrementCurrentGroup();
                 GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                
+                // Get the currently selected GameObject in the hierarchy
+                GameObject selectedParent = Selection.activeGameObject;
+                
+                // If there's a selected GameObject, make the new instance a child of it
+                if (selectedParent != null)
+                {
+                    Undo.SetTransformParent(instance.transform, selectedParent.transform, $"Parent {prefab.name} to {selectedParent.name}");
+                    
+                    // Convert world position to local position relative to the parent
+                    Vector3 localPosition = selectedParent.transform.InverseTransformPoint(placePosition);
+                    instance.transform.localPosition = localPosition;
+                    
+                    Debug.Log($"Placed {prefab.name} as child of {selectedParent.name} at local position {localPosition}");
+                }
+                else
+                {
+                    // No parent selected, place at world position as before
+                    instance.transform.position = placePosition;
+                    Debug.Log($"Placed {prefab.name} at world position {placePosition}");
+                }
+                
                 Undo.RegisterCreatedObjectUndo(instance, $"Place {prefab.name}");
-                instance.transform.position = placePosition;
                 Selection.activeGameObject = instance;
-
-                Debug.Log($"Placed {prefab.name} at {placePosition}");
             }
             catch (Exception e)
             {
