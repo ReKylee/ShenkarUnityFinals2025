@@ -80,7 +80,7 @@ namespace LevelSelection
             }
 
             // Make the player walk right
-            const float walkDuration = 1f;
+            const float walkDuration = 1.3f;
             float timer = 0f;
             while (timer < walkDuration)
             {
