@@ -3,7 +3,7 @@
 namespace LevelSelection.Services
 {
     /// <summary>
-    /// Service responsible for audio feedback during level selection
+    ///     Service responsible for audio feedback during level selection
     /// </summary>
     public interface IAudioFeedbackService
     {
@@ -14,7 +14,7 @@ namespace LevelSelection.Services
     }
 
     /// <summary>
-    /// Handles audio feedback for level selection events (Single Responsibility)
+    ///     Handles audio feedback for level selection events (Single Responsibility)
     /// </summary>
     public class AudioFeedbackService : IAudioFeedbackService
     {

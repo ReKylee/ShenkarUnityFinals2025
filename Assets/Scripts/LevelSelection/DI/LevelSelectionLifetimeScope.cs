@@ -9,7 +9,7 @@ using VContainer.Unity;
 namespace LevelSelection.DI
 {
     /// <summary>
-    /// VContainer lifetime scope for Level Selection services
+    ///     VContainer lifetime scope for Level Selection services
     /// </summary>
     public class LevelSelectionLifetimeScope : LifetimeScope
     {
@@ -41,7 +41,7 @@ namespace LevelSelection.DI
             // Register supporting components that are still used
             builder.RegisterComponentInHierarchy<ItemSelectScreen>();
             builder.RegisterComponentInHierarchy<NesCrossfade>();
-            
+
             // Register the scene transition manager
             builder.RegisterComponentInHierarchy<SceneTransitionManager>();
 

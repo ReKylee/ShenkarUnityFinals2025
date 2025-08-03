@@ -54,7 +54,7 @@ namespace LevelSelection
 
             // Keep GameObject active but start with hidden image
             gameObject.SetActive(true);
-            
+
             Debug.Log("[ItemSelectScreen] Initialized with hidden image");
         }
 
@@ -111,7 +111,7 @@ namespace LevelSelection
             {
                 itemSelectImage.enabled = true;
             }
-            
+
             Debug.Log($"[ItemSelectScreen] Showing item select for level: {levelName}");
 
             if (waitForInput)
@@ -149,7 +149,7 @@ namespace LevelSelection
             }
 
             IsWaitingForInput = false;
-            
+
             // Hide the image component
             if (itemSelectImage != null)
             {

@@ -68,7 +68,8 @@ namespace LevelSelection.Services
 
             LevelData selectedLevel = _levelData[CurrentIndex];
 
-            Debug.Log($"[LevelNavigationService] Attempting to select level: {selectedLevel.levelName} (Unlocked: {selectedLevel.isUnlocked})");
+            Debug.Log(
+                $"[LevelNavigationService] Attempting to select level: {selectedLevel.levelName} (Unlocked: {selectedLevel.isUnlocked})");
 
             if (!selectedLevel.isUnlocked)
             {
@@ -77,7 +78,7 @@ namespace LevelSelection.Services
             }
 
             Debug.Log($"[LevelNavigationService] Publishing LevelSelectedEvent for: {selectedLevel.levelName}");
-            _eventBus?.Publish(new Core.Events.LevelSelectedEvent
+            _eventBus?.Publish(new LevelSelectedEvent
             {
                 Timestamp = Time.time,
                 LevelName = selectedLevel.levelName,

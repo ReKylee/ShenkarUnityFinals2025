@@ -7,20 +7,24 @@ namespace LevelSelection
 {
     public class NesCrossfade : MonoBehaviour
     {
-        [Header("Crossfade Configuration")] 
-        public Image fadeImage;
+        [Header("Crossfade Configuration")] public Image fadeImage;
+
         public float fadeDuration = 1f;
         public Color fadeColor = Color.black;
         public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-        [Header("NES Style Effect")] 
-        public bool useNESEffect = true;
+        [Header("NES Style Effect")] public bool useNESEffect = true;
+
         public Color[] nesColors = { Color.black, new(0.2f, 0.2f, 0.3f), new(0.1f, 0.1f, 0.2f) };
         public float colorFlickerSpeed = 10f;
-        
+
         private LevelSelectionConfig _config;
-        private bool _isFading;
         private Action _onFadeComplete;
+
+        /// <summary>
+        ///     Check if currently fading
+        /// </summary>
+        public bool IsFading { get; private set; }
 
         private void Awake()
         {
@@ -30,7 +34,7 @@ namespace LevelSelection
             {
                 fadeImage.enabled = false;
             }
-            
+
             Debug.Log("[NESCrossfade] Initialized with hidden image");
         }
 
@@ -49,12 +53,12 @@ namespace LevelSelection
                     canvas = gameObject.AddComponent<Canvas>();
                     canvas.sortingOrder = 1000;
                     canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                    
+
                     // Add CanvasScaler for proper scaling
                     CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
                     scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
                     scaler.referenceResolution = new Vector2(1920, 1080);
-                    
+
                     // Add GraphicRaycaster
                     gameObject.AddComponent<GraphicRaycaster>();
                 }
@@ -65,12 +69,12 @@ namespace LevelSelection
                 rect.anchorMax = Vector2.one;
                 rect.sizeDelta = Vector2.zero;
                 rect.anchoredPosition = Vector2.zero;
-                
+
                 // Set initial color with full alpha (but start disabled)
                 fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 1f);
                 fadeImage.enabled = false;
             }
-            
+
             // Ensure the image covers the full screen
             if (fadeImage != null)
             {
@@ -96,7 +100,7 @@ namespace LevelSelection
 
         public void FadeOut(Action onComplete = null)
         {
-            if (_isFading) return;
+            if (IsFading) return;
 
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(0f, 1f));
@@ -104,7 +108,7 @@ namespace LevelSelection
 
         public void FadeIn(Action onComplete = null)
         {
-            if (_isFading) return;
+            if (IsFading) return;
 
             _onFadeComplete = onComplete;
             StartCoroutine(FadeCoroutine(1f, 0f));
@@ -112,21 +116,21 @@ namespace LevelSelection
 
         public void FadeOutAndIn(Action onMiddle = null, Action onComplete = null)
         {
-            if (_isFading) return;
+            if (IsFading) return;
 
             StartCoroutine(FadeOutAndInCoroutine(onMiddle, onComplete));
         }
 
         private IEnumerator FadeCoroutine(float from, float to)
         {
-            _isFading = true;
-            
+            IsFading = true;
+
             // Enable image when starting fade
             if (fadeImage != null)
             {
                 fadeImage.enabled = true;
             }
-            
+
             float elapsed = 0f;
 
             while (elapsed < fadeDuration)
@@ -163,7 +167,7 @@ namespace LevelSelection
                 fadeImage.enabled = false;
             }
 
-            _isFading = false;
+            IsFading = false;
             _onFadeComplete?.Invoke();
             _onFadeComplete = null;
         }
@@ -225,7 +229,7 @@ namespace LevelSelection
                 SetAlpha(1f);
             }
         }
-        
+
         /// <summary>
         ///     Hide the crossfade immediately
         /// </summary>
@@ -257,10 +261,5 @@ namespace LevelSelection
                 SetAlpha(alpha);
             }
         }
-
-        /// <summary>
-        ///     Check if currently fading
-        /// </summary>
-        public bool IsFading => _isFading;
     }
 }

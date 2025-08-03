@@ -1,41 +1,44 @@
 ﻿using System.Threading.Tasks;
 using Core.Events;
+using LevelSelection.Services;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer;
-using LevelSelection.Services;
 
 namespace LevelSelection
 {
     /// <summary>
-    /// Orchestrates level selection functionality using focused services (SOLID principles)
+    ///     Orchestrates level selection functionality using focused services (SOLID principles)
     /// </summary>
     public class LevelSelectionController : MonoBehaviour
     {
-        [Header("Auto Configuration")] 
-        [SerializeField] private bool autoActivateOnStart = true;
+        [Header("Auto Configuration")] [SerializeField]
+        private bool autoActivateOnStart = true;
+
         [SerializeField] private LevelSelectionConfig config;
 
-        [Header("UI Components")] 
-        [SerializeField] private GameObject selectorObject; // Only needed for service initialization
+        [Header("UI Components")] [SerializeField]
+        private GameObject selectorObject; // Only needed for service initialization
+
         [SerializeField] private ItemSelectScreen itemSelectScreen; // Only needed for service initialization
 
-        [Header("Input Actions")] 
-        [SerializeField] private InputActionReference navigateAction;
+        [Header("Input Actions")] [SerializeField]
+        private InputActionReference navigateAction;
+
         [SerializeField] private InputActionReference submitAction;
+        private IAudioFeedbackService _audioFeedbackService;
 
         // Core services - injected via DI
         private ILevelDiscoveryService _discoveryService;
-        private ILevelNavigationService _navigationService;
         private ILevelDisplayService _displayService;
         private IEventBus _eventBus;
+        private IInputFilterService _inputFilterService;
+        private IItemSelectService _itemSelectService;
+        private ILevelNavigationService _navigationService;
+        private ISceneLoadService _sceneLoadService;
 
         // New focused services
         private ISelectorService _selectorService;
-        private IInputFilterService _inputFilterService;
-        private IAudioFeedbackService _audioFeedbackService;
-        private IItemSelectService _itemSelectService;
-        private ISceneLoadService _sceneLoadService;
 
         public bool IsActive { get; private set; }
 
@@ -145,7 +148,7 @@ namespace LevelSelection
         private void InitializeServices()
         {
             // Setup audio source for AudioFeedbackService
-            var audioSource = GetComponent<AudioSource>();
+            AudioSource audioSource = GetComponent<AudioSource>();
             if (audioSource == null)
             {
                 audioSource = gameObject.AddComponent<AudioSource>();
@@ -166,7 +169,7 @@ namespace LevelSelection
             // When item select becomes active, hide selector and disable input
             _selectorService.SetVisible(!isActive);
             _inputFilterService.SetEnabled(!isActive);
-            
+
             Debug.Log($"[LevelSelectionController] Item select state changed: {isActive}");
         }
 

@@ -55,14 +55,6 @@ namespace LevelSelection.Services
             _isActive = false;
         }
 
-        public void UpdateSelection(int newIndex)
-        {
-            if (!_isActive || newIndex == _currentSelection) return;
-
-            _currentSelection = newIndex;
-            UpdateLevelStates();
-        }
-
         public void RefreshVisuals()
         {
             // Renamed to RefreshStates since no visuals
@@ -72,6 +64,14 @@ namespace LevelSelection.Services
         public void Dispose()
         {
             _eventBus?.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
+        }
+
+        public void UpdateSelection(int newIndex)
+        {
+            if (!_isActive || newIndex == _currentSelection) return;
+
+            _currentSelection = newIndex;
+            UpdateLevelStates();
         }
 
         private void UpdateLevelStates()

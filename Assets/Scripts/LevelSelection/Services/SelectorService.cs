@@ -4,18 +4,16 @@ using UnityEngine;
 namespace LevelSelection.Services
 {
     /// <summary>
-    /// Handles selector visual state and movement (Single Responsibility)
+    ///     Handles selector visual state and movement (Single Responsibility)
     /// </summary>
     public class SelectorService : ISelectorService
     {
-        private GameObject _selectorObject;
         private LevelSelectionConfig _config;
         private List<LevelPoint> _levelPoints;
+        private GameObject _selectorObject;
         private Vector3 _targetPosition;
-        private bool _isMoving;
 
-        public bool IsMoving => _isMoving;
-        public Vector3 TargetPosition => _targetPosition;
+        public bool IsMoving { get; private set; }
 
         public void Initialize(GameObject selectorObject, LevelSelectionConfig config)
         {
@@ -36,7 +34,7 @@ namespace LevelSelection.Services
             if (distance > 0.01f)
             {
                 _targetPosition = targetPosition;
-                _isMoving = true;
+                IsMoving = true;
                 Debug.Log($"[SelectorService] Moving selector to position {targetPosition}");
             }
         }
@@ -44,7 +42,7 @@ namespace LevelSelection.Services
         public void MoveToLevel(int levelIndex)
         {
             if (_levelPoints == null || levelIndex < 0 || levelIndex >= _levelPoints.Count) return;
-            
+
             Vector3 targetPosition = _levelPoints[levelIndex].transform.position;
             MoveToPosition(targetPosition);
         }
@@ -58,14 +56,9 @@ namespace LevelSelection.Services
             }
         }
 
-        public void StopMoving()
-        {
-            _isMoving = false;
-        }
-
         public void Update()
         {
-            if (!_isMoving || _selectorObject == null) return;
+            if (!IsMoving || _selectorObject == null) return;
 
             float moveSpeed = _config?.selectorMoveSpeed ?? 5f;
             float snapThreshold = _config?.snapThreshold ?? 0.1f;
@@ -79,7 +72,7 @@ namespace LevelSelection.Services
             if (Vector3.Distance(_selectorObject.transform.position, _targetPosition) < snapThreshold)
             {
                 _selectorObject.transform.position = _targetPosition;
-                _isMoving = false;
+                IsMoving = false;
             }
         }
     }

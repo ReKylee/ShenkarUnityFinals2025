@@ -3,7 +3,7 @@
 namespace LevelSelection.Services
 {
     /// <summary>
-    /// Service responsible for scene loading and transitions
+    ///     Service responsible for scene loading and transitions
     /// </summary>
     public interface ISceneLoadService
     {
@@ -12,7 +12,7 @@ namespace LevelSelection.Services
     }
 
     /// <summary>
-    /// Handles scene loading logic (Single Responsibility)
+    ///     Handles scene loading logic (Single Responsibility)
     /// </summary>
     public class SceneLoadService : ISceneLoadService
     {

@@ -103,7 +103,7 @@ namespace LevelSelection
             UnlockNextLevel();
 
             // Publish level completion event (for GameFlowManager)
-            _eventBus?.Publish(new Core.Events.LevelCompletedEvent
+            _eventBus?.Publish(new LevelCompletedEvent
             {
                 Timestamp = Time.time,
                 LevelName = currentLevelName,
@@ -113,7 +113,7 @@ namespace LevelSelection
             // Publish level unlocked event (for level selection system)
             if (!string.IsNullOrEmpty(nextLevelName))
             {
-                _eventBus?.Publish(new Core.Events.LevelUnlockedEvent
+                _eventBus?.Publish(new LevelUnlockedEvent
                 {
                     Timestamp = Time.time,
                     CompletedLevelName = currentLevelName,

@@ -3,7 +3,7 @@
 namespace LevelSelection.Services
 {
     /// <summary>
-    /// Service responsible for input processing and filtering
+    ///     Service responsible for input processing and filtering
     /// </summary>
     public interface IInputFilterService
     {
@@ -13,17 +13,17 @@ namespace LevelSelection.Services
     }
 
     /// <summary>
-    /// Handles input filtering and cooldowns (Single Responsibility)
+    ///     Handles input filtering and cooldowns (Single Responsibility)
     /// </summary>
     public class InputFilterService : IInputFilterService
     {
         private const float InputCooldownTime = 0.2f; // Prevent input spam
         private const float InputDeadzone = 0.5f; // Input threshold
-        
+
         private LevelSelectionConfig _config;
+        private bool _isEnabled = true;
         private Vector2 _lastInputDirection;
         private float _lastInputTime;
-        private bool _isEnabled = true;
 
         public void Initialize(LevelSelectionConfig config)
         {
@@ -38,7 +38,7 @@ namespace LevelSelection.Services
         public bool ProcessNavigationInput(Vector2 direction, out Vector2 filteredDirection)
         {
             filteredDirection = Vector2.zero;
-            
+
             if (!_isEnabled) return false;
 
             // Apply deadzone filtering
