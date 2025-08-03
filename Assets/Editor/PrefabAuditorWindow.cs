@@ -740,110 +740,118 @@ namespace Editor
 
         private void DrawPlacementPreview(Vector2 mousePos, Vector3 worldPos)
         {
-            // Get the prefab preview
+            // Get prefab bounds for accurate sizing
+            Bounds prefabBounds = GetPrefabBounds(_selectedPrefabForPlacement);
+            Vector3 worldSize = prefabBounds.size;
+            
+            // If bounds are too small or invalid, use default size
+            if (worldSize.magnitude < 0.1f)
+            {
+                worldSize = Vector3.one * 0.5f;
+            }
+
+            // Calculate GUI preview size based on actual prefab size
+            // Convert world size to screen pixels for accurate representation
+            Camera sceneCamera = SceneView.lastActiveSceneView?.camera;
+            float screenSize = 80f; // Base size in pixels
+            
+            if (sceneCamera != null)
+            {
+                // Calculate how big the prefab would appear on screen
+                float distance = Vector3.Distance(sceneCamera.transform.position, worldPos);
+                float worldToScreenScale = sceneCamera.orthographic ? 
+                    sceneCamera.orthographicSize * 2f / Screen.height :
+                    distance * Mathf.Tan(sceneCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * 2f / Screen.height;
+                
+                // Scale GUI preview to match world representation
+                screenSize = Mathf.Max(worldSize.x, worldSize.y) / worldToScreenScale;
+                screenSize = Mathf.Clamp(screenSize, 40f, 150f); // Keep within reasonable bounds
+            }
+
+            // Get the prefab preview texture
             Texture2D preview = GetPrefabPreview(_selectedPrefabForPlacement);
             
             if (preview != null)
             {
                 Handles.BeginGUI();
                 
-                // Center the preview on the mouse cursor for accurate placement indication
-                float guiPreviewSize = 100f;
+                // Calculate preview rect centered on mouse with actual size
                 Rect previewRect = new Rect(
-                    mousePos.x - guiPreviewSize * 0.5f, 
-                    mousePos.y - guiPreviewSize * 0.5f, 
-                    guiPreviewSize, 
-                    guiPreviewSize
+                    mousePos.x - screenSize * 0.5f, 
+                    mousePos.y - screenSize * 0.5f, 
+                    screenSize, 
+                    screenSize
                 );
                 
-                // Draw a semi-transparent background circle
+                // Draw semi-transparent background
                 Rect backgroundRect = new Rect(
-                    previewRect.x - 5, 
-                    previewRect.y - 5, 
-                    previewRect.width + 10, 
-                    previewRect.height + 10
+                    previewRect.x - 3, 
+                    previewRect.y - 3, 
+                    previewRect.width + 6, 
+                    previewRect.height + 6
                 );
                 
-                // Draw background with transparency
-                Color backgroundColor = EditorGUIUtility.isProSkin ? 
-                    new Color(0.2f, 0.2f, 0.2f, 0.8f) : 
-                    new Color(0.9f, 0.9f, 0.9f, 0.8f);
+                Color backgroundColor = new Color(0, 0, 0, 0.7f);
                 EditorGUI.DrawRect(backgroundRect, backgroundColor);
                 
-                // Draw a border to make it stand out
-                Color borderColor = Color.white;
-                EditorGUI.DrawRect(new Rect(backgroundRect.x, backgroundRect.y, backgroundRect.width, 2), borderColor);
-                EditorGUI.DrawRect(new Rect(backgroundRect.x, backgroundRect.y + backgroundRect.height - 2, backgroundRect.width, 2), borderColor);
-                EditorGUI.DrawRect(new Rect(backgroundRect.x, backgroundRect.y, 2, backgroundRect.height), borderColor);
-                EditorGUI.DrawRect(new Rect(backgroundRect.x + backgroundRect.width - 2, backgroundRect.y, 2, backgroundRect.height), borderColor);
+                // Draw thin white border
+                EditorGUI.DrawRect(new Rect(backgroundRect.x, backgroundRect.y, backgroundRect.width, 1), Color.white);
+                EditorGUI.DrawRect(new Rect(backgroundRect.x, backgroundRect.y + backgroundRect.height - 1, backgroundRect.width, 1), Color.white);
+                EditorGUI.DrawRect(new Rect(backgroundRect.x, backgroundRect.y, 1, backgroundRect.height), Color.white);
+                EditorGUI.DrawRect(new Rect(backgroundRect.x + backgroundRect.width - 1, backgroundRect.y, 1, backgroundRect.height), Color.white);
                 
                 // Draw the preview image
                 GUI.DrawTexture(previewRect, preview, ScaleMode.ScaleToFit);
                 
-                // Add crosshair at the center to show exact placement point
-                Vector2 center = new Vector2(mousePos.x, mousePos.y);
-                float crosshairSize = 8f;
-                EditorGUI.DrawRect(new Rect(center.x - crosshairSize, center.y - 1, crosshairSize * 2, 2), Color.red);
-                EditorGUI.DrawRect(new Rect(center.x - 1, center.y - crosshairSize, 2, crosshairSize * 2), Color.red);
+                // Draw center crosshair for precise placement
+                Vector2 center = mousePos;
+                float crosshairSize = 6f;
+                Color crosshairColor = Color.red;
+                EditorGUI.DrawRect(new Rect(center.x - crosshairSize, center.y - 0.5f, crosshairSize * 2, 1), crosshairColor);
+                EditorGUI.DrawRect(new Rect(center.x - 0.5f, center.y - crosshairSize, 1, crosshairSize * 2), crosshairColor);
                 
-                // Show prefab name below the preview
-                string labelText = _selectedPrefabForPlacement.name;
+                // Show prefab info below the preview
+                string infoText = _selectedPrefabForPlacement.name;
                 if (Event.current.shift && _settings.pixelsPerUnit > 0)
                 {
-                    labelText += " (Grid Snap)";
+                    infoText += " (Grid Snap)";
                 }
                 
-                GUIContent labelContent = new GUIContent(labelText);
-                Vector2 labelSize = EditorStyles.boldLabel.CalcSize(labelContent);
-                Rect labelRect = new Rect(
-                    mousePos.x - labelSize.x * 0.5f, 
-                    previewRect.y + previewRect.height + 8, 
-                    labelSize.x, 
-                    labelSize.y
+                GUIContent infoContent = new GUIContent(infoText);
+                Vector2 infoSize = EditorStyles.miniLabel.CalcSize(infoContent);
+                Rect infoRect = new Rect(
+                    mousePos.x - infoSize.x * 0.5f, 
+                    previewRect.y + previewRect.height + 5, 
+                    infoSize.x, 
+                    infoSize.y
                 );
                 
-                // Draw label background
-                EditorGUI.DrawRect(new Rect(labelRect.x - 4, labelRect.y - 2, labelRect.width + 8, labelRect.height + 4), backgroundColor);
+                // Draw info background
+                EditorGUI.DrawRect(new Rect(infoRect.x - 2, infoRect.y - 1, infoRect.width + 4, infoRect.height + 2), backgroundColor);
                 
-                // Draw the label
-                GUI.Label(labelRect, labelContent, EditorStyles.boldLabel);
+                // Draw info text
+                GUI.Label(infoRect, infoContent, EditorStyles.miniLabel);
                 
                 Handles.EndGUI();
             }
 
-            // Enhanced world preview with better visualization
-            Handles.color = Color.green;
+            // World space preview (simplified to avoid conflicts)
+            Handles.color = new Color(0, 1, 0, 0.8f);
+            Handles.DrawWireCube(worldPos, worldSize);
             
-            // Get prefab bounds for better preview representation
-            Bounds prefabBounds = GetPrefabBounds(_selectedPrefabForPlacement);
-            Vector3 worldPreviewSize = prefabBounds.size;
-            
-            // If bounds are too small or invalid, use default size
-            if (worldPreviewSize.magnitude < 0.1f)
-            {
-                worldPreviewSize = Vector3.one * 0.5f;
-            }
-            
-            // Draw wireframe cube representing the prefab bounds
-            Handles.DrawWireCube(worldPos, worldPreviewSize);
-            
-            // Draw a filled semi-transparent cube for better visibility
-            Handles.color = new Color(0, 1, 0, 0.1f);
-            Handles.CubeHandleCap(0, worldPos, Quaternion.identity, Mathf.Max(worldPreviewSize.x, worldPreviewSize.y, worldPreviewSize.z), EventType.Repaint);
-            
-            // Draw grid snap indicators if enabled
+            // Grid snap visualization
             if (Event.current.shift && _settings.pixelsPerUnit > 0)
             {
                 Handles.color = Color.yellow;
                 float gridSize = 1.0f / _settings.pixelsPerUnit;
                 
-                // Draw grid lines around the snap position
-                for (int i = -2; i <= 2; i++)
+                // Draw snap grid around cursor
+                for (int i = -1; i <= 1; i++)
                 {
-                    for (int j = -2; j <= 2; j++)
+                    for (int j = -1; j <= 1; j++)
                     {
                         Vector3 gridPoint = worldPos + new Vector3(i * gridSize, j * gridSize, 0);
-                        Handles.DrawWireCube(gridPoint, Vector3.one * gridSize * 0.1f);
+                        Handles.DrawWireCube(gridPoint, Vector3.one * gridSize * 0.2f);
                     }
                 }
             }
@@ -924,31 +932,80 @@ namespace Editor
                 float angle = i / (float)prefabCount * 360f - 90f;
                 Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
                 Vector2 itemPos = center + direction * (radius * 0.75f);
-                float iconSize = i == _hoveredRadialIndex ? 50f : 40f;
-                Rect iconRect = new(itemPos.x - iconSize * 0.5f, itemPos.y - iconSize * 0.5f, iconSize, iconSize);
-
-                // Highlight hovered item
-                if (i == _hoveredRadialIndex)
+                
+                bool isHovered = i == _hoveredRadialIndex;
+                float iconSize = isHovered ? 55f : 45f;
+                
+                // Enhanced highlighting for hovered item
+                if (isHovered)
                 {
+                    // Draw pulsing highlight background
+                    float pulseScale = 1f + Mathf.Sin((float)EditorApplication.timeSinceStartup * 8f) * 0.1f;
+                    Handles.color = new Color(0, 1, 1, 0.6f); // Cyan with transparency
+                    Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.7f * pulseScale);
+                    
+                    // Draw bright border
                     Handles.color = Color.cyan;
-                    Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.6f);
+                    Handles.DrawWireDisc(itemPos, Vector3.forward, iconSize * 0.7f);
                     Handles.color = Color.white;
 
-                    // Show name
-                    Rect labelRect = new(center.x - 60, center.y + radius + 15, 120, 20);
-                    GUIStyle style = new(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter };
-                    GUI.Label(labelRect, prefab.name, style);
+                    // Show enhanced name display
+                    GUIContent nameContent = new GUIContent(prefab.name);
+                    Vector2 nameSize = EditorStyles.boldLabel.CalcSize(nameContent);
+                    Rect nameRect = new Rect(
+                        center.x - nameSize.x * 0.5f, 
+                        center.y + radius + 10, 
+                        nameSize.x, 
+                        nameSize.y
+                    );
+                    
+                    // Draw name background
+                    EditorGUI.DrawRect(new Rect(nameRect.x - 4, nameRect.y - 2, nameRect.width + 8, nameRect.height + 4), 
+                        new Color(0, 0, 0, 0.8f));
+                    
+                    // Draw name with highlight color
+                    GUI.color = Color.cyan;
+                    GUI.Label(nameRect, nameContent, EditorStyles.boldLabel);
+                    GUI.color = Color.white;
+                }
+                else
+                {
+                    // Subtle highlight for non-hovered items
+                    Handles.color = new Color(0.4f, 0.4f, 0.4f, 0.3f);
+                    Handles.DrawSolidDisc(itemPos, Vector3.forward, iconSize * 0.6f);
+                    Handles.color = Color.white;
                 }
 
-                // Draw preview
+                // Draw icon rect
+                Rect iconRect = new Rect(
+                    itemPos.x - iconSize * 0.5f, 
+                    itemPos.y - iconSize * 0.5f, 
+                    iconSize, 
+                    iconSize
+                );
+
+                // Draw preview with enhanced border for hovered items
                 Texture2D preview = GetPrefabPreview(prefab);
                 if (preview != null)
                 {
+                    if (isHovered)
+                    {
+                        // Draw glowing border for hovered item
+                        Rect borderRect = new Rect(iconRect.x - 2, iconRect.y - 2, iconRect.width + 4, iconRect.height + 4);
+                        EditorGUI.DrawRect(borderRect, Color.cyan);
+                    }
                     GUI.DrawTexture(iconRect, preview, ScaleMode.ScaleToFit);
                 }
                 else
                 {
-                    EditorGUI.DrawRect(iconRect, Color.gray);
+                    // Draw placeholder with proper highlighting
+                    Color placeholderColor = isHovered ? new Color(0.6f, 0.6f, 0.6f) : new Color(0.3f, 0.3f, 0.3f);
+                    EditorGUI.DrawRect(iconRect, placeholderColor);
+                    
+                    // Draw loading text
+                    GUI.color = isHovered ? Color.white : Color.gray;
+                    GUI.Label(iconRect, "...", EditorStyles.centeredGreyMiniLabel);
+                    GUI.color = Color.white;
                 }
             }
 
@@ -970,7 +1027,7 @@ namespace Editor
         private int GetRadialMenuIndex(Vector2 mousePosition)
         {
             float distance = Vector2.Distance(mousePosition, _radialMenuPosition);
-            if (distance < 30 || distance > RadialMenuRadius) return -1;
+            if (distance < 20 || distance > RadialMenuRadius * 0.9f) return -1; // Improved hit detection
 
             var prefabsToShow = _frequentPrefabs.Count > 0
                 ? _frequentPrefabs
@@ -979,9 +1036,13 @@ namespace Editor
             int prefabCount = Mathf.Min(prefabsToShow.Count, MaxFrequentPrefabs);
             if (prefabCount == 0) return -1;
 
-            float angle = Vector2.SignedAngle(Vector2.up, mousePosition - _radialMenuPosition);
-            if (angle < 0) angle += 360;
-
+            // Improved angle calculation for better selection accuracy
+            Vector2 direction = (mousePosition - _radialMenuPosition).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            
+            // Normalize angle to 0-360 range and adjust for starting at top
+            angle = (angle + 90f + 360f) % 360f;
+            
             float segmentAngle = 360f / prefabCount;
             int index = Mathf.FloorToInt((angle + segmentAngle * 0.5f) / segmentAngle) % prefabCount;
 
