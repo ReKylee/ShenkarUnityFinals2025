@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Core;
 using Core.Data;
 using Core.Events;
 using UnityEngine;
@@ -28,11 +29,13 @@ namespace LevelSelection
         private GameObject completionUI;
 
         [SerializeField] private float uiDisplayDuration = 3f;
+        
         private AudioSource _audioSource;
-
         private IEventBus _eventBus;
         private IGameDataService _gameDataService;
+        private GameFlowManager _gameFlowManager;
         private bool _hasTriggered;
+        private float _levelStartTime;
 
         private void Awake()
         {
@@ -64,10 +67,11 @@ namespace LevelSelection
         }
 
         [Inject]
-        public void Construct(IEventBus eventBus, IGameDataService gameDataService)
+        public void Construct(IEventBus eventBus, IGameDataService gameDataService, GameFlowManager gameFlowManager)
         {
             _eventBus = eventBus;
             _gameDataService = gameDataService;
+            _gameFlowManager = gameFlowManager;
         }
 
         private IEnumerator CompleteLevel()
@@ -93,24 +97,31 @@ namespace LevelSelection
             // Wait for completion delay
             yield return new WaitForSeconds(completionDelay);
 
-            // Calculate completion time (should be tracked by GameFlowManager, but we'll use a simple calculation here)
-            float completionTime = Time.time; // This should be the actual level completion time
+            // Calculate completion time using proper tracking
+            float completionTime = Time.time - _levelStartTime;
 
-            // Update game data with completion stats
+            // Update game data with completion stats before notifying GameFlowManager
             UpdateCompletionStats(completionTime);
-
-            // Unlock next level and save progress
             UnlockNextLevel();
 
-            // Publish level completion event (for GameFlowManager)
-            _eventBus?.Publish(new LevelCompletedEvent
+            // Use GameFlowManager's CompleteLevel method instead of manual event publishing
+            if (_gameFlowManager != null)
             {
-                Timestamp = Time.time,
-                LevelName = currentLevelName,
-                CompletionTime = completionTime
-            });
+                _gameFlowManager.CompleteLevel(completionTime);
+                Debug.Log($"[EndLevelZone] Notified GameFlowManager of level completion: {completionTime:F2}s");
+            }
+            else
+            {
+                // Fallback: publish event directly if GameFlowManager is not available
+                _eventBus?.Publish(new LevelCompletedEvent
+                {
+                    Timestamp = Time.time,
+                    LevelName = currentLevelName,
+                    CompletionTime = completionTime
+                });
+            }
 
-            // Publish level unlocked event (for level selection system)
+            // Publish level unlocked event for level selection system
             if (!string.IsNullOrEmpty(nextLevelName))
             {
                 _eventBus?.Publish(new LevelUnlockedEvent
@@ -124,7 +135,7 @@ namespace LevelSelection
             // Return to level select if enabled
             if (autoReturnToLevelSelect)
             {
-                // Use standalone SceneTransitionManager
+                yield return new WaitForSeconds(1f); // Brief pause to show completion
                 SceneTransitionManager.TransitionTo("Level Select");
             }
         }
@@ -209,6 +220,34 @@ namespace LevelSelection
         public void ResetTrigger()
         {
             _hasTriggered = false;
+        }
+
+        /// <summary>
+        ///     Set the level start time (to be called by GameFlowManager)
+        /// </summary>
+        public void SetLevelStartTime(float startTime)
+        {
+            _levelStartTime = startTime;
+        }
+
+        private void Start()
+        {
+            // Subscribe to level started events to track start time
+            _eventBus?.Subscribe<LevelStartedEvent>(OnLevelStarted);
+        }
+
+        private void OnDestroy()
+        {
+            _eventBus?.Unsubscribe<LevelStartedEvent>(OnLevelStarted);
+        }
+
+        private void OnLevelStarted(LevelStartedEvent levelEvent)
+        {
+            if (levelEvent.LevelName == currentLevelName)
+            {
+                _levelStartTime = levelEvent.Timestamp;
+                Debug.Log($"[EndLevelZone] Level {currentLevelName} started at {_levelStartTime}");
+            }
         }
     }
 

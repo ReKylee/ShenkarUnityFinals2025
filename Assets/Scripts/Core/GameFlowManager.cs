@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Core.Data;
 using Core.Events;
 using Player.Components;
 using UnityEngine;
@@ -17,9 +18,10 @@ namespace Core
         #region VContainer Injection
 
         [Inject]
-        public void Construct(IEventBus eventBus)
+        public void Construct(IEventBus eventBus, IGameDataService gameDataService)
         {
             _eventBus = eventBus;
+            _gameDataService = gameDataService;
             SubscribeToEvents();
         }
 
@@ -35,6 +37,7 @@ namespace Core
         private string _currentLevelName = "Unknown";
         private float _levelStartTime;
         private IEventBus _eventBus;
+        private IGameDataService _gameDataService;
 
         #endregion
 
@@ -159,7 +162,11 @@ namespace Core
             if (isGameOver)
             {
                 ChangeState(GameState.GameOver);
-                Debug.Log("[GameFlowManager] Game Over: Player is out of lives");
+                Debug.Log("[GameFlowManager] Game Over: Player is out of lives - Resetting game data");
+                
+                // Reset all game data when all lives are lost
+                _gameDataService?.ResetAllData();
+                
                 _eventBus?.Publish(new GameOverEvent { Timestamp = Time.time });
             }
 

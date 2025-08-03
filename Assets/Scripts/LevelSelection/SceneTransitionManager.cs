@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections;
+using Core;
+using Core.Data;
+using Core.Events;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using VContainer;
 
 namespace LevelSelection
 {
@@ -16,6 +20,9 @@ namespace LevelSelection
         #region Private Fields
 
         private NesCrossfade _activeCrossfade;
+        private IEventBus _eventBus;
+        private IGameDataService _gameDataService;
+        private GameFlowManager _gameFlowManager;
 
         #endregion
 
@@ -161,11 +168,19 @@ namespace LevelSelection
         private void SubscribeToSceneEvents()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
+            
+            // Subscribe to game events for better integration
+            _eventBus?.Subscribe<LevelLoadRequestedEvent>(OnLevelLoadRequested);
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
         }
 
         private void UnsubscribeFromSceneEvents()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            
+            // Unsubscribe from game events
+            _eventBus?.Unsubscribe<LevelLoadRequestedEvent>(OnLevelLoadRequested);
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -175,6 +190,24 @@ namespace LevelSelection
             if (fadeInOnSceneStart && _activeCrossfade != null)
             {
                 StartCoroutine(FadeInAfterDelay());
+            }
+        }
+
+        private void OnLevelLoadRequested(LevelLoadRequestedEvent loadEvent)
+        {
+            Debug.Log($"[SceneTransitionManager] Level load requested via event: {loadEvent.SceneName}");
+            TransitionToScene(loadEvent.SceneName);
+        }
+
+        private void OnGameStateChanged(GameStateChangedEvent stateEvent)
+        {
+            Debug.Log($"[SceneTransitionManager] Game state changed: {stateEvent.PreviousState} -> {stateEvent.NewState}");
+            
+            // Handle specific state transitions if needed
+            if (stateEvent.NewState == GameState.GameOver && stateEvent.PreviousState == GameState.Playing)
+            {
+                // Could add special transition effects for game over
+                Debug.Log("[SceneTransitionManager] Game over transition detected");
             }
         }
 
@@ -232,6 +265,35 @@ namespace LevelSelection
             IsTransitioning = true;
             Debug.Log($"[SceneTransitionManager] Starting transition to: {sceneName}");
 
+            // Save game data before transitioning
+            if (_gameDataService != null)
+            {
+                _gameDataService.SaveData();
+                Debug.Log("[SceneTransitionManager] Game data saved before scene transition");
+            }
+
+            // Update current level in game data if transitioning to a level
+            if (_gameDataService != null && !sceneName.Contains("Menu") && !sceneName.Contains("Select"))
+            {
+                _gameDataService.UpdateCurrentLevel(sceneName);
+                Debug.Log($"[SceneTransitionManager] Updated current level to: {sceneName}");
+            }
+
+            // Notify GameFlowManager about the transition
+            if (_gameFlowManager != null)
+            {
+                if (sceneName.Contains("Level Select") || sceneName.Contains("Menu"))
+                {
+                    _gameFlowManager.PauseGame();
+                    Debug.Log("[SceneTransitionManager] Paused game for menu/level select transition");
+                }
+                else
+                {
+                    _gameFlowManager.ResumeGame();
+                    Debug.Log("[SceneTransitionManager] Resumed game for level transition");
+                }
+            }
+
             // Fade out
             bool fadeOutComplete = false;
             _activeCrossfade.FadeOut(() => fadeOutComplete = true);
@@ -275,5 +337,14 @@ namespace LevelSelection
 
         #endregion
 
+        [Inject]
+        public void Construct(IEventBus eventBus, IGameDataService gameDataService, GameFlowManager gameFlowManager)
+        {
+            _eventBus = eventBus;
+            _gameDataService = gameDataService;
+            _gameFlowManager = gameFlowManager;
+            
+            Debug.Log("[SceneTransitionManager] Dependencies injected successfully");
+        }
     }
 }

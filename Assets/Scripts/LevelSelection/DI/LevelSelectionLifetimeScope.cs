@@ -1,4 +1,5 @@
-﻿using Core.Data;
+﻿using Core;
+using Core.Data;
 using Core.Events;
 using Core.Services;
 using LevelSelection.Services;
@@ -22,6 +23,10 @@ namespace LevelSelection.DI
             builder.Register<IGameDataRepository, JsonGameDataRepository>(Lifetime.Singleton);
             builder.Register<IGameDataService, GameDataService>(Lifetime.Singleton);
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
+
+            // Register core game management components
+            builder.RegisterComponentInHierarchy<GameFlowManager>();
+            builder.RegisterComponentInHierarchy<GameDataCoordinator>();
 
             // Register the new service-based architecture
             builder.Register<ILevelDiscoveryService, LevelDiscoveryService>(Lifetime.Scoped);

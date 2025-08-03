@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Core;
+using Core.Data;
 using Core.Events;
 using LevelSelection.Services;
 using UnityEngine;
@@ -36,6 +38,11 @@ namespace LevelSelection
         private IItemSelectService _itemSelectService;
         private ILevelNavigationService _navigationService;
         private ISceneLoadService _sceneLoadService;
+
+        // Core game management components
+        private GameFlowManager _gameFlowManager;
+        private GameDataCoordinator _gameDataCoordinator;
+        private IGameDataService _gameDataService;
 
         // New focused services
         private ISelectorService _selectorService;
@@ -108,7 +115,10 @@ namespace LevelSelection
             IInputFilterService inputFilterService,
             IAudioFeedbackService audioFeedbackService,
             IItemSelectService itemSelectService,
-            ISceneLoadService sceneLoadService)
+            ISceneLoadService sceneLoadService,
+            GameFlowManager gameFlowManager,
+            GameDataCoordinator gameDataCoordinator,
+            IGameDataService gameDataService)
         {
             _discoveryService = discoveryService;
             _navigationService = navigationService;
@@ -119,6 +129,9 @@ namespace LevelSelection
             _audioFeedbackService = audioFeedbackService;
             _itemSelectService = itemSelectService;
             _sceneLoadService = sceneLoadService;
+            _gameFlowManager = gameFlowManager;
+            _gameDataCoordinator = gameDataCoordinator;
+            _gameDataService = gameDataService;
 
             SubscribeToEvents();
         }
@@ -127,6 +140,13 @@ namespace LevelSelection
         {
             // Initialize services first
             InitializeServices();
+
+            // Ensure GameFlowManager is in the correct state for level selection
+            if (_gameFlowManager != null)
+            {
+                _gameFlowManager.PauseGame(); // Pause any active gameplay
+                Debug.Log("[LevelSelectionController] GameFlowManager paused for level selection");
+            }
 
             var levelData = await _discoveryService.DiscoverLevelsAsync();
             await _navigationService.InitializeAsync(levelData);
@@ -236,6 +256,20 @@ namespace LevelSelection
         {
             Debug.Log(
                 $"[LevelSelectionController] Level load requested: {loadEvent.LevelName} -> {loadEvent.SceneName}");
+
+            // Update game data with the selected level before loading
+            if (_gameDataService != null)
+            {
+                _gameDataService.UpdateCurrentLevel(loadEvent.LevelName);
+                Debug.Log($"[LevelSelectionController] Updated current level in game data: {loadEvent.LevelName}");
+            }
+
+            // Resume gameplay when transitioning to a level
+            if (_gameFlowManager != null)
+            {
+                _gameFlowManager.ResumeGame();
+                Debug.Log("[LevelSelectionController] GameFlowManager resumed for level transition");
+            }
 
             // Delegate directly to scene load service
             _sceneLoadService.LoadLevel(loadEvent.SceneName);
