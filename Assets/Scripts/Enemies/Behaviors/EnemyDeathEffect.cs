@@ -8,15 +8,18 @@ namespace Enemies.Behaviors
         [SerializeField] private SpriteRenderer deathEffectPrefab;
 
         [Header("Launch Parameters")] [SerializeField]
-        private Vector2 launchVelocity = new Vector2(3f, 8f);
+        private Vector2 launchVelocity = new(3f, 8f);
 
         [SerializeField] private float gravityScale = 2f;
+        private Rigidbody2D _enemyRigidbody;
 
         private SpriteRenderer _spriteRenderer;
 
         private void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
+            _enemyRigidbody = GetComponent<Rigidbody2D>(); // Cache the enemy's rigidbody
+
             IHealthEvents healthEvents = GetComponent<IHealthEvents>();
             if (healthEvents != null)
                 healthEvents.OnDeath += PlayDeathEffect;
@@ -38,14 +41,29 @@ namespace Enemies.Behaviors
             effect.sprite = _spriteRenderer.sprite;
             effect.transform.localScale = transform.localScale;
             effect.flipY = true;
-            
+
             if (effect.TryGetComponent(out Rigidbody2D rb))
             {
                 rb.gravityScale = gravityScale;
-                
+
                 Vector2 adjustedVelocity = launchVelocity;
-                adjustedVelocity.x *= Mathf.Sign(transform.localScale.x);
-                
+
+                if (_enemyRigidbody)
+                {
+                    float movementDirection = Mathf.Sign(_enemyRigidbody.linearVelocity.x);
+
+                    if (Mathf.Approximately(movementDirection, 0f))
+                    {
+                        movementDirection = Mathf.Sign(transform.localScale.x);
+                    }
+
+                    adjustedVelocity.x *= movementDirection;
+                }
+                else
+                {
+                    adjustedVelocity.x *= Mathf.Sign(transform.localScale.x);
+                }
+
                 rb.linearVelocity = adjustedVelocity;
             }
         }

@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 3256051211672669333}
   - component: {fileID: 7080503468648798318}
   - component: {fileID: 3228354720832115947}
+  - component: {fileID: 5944526757729215661}
   m_Layer: 7
   m_Name: Pre_Frog
   m_TagString: Untagged
@@ -288,3 +289,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   respawnDelay: 3
+--- !u!114 &5944526757729215661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910659273603949271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a4bd67c02eb44749cd900fde21b5d1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deathEffectPrefab: {fileID: 7377143805596788149, guid: 61ea186785c8e2c4da1ac0c313f1bee7, type: 3}
+  launchVelocity: {x: 3, y: 8}
+  gravityScale: 2
