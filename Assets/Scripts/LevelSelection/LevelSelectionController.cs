@@ -295,17 +295,8 @@ namespace LevelSelection
         {
             Debug.Log($"[LevelSelectionController] Loading scene: {sceneName}");
 
-            if (crossfade != null)
-            {
-                crossfade.FadeOutAndIn(
-                    () => SceneManager.LoadScene(sceneName),
-                    () => Debug.Log($"Loaded scene: {sceneName}")
-                );
-            }
-            else
-            {
-                SceneManager.LoadScene(sceneName);
-            }
+            // Use standalone SceneTransitionManager first
+            SceneTransitionManager.TransitionTo(sceneName);
         }
 
         private void OnLevelLoadRequested(LevelLoadRequestedEvent loadEvent)

@@ -40,14 +40,22 @@ namespace LevelSelection
                 _audioSource = gameObject.AddComponent<AudioSource>();
             }
 
-
-            if (itemSelectSprite)
+            // Setup the item select sprite if available
+            if (itemSelectSprite && itemSelectImage)
             {
                 itemSelectImage.sprite = itemSelectSprite;
             }
 
-            // Start hidden
-            gameObject.SetActive(false);
+            // Hide the image component at start
+            if (itemSelectImage != null)
+            {
+                itemSelectImage.enabled = false;
+            }
+
+            // Keep GameObject active but start with hidden image
+            gameObject.SetActive(true);
+            
+            Debug.Log("[ItemSelectScreen] Initialized with hidden image");
         }
 
         private void OnEnable()
@@ -98,7 +106,13 @@ namespace LevelSelection
             _pendingSceneName = sceneName;
             _onComplete = onComplete;
 
-            gameObject.SetActive(true);
+            // Show the item select image
+            if (itemSelectImage != null)
+            {
+                itemSelectImage.enabled = true;
+            }
+            
+            Debug.Log($"[ItemSelectScreen] Showing item select for level: {levelName}");
 
             if (waitForInput)
             {
@@ -135,7 +149,12 @@ namespace LevelSelection
             }
 
             IsWaitingForInput = false;
-            gameObject.SetActive(false);
+            
+            // Hide the image component
+            if (itemSelectImage != null)
+            {
+                itemSelectImage.enabled = false;
+            }
 
             // Publish level load request event
             _eventBus?.Publish(new LevelLoadRequestedEvent

@@ -25,10 +25,13 @@ namespace LevelSelection
         private void Awake()
         {
             SetupFadeImage();
-            // Start completely transparent (hidden)
-            SetAlpha(0f);
+            // Start with image disabled (hidden)
+            if (fadeImage != null)
+            {
+                fadeImage.enabled = false;
+            }
             
-            Debug.Log("[NESCrossfade] Initialized and hidden");
+            Debug.Log("[NESCrossfade] Initialized with hidden image");
         }
 
         private void SetupFadeImage()
@@ -63,8 +66,9 @@ namespace LevelSelection
                 rect.sizeDelta = Vector2.zero;
                 rect.anchoredPosition = Vector2.zero;
                 
-                // Set initial color
-                fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 0f);
+                // Set initial color with full alpha (but start disabled)
+                fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 1f);
+                fadeImage.enabled = false;
             }
             
             // Ensure the image covers the full screen
@@ -116,6 +120,13 @@ namespace LevelSelection
         private IEnumerator FadeCoroutine(float from, float to)
         {
             _isFading = true;
+            
+            // Enable image when starting fade
+            if (fadeImage != null)
+            {
+                fadeImage.enabled = true;
+            }
+            
             float elapsed = 0f;
 
             while (elapsed < fadeDuration)
@@ -144,6 +155,12 @@ namespace LevelSelection
             else
             {
                 SetAlpha(to);
+            }
+
+            // Hide image if fade is complete (alpha = 0)
+            if (to <= 0f && fadeImage != null)
+            {
+                fadeImage.enabled = false;
             }
 
             _isFading = false;
@@ -198,9 +215,33 @@ namespace LevelSelection
         }
 
         /// <summary>
-        ///     Get current fade progress (0 = transparent, 1 = opaque)
+        ///     Show the crossfade immediately (useful for scene start)
         /// </summary>
-        public float GetFadeProgress() => fadeImage ? fadeImage.color.a : 0f;
+        public void Show()
+        {
+            if (fadeImage != null)
+            {
+                fadeImage.enabled = true;
+                SetAlpha(1f);
+            }
+        }
+        
+        /// <summary>
+        ///     Hide the crossfade immediately
+        /// </summary>
+        public void Hide()
+        {
+            if (fadeImage != null)
+            {
+                fadeImage.enabled = false;
+                SetAlpha(0f);
+            }
+        }
+
+        /// <summary>
+        ///     Get current fade progress (0 = hidden, 1 = fully visible)
+        /// </summary>
+        public float GetFadeProgress() => fadeImage && fadeImage.enabled ? fadeImage.color.a : 0f;
 
         /// <summary>
         ///     Instantly set fade to specific alpha without animation
@@ -221,21 +262,5 @@ namespace LevelSelection
         ///     Check if currently fading
         /// </summary>
         public bool IsFading => _isFading;
-        
-        /// <summary>
-        /// Show the crossfade immediately (useful for scene start)
-        /// </summary>
-        public void Show()
-        {
-            SetAlpha(1f);
-        }
-        
-        /// <summary>
-        /// Hide the crossfade immediately
-        /// </summary>
-        public void Hide()
-        {
-            SetAlpha(0f);
-        }
     }
 }

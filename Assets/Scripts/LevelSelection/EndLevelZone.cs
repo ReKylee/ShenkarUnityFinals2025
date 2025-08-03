@@ -124,12 +124,8 @@ namespace LevelSelection
             // Return to level select if enabled
             if (autoReturnToLevelSelect)
             {
-                _eventBus?.Publish(new Core.Events.LevelLoadRequestedEvent
-                {
-                    Timestamp = Time.time,
-                    LevelName = "Level Select",
-                    SceneName = "LevelSelection"
-                });
+                // Use standalone SceneTransitionManager
+                SceneTransitionManager.TransitionTo("LevelSelection");
             }
         }
 
