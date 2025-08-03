@@ -10,8 +10,6 @@ namespace LevelSelection.Services
     public interface ILevelDiscoveryService
     {
         Task<List<LevelData>> DiscoverLevelsAsync();
-        List<LevelPoint> GetSortedLevelPoints();
-        void InvalidateCache();
         void UpdateLevelProgress(string levelName, bool isCompleted, float bestTime = float.MaxValue);
     }
 }

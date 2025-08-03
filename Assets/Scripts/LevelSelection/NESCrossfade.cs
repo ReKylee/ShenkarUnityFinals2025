@@ -7,18 +7,17 @@ namespace LevelSelection
 {
     public class NesCrossfade : MonoBehaviour
     {
-        [Header("Crossfade Configuration")] public Image fadeImage;
-
+        [Header("Fade Settings")] 
+        public Image fadeImage;
         public float fadeDuration = 1f;
         public Color fadeColor = Color.black;
-        public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-        [Header("NES Style Effect")] public bool useNESEffect = true;
-
+        [Header("NES Style Effect")] 
+        public bool useNESEffect = true;
         public Color[] nesColors = { Color.black, new(0.2f, 0.2f, 0.3f), new(0.1f, 0.1f, 0.2f) };
         public float colorFlickerSpeed = 10f;
 
-        private LevelSelectionConfig _config;
         private Action _onFadeComplete;
 
         /// <summary>
@@ -86,17 +85,6 @@ namespace LevelSelection
             }
         }
 
-        public void SetConfig(LevelSelectionConfig config)
-        {
-            _config = config;
-
-            // Update fade settings from config
-            if (_config != null)
-            {
-                fadeDuration = _config.transitionDuration;
-                nesColors = _config.nesTransitionColors;
-            }
-        }
 
         public void FadeOut(Action onComplete = null)
         {
@@ -142,7 +130,7 @@ namespace LevelSelection
 
                 if (useNESEffect)
                 {
-                    SetNESStyleAlpha(alpha);
+                    SetNesStyleAlpha(alpha);
                 }
                 else
                 {
@@ -154,7 +142,7 @@ namespace LevelSelection
 
             if (useNESEffect)
             {
-                SetNESStyleAlpha(to);
+                SetNesStyleAlpha(to);
             }
             else
             {
@@ -199,7 +187,7 @@ namespace LevelSelection
             }
         }
 
-        private void SetNESStyleAlpha(float alpha)
+        private void SetNesStyleAlpha(float alpha)
         {
             if (fadeImage == null || nesColors == null || nesColors.Length == 0) return;
 
@@ -254,7 +242,7 @@ namespace LevelSelection
         {
             if (useNESEffect)
             {
-                SetNESStyleAlpha(alpha);
+                SetNesStyleAlpha(alpha);
             }
             else
             {

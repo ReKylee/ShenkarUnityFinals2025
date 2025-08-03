@@ -14,6 +14,9 @@ namespace Core
         private IGameDataService _gameDataService;
         private bool _isInitialized;
 
+        // Track previous values to detect changes
+        private int _previousLives = -1;
+
         [Inject]
         public void Construct(
             IGameDataService gameDataService,
@@ -32,14 +35,16 @@ namespace Core
         {
             _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
             _eventBus?.Subscribe<LevelStartedEvent>(OnLevelStarted);
-            _eventBus?.Subscribe<PlayerLivesChangedEvent>(OnLivesChanged);
             _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
             _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
             _eventBus?.Subscribe<LevelSelectedEvent>(OnLevelSelected);
             _eventBus?.Subscribe<LevelNavigationEvent>(OnLevelNavigation);
 
             if (_gameDataService != null)
+            {
                 _gameDataService.OnDataChanged += OnGameDataChanged;
+                _previousLives = _gameDataService.CurrentData.lives;
+            }
 
             if (_autoSaveService != null)
             {
@@ -70,7 +75,6 @@ namespace Core
                 _eventBus.Unsubscribe<PlayerDeathEvent>(OnPlayerDied);
                 _eventBus.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
                 _eventBus.Unsubscribe<LevelStartedEvent>(OnLevelStarted);
-                _eventBus.Unsubscribe<PlayerLivesChangedEvent>(OnLivesChanged);
                 _eventBus.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
                 _eventBus.Unsubscribe<LevelSelectedEvent>(OnLevelSelected);
                 _eventBus.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
@@ -124,13 +128,22 @@ namespace Core
             _gameDataService?.UpdateCurrentLevel(levelEvent.LevelName);
         }
 
-        private void OnLivesChanged(PlayerLivesChangedEvent livesEvent)
-        {
-            _gameDataService?.UpdateLives(livesEvent.CurrentLives);
-        }
-
         private void OnGameDataChanged(GameData newData)
         {
+            // Check if lives changed and publish the appropriate event
+            if (_previousLives != newData.lives)
+            {
+                _eventBus?.Publish(new PlayerLivesChangedEvent
+                {
+                    PreviousLives = _previousLives,
+                    CurrentLives = newData.lives,
+                    MaxLives = GameData.MaxLives,
+                    Timestamp = Time.time
+                });
+
+                _previousLives = newData.lives;
+            }
+
             _autoSaveService?.RequestSave();
         }
 
@@ -142,6 +155,11 @@ namespace Core
                 gameData.selectedLevelIndex = levelEvent.LevelIndex;
                 gameData.currentLevel = levelEvent.LevelName;
             }
+        }
+
+        private void OnLivesChanged(PlayerLivesChangedEvent livesEvent)
+        {
+            _gameDataService?.UpdateLives(livesEvent.CurrentLives);
         }
 
         private void OnLevelNavigation(LevelNavigationEvent navigationEvent)

@@ -4,106 +4,68 @@ using UnityEngine;
 namespace LevelSelection
 {
     /// <summary>
-    /// Represents a level point in the level selection scene
-    /// Note: MonoBehaviour components are automatically serialized by Unity
+    /// Simple Unity GameObject component for level placement in editor.
+    /// Only contains basic editor-friendly data that gets converted to LevelData at runtime.
     /// </summary>
     public class LevelPoint : MonoBehaviour
     {
-        [Header("Level Configuration")] 
+        [Header("Basic Level Info")]
         [SerializeField] private string levelName;
         [SerializeField] private string displayName;
         [SerializeField] private string sceneName;
         [SerializeField] private int levelIndex;
 
-        [Header("Level Progress")]
-        [SerializeField] private bool isCompleted;
-        [SerializeField] private float bestTime = float.MaxValue;
-
-        [Header("Unlock Configuration")] 
-        [SerializeField] private bool startUnlocked = true;
-        [SerializeField] private bool overrideGameData;
-        [Tooltip("If true, this level ignores saved game data and uses the inspector setting")]
-
-        [SerializeField] private bool isUnlocked;
-
-        // Public read-only properties for external access
+        // Public properties for easy access during conversion
         public string LevelName => levelName;
         public string DisplayName => displayName;
         public string SceneName => sceneName;
         public int LevelIndex => levelIndex;
-        public bool IsCompleted => isCompleted;
-        public float BestTime => bestTime;
-        public bool IsUnlocked => isUnlocked;
-        public bool StartUnlocked => startUnlocked;
-        public bool OverrideGameData => overrideGameData;
-        public Vector2 MapPosition => transform.position;
-
-        private void Awake()
-        {
-            // Set initial unlock state based on inspector setting
-            if (overrideGameData)
-            {
-                SetUnlocked(startUnlocked);
-            }
-        }
-
-        public void SetUnlocked(bool unlocked)
-        {
-            isUnlocked = unlocked;
-        }
-
-        public void SetCompleted(bool completed)
-        {
-            isCompleted = completed;
-        }
-
-        public void UpdateBestTime(float time)
-        {
-            if (time < bestTime)
-            {
-                bestTime = time;
-            }
-        }
-
-        public void SetSelected(bool selected)
-        {
-            // Implementation for visual feedback when selected
-        }
+        public Vector3 Position => transform.position;
 
         /// <summary>
-        /// Convert to LevelData for compatibility with existing systems
+        /// Convert this editor placement object to runtime data
         /// </summary>
         public LevelData ToLevelData()
         {
             return new LevelData
             {
                 levelName = this.levelName,
-                sceneName = this.sceneName,
-                mapPosition = this.MapPosition,
-                isUnlocked = this.isUnlocked,
-                isCompleted = this.isCompleted,
-                bestTime = this.bestTime,
                 displayName = this.displayName,
-                levelIndex = this.levelIndex
+                sceneName = this.sceneName,
+                levelIndex = this.levelIndex,
+                mapPosition = transform.position,
+                // Runtime data will be populated from GameData
+                isUnlocked = false,
+                isCompleted = false,
+                bestTime = float.MaxValue
             };
         }
 
-        /// <summary>
-        /// Update this LevelPoint from cached data
-        /// </summary>
-        public void UpdateFromLevelData(LevelData data)
+        private void OnValidate()
         {
-            if (data == null) return;
+            // Auto-generate display name if empty
+            if (string.IsNullOrEmpty(displayName) && !string.IsNullOrEmpty(levelName))
+            {
+                displayName = levelName.Replace("_", " ");
+            }
 
-            levelName = data.levelName;
-            sceneName = data.sceneName;
-            displayName = data.displayName;
-            levelIndex = data.levelIndex;
+            // Auto-generate scene name if empty
+            if (string.IsNullOrEmpty(sceneName) && !string.IsNullOrEmpty(levelName))
+            {
+                sceneName = levelName;
+            }
+        }
+
+        private void OnDrawGizmos()
+        {
+            // Draw a simple gizmo in editor for easy visualization
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, 0.5f);
             
-            // Use proper methods for state changes
-            SetUnlocked(data.isUnlocked);
-            SetCompleted(data.isCompleted);
-            UpdateBestTime(data.bestTime);
+            // Draw level index
+            #if UNITY_EDITOR
+            UnityEditor.Handles.Label(transform.position + Vector3.up * 0.7f, levelIndex.ToString());
+            #endif
         }
     }
 }

@@ -24,7 +24,6 @@ namespace LevelSelection
         private InputActionReference submitAction;
 
         private AudioSource _audioSource;
-        private LevelSelectionConfig _config;
         private GameFlowManager _gameFlowManager;
         private Action _onComplete;
         private string _pendingLevelName;
@@ -76,23 +75,7 @@ namespace LevelSelection
             }
         }
 
-        public void SetConfig(LevelSelectionConfig config)
-        {
-            _config = config;
 
-            // Update display duration and wait behavior from config
-            if (_config != null)
-            {
-                displayDuration = _config.itemSelectDisplayDuration;
-                waitForInput = _config.waitForInputOnItemSelect;
-
-                // Update audio clip from config if available
-                if (_config.selectionSound && !confirmSound)
-                {
-                    confirmSound = _config.selectionSound;
-                }
-            }
-        }
 
         [Inject]
         public void Construct(GameFlowManager gameFlowManager)
@@ -140,12 +123,9 @@ namespace LevelSelection
 
         private void ConfirmAndProceed()
         {
-            // Use config sound first, then fallback to assigned sound
-            AudioClip soundToPlay = _config?.selectionSound ?? confirmSound;
-
-            if (_audioSource && soundToPlay)
+            if (_audioSource && confirmSound)
             {
-                _audioSource.PlayOneShot(soundToPlay);
+                _audioSource.PlayOneShot(confirmSound);
             }
 
             CompleteSelection();

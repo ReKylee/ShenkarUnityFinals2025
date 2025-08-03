@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.Data;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace LevelSelection.Services
 {
@@ -16,7 +15,6 @@ namespace LevelSelection.Services
     {
         private readonly IGameDataService _gameDataService;
         private List<LevelData> _runtimeLevelData;
-        private List<LevelPoint> _runtimeLevelPoints;
 
         public LevelDiscoveryService(IGameDataService gameDataService)
         {
@@ -37,48 +35,26 @@ namespace LevelSelection.Services
             return await DiscoverAndCacheLevelsAsync();
         }
 
-        public List<LevelPoint> GetSortedLevelPoints()
+        public void ClearCache()
         {
-            // Return cached runtime level points if available
-            if (_runtimeLevelPoints != null)
+            GameData gameData = _gameDataService?.CurrentData;
+            if (gameData != null)
             {
-                return _runtimeLevelPoints;
+                gameData.cachedLevelData.Clear();
+                gameData.levelDataCacheValid = false;
+                _gameDataService.SaveData();
             }
-
-            // If we have runtime data but no points, rebuild points from data
-            if (_runtimeLevelData != null)
-            {
-                RebuildLevelPointsFromData();
-                return _runtimeLevelPoints;
-            }
-
-            // Fallback - discover level points directly from scene
-            return DiscoverLevelPointsInScene();
-        }
-
-        /// <summary>
-        ///     Invalidate the cache to force rediscovery on next call
-        /// </summary>
-        public void InvalidateCache()
-        {
-            var gameData = _gameDataService.CurrentData;
-            gameData.levelPointsCacheValid = false;
-            gameData.cachedLevelPoints.Clear();
-            _gameDataService.SaveData();
 
             _runtimeLevelData = null;
-            _runtimeLevelPoints = null;
         }
 
-        /// <summary>
-        ///     Update cached level progress data
-        /// </summary>
-        public void UpdateLevelProgress(string levelName, bool isCompleted, float bestTime = float.MaxValue)
+        public void UpdateLevelProgress(string levelName, bool isCompleted, float bestTime)
         {
-            var gameData = _gameDataService.CurrentData;
+            GameData gameData = _gameDataService?.CurrentData;
+            if (gameData?.cachedLevelData == null) return;
 
-            // Update cached level data
-            var cachedLevel = gameData.cachedLevelPoints.FirstOrDefault(l => l.levelName == levelName);
+            // Update cached data
+            var cachedLevel = gameData.cachedLevelData.FirstOrDefault(l => l.levelName == levelName);
             if (cachedLevel != null)
             {
                 cachedLevel.isCompleted = isCompleted;
@@ -98,109 +74,78 @@ namespace LevelSelection.Services
                     runtimeLevel.bestTime = bestTime;
                 }
             }
-
-            // Save to disk
-            _gameDataService.SaveData();
         }
 
         private bool TryLoadFromCache(out List<LevelData> cachedData)
         {
             cachedData = null;
+            GameData gameData = _gameDataService?.CurrentData;
 
-            var gameData = _gameDataService.CurrentData;
-
-            if (!gameData.levelPointsCacheValid || gameData.cachedLevelPoints == null || gameData.cachedLevelPoints.Count == 0)
+            if (!gameData.levelDataCacheValid || gameData.cachedLevelData == null || gameData.cachedLevelData.Count == 0)
             {
                 return false;
             }
 
-            // Apply current game state to cached data (unlock status, completion, etc.)
-            cachedData = ApplyGameStateToLevelData(gameData.cachedLevelPoints);
+            cachedData = ApplyGameStateToLevelData(gameData.cachedLevelData);
             return true;
         }
 
         private async Task<List<LevelData>> DiscoverAndCacheLevelsAsync()
         {
-            _runtimeLevelPoints = DiscoverLevelPointsInScene();
-            _runtimeLevelData = _runtimeLevelPoints.Select(lp => lp.ToLevelData()).ToList();
-
-            // Cache to game data
-            await CacheLevelDataAsync(_runtimeLevelData);
-
+            _runtimeLevelData = DiscoverLevelDataInScene();
+            
+            // Cache the discovered data
+            CacheLevelData(_runtimeLevelData);
+            
+            await Task.CompletedTask;
             return _runtimeLevelData;
         }
 
-        private List<LevelPoint> DiscoverLevelPointsInScene()
+        private List<LevelData> DiscoverLevelDataInScene()
         {
-            var levelPoints = Object.FindObjectsByType<LevelPoint>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.InstanceID
-            );
+            var levelPoints = UnityEngine.Object.FindObjectsByType<LevelPoint>(
+                FindObjectsInactive.Include, 
+                FindObjectsSortMode.None);
 
-            // Sort directly without creating intermediate collections
-            var sortedPoints = levelPoints.OrderBy(lp => lp.LevelName, StringComparer.OrdinalIgnoreCase).ToList();
-            
-            return sortedPoints;
+            return levelPoints
+                .OrderBy(lp => lp.LevelIndex)
+                .Select(lp => lp.ToLevelData())
+                .ToList();
         }
 
-        private void RebuildLevelPointsFromData()
+        private void CacheLevelData(List<LevelData> levelData)
         {
-            // Find all level points in scene and update them with cached data
-            var scenePoints = DiscoverLevelPointsInScene();
-            
-            // Use dictionary for O(1) lookup instead of O(n) for each point
-            var dataLookup = _runtimeLevelData.ToDictionary(d => d.levelName, d => d);
-            
-            foreach (var point in scenePoints)
-            {
-                if (dataLookup.TryGetValue(point.LevelName, out var matchingData))
-                {
-                    point.UpdateFromLevelData(matchingData);
-                }
-            }
-            
-            _runtimeLevelPoints = scenePoints;
+            GameData gameData = _gameDataService?.CurrentData;
+            if (gameData == null) return;
+
+            gameData.cachedLevelData = new List<LevelData>(levelData);
+            gameData.levelDataCacheValid = true;
+            _gameDataService.SaveData();
         }
 
-        private List<LevelData> ApplyGameStateToLevelData(List<LevelData> cachedLevelData)
+        private List<LevelData> ApplyGameStateToLevelData(List<LevelData> baseLevelData)
         {
-            var gameData = _gameDataService.CurrentData;
-            
-            // Create new list to avoid modifying cached data
-            var result = new List<LevelData>(cachedLevelData.Count);
+            GameData gameData = _gameDataService?.CurrentData;
+            if (gameData == null) return baseLevelData;
 
-            foreach (var levelData in cachedLevelData)
+            var result = new List<LevelData>();
+            foreach (var levelData in baseLevelData)
             {
-                // Create a copy and apply current game state
-                var updatedData = new LevelData
+                var copy = new LevelData
                 {
                     levelName = levelData.levelName,
                     sceneName = levelData.sceneName,
                     mapPosition = levelData.mapPosition,
                     displayName = levelData.displayName,
                     levelIndex = levelData.levelIndex,
-                    // Apply current game state
                     isUnlocked = gameData.unlockedLevels.Contains(levelData.levelName),
                     isCompleted = gameData.completedLevels.Contains(levelData.levelName),
-                    bestTime = gameData.LevelBestTimes.TryGetValue(levelData.levelName, out float bestTime) ? bestTime : levelData.bestTime
+                    bestTime = gameData.LevelBestTimes.GetValueOrDefault(levelData.levelName, float.MaxValue)
                 };
-                
-                result.Add(updatedData);
+                result.Add(copy);
             }
 
             return result;
-        }
-
-        private async Task CacheLevelDataAsync(List<LevelData> levelData)
-        {
-            await Task.Yield();
-
-            var gameData = _gameDataService.CurrentData;
-            gameData.cachedLevelPoints = new List<LevelData>(levelData);
-            gameData.levelPointsCacheValid = true;
-
-            // Save to disk
-            _gameDataService.SaveData();
         }
     }
 }

@@ -40,9 +40,9 @@ namespace Core.Data
         [Header("Collectables")] 
         public int fruitCollected;
 
-        // Cached level discovery data
-        public List<LevelData> cachedLevelPoints = new();
-        public bool levelPointsCacheValid = false;
+        // Cached level discovery data - now using LevelData instead of LevelPoint
+        public List<LevelData> cachedLevelData = new();
+        public bool levelDataCacheValid = false;
 
         // Constructor for easy initialization
         public GameData()
@@ -69,8 +69,8 @@ namespace Core.Data
             LevelBestTimes = new Dictionary<string, float>(other.LevelBestTimes);
             LevelBestScores = new Dictionary<string, int>(other.LevelBestScores);
             LevelCompleted = new Dictionary<string, bool>(other.LevelCompleted);
-            cachedLevelPoints = new List<LevelData>(other.cachedLevelPoints);
-            levelPointsCacheValid = other.levelPointsCacheValid;
+            cachedLevelData = new List<LevelData>(other.cachedLevelData);
+            levelDataCacheValid = other.levelDataCacheValid;
         }
 
         // Reset to default values
@@ -94,8 +94,8 @@ namespace Core.Data
             LevelBestTimes = new Dictionary<string, float>();
             LevelBestScores = new Dictionary<string, int>();
             LevelCompleted = new Dictionary<string, bool>();
-            cachedLevelPoints = new List<LevelData>();
-            levelPointsCacheValid = false;
+            cachedLevelData = new List<LevelData>();
+            levelDataCacheValid = false;
         }
 
         /// <summary>

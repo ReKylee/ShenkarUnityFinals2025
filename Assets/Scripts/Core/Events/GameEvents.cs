@@ -5,7 +5,7 @@ namespace Core.Events
     public enum GameState
     {
         MainMenu,
-        LevelSelection, // Added LevelSelection state
+        LevelSelection, 
         Loading,
         Playing,
         Paused,
@@ -21,27 +21,12 @@ namespace Core.Events
         public float Timestamp;
     }
 
-    public struct PlayerHealthChangedEvent
-    {
-        public int CurrentHp;
-        public int MaxHp;
-        public int Damage;
-        public float Timestamp;
-    }
-
     public struct PlayerLivesChangedEvent
     {
         public int PreviousLives;
         public int CurrentLives;
         public int MaxLives;
         public float Timestamp;
-    }
-
-    public struct ScoreChangedEvent
-    {
-        public Vector3 Position;
-        public int ScoreAmount; // Delta amount
-        public int TotalScore; // Overall score
     }
 
     // Base event structure for consistency

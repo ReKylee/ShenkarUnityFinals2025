@@ -7,7 +7,7 @@ namespace LevelSelection.Services
     /// </summary>
     public interface IAudioFeedbackService
     {
-        void Initialize(AudioSource audioSource, LevelSelectionConfig config);
+        void Initialize(AudioSource audioSource);
         void PlayNavigationSound();
         void PlaySelectionSound();
         void PlayLockedSound();
@@ -19,35 +19,33 @@ namespace LevelSelection.Services
     public class AudioFeedbackService : IAudioFeedbackService
     {
         private AudioSource _audioSource;
-        private LevelSelectionConfig _config;
 
-        public void Initialize(AudioSource audioSource, LevelSelectionConfig config)
+        public void Initialize(AudioSource audioSource)
         {
             _audioSource = audioSource;
-            _config = config;
         }
 
         public void PlayNavigationSound()
         {
-            if (_config?.navigationSound && _audioSource)
+            if (_audioSource)
             {
-                _audioSource.PlayOneShot(_config.navigationSound);
+                _audioSource.PlayOneShot(_audioSource.clip);
             }
         }
 
         public void PlaySelectionSound()
         {
-            if (_config?.selectionSound && _audioSource)
+            if (_audioSource)
             {
-                _audioSource.PlayOneShot(_config.selectionSound);
+                _audioSource.PlayOneShot(_audioSource.clip);
             }
         }
 
         public void PlayLockedSound()
         {
-            if (_config?.lockedSound && _audioSource)
+            if (_audioSource)
             {
-                _audioSource.PlayOneShot(_config.lockedSound);
+                _audioSource.PlayOneShot(_audioSource.clip);
             }
         }
     }

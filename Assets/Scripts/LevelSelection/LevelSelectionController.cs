@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Core;
 using Core.Data;
 using Core.Events;
@@ -13,7 +14,6 @@ namespace LevelSelection
     {
         [Header("Configuration")]
         [SerializeField] private bool autoActivateOnStart = true;
-        [SerializeField] private LevelSelectionConfig config;
 
         [Header("UI Components")]
         [SerializeField] private GameObject selectorObject;
@@ -124,10 +124,8 @@ namespace LevelSelection
             var levelData = await _gameDataService.DiscoverLevelsAsync();
             await _navigationService.InitializeAsync(levelData);
 
-            if (config != null)
-            {
-                _navigationService.SetGridWidth(config.gridWidth);
-            }
+            // Configure navigation service with grid width (hardcoded since config removed)
+            _navigationService.SetGridWidth(4); // Default grid width
         }
 
         private void InitializeServices()
@@ -138,9 +136,9 @@ namespace LevelSelection
                 audioSource = gameObject.AddComponent<AudioSource>();
             }
 
-            _selectorService.Initialize(selectorObject, config);
-            _inputFilterService.Initialize(config);
-            _audioFeedbackService.Initialize(audioSource, config);
+            _selectorService.Initialize(selectorObject);
+            _inputFilterService.Initialize();
+            _audioFeedbackService.Initialize(audioSource);
             _itemSelectService.Initialize(itemSelectScreen, _sceneLoadService);
 
             _itemSelectService.OnStateChanged += OnItemSelectStateChanged;
@@ -181,7 +179,7 @@ namespace LevelSelection
         private void OnLevelNavigation(LevelNavigationEvent navigationEvent)
         {
             _audioFeedbackService.PlayNavigationSound();
-            _selectorService.MoveToLevel(_navigationService.CurrentIndex);
+            _selectorService.MoveToCurrentLevel(_navigationService);
         }
 
         private void OnLevelSelected(LevelSelectedEvent selectionEvent)
@@ -221,7 +219,7 @@ namespace LevelSelection
 
             if (_navigationService?.CurrentIndex >= 0)
             {
-                _selectorService?.MoveToLevel(_navigationService.CurrentIndex);
+                _selectorService?.MoveToCurrentLevel(_navigationService);
             }
         }
 

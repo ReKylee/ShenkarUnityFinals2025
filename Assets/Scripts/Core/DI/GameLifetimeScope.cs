@@ -56,8 +56,7 @@ namespace Core.DI
             // Register Player Services
             builder.Register<IPlayerLivesService>(resolver
                 => new PlayerLivesService(
-                    resolver.Resolve<IGameDataService>(),
-                    resolver.Resolve<IEventBus>()
+                    resolver.Resolve<IGameDataService>()
                 ), Lifetime.Singleton);
 
             // Register Level Discovery Service for caching

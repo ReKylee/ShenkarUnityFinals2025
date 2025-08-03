@@ -114,28 +114,15 @@ namespace LevelSelection.Services
 
         private void UpdateSelection(int newIndex)
         {
-            Debug.Log($"[LevelNavigationService] UpdateSelection called: {CurrentIndex} -> {newIndex}");
-
             if (newIndex == CurrentIndex)
             {
-                Debug.Log($"[LevelNavigationService] No change needed, staying at index {CurrentIndex}");
                 return;
             }
 
             int previousIndex = CurrentIndex;
             CurrentIndex = newIndex;
 
-            // Save selection immediately
-            GameData gameData = _gameDataService?.CurrentData;
-            if (gameData != null)
-            {
-                gameData.selectedLevelIndex = CurrentIndex;
-                _gameDataService?.SaveData();
-            }
-
-            Debug.Log($"[LevelNavigationService] Publishing navigation event through GameFlowManager: {previousIndex} -> {CurrentIndex}");
-
-            // Publish navigation event through GameFlowManager
+            // Only handle FLOW - let GameDataCoordinator handle the DATA when it receives this event
             _gameFlowManager?.NavigateLevel(previousIndex, CurrentIndex, Vector2.zero);
         }
     }

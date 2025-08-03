@@ -9,11 +9,10 @@ namespace LevelSelection.Services
     public interface ISelectorService
     {
         bool IsMoving { get; }
-        void Initialize(GameObject selectorObject, LevelSelectionConfig config);
+        void Initialize(GameObject selectorObject);
         void MoveToPosition(Vector3 targetPosition);
         void SetVisible(bool visible);
         void Update();
-        void SetLevelPoints(List<LevelPoint> levelPoints);
-        void MoveToLevel(int levelIndex);
+        void MoveToCurrentLevel(ILevelNavigationService navigationService);
     }
 }

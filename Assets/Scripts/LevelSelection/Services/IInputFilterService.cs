@@ -7,7 +7,7 @@ namespace LevelSelection.Services
     /// </summary>
     public interface IInputFilterService
     {
-        void Initialize(LevelSelectionConfig config);
+        void Initialize();
         void SetEnabled(bool enabled);
         bool ProcessNavigationInput(Vector2 direction, out Vector2 filteredDirection);
     }
@@ -20,14 +20,12 @@ namespace LevelSelection.Services
         private const float InputCooldownTime = 0.2f; // Prevent input spam
         private const float InputDeadzone = 0.5f; // Input threshold
 
-        private LevelSelectionConfig _config;
         private bool _isEnabled = true;
         private Vector2 _lastInputDirection;
         private float _lastInputTime;
 
-        public void Initialize(LevelSelectionConfig config)
+        public void Initialize()
         {
-            _config = config;
         }
 
         public void SetEnabled(bool enabled)

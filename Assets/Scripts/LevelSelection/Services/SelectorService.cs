@@ -8,22 +8,17 @@ namespace LevelSelection.Services
     /// </summary>
     public class SelectorService : ISelectorService
     {
-        private LevelSelectionConfig _config;
-        private List<LevelPoint> _levelPoints;
+        private const float DefaultMoveSpeed = 5f;
+        private const float DefaultSnapThreshold = 0.1f;
+        
         private GameObject _selectorObject;
         private Vector3 _targetPosition;
 
         public bool IsMoving { get; private set; }
 
-        public void Initialize(GameObject selectorObject, LevelSelectionConfig config)
+        public void Initialize(GameObject selectorObject)
         {
             _selectorObject = selectorObject;
-            _config = config;
-        }
-
-        public void SetLevelPoints(List<LevelPoint> levelPoints)
-        {
-            _levelPoints = levelPoints;
         }
 
         public void MoveToPosition(Vector3 targetPosition)
@@ -35,16 +30,15 @@ namespace LevelSelection.Services
             {
                 _targetPosition = targetPosition;
                 IsMoving = true;
-                Debug.Log($"[SelectorService] Moving selector to position {targetPosition}");
             }
         }
 
-        public void MoveToLevel(int levelIndex)
+        public void MoveToCurrentLevel(ILevelNavigationService navigationService)
         {
-            if (_levelPoints == null || levelIndex < 0 || levelIndex >= _levelPoints.Count) return;
-
-            Vector3 targetPosition = _levelPoints[levelIndex].transform.position;
-            MoveToPosition(targetPosition);
+            if (navigationService?.CurrentLevel != null)
+            {
+                MoveToPosition(navigationService.CurrentLevel.mapPosition);
+            }
         }
 
         public void SetVisible(bool visible)
@@ -52,7 +46,6 @@ namespace LevelSelection.Services
             if (_selectorObject != null)
             {
                 _selectorObject.SetActive(visible);
-                Debug.Log($"[SelectorService] Selector visibility set to: {visible}");
             }
         }
 
@@ -60,16 +53,13 @@ namespace LevelSelection.Services
         {
             if (!IsMoving || _selectorObject == null) return;
 
-            float moveSpeed = _config?.selectorMoveSpeed ?? 5f;
-            float snapThreshold = _config?.snapThreshold ?? 0.1f;
-
             _selectorObject.transform.position = Vector3.MoveTowards(
                 _selectorObject.transform.position,
                 _targetPosition,
-                moveSpeed * Time.deltaTime
+                DefaultMoveSpeed * Time.deltaTime
             );
 
-            if (Vector3.Distance(_selectorObject.transform.position, _targetPosition) < snapThreshold)
+            if (Vector3.Distance(_selectorObject.transform.position, _targetPosition) < DefaultSnapThreshold)
             {
                 _selectorObject.transform.position = _targetPosition;
                 IsMoving = false;

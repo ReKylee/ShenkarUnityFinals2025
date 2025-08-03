@@ -1,5 +1,4 @@
 ﻿using Core;
-using Core.Events;
 using Health.Core;
 using Health.Interfaces;
 using Health.Views;
@@ -12,7 +11,6 @@ namespace Player.Components
     public class PlayerHealthController : HealthComponent, IBypassableDamageable
     {
         [SerializeField] private BarsHealthView healthView;
-        private IEventBus _eventBus;
         private GameFlowManager _gameFlowManager;
         private IHealthView _healthView;
         private IInvincibility _invincibility;
@@ -22,9 +20,8 @@ namespace Player.Components
         #region VContainer Injection
 
         [Inject]
-        public void Construct(IEventBus eventBus, IPlayerLivesService livesService, GameFlowManager gameFlowManager)
+        public void Construct(IPlayerLivesService livesService, GameFlowManager gameFlowManager)
         {
-            _eventBus = eventBus;
             _livesService = livesService;
             _gameFlowManager = gameFlowManager;
         }
@@ -61,13 +58,8 @@ namespace Player.Components
         private void HandleHealthChanged(int hp, int maxHp)
         {
             _healthView.UpdateDisplay(hp, maxHp);
-            _eventBus?.Publish(new PlayerHealthChangedEvent
-            {
-                CurrentHp = hp,
-                MaxHp = maxHp,
-                Damage = maxHp - hp,
-                Timestamp = Time.time
-            });
+            // Health changes are now handled purely as UI updates
+            // No need to publish events for every health change
         }
 
         private void HandleHealthEmpty()
@@ -86,13 +78,9 @@ namespace Player.Components
 
             if (_livesService.TryUseLife())
             {
-                Debug.Log(
-                    $"[PlayerHealthController] Used a life, waiting for scene reload. Lives remaining: {_livesService.CurrentLives}");
-
                 return;
             }
 
-            Debug.Log("[PlayerHealthController] No lives left, calling HandlePlayerDeath.");
             _gameFlowManager.HandlePlayerDeath(transform.position);
         }
 

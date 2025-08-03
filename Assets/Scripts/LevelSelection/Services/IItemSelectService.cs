@@ -11,7 +11,6 @@ namespace LevelSelection.Services
         bool IsActive { get; }
         event Action<bool> OnStateChanged;
 
-        void Initialize(ItemSelectScreen itemSelectScreen);
         void Initialize(ItemSelectScreen itemSelectScreen, ISceneLoadService sceneLoadService);
         void ShowItemSelect(string levelName, string sceneName, Action onComplete = null);
     }
@@ -26,11 +25,6 @@ namespace LevelSelection.Services
         private ISceneLoadService _sceneLoadService;
         public bool IsActive { get; private set; }
         public event Action<bool> OnStateChanged;
-
-        public void Initialize(ItemSelectScreen itemSelectScreen)
-        {
-            Initialize(itemSelectScreen, null);
-        }
 
         public void Initialize(ItemSelectScreen itemSelectScreen, ISceneLoadService sceneLoadService)
         {
