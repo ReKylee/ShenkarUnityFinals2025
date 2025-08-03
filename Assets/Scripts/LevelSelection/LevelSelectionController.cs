@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Core;
-using Core.Data;
 using Core.Events;
 using LevelSelection.Services;
 using UnityEngine;
@@ -12,25 +10,27 @@ namespace LevelSelection
 {
     public class LevelSelectionController : MonoBehaviour
     {
-        [Header("Configuration")]
-        [SerializeField] private bool autoActivateOnStart = true;
+        [Header("Configuration")] [SerializeField]
+        private bool autoActivateOnStart = true;
 
-        [Header("UI Components")]
-        [SerializeField] private GameObject selectorObject;
+        [Header("UI Components")] [SerializeField]
+        private GameObject selectorObject;
+
         [SerializeField] private ItemSelectScreen itemSelectScreen;
 
-        [Header("Input Actions")]
-        [SerializeField] private InputActionReference navigateAction;
+        [Header("Input Actions")] [SerializeField]
+        private InputActionReference navigateAction;
+
         [SerializeField] private InputActionReference submitAction;
 
         private IAudioFeedbackService _audioFeedbackService;
-        private ILevelNavigationService _navigationService;
         private IEventBus _eventBus;
+        private GameDataCoordinator _gameDataCoordinator;
+        private GameFlowManager _gameFlowManager;
         private IInputFilterService _inputFilterService;
         private IItemSelectService _itemSelectService;
+        private ILevelNavigationService _navigationService;
         private ISceneLoadService _sceneLoadService;
-        private GameFlowManager _gameFlowManager;
-        private GameDataCoordinator _gameDataCoordinator;
         private ISelectorService _selectorService;
 
         public bool IsActive { get; private set; }

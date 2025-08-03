@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -17,9 +16,9 @@ namespace LevelSelection.Services
         public async Task<List<LevelData>> DiscoverLevelsFromSceneAsync()
         {
             // This can be an expensive operation, so keep it async
-            await Task.Yield(); 
+            await Task.Yield();
 
-            var levelPoints = UnityEngine.Object.FindObjectsByType<LevelPoint>(
+            var levelPoints = Object.FindObjectsByType<LevelPoint>(
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
 

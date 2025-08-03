@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace LevelSelection.Services
 {
@@ -10,7 +9,7 @@ namespace LevelSelection.Services
     {
         private const float DefaultMoveSpeed = 5f;
         private const float DefaultSnapThreshold = 0.1f;
-        
+
         private GameObject _selectorObject;
         private Vector3 _targetPosition;
 

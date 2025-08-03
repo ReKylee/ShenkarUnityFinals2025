@@ -76,7 +76,6 @@ namespace LevelSelection
         }
 
 
-
         [Inject]
         public void Construct(GameFlowManager gameFlowManager)
         {

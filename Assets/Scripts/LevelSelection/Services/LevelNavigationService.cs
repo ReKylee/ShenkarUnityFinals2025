@@ -12,9 +12,9 @@ namespace LevelSelection.Services
     /// </summary>
     public class LevelNavigationService : ILevelNavigationService
     {
+        private readonly GameDataCoordinator _gameDataCoordinator;
 
         private readonly GameFlowManager _gameFlowManager;
-        private readonly GameDataCoordinator _gameDataCoordinator;
         private int _gridWidth = 4; // Default value, will be updated from config
         private bool _isActive;
         private List<LevelData> _levelData;
@@ -77,7 +77,9 @@ namespace LevelSelection.Services
                 return;
             }
 
-            Debug.Log($"[LevelNavigationService] Requesting level selection through GameFlowManager for: {selectedLevel.levelName}");
+            Debug.Log(
+                $"[LevelNavigationService] Requesting level selection through GameFlowManager for: {selectedLevel.levelName}");
+
             _gameFlowManager?.SelectLevel(selectedLevel.levelName, CurrentIndex);
         }
 

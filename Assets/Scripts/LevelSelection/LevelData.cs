@@ -1,5 +1,4 @@
 ﻿using System;
-using Core.Data;
 using UnityEngine;
 
 namespace LevelSelection
@@ -10,12 +9,11 @@ namespace LevelSelection
         public string levelName;
         public string sceneName;
         public Vector2 mapPosition;
-        public bool isUnlocked = false;
-        public bool isCompleted = false;
+        public bool isUnlocked;
+        public bool isCompleted;
         public float bestTime = float.MaxValue;
         public string displayName;
         public int levelIndex;
-
     }
 
 }

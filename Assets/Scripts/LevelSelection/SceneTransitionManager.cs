@@ -144,7 +144,6 @@ namespace LevelSelection
             _activeCrossfade.nesColors = nesColors;
         }
 
-
         #endregion
 
         #region Fade Effects
@@ -241,5 +240,6 @@ namespace LevelSelection
         }
 
         #endregion
+
     }
 }

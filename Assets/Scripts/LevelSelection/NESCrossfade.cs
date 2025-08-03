@@ -7,14 +7,14 @@ namespace LevelSelection
 {
     public class NesCrossfade : MonoBehaviour
     {
-        [Header("Fade Settings")] 
-        public Image fadeImage;
+        [Header("Fade Settings")] public Image fadeImage;
+
         public float fadeDuration = 1f;
         public Color fadeColor = Color.black;
         public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-        [Header("NES Style Effect")] 
-        public bool useNesEffect = true;
+        [Header("NES Style Effect")] public bool useNesEffect = true;
+
         public Color[] nesColors = { Color.black, new(0.2f, 0.2f, 0.3f), new(0.1f, 0.1f, 0.2f) };
         public float colorFlickerSpeed = 10f;
 

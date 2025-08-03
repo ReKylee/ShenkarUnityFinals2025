@@ -74,10 +74,11 @@ namespace LevelSelection
             _hasTriggered = true;
 
             // Take control from the player
-            if(input)
+            if (input)
             {
                 input.enabled = false; // Disable player input
             }
+
             // Make the player walk right
             const float walkDuration = 1f;
             float timer = 0f;
@@ -85,8 +86,9 @@ namespace LevelSelection
             {
                 if (rb)
                 {
-                    rb.velocity = new Vector2(2f, rb.velocity.y);
+                    rb.linearVelocityX = 2f;
                 }
+
                 timer += Time.deltaTime;
                 yield return null;
             }
