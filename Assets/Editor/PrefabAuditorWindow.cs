@@ -8,34 +8,48 @@ namespace Editor
 {
     public class PrefabAuditorWindow : EditorWindow
     {
+        #region Constants
         private const int MaxFrequentPrefabs = 8;
+        private const float RadialMenuRadius = 100f;
+        private const float RadialMenuItemRadius = 30f;
+        private const float RadialMenuAnimationTime = 0.5f;
+        #endregion
+
+        #region Private Fields
+        private readonly List<GameObject> _prefabs = new();
+        private readonly List<GameObject> _filteredPrefabs = new();
+        private readonly List<GameObject> _frequentPrefabs = new();
+        private readonly Dictionary<GameObject, int> _prefabUsageCount = new();
+        private readonly Dictionary<GameObject, Texture2D> _previewCache = new();
+
+        private string _searchFilter = "";
+        private FilterType _filterType = FilterType.All;
+        private bool _useGridView = true;
+        private Vector2 _scrollPosition;
+
+        private bool _placementMode;
+        private GameObject _selectedPrefabForPlacement;
+        private float _ppu = 16f;
+
+        private bool _showRadialMenu;
+        private Vector2 _radialMenuPosition;
+        private float _radialMenuOpenTime;
+
+        private bool _autoRefresh = true;
+        private bool _showAdvancedSettings;
+        private GameObject _defaultDropPrefab;
 
         private static GUIStyle _headerStyle;
         private static GUIStyle _cardStyle;
-        private readonly List<GameObject> _filteredPrefabs = new();
-        private readonly List<GameObject> _frequentPrefabs = new();
-        private readonly List<GameObject> _prefabs = new();
+        #endregion
 
-        private readonly Dictionary<GameObject, int> _prefabUsageCount = new();
-
-        private readonly Dictionary<GameObject, Texture2D> _previewCache = new();
-        private bool _autoRefresh = true;
-        private GameObject _defaultDropPrefab;
-        private FilterType _filterType = FilterType.All;
-        private bool _placementMode;
-
-        private float _ppu = 16f;
-        private float _radialMenuCloseTime;
-
-        private float _radialMenuOpenTime;
-
-        private Vector2 _radialMenuPosition;
-        private Vector2 _scrollPosition;
-        private string _searchFilter = "";
-        private GameObject _selectedPrefabForPlacement;
-        private bool _showAdvancedSettings;
-        private bool _showRadialMenu;
-        private bool _useGridView = true;
+        #region Unity Methods
+        [MenuItem("Tools/Level Auditor & Prefab Manager")]
+        public static void ShowWindow()
+        {
+            var window = GetWindow<PrefabAuditorWindow>("Level Auditor");
+            window.minSize = new Vector2(500, 600);
+        }
 
         private void OnEnable()
         {
@@ -44,7 +58,6 @@ namespace Editor
             UpdateFrequentPrefabs();
             SceneView.duringSceneGui += OnSceneGUI;
             EditorApplication.update += OnEditorUpdate;
-            EditorApplication.update += UpdateRadialMenuAnimation;
         }
 
         private void OnDisable()
@@ -52,19 +65,15 @@ namespace Editor
             SaveUsageData();
             SceneView.duringSceneGui -= OnSceneGUI;
             EditorApplication.update -= OnEditorUpdate;
-            EditorApplication.update -= UpdateRadialMenuAnimation;
-        }
-
-        private void UpdateRadialMenuAnimation()
-        {
-            if (_showRadialMenu)
-            {
-                SceneView.lastActiveSceneView.Repaint();
-            }
+            ClearPreviews();
         }
 
         private void OnEditorUpdate()
         {
+            if (_showRadialMenu)
+            {
+                SceneView.lastActiveSceneView?.Repaint();
+            }
             Repaint();
         }
 
@@ -76,25 +85,29 @@ namespace Editor
             DrawFiltersAndSearch();
             DrawQuickSettings();
             DrawPrefabsList();
-
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Undo", GUILayout.Width(80))) Undo.PerformUndo();
-            if (GUILayout.Button("Redo", GUILayout.Width(80))) Undo.PerformRedo();
-            EditorGUILayout.EndHorizontal();
+            DrawFooter();
 
             if (_autoRefresh && GUI.changed)
+            {
                 ApplyFilters();
-
-            HandlePlacementMode();
+            }
         }
 
-        [MenuItem("Tools/Level Auditor & Prefab Manager")]
-        public static void ShowWindow()
+        private void OnSceneGUI(SceneView sceneView)
         {
-            PrefabAuditorWindow window = GetWindow<PrefabAuditorWindow>("Level Auditor");
-            window.minSize = new Vector2(500, 600);
-        }
+            var currentEvent = Event.current;
 
+            // Prioritize radial menu input to ensure it's not consumed by other controls.
+            HandleRadialMenu(currentEvent, sceneView);
+
+            // If the radial menu used the event, don't process placement mode.
+            if (currentEvent.type == EventType.Used) return;
+
+            HandlePlacementMode(currentEvent, sceneView);
+        }
+        #endregion
+
+        #region UI Drawing
         private void InitializeStyles()
         {
             if (_headerStyle != null) return;
@@ -110,27 +123,25 @@ namespace Editor
                 padding = new RectOffset(10, 10, 10, 10),
                 margin = new RectOffset(5, 5, 2, 2)
             };
-
         }
-
 
         private void DrawHeader()
         {
             EditorGUILayout.BeginVertical(_cardStyle);
             EditorGUILayout.LabelField("🎮 Level Auditor & Prefab Manager", _headerStyle);
-            EditorGUILayout.LabelField($"Found {_prefabs.Count} prefabs | Showing {_filteredPrefabs.Count}",
-                EditorStyles.miniLabel);
+            EditorGUILayout.LabelField($"Found {_prefabs.Count} prefabs | Showing {_filteredPrefabs.Count}", EditorStyles.miniLabel);
 
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("🔄 Refresh", GUILayout.Width(80))) LoadPrefabs();
+            if (GUILayout.Button("🔄 Refresh", GUILayout.Width(80)))
+            {
+                LoadPrefabs();
+            }
             _autoRefresh = GUILayout.Toggle(_autoRefresh, "Auto Refresh", GUILayout.Width(100));
             GUILayout.FlexibleSpace();
             if (_placementMode && GUILayout.Button("❌ Exit Placement", GUILayout.Width(120)))
             {
-                _placementMode = false;
-                _selectedPrefabForPlacement = null;
+                ExitPlacementMode();
             }
-
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
         }
@@ -140,32 +151,33 @@ namespace Editor
             EditorGUILayout.BeginVertical(_cardStyle);
             EditorGUILayout.LabelField("🔍 Filters & Search", EditorStyles.boldLabel);
 
+            // Search
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Search:", GUILayout.Width(50));
-            string newSearch = EditorGUILayout.TextField(_searchFilter);
+            var newSearch = EditorGUILayout.TextField(_searchFilter);
             if (newSearch != _searchFilter)
             {
                 _searchFilter = newSearch;
                 ApplyFilters();
             }
-
             EditorGUILayout.EndHorizontal();
 
+            // Filter
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Filter:", GUILayout.Width(50));
-            FilterType newFilter = (FilterType)EditorGUILayout.EnumPopup(_filterType);
+            var newFilter = (FilterType)EditorGUILayout.EnumPopup(_filterType);
             if (newFilter != _filterType)
             {
                 _filterType = newFilter;
                 ApplyFilters();
             }
-
             EditorGUILayout.EndHorizontal();
 
+            // View
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("View:", GUILayout.Width(50));
-            _useGridView = GUILayout.Toggle(_useGridView, "Grid", GUILayout.Width(60));
-            _useGridView = !GUILayout.Toggle(!_useGridView, "List", GUILayout.Width(60));
+            if (GUILayout.Toggle(_useGridView, "Grid", "Button", GUILayout.Width(60))) _useGridView = true;
+            if (GUILayout.Toggle(!_useGridView, "List", "Button", GUILayout.Width(60))) _useGridView = false;
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.EndVertical();
@@ -174,16 +186,16 @@ namespace Editor
         private void DrawQuickSettings()
         {
             EditorGUILayout.BeginVertical(_cardStyle);
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("⚙️ Quick Settings", EditorStyles.boldLabel);
-            _showAdvancedSettings = EditorGUILayout.Foldout(_showAdvancedSettings, "Advanced");
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Grid Snap (PPU):", GUILayout.Width(100));
-            _ppu = EditorGUILayout.FloatField(_ppu, GUILayout.Width(60));
-            EditorGUILayout.LabelField("Default Drop:", GUILayout.Width(80));
-            _defaultDropPrefab = (GameObject)EditorGUILayout.ObjectField(_defaultDropPrefab, typeof(GameObject), false);
-            EditorGUILayout.EndHorizontal();
+            _showAdvancedSettings = EditorGUILayout.Foldout(_showAdvancedSettings, "⚙️ Quick Settings", true, EditorStyles.foldout);
+            if (_showAdvancedSettings)
+            {
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Grid Snap (PPU):", GUILayout.Width(100));
+                _ppu = EditorGUILayout.FloatField(_ppu, GUILayout.Width(60));
+                EditorGUILayout.LabelField("Default Drop:", GUILayout.Width(80));
+                _defaultDropPrefab = (GameObject)EditorGUILayout.ObjectField(_defaultDropPrefab, typeof(GameObject), false);
+                EditorGUILayout.EndHorizontal();
+            }
             EditorGUILayout.EndVertical();
         }
 
@@ -191,255 +203,400 @@ namespace Editor
         {
             EditorGUILayout.BeginVertical(_cardStyle);
             EditorGUILayout.LabelField("📦 Prefabs", EditorStyles.boldLabel);
+
             if (_filteredPrefabs.Count == 0)
             {
                 EditorGUILayout.HelpBox("No prefabs match current filters.", MessageType.Info);
-                EditorGUILayout.EndVertical();
-                return;
             }
-
-            _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(300));
-            if (_useGridView) DrawPrefabsGrid();
             else
-                foreach (GameObject prefab in _filteredPrefabs)
-                    DrawPrefabListItem(prefab);
-
-            EditorGUILayout.EndScrollView();
+            {
+                _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, GUILayout.ExpandHeight(true));
+                if (_useGridView)
+                {
+                    DrawPrefabsGrid();
+                }
+                else
+                {
+                    DrawPrefabsListItems();
+                }
+                EditorGUILayout.EndScrollView();
+            }
             EditorGUILayout.EndVertical();
+        }
+
+        private void DrawPrefabsListItems()
+        {
+            foreach (var prefab in _filteredPrefabs)
+            {
+                DrawPrefabListItem(prefab);
+            }
         }
 
         private void DrawPrefabListItem(GameObject prefab)
         {
             EditorGUILayout.BeginVertical(_cardStyle);
             EditorGUILayout.BeginHorizontal();
-            Texture2D preview = GetPrefabPreview(prefab);
+
+            var preview = GetPrefabPreview(prefab);
             if (preview != null)
+            {
                 GUILayout.Label(preview, GUILayout.Width(48), GUILayout.Height(48));
+            }
 
             EditorGUILayout.BeginVertical();
             EditorGUILayout.LabelField(prefab.name, EditorStyles.boldLabel);
             EditorGUILayout.EndVertical();
+
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("🖱️ Place", GUILayout.Width(60))) StartPlacementMode(prefab);
             if (GUILayout.Button("📍 Instant", GUILayout.Width(60))) PlacePrefabAtPosition(prefab, Vector3.zero);
             if (GUILayout.Button("🔍 Select", GUILayout.Width(60))) Selection.activeObject = prefab;
+
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
         }
 
         private void DrawPrefabsGrid()
         {
-            int columns = Mathf.Max(1, (int)(EditorGUIUtility.currentViewWidth / 150));
-            int rows = Mathf.CeilToInt(_filteredPrefabs.Count / (float)columns);
-            for (int row = 0; row < rows; row++)
+            var columns = Mathf.Max(1, (int)(position.width / 150));
+            var rows = Mathf.CeilToInt((float)_filteredPrefabs.Count / columns);
+
+            for (var row = 0; row < rows; row++)
             {
                 EditorGUILayout.BeginHorizontal();
-                for (int col = 0; col < columns; col++)
+                for (var col = 0; col < columns; col++)
                 {
-                    int index = row * columns + col;
+                    var index = row * columns + col;
                     if (index >= _filteredPrefabs.Count) break;
-                    GameObject prefab = _filteredPrefabs[index];
-                    EditorGUILayout.BeginVertical(GUILayout.Width(120), GUILayout.Height(140));
-                    Texture2D preview = GetPrefabPreview(prefab);
-                    if (preview != null)
-                    {
-                        Rect rect = GUILayoutUtility.GetRect(100, 100, GUILayout.ExpandWidth(false));
-                        GUI.DrawTexture(rect, preview, ScaleMode.ScaleToFit);
-                    }
-                    else
-                    {
-                        GUILayout.Space(100);
-                    }
 
-                    GUILayout.Label(prefab.name, EditorStyles.miniLabel, GUILayout.Width(120));
-                    if (GUILayout.Button("Place", GUILayout.Height(30))) StartPlacementMode(prefab);
-                    EditorGUILayout.EndVertical();
+                    var prefab = _filteredPrefabs[index];
+                    DrawPrefabGridItem(prefab);
                 }
-
                 EditorGUILayout.EndHorizontal();
             }
         }
 
-        private Texture2D GetPrefabPreview(GameObject prefab)
+        private void DrawPrefabGridItem(GameObject prefab)
         {
-            if (_previewCache.TryGetValue(prefab, out Texture2D preview) && preview != null) return preview;
-
-            // Attempt to fetch the preview texture
-            preview = AssetPreview.GetAssetPreview(prefab);
-
-            // Fallback to mini thumbnail if preview is unavailable
-            if (!preview)
+            EditorGUILayout.BeginVertical(GUILayout.Width(120));
+            var preview = GetPrefabPreview(prefab);
+            var rect = GUILayoutUtility.GetRect(100, 100, GUILayout.ExpandWidth(false));
+            if (preview != null)
             {
-                preview = AssetPreview.GetMiniThumbnail(prefab);
+                GUI.DrawTexture(rect, preview, ScaleMode.ScaleToFit);
             }
 
-            // If still unavailable, create a placeholder texture
-            if (preview == null)
+            GUILayout.Label(prefab.name, EditorStyles.miniLabel, GUILayout.Width(120), GUILayout.ExpandWidth(false));
+            if (GUILayout.Button("Place", GUILayout.Height(30)))
             {
-                preview = new Texture2D(100, 100);
-                Color fillColor = Color.yellow;
-                var fillPixels = Enumerable.Repeat(fillColor, preview.width * preview.height).ToArray();
-                preview.SetPixels(fillPixels);
-                preview.Apply();
+                StartPlacementMode(prefab);
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        private void DrawFooter()
+        {
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Undo", GUILayout.Width(80))) Undo.PerformUndo();
+            if (GUILayout.Button("Redo", GUILayout.Width(80))) Undo.PerformRedo();
+            EditorGUILayout.EndHorizontal();
+        }
+        #endregion
+
+        #region Scene GUI Handling
+        private void HandlePlacementMode(Event currentEvent, SceneView sceneView)
+        {
+            if (!_placementMode || _selectedPrefabForPlacement == null) return;
+
+            var controlId = GUIUtility.GetControlID(FocusType.Passive);
+            HandleUtility.AddDefaultControl(controlId);
+
+            var worldPos = GetMouseWorldPosition(currentEvent);
+            if (currentEvent.shift && _ppu > 0)
+            {
+                worldPos = SnapToGrid(worldPos);
             }
 
-            _previewCache[prefab] = preview;
-            return preview;
-        }
-
-        private void StartPlacementMode(GameObject prefab)
-        {
-            Undo.RecordObject(this, "Select Prefab for Placement");
-            _placementMode = true;
-            _selectedPrefabForPlacement = prefab;
-            IncrementPrefabUsage(prefab);
-        }
-
-        private void HandlePlacementMode()
-        {
-            if (_placementMode && _selectedPrefabForPlacement == null) _placementMode = false;
-        }
-
-        private void OnSceneGUI(SceneView sceneView)
-        {
-            Event e = Event.current;
-
-            if (_placementMode && _selectedPrefabForPlacement != null)
+            if (currentEvent.type == EventType.MouseMove || currentEvent.type == EventType.Repaint)
             {
-                if (e.type == EventType.MouseMove || e.type == EventType.Repaint)
-                {
-                    Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-                    Vector3 worldPos = ray.origin;
-                    worldPos.z = 0;
-
-                    if (e.shift && _ppu > 0)
-                    {
-                        worldPos.x = Mathf.Round(worldPos.x * _ppu) / _ppu;
-                        worldPos.y = Mathf.Round(worldPos.y * _ppu) / _ppu;
-                    }
-
-                    Texture2D preview = GetPrefabPreview(_selectedPrefabForPlacement);
-                    if (preview != null)
-                    {
-                        Rect previewRect = new(e.mousePosition.x + 15, e.mousePosition.y + 15, 100, 100);
-                        GUI.DrawTexture(previewRect, preview, ScaleMode.ScaleToFit);
-                    }
-
-                    sceneView.Repaint();
-                }
-
-                if (e.type == EventType.MouseDown && e.button == 0)
-                {
-                    Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-                    Vector3 worldPos = ray.origin;
-                    worldPos.z = 0;
-
-                    if (e.shift && _ppu > 0)
-                    {
-                        worldPos.x = Mathf.Round(worldPos.x * _ppu) / _ppu;
-                        worldPos.y = Mathf.Round(worldPos.y * _ppu) / _ppu;
-                    }
-
-                    PlacePrefabAtPosition(_selectedPrefabForPlacement, worldPos);
-                    e.Use();
-                }
-
-                HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
+                DrawPlacementPreview(currentEvent.mousePosition, worldPos);
+                sceneView.Repaint();
             }
+            else if (currentEvent.type == EventType.MouseDown && currentEvent.button == 0)
+            {
+                PlacePrefabAtPosition(_selectedPrefabForPlacement, worldPos);
+                currentEvent.Use();
+            }
+            else if (currentEvent.type == EventType.KeyDown && currentEvent.keyCode == KeyCode.Escape)
+            {
+                ExitPlacementMode();
+                currentEvent.Use();
+            }
+        }
 
-            if (e.type == EventType.MouseDown && e.button == 1)
+        private void DrawPlacementPreview(Vector2 mousePos, Vector3 worldPos)
+        {
+            var preview = GetPrefabPreview(_selectedPrefabForPlacement);
+            if (preview != null)
+            {
+                Handles.BeginGUI();
+                var previewRect = new Rect(mousePos.x + 15, mousePos.y + 15, 100, 100);
+                GUI.DrawTexture(previewRect, preview, ScaleMode.ScaleToFit);
+                Handles.EndGUI();
+            }
+            Handles.color = Color.green;
+            Handles.DrawWireCube(worldPos, Vector3.one);
+        }
+
+        private void HandleRadialMenu(Event currentEvent, SceneView sceneView)
+        {
+            // Use the raw event type for more reliable capture
+            var eventType = currentEvent.GetTypeForControl(GUIUtility.GetControlID(FocusType.Passive));
+
+            if (eventType == EventType.MouseDown && currentEvent.button == 1)
             {
                 _showRadialMenu = true;
-                _radialMenuPosition = e.mousePosition;
+                _radialMenuPosition = currentEvent.mousePosition;
                 _radialMenuOpenTime = Time.realtimeSinceStartup;
-                sceneView.Repaint();
-                e.Use();
+                currentEvent.Use();
                 return;
             }
 
-            float baseRadius = 100f;
+            if (!_showRadialMenu) return;
 
-            if (_showRadialMenu)
+            DrawRadialMenu();
+
+            if (eventType == EventType.MouseUp && currentEvent.button == 1)
             {
-                Handles.BeginGUI();
-
-                Vector2 center = _radialMenuPosition;
-
-                // Smooth grow-in animation
-                float elapsedTime = Time.realtimeSinceStartup - _radialMenuOpenTime;
-                float growProgress = Mathf.SmoothStep(0, 1, Mathf.Clamp01(elapsedTime / 0.5f));
-                float radius = baseRadius * growProgress;
-
-                Handles.color = new Color(0, 0, 0, 0.5f);
-                Handles.DrawSolidDisc(center, Vector3.forward, radius);
-
-                Handles.color = Color.white;
-                Handles.DrawWireDisc(center, Vector3.forward, radius);
-
-                int prefabCount = Mathf.Min(_filteredPrefabs.Count, 8);
-                for (int i = 0; i < prefabCount; i++)
+                var selectedPrefab = GetPrefabFromRadialMenu(currentEvent.mousePosition);
+                if (selectedPrefab != null)
                 {
-                    if (_filteredPrefabs[i] == null) continue;
-
-                    float angle = i / (float)prefabCount * 360f - 90f;
-                    Vector2 direction = new(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
-                    Vector2 buttonPos = center + direction * (radius * 0.7f);
-
-                    Texture2D preview = GetPrefabPreview(_filteredPrefabs[i]);
-                    if (preview != null)
-                    {
-                        Rect imageRect = new(buttonPos.x - 20, buttonPos.y - 20, 40, 40);
-
-                        // Highlight hovered prefab
-                        if (Vector2.Distance(Event.current.mousePosition, buttonPos) < 30f)
-                        {
-                            GUI.color = Color.yellow; // Change color to highlight
-                            GUI.DrawTexture(imageRect, preview, ScaleMode.ScaleToFit);
-                            GUI.color = Color.white; // Reset color
-                        }
-                        else
-                        {
-                            GUI.DrawTexture(imageRect, preview, ScaleMode.ScaleToFit);
-                        }
-                    }
-
-                    if (Event.current.type == EventType.MouseDown && Vector2.Distance(Event.current.mousePosition, buttonPos) < 30f)
-                    {
-                        _selectedPrefabForPlacement = _filteredPrefabs[i];
-                        _placementMode = false; // Ensure placement mode is disabled
-                        _showRadialMenu = false;
-                        Event.current.Use();
-                    }
+                    StartPlacementMode(selectedPrefab);
                 }
-
-                Handles.EndGUI();
+                _showRadialMenu = false;
+                currentEvent.Use();
             }
-
-            // Shrink-out animation
-            if (!_showRadialMenu)
+            else if (eventType == EventType.MouseDrag && currentEvent.button == 1)
             {
-                float shrinkProgress = Mathf.Clamp01((Time.realtimeSinceStartup - _radialMenuCloseTime) / 0.5f);
-                float radius = baseRadius * (1 - shrinkProgress);
-
-                Handles.color = new Color(0, 0, 0, 0.5f);
-                Handles.DrawSolidDisc(_radialMenuPosition, Vector3.forward, radius);
+                sceneView.Repaint();
+            }
+            else if (eventType == EventType.ScrollWheel || (eventType == EventType.MouseDown && currentEvent.button != 1))
+            {
+                // Dismiss on other mouse actions
+                _showRadialMenu = false;
+                // Don't use the event, let other controls use it
             }
         }
 
-        private void PlacePrefabAtPosition(GameObject prefab, Vector3 placePosition)
+        private void DrawRadialMenu()
         {
+            Handles.BeginGUI();
+
+            var center = _radialMenuPosition;
+            var elapsedTime = Time.realtimeSinceStartup - _radialMenuOpenTime;
+            var growProgress = Mathf.Clamp01(elapsedTime / RadialMenuAnimationTime);
+            var radius = RadialMenuRadius * growProgress;
+
+            // Background
+            Handles.color = new Color(0.1f, 0.1f, 0.1f, 0.8f);
+            Handles.DrawSolidDisc(center, Vector3.forward, radius);
+            Handles.color = Color.white;
+            Handles.DrawWireDisc(center, Vector3.forward, radius);
+
+            var prefabsToShow = _frequentPrefabs.Count > 0 ? _frequentPrefabs : _filteredPrefabs;
+            var prefabCount = Mathf.Min(prefabsToShow.Count, MaxFrequentPrefabs);
+            var mousePosition = Event.current.mousePosition;
+
+            for (var i = 0; i < prefabCount; i++)
+            {
+                var prefab = prefabsToShow[i];
+                if (prefab == null) continue;
+
+                var angle = i / (float)prefabCount * 360f - 90f;
+                var direction = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
+                var itemPos = center + direction * (radius * 0.7f);
+                var iconRect = new Rect(itemPos.x - 20, itemPos.y - 20, 40, 40);
+
+                var isHovered = iconRect.Contains(mousePosition);
+                if (isHovered)
+                {
+                    Handles.color = Color.cyan;
+                    Handles.DrawSolidDisc(itemPos, Vector3.forward, 25f);
+                    Handles.color = Color.white;
+                    GUI.Label(new Rect(center.x - 50, center.y + radius + 10, 100, 20), prefab.name, EditorStyles.boldLabel);
+                }
+
+                var preview = GetPrefabPreview(prefab);
+                if (preview != null)
+                {
+                    GUI.DrawTexture(iconRect, preview, ScaleMode.ScaleToFit);
+                }
+            }
+
+            Handles.EndGUI();
+        }
+        #endregion
+
+        #region Core Logic
+        private void StartPlacementMode(GameObject prefab)
+        {
+            _placementMode = true;
+            _selectedPrefabForPlacement = prefab;
+            IncrementPrefabUsage(prefab);
+            GUI.FocusControl(null); // Remove focus from window UI
+        }
+
+        private void ExitPlacementMode()
+        {
+            _placementMode = false;
+            _selectedPrefabForPlacement = null;
+        }
+
+        private void PlacePrefabAtPosition(GameObject prefab, Vector3 position)
+        {
+            if (prefab == null) return;
             Undo.IncrementCurrentGroup();
-            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-            Undo.RegisterCreatedObjectUndo(instance, "Place Prefab");
-            instance.transform.position = placePosition;
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            Undo.RegisterCreatedObjectUndo(instance, $"Place {prefab.name}");
+            instance.transform.position = position;
             Selection.activeGameObject = instance;
+        }
+
+        private GameObject GetPrefabFromRadialMenu(Vector2 mousePosition)
+        {
+            if (Vector2.Distance(mousePosition, _radialMenuPosition) < 20) return null; // Deadzone in center
+
+            var prefabsToShow = _frequentPrefabs.Count > 0 ? _frequentPrefabs : _filteredPrefabs;
+            var prefabCount = Mathf.Min(prefabsToShow.Count, MaxFrequentPrefabs);
+            if (prefabCount == 0) return null;
+
+            var angle = Vector2.SignedAngle(Vector2.up, mousePosition - _radialMenuPosition);
+            if (angle < 0) angle += 360;
+
+            var segmentAngle = 360f / prefabCount;
+            var index = Mathf.FloorToInt((angle + segmentAngle / 2f) % 360 / segmentAngle);
+
+            return index < prefabsToShow.Count ? prefabsToShow[index] : null;
+        }
+
+        private Vector3 GetMouseWorldPosition(Event e)
+        {
+            var ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+            // Assuming a 2D setup, raycast against XY plane at Z=0
+            var plane = new Plane(Vector3.forward, Vector3.zero);
+            if (plane.Raycast(ray, out var distance))
+            {
+                return ray.GetPoint(distance);
+            }
+            return ray.origin; // Fallback
+        }
+
+        private Vector3 SnapToGrid(Vector3 position)
+        {
+            if (_ppu <= 0) return position;
+            position.x = Mathf.Round(position.x * _ppu) / _ppu;
+            position.y = Mathf.Round(position.y * _ppu) / _ppu;
+            position.z = 0;
+            return position;
+        }
+        #endregion
+
+        #region Data Handling
+        private void LoadPrefabs()
+        {
+            _prefabs.Clear();
+            ClearPreviews();
+            var guids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Prefabs" });
+            foreach (var guid in guids)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (prefab != null)
+                {
+                    _prefabs.Add(prefab);
+                }
+            }
+            ApplyFilters();
+        }
+
+        private void ApplyFilters()
+        {
+            _filteredPrefabs.Clear();
+            var searchLower = _searchFilter.ToLower();
+
+            foreach (var prefab in _prefabs)
+            {
+                if (!string.IsNullOrEmpty(_searchFilter) && !prefab.name.ToLower().Contains(searchLower))
+                {
+                    continue;
+                }
+
+                if (MatchesFilter(prefab))
+                {
+                    _filteredPrefabs.Add(prefab);
+                }
+            }
+        }
+
+        private bool MatchesFilter(GameObject prefab)
+        {
+            return _filterType switch
+            {
+                FilterType.All => true,
+                FilterType.Enemies => IsOnLayer(prefab, "Enemy"),
+                FilterType.Containers => IsOnLayer(prefab, "Collectibles") && prefab.GetComponent<PowerUpContainer>() != null,
+                FilterType.Others => !IsOnLayer(prefab, "Enemy") && (!IsOnLayer(prefab, "Collectibles") || prefab.GetComponent<PowerUpContainer>() == null),
+                _ => true,
+            };
+        }
+
+        private bool IsOnLayer(GameObject obj, string layerName)
+        {
+            return obj.layer == LayerMask.NameToLayer(layerName);
+        }
+
+        private void LoadUsageData()
+        {
+            _prefabUsageCount.Clear();
+            var data = EditorPrefs.GetString(nameof(PrefabAuditorWindow) + "_UsageData", "");
+            if (string.IsNullOrEmpty(data)) return;
+
+            foreach (var entry in data.Split(';'))
+            {
+                var parts = entry.Split(':');
+                if (parts.Length != 2) continue;
+
+                var path = AssetDatabase.GUIDToAssetPath(parts[0]);
+                if (string.IsNullOrEmpty(path)) continue;
+
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (prefab != null && int.TryParse(parts[1], out var count))
+                {
+                    _prefabUsageCount[prefab] = count;
+                }
+            }
+        }
+
+        private void SaveUsageData()
+        {
+            var validEntries = _prefabUsageCount
+                .Where(kvp => kvp.Key != null && AssetDatabase.Contains(kvp.Key))
+                .Select(kvp =>
+                {
+                    var path = AssetDatabase.GetAssetPath(kvp.Key);
+                    var guid = AssetDatabase.AssetPathToGUID(path);
+                    return $"{guid}:{kvp.Value}";
+                });
+
+            var data = string.Join(";", validEntries);
+            EditorPrefs.SetString(nameof(PrefabAuditorWindow) + "_UsageData", data);
         }
 
         private void IncrementPrefabUsage(GameObject prefab)
         {
-            if (_prefabUsageCount.ContainsKey(prefab)) _prefabUsageCount[prefab]++;
-            else _prefabUsageCount[prefab] = 1;
-
+            if (prefab == null) return;
+            _prefabUsageCount.TryGetValue(prefab, out var count);
+            _prefabUsageCount[prefab] = count + 1;
             UpdateFrequentPrefabs();
             SaveUsageData();
         }
@@ -452,93 +609,49 @@ namespace Editor
                 .OrderByDescending(kvp => kvp.Value)
                 .Take(MaxFrequentPrefabs)
                 .Select(kvp => kvp.Key);
-
             _frequentPrefabs.AddRange(sortedPrefabs);
         }
+        #endregion
 
-        private void SaveUsageData()
+        #region Preview Handling
+        private Texture2D GetPrefabPreview(GameObject prefab)
         {
-            string data = string.Join(";", _prefabUsageCount.Select(kvp =>
+            if (prefab == null) return null;
+            if (_previewCache.TryGetValue(prefab, out var preview) && preview != null)
             {
-                string guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(kvp.Key));
-                return $"{guid}:{kvp.Value}";
-            }));
-
-            EditorPrefs.SetString("PrefabAuditor_UsageData", data);
-        }
-
-        private void LoadUsageData()
-        {
-            _prefabUsageCount.Clear();
-            string data = EditorPrefs.GetString("PrefabAuditor_UsageData", "");
-            if (string.IsNullOrEmpty(data)) return;
-            foreach (string entry in data.Split(';'))
-            {
-                if (string.IsNullOrEmpty(entry)) continue;
-                string[] parts = entry.Split(':');
-                if (parts.Length != 2) continue;
-
-                string guid = parts[0];
-                if (!AssetDatabase.GUIDToAssetPath(guid).EndsWith(".prefab")) continue;
-
-                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid));
-                if (prefab != null)
-                    _prefabUsageCount[prefab] = int.Parse(parts[1]);
+                return preview;
             }
+
+            preview = AssetPreview.GetAssetPreview(prefab);
+            if (preview == null)
+            {
+                preview = AssetPreview.GetMiniThumbnail(prefab);
+            }
+            if (preview == null)
+            {
+                preview = CreatePlaceholderTexture();
+            }
+
+            _previewCache[prefab] = preview;
+            return preview;
         }
 
-        private void LoadPrefabs()
+        private Texture2D CreatePlaceholderTexture()
         {
-            _prefabs.Clear();
+            var tex = new Texture2D(64, 64);
+            // Simple placeholder graphic
+            return tex;
+        }
+
+        private void ClearPreviews()
+        {
+            foreach (var tex in _previewCache.Values)
+            {
+                if (tex != null) DestroyImmediate(tex);
+            }
             _previewCache.Clear();
-            string[] guids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Prefabs" });
-            foreach (string guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                if (prefab != null)
-                    _prefabs.Add(prefab);
-            }
-
-            ApplyFilters();
         }
-
-        private void ApplyFilters()
-        {
-            _filteredPrefabs.Clear();
-            foreach (GameObject prefab in _prefabs)
-            {
-                if (!MatchesSearch(prefab)) continue;
-                if (!MatchesFilter(prefab)) continue;
-                _filteredPrefabs.Add(prefab);
-            }
-        }
-
-        private bool MatchesSearch(GameObject prefab)
-        {
-            if (string.IsNullOrEmpty(_searchFilter)) return true;
-            return prefab.name.ToLower().Contains(_searchFilter.ToLower());
-        }
-
-        private bool MatchesFilter(GameObject prefab)
-        {
-            switch (_filterType)
-            {
-                case FilterType.Enemies:
-                    return (1 << prefab.layer & LayerMask.GetMask("Enemy")) != 0;
-                case FilterType.Containers:
-                    return prefab.layer == LayerMask.NameToLayer("Collectibles") &&
-                           prefab.GetComponent<PowerUpContainer>();
-                case FilterType.Others:
-                    bool isEnemy = (1 << prefab.layer & LayerMask.GetMask("Enemy")) != 0;
-                    bool isContainer = prefab.layer == LayerMask.NameToLayer("Collectibles") &&
-                                       prefab.GetComponent<PowerUpContainer>();
-
-                    return !isEnemy && !isContainer;
-                default:
-                    return true;
-            }
-        }
+        #endregion
 
         private enum FilterType
         {
