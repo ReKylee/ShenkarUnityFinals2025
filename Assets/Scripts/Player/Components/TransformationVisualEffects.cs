@@ -23,6 +23,7 @@ namespace Player.Components
         /// <summary>
         ///     Event raised when visual effect completes
         /// </summary>
+        public event Action OnEffectStarted;
         public event Action OnEffectComplete;
 
         public void RevertToOriginalState()
@@ -66,6 +67,7 @@ namespace Player.Components
             // Pause time and animation
             Time.timeScale = 0;
             _animationController.PauseAnimation();
+            OnEffectStarted?.Invoke();
 
             WaitForSecondsRealtime shortWait = new(flashInterval);
 

@@ -22,16 +22,20 @@ namespace Player.Components
         [SerializeField] private SoundData collectSound;
         [SerializeField] private SoundData deathSound;
         [SerializeField] private SoundData attackSound;
+        [SerializeField] private SoundData transformSound;
         private MccGroundCheck _groundCheck;
         private IHealthEvents _health;
         private InputHandler _inputHandler;
         private bool _jumpSoundPlayed;
+        private TransformationVisualEffects _transformationVisualEffects;
 
         private void Awake()
         {
             _health = GetComponent<IHealthEvents>();
             _inputHandler = GetComponent<InputHandler>();
             _groundCheck = GetComponent<MccGroundCheck>();
+            _transformationVisualEffects = GetComponent<TransformationVisualEffects>();
+            _transformationVisualEffects.OnEffectStarted += () => AudioService.Instance?.PlaySound(transformSound);
         }
 
         private void Update()
