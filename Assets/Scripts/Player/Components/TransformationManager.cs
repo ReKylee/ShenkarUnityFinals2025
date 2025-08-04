@@ -47,7 +47,7 @@ namespace Player.Components
         {
             if (!ValidateDependencies()) return;
             _isTransformed = true;
-            _shield?.ActivateShield();
+            _shield.ActivateShield();
             _weaponManager.DisableAttacking();
             _pendingWeapon = weapon;
             _visualEffects.PlayTransformationEffect(transitionTexture, animationObject);

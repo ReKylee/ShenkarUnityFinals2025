@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -5121963614803949496}
   - component: {fileID: 1579130814505104006}
   - component: {fileID: 7676039638876186798}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Pre_PowerUpContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
