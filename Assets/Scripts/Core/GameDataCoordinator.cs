@@ -157,42 +157,49 @@ namespace Core
         public void UpdateLives(int lives)
         {
             if (!_isInitialized) return;
+            int previousLives = GetCurrentLives();
+            _gameDataService?.UpdateLives(lives);
+            _gameDataService?.SaveData();
             _eventBus?.Publish(new PlayerLivesChangedEvent
             {
-                PreviousLives = GetCurrentLives(),
+                PreviousLives = previousLives,
                 CurrentLives = lives,
+                MaxLives = GameData.MaxLives,
                 Timestamp = Time.time
             });
-            _gameDataService?.UpdateLives(lives);
         }
 
         public void UpdateCurrentLevel(string levelName)
         {
             if (!_isInitialized) return;
             _gameDataService?.UpdateCurrentLevel(levelName);
+            _gameDataService?.SaveData();
         }
 
         public void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime)
         {
             if (!_isInitialized) return;
             _gameDataService?.UpdateLevelProgress(levelName, isCompleted, completionTime);
+            _gameDataService?.SaveData();
         }
 
         public void UpdateScore(int score)
         {
             if (!_isInitialized) return;
+            _gameDataService?.UpdateScore(score);
+            _gameDataService?.SaveData();
             _eventBus?.Publish(new ScoreChangedEvent
             {
                 NewScore = score,
                 Timestamp = Time.time
             });
-            _gameDataService?.UpdateScore(score);
         }
 
         public void AddFruitCollected()
         {
             if (!_isInitialized) return;
             _gameDataService?.AddFruitCollected();
+            _gameDataService?.SaveData();
         }
 
         public async Task<List<LevelData>> DiscoverLevelsAsync()
@@ -209,12 +216,14 @@ namespace Core
         {
             if (!_isInitialized) return;
             _gameDataService?.ResetAllData();
+            _gameDataService?.SaveData();
         }
 
         public void ResetProgressData()
         {
             if (!_isInitialized) return;
             _gameDataService?.ResetProgressData();
+            _gameDataService?.SaveData();
         }
 
         // Wrapper methods for GameData operations 
@@ -230,8 +239,6 @@ namespace Core
         // Additional wrapper methods to avoid GetCurrentData() calls
         public int GetCurrentLives() => GetCurrentData()?.lives ?? GameData.MaxLives;
 
-        public List<string> GetUnlockedLevels() => GetCurrentData()?.unlockedLevels ?? new List<string> { "Level_01" };
-
         public List<string> GetCompletedLevels() => GetCurrentData()?.completedLevels ?? new List<string>();
 
         public int GetSelectedLevelIndex() => GetCurrentData()?.selectedLevelIndex ?? 0;
@@ -240,6 +247,7 @@ namespace Core
         {
             if (!_isInitialized) return;
             _gameDataService?.UnlockLevel(levelName);
+            _gameDataService?.SaveData();
         }
 
         public int GetCurrentScore() => GetCurrentData()?.score ?? 0;
