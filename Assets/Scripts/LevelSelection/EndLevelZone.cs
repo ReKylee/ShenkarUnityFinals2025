@@ -3,6 +3,7 @@ using Core;
 using ModularCharacterController.Core;
 using Player.Services;
 using UnityEngine;
+using UnityEngine.Audio;
 using VContainer;
 
 namespace LevelSelection
@@ -22,6 +23,7 @@ namespace LevelSelection
 
         [Header("Audio Feedback")] [SerializeField]
         private AudioClip completionSound;
+        [SerializeField]private AudioMixer audioMixer;
 
         private AudioSource _audioSource;
         private GameFlowManager _gameFlowManager;
@@ -59,7 +61,7 @@ namespace LevelSelection
         private IEnumerator CompleteLevel(Rigidbody2D rb, InputHandler input)
         {
             _hasTriggered = true;
-
+            audioMixer.SetFloat("MusicVolume", 0f);
             // Take control from the player
             if (input)
             {

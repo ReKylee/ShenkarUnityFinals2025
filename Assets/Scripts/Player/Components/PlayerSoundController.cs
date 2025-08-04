@@ -18,7 +18,6 @@ namespace Player.Components
         [Header("Sound Effects")]
         [SerializeField] private AudioClip jumpSound;
         [SerializeField] private AudioClip collectSound;
-        [SerializeField] private AudioClip damageSound;
         [SerializeField] private AudioClip deathSound;
         
         [Header("Volume Settings")]
@@ -46,7 +45,6 @@ namespace Player.Components
             
             if (_health != null)
             {
-                _health.OnHealthChanged += OnHealthChanged;
                 _health.OnDeath += OnDeath;
             }
         }
@@ -62,7 +60,6 @@ namespace Player.Components
             
             if (_health != null)
             {
-                _health.OnHealthChanged -= OnHealthChanged;
                 _health.OnDeath -= OnDeath;
             }
         }
@@ -80,10 +77,6 @@ namespace Player.Components
         }
 
 
-        private void OnHealthChanged(int currentHp, int maxHp)
-        {
-            PlaySound(damageSound, damageVolume);
-        }
 
         private void OnDeath()
         {
