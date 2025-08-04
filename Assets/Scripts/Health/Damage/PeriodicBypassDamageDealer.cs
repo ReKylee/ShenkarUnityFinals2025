@@ -7,87 +7,57 @@ using VContainer;
 namespace Health.Damage
 {
     /// <summary>
-    /// Deals periodic bypass damage to the player automatically
+    ///     Applies damage every interval seconds to the attached GameObject, bypassing shield logic.
     /// </summary>
+    [DisallowMultipleComponent]
     public class PeriodicBypassDamageDealer : MonoBehaviour
     {
-        [Header("Damage Settings")] [SerializeField]
-        private int damageAmount = 1;
-
-        [SerializeField] private float damageInterval = 1f;
-
+        [SerializeField] private int damageAmount = 1;
+        [SerializeField] private float interval = 3f;
+        private IBypassableDamageable _bypassable;
+        private Coroutine _damageRoutine;
         private IEventBus _eventBus;
-        private IBypassableDamageable _damagable;
-        private Coroutine _damageCoroutine;
-        private bool _isLevelCompleted;
 
         [Inject]
         public void Construct(IEventBus eventBus)
         {
             _eventBus = eventBus;
         }
-
-        private void Start()
+        
+        private void Awake()
         {
-            _damagable = GetComponent<IBypassableDamageable>();
-
-            if (_damagable != null)
-            {
-                StartDamageCoroutine();
-                Debug.Log("[PeriodicBypassDamageDealer] Auto-started periodic damage");
-            }
-            else
-            {
-                Debug.LogWarning(
-                    "[PeriodicBypassDamageDealer] No IBypassableDamageable found on player - damage will not start");
-            }
+            _bypassable = GetComponent<IBypassableDamageable>();
         }
-
         private void OnEnable()
         {
             _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
+            
+            if (_bypassable != null)
+                _damageRoutine = StartCoroutine(DamageLoop());
+        }
+        private void OnLevelCompleted(LevelCompletedEvent obj)
+        {
+            if (_damageRoutine != null)
+            {
+                StopCoroutine(_damageRoutine);
+                _damageRoutine = null;
+            }
         }
 
         private void OnDisable()
         {
+            if (_damageRoutine != null)
+                StopCoroutine(_damageRoutine);
             _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
-            StopDamageCoroutine();
         }
 
-        private void OnLevelCompleted(LevelCompletedEvent evt)
+        private IEnumerator DamageLoop()
         {
-            Debug.Log("[PeriodicBypassDamageDealer] Level completed, stopping damage.");
-            _isLevelCompleted = true;
-            StopDamageCoroutine();
-            enabled = false;
-        }
-
-        private void StartDamageCoroutine()
-        {
-            if (_damageCoroutine == null && !_isLevelCompleted)
+            while (true)
             {
-                _damageCoroutine = StartCoroutine(DealDamagePeriodically());
+                _bypassable.DamageBypass(damageAmount);
+                yield return new WaitForSeconds(interval);
             }
-        }
-
-        private void StopDamageCoroutine()
-        {
-            if (_damageCoroutine != null)
-            {
-                StopCoroutine(_damageCoroutine);
-                _damageCoroutine = null;
-            }
-        }
-
-        private IEnumerator DealDamagePeriodically()
-        {
-            while (_damagable != null && !_isLevelCompleted)
-            {
-                _damagable.DamageBypass(damageAmount);
-                yield return new WaitForSeconds(damageInterval);
-            }
-
-            _damageCoroutine = null;
         }
     }
 }

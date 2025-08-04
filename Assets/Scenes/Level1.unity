@@ -3771,6 +3771,7 @@ GameObject:
   - component: {fileID: 2112735234}
   - component: {fileID: 2112735236}
   - component: {fileID: 2112735237}
+  - component: {fileID: 2112735238}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -3932,6 +3933,14 @@ MonoBehaviour:
   pixelsPerUnit: 16
   useWorldBounds: 1
   worldBoundsCollider: {fileID: 1887416127}
+--- !u!81 &2112735238
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112735231}
+  m_Enabled: 1
 --- !u!1001 &2118117319
 PrefabInstance:
   m_ObjectHideFlags: 0
