@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 552978598345636826}
   - component: {fileID: 4599212606594082546}
   - component: {fileID: 2116303122286882848}
+  - component: {fileID: 9134090015392668332}
   - component: {fileID: 215973868008936397}
   - component: {fileID: 6535961759412238673}
   - component: {fileID: 3428065415141261201}
@@ -187,7 +188,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f6bfe01db6b413c9d09c13dd61b83b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultTriggerCondition: 0
+  defaultTriggerCondition: 1
+--- !u!114 &9134090015392668332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4327344697898201052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89205c70a8a14ffa8d3691efb296530e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &215973868008936397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,5 +282,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deathEffectPrefab: {fileID: 7377143805596788149, guid: 61ea186785c8e2c4da1ac0c313f1bee7, type: 3}
-  launchVelocity: {x: 3, y: 8}
+  launchVelocity: {x: 2, y: 8}
   gravityScale: 2

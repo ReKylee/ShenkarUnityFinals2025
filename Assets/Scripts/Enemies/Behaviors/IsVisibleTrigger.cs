@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Enemies.Behaviors
 {
-    // Trigger that activates at a fixed interval
+    // Trigger that activates when the GameObject becomes visible to any camera
     public class IsVisibleTrigger : MonoBehaviour, ITrigger
     {
         public bool IsTriggered { get; private set; }

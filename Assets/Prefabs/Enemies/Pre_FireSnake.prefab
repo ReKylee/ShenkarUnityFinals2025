@@ -63,6 +63,7 @@ GameObject:
   - component: {fileID: 5864079117574630970}
   - component: {fileID: 1448244929395315657}
   - component: {fileID: 3948624604827710732}
+  - component: {fileID: 679258889390339012}
   - component: {fileID: 585798348902680264}
   - component: {fileID: 5639188283508621201}
   - component: {fileID: 7011931513430848884}
@@ -251,6 +252,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireballWeapon: {fileID: 7113734273231339645}
+--- !u!114 &679258889390339012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5321648136915839534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89205c70a8a14ffa8d3691efb296530e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &585798348902680264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,5 +344,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deathEffectPrefab: {fileID: 7377143805596788149, guid: 61ea186785c8e2c4da1ac0c313f1bee7, type: 3}
-  launchVelocity: {x: 3, y: 8}
+  launchVelocity: {x: 2, y: 8}
   gravityScale: 2

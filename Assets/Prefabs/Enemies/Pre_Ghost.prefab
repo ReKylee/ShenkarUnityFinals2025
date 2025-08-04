@@ -276,5 +276,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deathEffectPrefab: {fileID: 7377143805596788149, guid: 61ea186785c8e2c4da1ac0c313f1bee7, type: 3}
-  launchVelocity: {x: 3, y: 8}
+  launchVelocity: {x: 2, y: 8}
   gravityScale: 2
