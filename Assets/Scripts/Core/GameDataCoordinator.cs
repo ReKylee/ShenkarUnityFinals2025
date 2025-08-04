@@ -93,14 +93,7 @@ namespace Core
             _eventBus?.Unsubscribe<LevelSelectedEvent>(OnLevelSelected);
             _eventBus?.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
 
-            if (_gameDataService != null)
-                _gameDataService.OnDataChanged -= OnGameDataChanged;
-
-            if (_autoSaveService != null)
-            {
-                _autoSaveService.OnSaveRequested -= SaveData;
-                _autoSaveService.ForceSave();
-            }
+            _autoSaveService?.ForceSave();
         }
 
         private void OnApplicationPause(bool pauseStatus)

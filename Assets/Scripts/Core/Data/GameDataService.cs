@@ -106,7 +106,9 @@ namespace Core.Data
             if (CurrentData != null && !string.IsNullOrEmpty(levelName) && !CurrentData.unlockedLevels.Contains(levelName))
             {
                 CurrentData.unlockedLevels.Add(levelName);
+                Debug.Log($"[GameDataService] Level '{levelName}' unlocked and added to unlocked levels list");
                 NotifyDataChanged();
+                SaveData(); 
             }
         }
 
