@@ -1581,7 +1581,7 @@ MonoBehaviour:
   restartDelay: 2
   victorySceneName: YouWonScene
   victoryTransitionDelay: 3
-  defaultTransition: {fileID: 0}
+  defaultTransition: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
 --- !u!1 &533367242
 GameObject:
   m_ObjectHideFlags: 0
@@ -3582,6 +3582,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1997316293}
   - component: {fileID: 1997316292}
+  - component: {fileID: 1997316294}
   m_Layer: 0
   m_Name: TransitionManager
   m_TagString: Untagged
@@ -3617,6 +3618,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1997316294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997316291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7995a0977e3241e2867c2bfd95b4f62a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultTransition: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
 --- !u!224 &2016275899 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7282089671764377105, guid: 8ab95268c2a21c34889c6d2b81e7f2d7, type: 3}

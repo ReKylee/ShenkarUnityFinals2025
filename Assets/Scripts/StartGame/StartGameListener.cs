@@ -30,6 +30,7 @@ namespace StartGame
             if (_submitAction != null)
             {
                 _submitAction.UI.Submit.performed -= StartGame;
+                _submitAction.UI.Submit.Disable();
                 _submitAction.Dispose();
             }
         }

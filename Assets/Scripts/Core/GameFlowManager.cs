@@ -21,9 +21,6 @@ namespace Core
         [SerializeField] private string victorySceneName = "YouWonScene";
         [SerializeField] private float victoryTransitionDelay = 3f;
         
-        [Header("Scene Transitions")]
-        [SerializeField] private TransitionSettings defaultTransition;
-
         private string _currentLevelName = "Unknown";
         private float _levelStartTime;
         private IEventBus _eventBus;

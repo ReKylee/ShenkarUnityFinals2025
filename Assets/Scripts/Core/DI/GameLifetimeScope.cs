@@ -51,6 +51,7 @@ namespace Core.DI
             builder.Register<IGameDataService, GameDataService>(Lifetime.Singleton);
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
             builder.Register<IScoreService, ScoreService>(Lifetime.Singleton);
+            builder.Register<ILevelDiscoveryService, LevelDiscoveryService>(Lifetime.Singleton);
             builder.RegisterComponentInHierarchy<SceneLoadService>().As<ISceneLoadService>();
 
 
