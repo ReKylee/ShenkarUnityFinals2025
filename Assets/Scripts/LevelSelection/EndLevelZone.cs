@@ -118,7 +118,7 @@ namespace LevelSelection
             yield return new WaitForSeconds(completionDelay);
 
             // Notify GameFlowManager, which will handle all subsequent logic.
-            _gameFlowManager?.CompleteLevel(currentLevelName, nextLevelName, autoReturnToLevelSelect);
+            _gameFlowManager?.CompleteLevel(currentLevelName);
         }
     }
 }

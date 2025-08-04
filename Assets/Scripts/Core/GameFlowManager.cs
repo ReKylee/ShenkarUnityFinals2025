@@ -90,7 +90,7 @@ namespace Core
             });
         }
 
-        public void CompleteLevel(string currentLevelName, string nextLevelName, bool autoReturnToLevelSelect)
+        public void CompleteLevel(string currentLevelName)
         {
             float completionTime = Time.time - _levelStartTime;
             
