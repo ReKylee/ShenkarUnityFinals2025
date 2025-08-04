@@ -26,7 +26,7 @@ namespace Core.DI
             base.Awake();
         }
 
-        public void AddToAutoInject<T>() where T : Component
+        private void AddToAutoInject<T>() where T : Component
         {
 
             var components = FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
@@ -51,6 +51,7 @@ namespace Core.DI
             builder.Register<IGameDataService, GameDataService>(Lifetime.Singleton);
             builder.Register<IAutoSaveService, AutoSaveService>(Lifetime.Singleton);
             builder.Register<IScoreService, ScoreService>(Lifetime.Singleton);
+            builder.Register<ISceneLoadService, SceneLoadService>(Lifetime.Singleton);
 
 
             // Register Player Services
@@ -59,8 +60,6 @@ namespace Core.DI
                     resolver.Resolve<GameDataCoordinator>()
                 ), Lifetime.Singleton);
 
-            // Register Level Discovery Service for caching
-            builder.Register<ILevelDiscoveryService, LevelDiscoveryService>(Lifetime.Singleton);
 
             // Game Management
             builder.RegisterComponentInHierarchy<GameFlowManager>();

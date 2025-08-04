@@ -45,9 +45,6 @@ namespace LevelSelection.DI
             // Register supporting components that are still used
             builder.RegisterComponentInHierarchy<ItemSelectScreen>();
 
-            // Register the scene transition manager
-            builder.RegisterComponentInHierarchy<SceneTransitionManager>();
-
             Debug.Log("[LevelSelectionLifetimeScope] Level selection DI container configured successfully.");
         }
     }

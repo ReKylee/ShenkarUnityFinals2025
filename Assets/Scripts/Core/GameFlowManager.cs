@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.Data;
 using Core.Events;
+using EasyTransition;
+using LevelSelection.Services;
 using Player.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,37 +15,51 @@ namespace Core
     public class GameFlowManager : MonoBehaviour
     {
         [Header("Game Settings")]
-        [SerializeField] private bool autoStartGame = true;
         [SerializeField] private float restartDelay = 2f;
         
         [Header("Victory Settings")]
         [SerializeField] private string victorySceneName = "YouWonScene";
         [SerializeField] private float victoryTransitionDelay = 3f;
+        
+        [Header("Scene Transitions")]
+        [SerializeField] private TransitionSettings defaultTransition;
 
         private string _currentLevelName = "Unknown";
         private float _levelStartTime;
         private IEventBus _eventBus;
         private GameDataCoordinator _gameDataCoordinator;
+        private ISceneLoadService _sceneLoadService;
 
-        public GameState CurrentState { get; private set; } = GameState.MainMenu;
-        public bool IsPlaying => CurrentState == GameState.Playing;
+        private GameState CurrentState { get; set; } = GameState.MainMenu;
 
         [Inject]
-        public void Construct(IEventBus eventBus, GameDataCoordinator gameDataCoordinator)
+        public void Construct(IEventBus eventBus, GameDataCoordinator gameDataCoordinator, ISceneLoadService sceneLoadService)
         {
             _eventBus = eventBus;
             _gameDataCoordinator = gameDataCoordinator;
+            _sceneLoadService = sceneLoadService;
             SubscribeToEvents();
         }
 
         private void Start()
         {
             _currentLevelName = GetCurrentLevelName();
-
-            if (autoStartGame)
+            
+            // Only auto-start gameplay in actual level scenes
+            // Other scenes (Level Select, Start Menu, etc.) will manage their own states
+            if (ShouldAutoStartGameplay())
             {
-                StartGame();
+                StartGameplay();
             }
+        }
+
+        private static bool ShouldAutoStartGameplay()
+        {
+            // Only auto-start gameplay in actual level scenes
+            string sceneName = SceneManager.GetActiveScene().name;
+            return !sceneName.Equals("Level Select", StringComparison.OrdinalIgnoreCase) && 
+                   !sceneName.Contains("Start") &&
+                   !sceneName.Equals("YouWonScene", StringComparison.OrdinalIgnoreCase);
         }
 
         private void OnDestroy()
@@ -51,7 +67,7 @@ namespace Core
             UnsubscribeFromEvents();
         }
 
-        private void StartGame()
+        private void StartGameplay()
         {
             Time.timeScale = 1;
             ChangeState(GameState.Playing);
@@ -60,6 +76,20 @@ namespace Core
             _eventBus?.Publish(new LevelStartedEvent
             {
                 LevelName = _currentLevelName,
+                Timestamp = Time.time
+            });
+        }
+
+        public void StartLevel(string levelName)
+        {
+            _currentLevelName = levelName;
+            Time.timeScale = 1;
+            ChangeState(GameState.Playing);
+            _levelStartTime = Time.time;
+
+            _eventBus?.Publish(new LevelStartedEvent
+            {
+                LevelName = levelName,
                 Timestamp = Time.time
             });
         }
@@ -78,7 +108,8 @@ namespace Core
 
         public void RestartLevel()
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            _sceneLoadService?.LoadLevel(currentSceneName);
         }
 
         public void HandlePlayerDeath(Vector3 deathPosition)
@@ -138,7 +169,7 @@ namespace Core
             try
             {
                 ChangeState(GameState.LevelSelection);
-                SceneManager.LoadScene("Level Select");
+                _sceneLoadService?.LoadLevel("Level Select");
             }
             catch (Exception e)
             {
@@ -304,12 +335,12 @@ namespace Core
                     FinalLevelName = _currentLevelName
                 });
                 
-                SceneManager.LoadScene(victorySceneName);
+                _sceneLoadService?.LoadLevel(victorySceneName);
             }
             catch (Exception e)
             {
                 Debug.LogError($"[GameFlowManager] Failed to transition to victory scene: {e}");
-                SceneManager.LoadScene("Level Select");
+                _sceneLoadService?.LoadLevel("Level Select");
             }
         }
 
@@ -319,7 +350,7 @@ namespace Core
             {
                 await Task.Delay((int)(2f * 1000));
                 ChangeState(GameState.LevelSelection);
-                SceneManager.LoadScene("Level Select");
+                _sceneLoadService?.LoadLevel("Level Select");
             }
             catch (Exception e)
             {
@@ -355,12 +386,13 @@ namespace Core
             }
         }
 
-        private static async void RestartLevelAfterDelayAsync(float delay)
+        private async void RestartLevelAfterDelayAsync(float delay)
         {
             try
             {
                 await Task.Delay((int)(delay * 1000));
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                string currentSceneName = SceneManager.GetActiveScene().name;
+                _sceneLoadService?.LoadLevel(currentSceneName);
             }
             catch (Exception e)
             {

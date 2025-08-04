@@ -2,6 +2,7 @@
 using Core;
 using Core.Data;
 using Core.Events;
+using EasyTransition;
 using LevelSelection.Services;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -166,7 +167,7 @@ namespace LevelSelection
         private void OnSubmit(InputAction.CallbackContext context)
         {
             if (!IsActive || _itemSelectService.IsActive) return;
-
+   
             _navigationService.SelectCurrentLevel();
         }
 
@@ -206,7 +207,8 @@ namespace LevelSelection
 
             if (_gameFlowManager != null)
             {
-                _gameFlowManager.ResumeGame();
+                // Use StartLevel with the correct level name when loading from level selection
+                _gameFlowManager.StartLevel(loadEvent.LevelName);
             }
 
             _sceneLoadService.LoadLevel(loadEvent.SceneName);
