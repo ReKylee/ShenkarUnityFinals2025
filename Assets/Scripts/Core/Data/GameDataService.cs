@@ -70,6 +70,16 @@ namespace Core.Data
             NotifyDataChanged();
         }
 
+        public void ResetProgressData()
+        {
+            // Reset only player progress data, preserve score and level progress
+            CurrentData.lives = GameData.MaxLives;
+            CurrentData.currentLevel = "";
+            CurrentData.selectedLevelIndex = 0;
+            // Note: Score, maxScore, unlockedLevels, completedLevels, and best times are preserved
+            NotifyDataChanged();
+        }
+
         public void SaveData()
         {
             _repository.SaveData(CurrentData);

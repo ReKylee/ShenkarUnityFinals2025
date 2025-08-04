@@ -17,6 +17,7 @@ namespace Core.Data
         void UnlockLevel(string levelName);
         void ResetAllData();
         void SaveData();
+        void ResetProgressData(); // New method for selective reset
         event Action<GameData> OnDataChanged;
         
         // Level data operations that should go through GameDataService

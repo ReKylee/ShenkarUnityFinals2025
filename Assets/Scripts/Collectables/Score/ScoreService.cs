@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Events;
 using Player.Interfaces;
 using UnityEngine;
 using VContainer;
@@ -10,13 +11,23 @@ namespace Collectables.Score
         private const int OneUpThreshold = 30;
         private GameDataCoordinator _gameDataCoordinator;
         private IPlayerLivesService _livesService;
+        private IEventBus _eventBus;
         
         public int CurrentScore => _gameDataCoordinator?.GetCurrentScore() ?? 0;
         
         public void AddScore(int amount)
         {
-            int newScore = CurrentScore + amount;
+            int previousScore = CurrentScore;
+            int newScore = previousScore + amount;
             _gameDataCoordinator?.UpdateScore(newScore);
+            
+            // Publish score changed event for UI updates
+            _eventBus?.Publish(new ScoreChangedEvent
+            {
+                Timestamp = Time.time,
+                NewScore = newScore,
+                ScoreChange = amount
+            });
         }
         
         public void ResetScore()
@@ -38,10 +49,11 @@ namespace Collectables.Score
         public int FruitCollectedCount => _gameDataCoordinator?.GetFruitCollectedCount() ?? 0;
         
         [Inject]
-        public void Construct(GameDataCoordinator gameDataCoordinator, IPlayerLivesService livesService)
+        public void Construct(GameDataCoordinator gameDataCoordinator, IPlayerLivesService livesService, IEventBus eventBus)
         {
             _gameDataCoordinator = gameDataCoordinator;
             _livesService = livesService;
+            _eventBus = eventBus;
         }
     }
 }

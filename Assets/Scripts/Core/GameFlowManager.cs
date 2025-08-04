@@ -363,7 +363,8 @@ namespace Core
             if (isGameOver)
             {
                 ChangeState(GameState.GameOver);
-                _gameDataCoordinator?.ResetAllData();
+                // Use selective reset to preserve score and level progress
+                _gameDataCoordinator?.ResetProgressData();
                 _eventBus?.Publish(new GameOverEvent { Timestamp = Time.time });
             }
 

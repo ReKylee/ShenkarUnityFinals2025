@@ -221,6 +221,12 @@ namespace Core
             _gameDataService?.ResetAllData();
         }
 
+        public void ResetProgressData()
+        {
+            if (!_isInitialized) return;
+            _gameDataService?.ResetProgressData();
+        }
+
         // Wrapper methods for GameData operations 
         public bool IsLevelUnlocked(string levelName)
         {
