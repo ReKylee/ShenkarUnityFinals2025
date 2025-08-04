@@ -352,8 +352,6 @@ namespace Core
             if (isGameOver)
             {
                 ChangeState(GameState.GameOver);
-                // Use selective reset to preserve score and level progress
-                _gameDataCoordinator?.ResetProgressData();
                 _eventBus?.Publish(new GameOverEvent { Timestamp = Time.time });
             }
 
@@ -366,7 +364,7 @@ namespace Core
                 });
             }
 
-            if (isGameOver || lostLife)
+            if (lostLife)
             {
                 Time.timeScale = 0.01f;
                 RestartLevelAfterDelayAsync(restartDelay);

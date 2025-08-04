@@ -119,13 +119,13 @@ namespace Audio.Services
             // Stop all SFX sources
             foreach (AudioSource sfxSource in _sfxSources)
             {
-                sfxSource.Stop();
+                sfxSource?.Stop();
             }
 
             // Stop all managed audio sources
             foreach (AudioSource managedSource in _managedAudioSources)
             {
-                managedSource.Stop();
+                managedSource?.Stop();
             }
         }
 
