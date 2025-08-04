@@ -13,12 +13,13 @@ namespace LevelSelection
         [SerializeField] private string sceneName = "Level1";
         [SerializeField] private string displayName = "Level 1";
 
+        [Header("Level Settings")]
+        [SerializeField] private bool unlockedByDefault = false;
+
         // Auto-calculated index based on position in hierarchy or scene order
         public int LevelIndex { get; private set; }
         public string LevelName => levelName;
-        public string DisplayName => displayName;
-        public string SceneName => sceneName;
-        public Vector3 Position => transform.position;
+        public bool UnlockedByDefault => unlockedByDefault;
 
         private void OnValidate()
         {
