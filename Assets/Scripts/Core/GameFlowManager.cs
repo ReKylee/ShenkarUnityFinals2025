@@ -183,22 +183,53 @@ namespace Core
 
         private async Task UnlockNextLevelByIndex(string completedLevelName)
         {
+            Debug.Log($"[GameFlowManager] UnlockNextLevelByIndex called for: {completedLevelName}");
+            
             var allLevels = await _gameDataCoordinator.DiscoverLevelsAsync();
-            if (allLevels == null || allLevels.Count == 0) return;
+            if (allLevels == null || allLevels.Count == 0) 
+            {
+                Debug.LogWarning($"[GameFlowManager] No levels discovered for unlocking next level");
+                return;
+            }
 
+            Debug.Log($"[GameFlowManager] Found {allLevels.Count} levels total");
+            
             var completedLevel = allLevels.FirstOrDefault(l => l.levelName == completedLevelName);
-            if (completedLevel == null) return;
+            if (completedLevel == null) 
+            {
+                Debug.LogWarning($"[GameFlowManager] Could not find completed level: {completedLevelName}");
+                return;
+            }
 
+            Debug.Log($"[GameFlowManager] Completed level index: {completedLevel.levelIndex}");
             int nextLevelIndex = completedLevel.levelIndex + 1;
 
             if (nextLevelIndex < allLevels.Count)
             {
                 var nextLevel = allLevels.FirstOrDefault(l => l.levelIndex == nextLevelIndex);
-                if (nextLevel != null && !_gameDataCoordinator.IsLevelUnlocked(nextLevel.levelName))
+                if (nextLevel != null)
                 {
-                    _gameDataCoordinator.UnlockLevel(nextLevel.levelName);
-                    Debug.Log($"[GameFlowManager] Unlocked next level: {nextLevel.levelName}");
+                    bool isAlreadyUnlocked = _gameDataCoordinator.IsLevelUnlocked(nextLevel.levelName);
+                    Debug.Log($"[GameFlowManager] Next level '{nextLevel.levelName}' (index {nextLevelIndex}) - Already unlocked: {isAlreadyUnlocked}");
+                    
+                    if (!isAlreadyUnlocked)
+                    {
+                        _gameDataCoordinator.UnlockLevel(nextLevel.levelName);
+                        Debug.Log($"[GameFlowManager] Unlocked next level: {nextLevel.levelName}");
+                    }
+                    else
+                    {
+                        Debug.Log($"[GameFlowManager] Next level {nextLevel.levelName} was already unlocked");
+                    }
                 }
+                else
+                {
+                    Debug.LogWarning($"[GameFlowManager] Could not find level with index {nextLevelIndex}");
+                }
+            }
+            else
+            {
+                Debug.Log($"[GameFlowManager] No more levels to unlock (completed level was the last one)");
             }
         }
 

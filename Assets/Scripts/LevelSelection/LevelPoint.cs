@@ -68,7 +68,7 @@ namespace LevelSelection
                 mapPosition = transform.position,
                 displayName = displayName,
                 levelIndex = LevelIndex,
-                unlockedByDefault = UnlockedByDefault
+                UnlockedByDefault = UnlockedByDefault
             };
     }
 }

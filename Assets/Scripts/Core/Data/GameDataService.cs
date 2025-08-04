@@ -141,7 +141,7 @@ namespace Core.Data
         private void ApplyDefaultUnlockStatus(List<LevelData> levelData)
         {
             foreach (LevelData level in levelData.Where(level =>
-                         level.unlockedByDefault && !CurrentData.unlockedLevels.Contains(level.levelName)))
+                         level.UnlockedByDefault && !CurrentData.unlockedLevels.Contains(level.levelName)))
             {
                 CurrentData.unlockedLevels.Add(level.levelName);
                 Debug.Log($"[GameDataService] Auto-unlocked level: {level.levelName} (UnlockedByDefault = true)");

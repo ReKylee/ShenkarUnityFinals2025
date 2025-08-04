@@ -15,11 +15,11 @@ namespace Core.Data
         public int maxScore; // Track highest score ever achieved
 
         [Header("Level Progress")] 
-        public string currentLevel = "Level_01";
+        public string currentLevel;
 
         // Level Selection Data
-        public List<string> unlockedLevels = new() { "Level_01" };
-        public List<string> completedLevels = new(); // Added for EndLevelZone
+        public List<string> unlockedLevels = new();
+        public List<string> completedLevels = new(); 
         public int selectedLevelIndex;
 
         // Enhanced timing and scoring data
@@ -80,7 +80,7 @@ namespace Core.Data
             fruitCollected = 0;
             
             // Reset level selection data
-            unlockedLevels = new List<string> { "Level_01" };
+            unlockedLevels = new List<string>();
             completedLevels = new List<string>();
             selectedLevelIndex = 0;
             LevelBestTimes = new Dictionary<string, float>();
@@ -175,7 +175,7 @@ namespace Core.Data
                 musicVolume = 1.0f,
                 sfxVolume = 1.0f,
                 fruitCollected = 0,
-                unlockedLevels = new List<string> { "Level_01" },
+                unlockedLevels = new List<string>(),
                 selectedLevelIndex = 0,
                 LevelBestTimes = new Dictionary<string, float>(),
                 LevelCompleted = new Dictionary<string, bool>()
