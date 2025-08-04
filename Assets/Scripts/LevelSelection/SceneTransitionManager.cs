@@ -8,17 +8,14 @@ namespace LevelSelection
 {
     public class SceneTransitionManager : MonoBehaviour
     {
-        private static bool _shouldFadeIn;
-
-        [Header("Transition Settings")] [SerializeField]
-        private float fadeDuration = 1.2f; // Slightly longer for NES feel
-
-        [SerializeField] private Color fadeColor = Color.black;
-        [SerializeField] private bool fadeInOnStart = true;
+        [Header("Transition Settings")] 
+        [SerializeField] private float fadeDuration = 1.2f;
+        [SerializeField] private Color fadeColor = Color.cornflowerBlue;
         [SerializeField] private bool useNesEffect = true;
-        [SerializeField] private float sceneLoadDelay = 0.1f; // Small delay before loading
+        [SerializeField] private float sceneLoadDelay = 0.1f;
 
         private NesCrossfade _crossfade;
+        private bool _pendingFadeIn = false;
 
         public static SceneTransitionManager Instance { get; private set; }
         public bool IsTransitioning { get; private set; }
@@ -30,23 +27,13 @@ namespace LevelSelection
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
                 SetupCrossfade();
+                
+                // Subscribe to scene loaded event to handle fade-in
+                SceneManager.sceneLoaded += OnSceneLoaded;
             }
             else
             {
                 Destroy(gameObject);
-            }
-        }
-
-        private void Start()
-        {
-            if (fadeInOnStart && _shouldFadeIn)
-            {
-                StartCoroutine(FadeInOnStart());
-            }
-            else if (fadeInOnStart)
-            {
-                // First scene load, start hidden
-                _crossfade?.Hide();
             }
         }
 
@@ -55,6 +42,7 @@ namespace LevelSelection
             if (Instance == this)
             {
                 Instance = null;
+                SceneManager.sceneLoaded -= OnSceneLoaded;
             }
         }
 
@@ -63,12 +51,12 @@ namespace LevelSelection
             // Create canvas with NES-appropriate settings
             Canvas canvas = gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 10000; // Ensure it's always on top
+            canvas.sortingOrder = 10000;
 
             // Add canvas scaler with NES resolution
             CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(256, 240); // Authentic NES resolution
+            scaler.referenceResolution = new Vector2(256, 240);
             scaler.matchWidthOrHeight = 0.5f;
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
 
@@ -102,19 +90,30 @@ namespace LevelSelection
             Debug.Log("[SceneTransitionManager] Setup complete with NES crossfade");
         }
 
-        private IEnumerator FadeInOnStart()
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            // Small delay to ensure everything is loaded
-            yield return new WaitForSeconds(0.05f);
+            if (_pendingFadeIn)
+            {
+                StartCoroutine(PerformFadeIn());
+                _pendingFadeIn = false;
+            }
+        }
 
+        private IEnumerator PerformFadeIn()
+        {
+            // Wait a frame to ensure everything is set up
+            yield return new WaitForEndOfFrame();
+            
             if (_crossfade != null)
             {
-                Debug.Log("[SceneTransitionManager] Fading in on scene start");
-                _crossfade.Show(); // Start visible
-                _crossfade.FadeIn(() => { Debug.Log("[SceneTransitionManager] Fade in complete"); });
+                Debug.Log("[SceneTransitionManager] Performing fade-in on new scene");
+                _crossfade.Show(); // Ensure it's visible and black
+                _crossfade.FadeIn(() => 
+                {
+                    Debug.Log("[SceneTransitionManager] Fade-in complete");
+                    IsTransitioning = false;
+                });
             }
-
-            _shouldFadeIn = false;
         }
 
         public static void TransitionTo(string sceneName)
@@ -128,28 +127,6 @@ namespace LevelSelection
                 Debug.LogWarning("[SceneTransitionManager] No instance found, loading scene directly");
                 SceneManager.LoadScene(sceneName);
             }
-        }
-
-        public static void TransitionToWithDelay(string sceneName, float delay = 0f)
-        {
-            if (Instance != null)
-            {
-                Instance.StartCoroutine(Instance.DelayedTransition(sceneName, delay));
-            }
-            else
-            {
-                SceneManager.LoadScene(sceneName);
-            }
-        }
-
-        private IEnumerator DelayedTransition(string sceneName, float delay)
-        {
-            if (delay > 0f)
-            {
-                yield return new WaitForSeconds(delay);
-            }
-
-            yield return StartCoroutine(TransitionCoroutine(sceneName));
         }
 
         private IEnumerator TransitionCoroutine(string sceneName)
@@ -177,15 +154,12 @@ namespace LevelSelection
             // Small delay for authentic NES timing
             yield return new WaitForSeconds(sceneLoadDelay);
 
-            // Mark that we should fade in on the next scene
-            _shouldFadeIn = true;
+            // Mark that we need to fade in after scene load
+            _pendingFadeIn = true;
 
-            // Load scene (this will destroy current scene but preserve this manager)
+            // Load scene (this will trigger OnSceneLoaded callback)
             Debug.Log($"[SceneTransitionManager] Loading scene: {sceneName}");
             SceneManager.LoadScene(sceneName);
-
-            // Reset transition state (will be set again if needed)
-            IsTransitioning = false;
         }
 
         // Public methods for external control

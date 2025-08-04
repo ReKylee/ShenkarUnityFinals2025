@@ -14,7 +14,6 @@ namespace LevelSelection
 
         [Header("NES Style Effect")] public bool useNesEffect = true;
 
-        [SerializeField] private float pixelateScale = 4f;
         [SerializeField] private float noiseIntensity = 0.1f;
         [SerializeField] private int frameSkip = 3; // Skip frames for authentic NES feel
 
