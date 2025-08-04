@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.Data;
 using Core.Events;
-using EasyTransition;
+using LevelSelection;
 using LevelSelection.Services;
 using Player.Components;
 using UnityEngine;
@@ -14,34 +13,26 @@ namespace Core
 {
     public class GameFlowManager : MonoBehaviour
     {
-        [Header("Game Settings")]
-        [SerializeField] private float restartDelay = 2f;
-        
-        [Header("Victory Settings")]
-        [SerializeField] private string victorySceneName = "YouWonScene";
+        [Header("Game Settings")] [SerializeField]
+        private float restartDelay = 2f;
+
+        [Header("Victory Settings")] [SerializeField]
+        private string victorySceneName = "YouWonScene";
+
         [SerializeField] private float victoryTransitionDelay = 3f;
-        
+
         private string _currentLevelName = "Unknown";
-        private float _levelStartTime;
         private IEventBus _eventBus;
         private GameDataCoordinator _gameDataCoordinator;
+        private float _levelStartTime;
         private ISceneLoadService _sceneLoadService;
 
         private GameState CurrentState { get; set; } = GameState.MainMenu;
 
-        [Inject]
-        public void Construct(IEventBus eventBus, GameDataCoordinator gameDataCoordinator, ISceneLoadService sceneLoadService)
-        {
-            _eventBus = eventBus;
-            _gameDataCoordinator = gameDataCoordinator;
-            _sceneLoadService = sceneLoadService;
-            SubscribeToEvents();
-        }
-
         private void Start()
         {
             _currentLevelName = GetCurrentLevelName();
-            
+
             // Only auto-start gameplay in actual level scenes
             // Other scenes (Level Select, Start Menu, etc.) will manage their own states
             if (ShouldAutoStartGameplay())
@@ -50,18 +41,28 @@ namespace Core
             }
         }
 
+        private void OnDestroy()
+        {
+            UnsubscribeFromEvents();
+        }
+
+        [Inject]
+        public void Construct(IEventBus eventBus, GameDataCoordinator gameDataCoordinator,
+            ISceneLoadService sceneLoadService)
+        {
+            _eventBus = eventBus;
+            _gameDataCoordinator = gameDataCoordinator;
+            _sceneLoadService = sceneLoadService;
+            SubscribeToEvents();
+        }
+
         private static bool ShouldAutoStartGameplay()
         {
             // Only auto-start gameplay in actual level scenes
             string sceneName = SceneManager.GetActiveScene().name;
-            return !sceneName.Equals("Level Select", StringComparison.OrdinalIgnoreCase) && 
+            return !sceneName.Equals("Level Select", StringComparison.OrdinalIgnoreCase) &&
                    !sceneName.Contains("Start") &&
                    !sceneName.Equals("YouWonScene", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private void OnDestroy()
-        {
-            UnsubscribeFromEvents();
         }
 
         private void StartGameplay()
@@ -121,7 +122,7 @@ namespace Core
         public void CompleteLevel(string currentLevelName)
         {
             float completionTime = Time.time - _levelStartTime;
-            
+
             _eventBus?.Publish(new LevelCompletedEvent
             {
                 LevelName = currentLevelName,
@@ -225,18 +226,18 @@ namespace Core
         private async Task UnlockNextLevelByIndex(string completedLevelName)
         {
             Debug.Log($"[GameFlowManager] UnlockNextLevelByIndex called for: {completedLevelName}");
-            
+
             var allLevels = await _gameDataCoordinator.DiscoverLevelsAsync();
-            if (allLevels == null || allLevels.Count == 0) 
+            if (allLevels == null || allLevels.Count == 0)
             {
-                Debug.LogWarning($"[GameFlowManager] No levels discovered for unlocking next level");
+                Debug.LogWarning("[GameFlowManager] No levels discovered for unlocking next level");
                 return;
             }
 
             Debug.Log($"[GameFlowManager] Found {allLevels.Count} levels total");
-            
-            var completedLevel = allLevels.FirstOrDefault(l => l.levelName == completedLevelName);
-            if (completedLevel == null) 
+
+            LevelData completedLevel = allLevels.FirstOrDefault(l => l.levelName == completedLevelName);
+            if (completedLevel == null)
             {
                 Debug.LogWarning($"[GameFlowManager] Could not find completed level: {completedLevelName}");
                 return;
@@ -247,12 +248,13 @@ namespace Core
 
             if (nextLevelIndex < allLevels.Count)
             {
-                var nextLevel = allLevels.FirstOrDefault(l => l.levelIndex == nextLevelIndex);
+                LevelData nextLevel = allLevels.FirstOrDefault(l => l.levelIndex == nextLevelIndex);
                 if (nextLevel != null)
                 {
                     bool isAlreadyUnlocked = _gameDataCoordinator.IsLevelUnlocked(nextLevel.levelName);
-                    Debug.Log($"[GameFlowManager] Next level '{nextLevel.levelName}' (index {nextLevelIndex}) - Already unlocked: {isAlreadyUnlocked}");
-                    
+                    Debug.Log(
+                        $"[GameFlowManager] Next level '{nextLevel.levelName}' (index {nextLevelIndex}) - Already unlocked: {isAlreadyUnlocked}");
+
                     if (!isAlreadyUnlocked)
                     {
                         _gameDataCoordinator.UnlockLevel(nextLevel.levelName);
@@ -270,7 +272,7 @@ namespace Core
             }
             else
             {
-                Debug.Log($"[GameFlowManager] No more levels to unlock (completed level was the last one)");
+                Debug.Log("[GameFlowManager] No more levels to unlock (completed level was the last one)");
             }
         }
 
@@ -280,7 +282,7 @@ namespace Core
             {
                 // Get all available levels through GameDataCoordinator
                 var allLevels = await _gameDataCoordinator.DiscoverLevelsAsync();
-                
+
                 if (allLevels == null || allLevels.Count == 0)
                 {
                     Debug.LogWarning("[GameFlowManager] No levels found in discovery service");
@@ -292,24 +294,27 @@ namespace Core
                 if (completedLevels == null) return false;
 
                 // Check if all levels are in the completed list
-                var completedCount = 0;
-                foreach (var level in allLevels)
+                int completedCount = 0;
+                foreach (LevelData level in allLevels)
                 {
                     if (completedLevels.Contains(level.levelName))
                     {
                         completedCount++;
                     }
                 }
-                
-                Debug.Log($"[GameFlowManager] Game completion check: {completedCount}/{allLevels.Count} levels completed");
-                
+
+                Debug.Log(
+                    $"[GameFlowManager] Game completion check: {completedCount}/{allLevels.Count} levels completed");
+
                 if (completedCount >= allLevels.Count)
                 {
                     Debug.Log("[GameFlowManager] All levels completed!");
                     return true;
                 }
 
-                var remainingLevels = allLevels.Where(l => !completedLevels.Contains(l.levelName)).Select(l => l.levelName);
+                var remainingLevels = allLevels.Where(l => !completedLevels.Contains(l.levelName))
+                    .Select(l => l.levelName);
+
                 Debug.Log($"[GameFlowManager] Remaining levels: {string.Join(", ", remainingLevels)}");
                 return false;
             }
@@ -325,13 +330,13 @@ namespace Core
             try
             {
                 await Task.Delay((int)(victoryTransitionDelay * 1000));
-                
+
                 _eventBus?.Publish(new GameCompletedEvent
                 {
                     Timestamp = Time.time,
                     FinalLevelName = _currentLevelName
                 });
-                
+
                 _sceneLoadService?.LoadLevel(victorySceneName);
             }
             catch (Exception e)

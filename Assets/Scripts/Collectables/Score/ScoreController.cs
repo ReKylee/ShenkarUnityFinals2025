@@ -9,18 +9,18 @@ namespace Collectables.Score
     {
         [SerializeField] private PaddedTextView scoreTextView;
         [SerializeField] private PaddedTextView fruitCountHealthView;
+        private IEventBus _eventBus;
         private ICounterView _fruitCountHealthView;
 
         private IScoreService _scoreService;
-        private IEventBus _eventBus;
         private ICounterView _scoreTextView;
-        
+
         private void Awake()
         {
             _scoreTextView = scoreTextView;
             _fruitCountHealthView = fruitCountHealthView;
         }
-        
+
         private void Start()
         {
             _scoreTextView?.UpdateCountDisplay(_scoreService.CurrentScore);

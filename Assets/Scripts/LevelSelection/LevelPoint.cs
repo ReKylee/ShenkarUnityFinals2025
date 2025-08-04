@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace LevelSelection
 {
@@ -8,18 +9,31 @@ namespace LevelSelection
     /// </summary>
     public class LevelPoint : MonoBehaviour
     {
-        [Header("Level Info")]
-        [SerializeField] private string levelName = "Level_01";
+        [Header("Level Info")] [SerializeField]
+        private string levelName = "Level_01";
+
         [SerializeField] private string sceneName = "Level1";
         [SerializeField] private string displayName = "Level 1";
 
-        [Header("Level Settings")]
-        [SerializeField] private bool unlockedByDefault = false;
+        [Header("Level Settings")] [SerializeField]
+        private bool unlockedByDefault;
 
         // Auto-calculated index based on position in hierarchy or scene order
         public int LevelIndex { get; private set; }
         public string LevelName => levelName;
         public bool UnlockedByDefault => unlockedByDefault;
+
+        private void OnDrawGizmos()
+        {
+            // Draw a simple gizmo for easy visualization
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, 0.5f);
+
+            // Draw level index if available
+#if UNITY_EDITOR
+            Handles.Label(transform.position + Vector3.up * 0.8f, $"{LevelIndex}: {displayName}");
+#endif
+        }
 
         private void OnValidate()
         {
@@ -35,18 +49,6 @@ namespace LevelSelection
                 // Convert "Level_01" to "Level1"
                 sceneName = levelName.Replace("_", "");
             }
-        }
-
-        private void OnDrawGizmos()
-        {
-            // Draw a simple gizmo for easy visualization
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(transform.position, 0.5f);
-
-            // Draw level index if available
-#if UNITY_EDITOR
-            UnityEditor.Handles.Label(transform.position + Vector3.up * 0.8f, $"{LevelIndex}: {displayName}");
-#endif
         }
 
         /// <summary>

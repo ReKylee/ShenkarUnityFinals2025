@@ -1,27 +1,40 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 namespace EasyTransition
 {
 
     public class TransitionManager : MonoBehaviour
-    {        
-        [SerializeField] private GameObject transitionTemplate;
+    {
 
-        private bool runningTransition;
+        private static TransitionManager instance;
+        [SerializeField] private GameObject transitionTemplate;
 
         public UnityAction onTransitionBegin;
         public UnityAction onTransitionCutPointReached;
         public UnityAction onTransitionEnd;
 
-        private static TransitionManager instance;
+        private bool runningTransition;
 
         private void Awake()
         {
             instance = this;
+        }
+
+        private IEnumerator Start()
+        {
+            while (gameObject.activeInHierarchy)
+            {
+                //Check for multiple instances of the Transition Manager component
+                int managerCount = FindObjectsByType<TransitionManager>(FindObjectsSortMode.None).Length;
+                if (managerCount > 1)
+                    Debug.LogError(
+                        $"There are {managerCount.ToString()} Transition Managers in your scene. Please ensure there is only one Transition Manager in your scene or overlapping transitions may occur.");
+
+                yield return new WaitForSecondsRealtime(1f);
+            }
         }
 
         public static TransitionManager Instance()
@@ -33,7 +46,7 @@ namespace EasyTransition
         }
 
         /// <summary>
-        /// Starts a transition without loading a new level.
+        ///     Starts a transition without loading a new level.
         /// </summary>
         /// <param name="transition">The settings of the transition you want to use.</param>
         /// <param name="startDelay">The delay before the transition starts.</param>
@@ -50,7 +63,7 @@ namespace EasyTransition
         }
 
         /// <summary>
-        /// Loads the new Scene with a transition.
+        ///     Loads the new Scene with a transition.
         /// </summary>
         /// <param name="sceneName">The name of the scene you want to load.</param>
         /// <param name="transition">The settings of the transition you want to use to load you new scene.</param>
@@ -68,7 +81,7 @@ namespace EasyTransition
         }
 
         /// <summary>
-        /// Loads the new Scene with a transition.
+        ///     Loads the new Scene with a transition.
         /// </summary>
         /// <param name="sceneIndex">The index of the scene you want to load.</param>
         /// <param name="transition">The settings of the transition you want to use to load you new scene.</param>
@@ -86,21 +99,18 @@ namespace EasyTransition
         }
 
         /// <summary>
-        /// Gets the index of a scene from its name.
+        ///     Gets the index of a scene from its name.
         /// </summary>
         /// <param name="sceneName">The name of the scene you want to get the index of.</param>
-        int GetSceneIndex(string sceneName)
-        {
-            return SceneManager.GetSceneByName(sceneName).buildIndex;
-        }
+        private int GetSceneIndex(string sceneName) => SceneManager.GetSceneByName(sceneName).buildIndex;
 
-        IEnumerator Timer(string sceneName, float startDelay, TransitionSettings transitionSettings)
+        private IEnumerator Timer(string sceneName, float startDelay, TransitionSettings transitionSettings)
         {
             yield return new WaitForSecondsRealtime(startDelay);
 
             onTransitionBegin?.Invoke();
 
-            GameObject template = Instantiate(transitionTemplate) as GameObject;
+            GameObject template = Instantiate(transitionTemplate);
             template.GetComponent<Transition>().transitionSettings = transitionSettings;
 
             float transitionTime = transitionSettings.transitionTime;
@@ -119,13 +129,13 @@ namespace EasyTransition
             onTransitionEnd?.Invoke();
         }
 
-        IEnumerator Timer(int sceneIndex, float startDelay, TransitionSettings transitionSettings)
+        private IEnumerator Timer(int sceneIndex, float startDelay, TransitionSettings transitionSettings)
         {
             yield return new WaitForSecondsRealtime(startDelay);
 
             onTransitionBegin?.Invoke();
 
-            GameObject template = Instantiate(transitionTemplate) as GameObject;
+            GameObject template = Instantiate(transitionTemplate);
             template.GetComponent<Transition>().transitionSettings = transitionSettings;
 
             float transitionTime = transitionSettings.transitionTime;
@@ -143,13 +153,13 @@ namespace EasyTransition
             onTransitionEnd?.Invoke();
         }
 
-        IEnumerator Timer(float delay, TransitionSettings transitionSettings)
+        private IEnumerator Timer(float delay, TransitionSettings transitionSettings)
         {
             yield return new WaitForSecondsRealtime(delay);
 
             onTransitionBegin?.Invoke();
 
-            GameObject template = Instantiate(transitionTemplate) as GameObject;
+            GameObject template = Instantiate(transitionTemplate);
             template.GetComponent<Transition>().transitionSettings = transitionSettings;
 
             float transitionTime = transitionSettings.transitionTime;
@@ -167,19 +177,6 @@ namespace EasyTransition
             onTransitionEnd?.Invoke();
 
             runningTransition = false;
-        }
-
-        private IEnumerator Start()
-        {
-            while (this.gameObject.activeInHierarchy)
-            {
-                //Check for multiple instances of the Transition Manager component
-                var managerCount = FindObjectsByType<TransitionManager>(FindObjectsSortMode.None).Length;
-                if (managerCount > 1)
-                    Debug.LogError($"There are {managerCount.ToString()} Transition Managers in your scene. Please ensure there is only one Transition Manager in your scene or overlapping transitions may occur.");
-            
-                yield return new WaitForSecondsRealtime(1f);
-            }
         }
     }
 

@@ -11,42 +11,43 @@ namespace Health.Damage
     [DisallowMultipleComponent]
     public class PeriodicBypassDamageDealer : MonoBehaviour
     {
-        [Header("Damage Settings")]
-        [SerializeField] private int damageAmount = 1;
+        [Header("Damage Settings")] [SerializeField]
+        private int damageAmount = 1;
+
         [SerializeField] private float interval = 3f;
         private IBypassableDamageable _bypassable;
         private IEventBus _eventBus;
 
-        [Inject]
-        public void Construct(IEventBus eventBus)
-        {
-            _eventBus = eventBus;
-        }
-        
         private void Awake()
         {
             _bypassable = GetComponent<IBypassableDamageable>();
         }
-        
+
         private void OnEnable()
         {
             _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
-            
+
             if (_bypassable != null)
             {
                 InvokeRepeating(nameof(DealDamage), 0f, interval);
             }
-        }
-        
-        private void OnLevelCompleted(LevelCompletedEvent obj)
-        {
-            StopDamage();
         }
 
         private void OnDisable()
         {
             StopDamage();
             _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
+        }
+
+        [Inject]
+        public void Construct(IEventBus eventBus)
+        {
+            _eventBus = eventBus;
+        }
+
+        private void OnLevelCompleted(LevelCompletedEvent obj)
+        {
+            StopDamage();
         }
 
         private void StopDamage()

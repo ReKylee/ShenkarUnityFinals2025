@@ -5,7 +5,7 @@ namespace Core.Events
     public enum GameState
     {
         MainMenu,
-        LevelSelection, 
+        LevelSelection,
         Loading,
         Playing,
         Paused,

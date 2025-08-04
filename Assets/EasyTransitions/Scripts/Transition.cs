@@ -8,7 +8,7 @@ namespace EasyTransition
     public class Transition : MonoBehaviour
     {
         public TransitionSettings transitionSettings;
-        
+
         public Transform transitionPanelIN;
         public Transform transitionPanelOUT;
 
@@ -17,7 +17,7 @@ namespace EasyTransition
         public Material multiplyColorMaterial;
         public Material additiveColorMaterial;
 
-        bool hasTransitionTriggeredOnce;
+        private bool hasTransitionTriggeredOnce;
 
         private void Start()
         {
@@ -41,12 +41,13 @@ namespace EasyTransition
 
             //Checking if the materials were correctly set
             if (multiplyColorMaterial == null || additiveColorMaterial == null)
-                Debug.LogWarning("There are no color tint materials set for the transition. Changing the color tint will not affect the transition anymore!");
+                Debug.LogWarning(
+                    "There are no color tint materials set for the transition. Changing the color tint will not affect the transition anymore!");
 
             //Changing the color of the transition
             if (!transitionSettings.isCutoutTransition)
             {
-                if (transitionIn.TryGetComponent<Image>(out Image parentImage))
+                if (transitionIn.TryGetComponent(out Image parentImage))
                 {
                     if (transitionSettings.colorTintMode == ColorTintMode.Multiply)
                     {
@@ -59,9 +60,10 @@ namespace EasyTransition
                         parentImage.material.SetColor("_Color", transitionSettings.colorTint);
                     }
                 }
+
                 for (int i = 0; i < transitionIn.transform.childCount; i++)
                 {
-                    if (transitionIn.transform.GetChild(i).TryGetComponent<Image>(out Image childImage))
+                    if (transitionIn.transform.GetChild(i).TryGetComponent(out Image childImage))
                     {
                         if (transitionSettings.colorTintMode == ColorTintMode.Multiply)
                         {
@@ -79,18 +81,24 @@ namespace EasyTransition
 
             //Flipping the scale if needed
             if (transitionSettings.flipX)
-                transitionIn.transform.localScale = new Vector3(-transitionIn.transform.localScale.x, transitionIn.transform.localScale.y, transitionIn.transform.localScale.z);
+                transitionIn.transform.localScale = new Vector3(-transitionIn.transform.localScale.x,
+                    transitionIn.transform.localScale.y, transitionIn.transform.localScale.z);
+
             if (transitionSettings.flipY)
-                transitionIn.transform.localScale = new Vector3(transitionIn.transform.localScale.x, -transitionIn.transform.localScale.y, transitionIn.transform.localScale.z);
+                transitionIn.transform.localScale = new Vector3(transitionIn.transform.localScale.x,
+                    -transitionIn.transform.localScale.y, transitionIn.transform.localScale.z);
 
             //Changing the animator speed
-            if (transitionIn.TryGetComponent<Animator>(out Animator parentAnim) && transitionSettings.transitionSpeed != 0)
+            if (transitionIn.TryGetComponent(out Animator parentAnim) && transitionSettings.transitionSpeed != 0)
+            {
                 parentAnim.speed = transitionSettings.transitionSpeed;
+            }
             else
             {
                 for (int c = 0; c < transitionIn.transform.childCount; c++)
                 {
-                    if(transitionIn.transform.GetChild(c).TryGetComponent<Animator>(out Animator childAnim) && transitionSettings.transitionSpeed != 0)
+                    if (transitionIn.transform.GetChild(c).TryGetComponent(out Animator childAnim) &&
+                        transitionSettings.transitionSpeed != 0)
                         childAnim.speed = transitionSettings.transitionSpeed;
                 }
             }
@@ -115,7 +123,7 @@ namespace EasyTransition
             //Changing the color of the transition
             if (!transitionSettings.isCutoutTransition)
             {
-                if (transitionOut.TryGetComponent<Image>(out Image parentImage))
+                if (transitionOut.TryGetComponent(out Image parentImage))
                 {
                     if (transitionSettings.colorTintMode == ColorTintMode.Multiply)
                     {
@@ -128,9 +136,10 @@ namespace EasyTransition
                         parentImage.material.SetColor("_Color", transitionSettings.colorTint);
                     }
                 }
+
                 for (int i = 0; i < transitionOut.transform.childCount; i++)
                 {
-                    if (transitionOut.transform.GetChild(i).TryGetComponent<Image>(out Image childImage))
+                    if (transitionOut.transform.GetChild(i).TryGetComponent(out Image childImage))
                     {
                         if (transitionSettings.colorTintMode == ColorTintMode.Multiply)
                         {
@@ -148,18 +157,24 @@ namespace EasyTransition
 
             //Flipping the scale if needed
             if (transitionSettings.flipX)
-                transitionOut.transform.localScale = new Vector3(-transitionOut.transform.localScale.x, transitionOut.transform.localScale.y, transitionOut.transform.localScale.z);
+                transitionOut.transform.localScale = new Vector3(-transitionOut.transform.localScale.x,
+                    transitionOut.transform.localScale.y, transitionOut.transform.localScale.z);
+
             if (transitionSettings.flipY)
-                transitionOut.transform.localScale = new Vector3(transitionOut.transform.localScale.x, -transitionOut.transform.localScale.y, transitionOut.transform.localScale.z);
+                transitionOut.transform.localScale = new Vector3(transitionOut.transform.localScale.x,
+                    -transitionOut.transform.localScale.y, transitionOut.transform.localScale.z);
 
             //Changeing the animator speed
-            if (transitionOut.TryGetComponent<Animator>(out Animator parentAnim) && transitionSettings.transitionSpeed != 0)
+            if (transitionOut.TryGetComponent(out Animator parentAnim) && transitionSettings.transitionSpeed != 0)
+            {
                 parentAnim.speed = transitionSettings.transitionSpeed;
+            }
             else
             {
                 for (int c = 0; c < transitionOut.transform.childCount; c++)
                 {
-                    if (transitionOut.transform.GetChild(c).TryGetComponent<Animator>(out Animator childAnim) && transitionSettings.transitionSpeed != 0)
+                    if (transitionOut.transform.GetChild(c).TryGetComponent(out Animator childAnim) &&
+                        transitionSettings.transitionSpeed != 0)
                         childAnim.speed = transitionSettings.transitionSpeed;
                 }
             }

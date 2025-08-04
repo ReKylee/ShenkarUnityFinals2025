@@ -1,9 +1,4 @@
-﻿using Core;
-using Core.Data;
-using Core.Events;
-using Core.Services;
-using EasyTransition;
-using LevelSelection.Services;
+﻿using LevelSelection.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -19,7 +14,7 @@ namespace StartGame
         {
             Debug.Log("[LevelSelectionLifetimeScope] Configuring level selection DI container...");
 
-   
+
             // Register SceneLoadService as a component in hierarchy
             builder.RegisterComponentInHierarchy<SceneLoadService>().As<ISceneLoadService>();
 

@@ -1,5 +1,4 @@
-﻿using System;
-using InputSystem;
+﻿using InputSystem;
 using LevelSelection.Services;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,14 +8,8 @@ namespace StartGame
 {
     public class StartGameListener : MonoBehaviour
     {
-        private InputSystem_Actions _submitAction;
         private ISceneLoadService _sceneLoadService;
-
-        [Inject]
-        public void Construct(ISceneLoadService sceneLoadService)
-        {
-            _sceneLoadService = sceneLoadService;
-        }
+        private InputSystem_Actions _submitAction;
 
         public void Start()
         {
@@ -33,6 +26,12 @@ namespace StartGame
                 _submitAction.UI.Submit.Disable();
                 _submitAction.Dispose();
             }
+        }
+
+        [Inject]
+        public void Construct(ISceneLoadService sceneLoadService)
+        {
+            _sceneLoadService = sceneLoadService;
         }
 
         private void StartGame(InputAction.CallbackContext callbackContext)

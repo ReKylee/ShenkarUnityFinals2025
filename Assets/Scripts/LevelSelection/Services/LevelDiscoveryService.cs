@@ -42,8 +42,8 @@ namespace LevelSelection.Services
         }
 
         /// <summary>
-        /// Extract the numeric part from level names like "Level_01" -> 1, "Level_02" -> 2
-        /// Returns a high number for non-standard names so they appear last
+        ///     Extract the numeric part from level names like "Level_01" -> 1, "Level_02" -> 2
+        ///     Returns a high number for non-standard names so they appear last
         /// </summary>
         private int ExtractLevelNumber(string levelName)
         {
@@ -51,7 +51,7 @@ namespace LevelSelection.Services
                 return 9999;
 
             // Try to extract number from patterns like "Level_01", "Level1", "Lv01", etc.
-            var parts = levelName.Split('_');
+            string[] parts = levelName.Split('_');
 
             // Check last part first (for "Level_01" format)
             if (parts.Length > 1 && int.TryParse(parts[^1], out int levelNum))

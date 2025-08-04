@@ -34,17 +34,17 @@ namespace Core.Data
         {
             int previousScore = CurrentData.score;
             CurrentData.score = score;
-            
+
             // Update maxScore if current score is higher
             if (score > CurrentData.maxScore)
             {
                 CurrentData.maxScore = score;
                 Debug.Log($"[GameDataService] New high score achieved: {score}");
             }
-            
+
             Debug.Log($"[GameDataService] Score updated: {previousScore} -> {score}, MaxScore: {CurrentData.maxScore}");
             NotifyDataChanged();
-            
+
             // Force save on score changes to ensure persistence
             SaveData();
         }
@@ -58,7 +58,7 @@ namespace Core.Data
 
         public void UpdateBestTime(string levelName, float time)
         {
-            var gameData = CurrentData;
+            GameData gameData = CurrentData;
             if (gameData == null) return;
 
             // Update overall best time
@@ -105,7 +105,7 @@ namespace Core.Data
 
         public void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime)
         {
-            var gameData = CurrentData;
+            GameData gameData = CurrentData;
             if (gameData == null) return;
 
             // Update completed levels list
@@ -125,12 +125,13 @@ namespace Core.Data
 
         public void UnlockLevel(string levelName)
         {
-            if (CurrentData != null && !string.IsNullOrEmpty(levelName) && !CurrentData.unlockedLevels.Contains(levelName))
+            if (CurrentData != null && !string.IsNullOrEmpty(levelName) &&
+                !CurrentData.unlockedLevels.Contains(levelName))
             {
                 CurrentData.unlockedLevels.Add(levelName);
                 Debug.Log($"[GameDataService] Level '{levelName}' unlocked and added to unlocked levels list");
                 NotifyDataChanged();
-                SaveData(); 
+                SaveData();
             }
         }
 
@@ -160,7 +161,7 @@ namespace Core.Data
         }
 
         /// <summary>
-        /// Apply default unlock status from discovered level data
+        ///     Apply default unlock status from discovered level data
         /// </summary>
         private void ApplyDefaultUnlockStatus(List<LevelData> levelData)
         {

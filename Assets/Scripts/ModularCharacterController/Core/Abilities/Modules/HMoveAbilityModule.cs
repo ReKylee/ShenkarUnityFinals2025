@@ -66,7 +66,7 @@ namespace ModularCharacterController.Core.Abilities.Modules
             float deceleration = isGrounded ? stats.groundDeceleration : stats.airDeceleration;
 
             // Calculate new horizontal velocity
-            if (hasMovementInput )
+            if (hasMovementInput)
             {
 
                 // Accelerate towards target velocity

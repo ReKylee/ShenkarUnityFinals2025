@@ -35,7 +35,6 @@ namespace LevelSelection.DI
             // Register NEW focused services following SOLID principles
             builder.Register<ISelectorService, SelectorService>(Lifetime.Scoped);
             builder.Register<IInputFilterService, InputFilterService>(Lifetime.Scoped);
-            builder.Register<IAudioFeedbackService, AudioFeedbackService>(Lifetime.Scoped);
             builder.Register<IItemSelectService, ItemSelectService>(Lifetime.Scoped);
             builder.RegisterComponentInHierarchy<SceneLoadService>().As<ISceneLoadService>();
 

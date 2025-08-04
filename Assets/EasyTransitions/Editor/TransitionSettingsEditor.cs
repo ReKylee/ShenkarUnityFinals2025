@@ -1,5 +1,5 @@
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
 namespace EasyTransition
 {
@@ -9,9 +9,9 @@ namespace EasyTransition
     public class TransitionSettingsEditor : UnityEditor.Editor
     {
         public Texture transitionManagerSettingsLogo;
-        SerializedProperty transitionsList;
+        private SerializedProperty transitionsList;
 
-        void OnEnable()
+        private void OnEnable()
         {
             transitionsList = serializedObject.FindProperty("transitions");
         }
@@ -20,11 +20,12 @@ namespace EasyTransition
         {
             serializedObject.Update();
 
-            var bgTexture = new Texture2D(1, 1, TextureFormat.RGBAFloat, false);
-            var style = new GUIStyle(GUI.skin.box);
+            Texture2D bgTexture = new(1, 1, TextureFormat.RGBAFloat, false);
+            GUIStyle style = new(GUI.skin.box);
             style.normal.background = bgTexture;
 
-            GUILayout.Box(transitionManagerSettingsLogo, style, GUILayout.Width(Screen.width - 20), GUILayout.Height(Screen.height / 15));
+            GUILayout.Box(transitionManagerSettingsLogo, style, GUILayout.Width(Screen.width - 20),
+                GUILayout.Height(Screen.height / 15));
 
             EditorGUILayout.Space();
 
@@ -34,4 +35,3 @@ namespace EasyTransition
     }
 
 }
-

@@ -1,4 +1,5 @@
-﻿using EasyTransition;
+﻿using System;
+using EasyTransition;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,10 +11,11 @@ namespace LevelSelection.Services
     /// </summary>
     public class SceneLoadService : MonoBehaviour, ISceneLoadService
     {
-        [Header("Transition Settings")]
-        [SerializeField] private TransitionSettings defaultTransition;
 
         private const float DefaultTransitionDelay = 0f;
+
+        [Header("Transition Settings")] [SerializeField]
+        private TransitionSettings defaultTransition;
 
         public void LoadLevel(string sceneName)
         {
@@ -37,7 +39,7 @@ namespace LevelSelection.Services
                     SceneManager.LoadScene(sceneName);
                 }
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Debug.LogError($"[SceneLoadService] Failed to load scene {sceneName}: {e}");
                 // Fallback to direct scene loading

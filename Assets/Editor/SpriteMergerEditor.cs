@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.U2D.Sprites;
@@ -23,18 +22,18 @@ namespace Editor
         [SerializeField] private List<string> createdAssetPaths = new();
         [SerializeField] private string outputFileName = "MergedSpriteAtlas";
         private readonly List<Sprite> _spritesToMerge = new();
+        private bool _deepScan = true; // New option for thorough scanning
         private FilterMode _filterMode = FilterMode.Point;
         private bool _makeBackup = true;
         private int _maxAtlasSize = 4096;
         private int _padding = 2;
         private Vector2 _scrollPosition;
         private TextureFormat _textureFormat = TextureFormat.RGBA32;
+        private bool _updateAnimations = true;
+        private bool _updateMaterials = true;
         private bool _updatePrefabs = true;
         private bool _updateScenes = true;
         private bool _updateScriptableObjects = true;
-        private bool _updateAnimations = true;
-        private bool _updateMaterials = true;
-        private bool _deepScan = true; // New option for thorough scanning
 
         private void OnGUI()
         {
@@ -742,7 +741,7 @@ namespace Editor
             int updated = 0;
 
             // Scan all loaded objects in memory
-            Object[] allObjects = Resources.FindObjectsOfTypeAll<Object>();
+            var allObjects = Resources.FindObjectsOfTypeAll<Object>();
 
             foreach (Object obj in allObjects)
             {
@@ -896,7 +895,7 @@ namespace Editor
             int count = 0;
 
             // Get all components including inactive ones
-            Component[] allComponents = go.GetComponentsInChildren<Component>(true);
+            var allComponents = go.GetComponentsInChildren<Component>(true);
 
             foreach (Component component in allComponents)
             {
@@ -948,7 +947,7 @@ namespace Editor
             // Handle UI Button components (may have sprite states)
             else if (component is Button button)
             {
-                var spriteState = button.spriteState;
+                SpriteState spriteState = button.spriteState;
                 bool spriteStateModified = false;
 
                 if (spriteState.highlightedSprite != null &&
@@ -1068,7 +1067,7 @@ namespace Editor
                 var curveBindings = AnimationUtility.GetObjectReferenceCurveBindings(clip);
                 bool clipModified = false;
 
-                foreach (var binding in curveBindings)
+                foreach (EditorCurveBinding binding in curveBindings)
                 {
                     if (binding.propertyName.Contains("sprite") || binding.propertyName.Contains("Sprite"))
                     {
@@ -1129,7 +1128,7 @@ namespace Editor
                 {
                     // Find the original sprite by instance ID (we need to search for it)
                     var originalSprites = _spritesToMerge.Where(s => s != null && s.GetInstanceID() == kvp.Key);
-                    foreach (var originalSprite in originalSprites)
+                    foreach (Sprite originalSprite in originalSprites)
                     {
                         if (originalSprite.texture != null)
                         {
@@ -1217,7 +1216,7 @@ namespace Editor
 
         private bool WillGameObjectBeModified(GameObject go, Dictionary<int, Sprite> spriteMap)
         {
-            Component[] components = go.GetComponentsInChildren<Component>(true);
+            var components = go.GetComponentsInChildren<Component>(true);
             return components.Any(component => component != null && WillComponentBeModified(component, spriteMap));
         }
 

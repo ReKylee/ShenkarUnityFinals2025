@@ -23,12 +23,13 @@ namespace LevelSelection
 
         [Header("Audio Feedback")] [SerializeField]
         private AudioClip completionSound;
-        [SerializeField]private AudioMixer audioMixer;
+
+        [SerializeField] private AudioMixer audioMixer;
 
         private AudioSource _audioSource;
         private GameFlowManager _gameFlowManager;
-        private HealthBonusService _healthBonusService;
         private bool _hasTriggered;
+        private HealthBonusService _healthBonusService;
 
         private void Awake()
         {
@@ -65,12 +66,12 @@ namespace LevelSelection
             // Take control from the player
             if (input)
             {
-                input.enabled = false; 
+                input.enabled = false;
             }
-            
+
             if (rb)
             {
-                rb.linearVelocity = Vector2.zero; 
+                rb.linearVelocity = Vector2.zero;
             }
 
             // Make the player walk right
@@ -92,14 +93,13 @@ namespace LevelSelection
             if (completionSound && _audioSource)
                 _audioSource.PlayOneShot(completionSound);
 
-      
 
             bool bonusComplete = false;
             if (_healthBonusService)
             {
                 Debug.Log("[EndLevelZone] Starting health bonus calculation...");
                 _healthBonusService.CalculateHealthBonus(() => bonusComplete = true);
-                
+
                 // Wait for bonus calculation to complete
                 yield return new WaitUntil(() => bonusComplete);
                 Debug.Log("[EndLevelZone] Health bonus calculation finished");

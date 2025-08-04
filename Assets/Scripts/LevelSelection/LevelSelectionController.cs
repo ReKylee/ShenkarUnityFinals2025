@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
+using Audio.Data;
+using Audio.Interfaces;
 using Core;
-using Core.Data;
 using Core.Events;
-using EasyTransition;
 using LevelSelection.Services;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,22 +10,28 @@ using VContainer;
 
 namespace LevelSelection
 {
+    /// <summary>
+    ///     Controls level selection functionality using the new SOLID audio system directly
+    /// </summary>
     public class LevelSelectionController : MonoBehaviour
     {
         [Header("Configuration")] [SerializeField]
         private bool autoActivateOnStart = true;
 
-        [Header("UI Components")] [SerializeField]
+        [Header("UI References")] [SerializeField]
         private GameObject selectorObject;
 
         [SerializeField] private ItemSelectScreen itemSelectScreen;
 
-        [Header("Input Actions")] [SerializeField]
-        private InputActionReference navigateAction;
+        [Header("Input")] [SerializeField] private InputActionReference navigateAction;
 
         [SerializeField] private InputActionReference submitAction;
 
-        private IAudioFeedbackService _audioFeedbackService;
+        [Header("Audio")] [SerializeField] private SoundData selectionSound;
+
+        [SerializeField] private SoundData lockedSound;
+
+        private IAudioService _audioService;
         private IEventBus _eventBus;
         private GameDataCoordinator _gameDataCoordinator;
         private GameFlowManager _gameFlowManager;
@@ -95,7 +101,7 @@ namespace LevelSelection
             IEventBus eventBus,
             ISelectorService selectorService,
             IInputFilterService inputFilterService,
-            IAudioFeedbackService audioFeedbackService,
+            IAudioService audioService,
             IItemSelectService itemSelectService,
             ISceneLoadService sceneLoadService,
             GameFlowManager gameFlowManager,
@@ -105,7 +111,7 @@ namespace LevelSelection
             _eventBus = eventBus;
             _selectorService = selectorService;
             _inputFilterService = inputFilterService;
-            _audioFeedbackService = audioFeedbackService;
+            _audioService = audioService;
             _itemSelectService = itemSelectService;
             _sceneLoadService = sceneLoadService;
             _gameFlowManager = gameFlowManager;
@@ -132,15 +138,8 @@ namespace LevelSelection
 
         private void InitializeServices()
         {
-            AudioSource audioSource = GetComponent<AudioSource>();
-            if (audioSource == null)
-            {
-                audioSource = gameObject.AddComponent<AudioSource>();
-            }
-
             _selectorService.Initialize(selectorObject);
             _inputFilterService.Initialize();
-            _audioFeedbackService.Initialize(audioSource);
             _itemSelectService.Initialize(itemSelectScreen, _sceneLoadService);
 
             _itemSelectService.OnStateChanged += OnItemSelectStateChanged;
@@ -167,7 +166,7 @@ namespace LevelSelection
         private void OnSubmit(InputAction.CallbackContext context)
         {
             if (!IsActive || _itemSelectService.IsActive) return;
-   
+
             _navigationService.SelectCurrentLevel();
         }
 
@@ -187,14 +186,14 @@ namespace LevelSelection
         {
             LevelData levelData = _navigationService.CurrentLevel;
             bool isUnlocked = _gameDataCoordinator?.IsLevelUnlocked(levelData?.levelName) ?? false;
-            
+
             if (levelData != null && !isUnlocked)
             {
-                _audioFeedbackService.PlayLockedSound();
+                PlayLockedSound();
                 return;
             }
 
-            _audioFeedbackService.PlaySelectionSound();
+            PlaySelectionSound();
 
             string sceneName = _sceneLoadService.GetSceneNameForLevel(levelData);
             _itemSelectService.ShowItemSelect(selectionEvent.LevelName, sceneName);
@@ -233,6 +232,30 @@ namespace LevelSelection
         public void SetCurrentLevel(int levelIndex)
         {
             _navigationService?.SetCurrentIndex(levelIndex);
+        }
+
+        private void PlaySelectionSound()
+        {
+            if (selectionSound?.clip && _audioService != null)
+            {
+                _audioService.PlaySound(
+                    selectionSound.clip,
+                    selectionSound.GetRandomizedVolume(),
+                    selectionSound.GetRandomizedPitch()
+                );
+            }
+        }
+
+        private void PlayLockedSound()
+        {
+            if (lockedSound?.clip && _audioService != null)
+            {
+                _audioService.PlaySound(
+                    lockedSound.clip,
+                    lockedSound.GetRandomizedVolume(),
+                    lockedSound.GetRandomizedPitch()
+                );
+            }
         }
     }
 }

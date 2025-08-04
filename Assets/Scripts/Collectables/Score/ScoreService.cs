@@ -9,31 +9,31 @@ namespace Collectables.Score
     public class ScoreService : IScoreService
     {
         private const int OneUpThreshold = 30;
+        private IEventBus _eventBus;
         private GameDataCoordinator _gameDataCoordinator;
         private IPlayerLivesService _livesService;
-        private IEventBus _eventBus;
-        
+
         public int CurrentScore => _gameDataCoordinator?.GetCurrentScore() ?? 0;
-        
+
         public void AddScore(int amount)
         {
             int previousScore = CurrentScore;
             int newScore = previousScore + amount;
             _gameDataCoordinator?.UpdateScore(newScore);
-            
+
             // Publish score changed event for UI updates
             _eventBus?.Publish(new ScoreChangedEvent
             {
                 Timestamp = Time.time,
-                NewScore = newScore,
+                NewScore = newScore
             });
         }
-        
+
         public void ResetScore()
         {
             _gameDataCoordinator?.UpdateScore(0);
         }
-        
+
         public void AddFruitCollected(Vector3 collectPosition)
         {
             _gameDataCoordinator?.AddFruitCollected();
@@ -43,19 +43,20 @@ namespace Collectables.Score
                 _livesService?.AddLife(collectPosition);
                 Debug.Log("One-up awarded! Player gained an extra life.");
             }
-            
+
             // Publish event to update UI
             _eventBus?.Publish(new ScoreChangedEvent
             {
                 Timestamp = Time.time,
-                NewScore = CurrentScore,
+                NewScore = CurrentScore
             });
         }
-        
+
         public int FruitCollectedCount => _gameDataCoordinator?.GetFruitCollectedCount() ?? 0;
-        
+
         [Inject]
-        public void Construct(GameDataCoordinator gameDataCoordinator, IPlayerLivesService livesService, IEventBus eventBus)
+        public void Construct(GameDataCoordinator gameDataCoordinator, IPlayerLivesService livesService,
+            IEventBus eventBus)
         {
             _gameDataCoordinator = gameDataCoordinator;
             _livesService = livesService;

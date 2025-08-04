@@ -12,20 +12,72 @@ namespace Core
 {
     public class GameDataCoordinator : MonoBehaviour
     {
-        
+
 #if UNITY_EDITOR
-        [Header("Debug")]
-        [SerializeField] private bool resetGameData;
+        [Header("Debug")] [SerializeField] private bool resetGameData;
 #endif
-        
+
         private IAutoSaveService _autoSaveService;
         private IEventBus _eventBus;
         private IGameDataService _gameDataService;
-        private ILevelDiscoveryService _levelDiscoveryService;
         private bool _isInitialized;
+        private ILevelDiscoveryService _levelDiscoveryService;
 
         // Track previous values to detect changes
         private int _previousLives = -1;
+
+        private void Update()
+        {
+            if (!_isInitialized || _autoSaveService == null) return;
+
+            _autoSaveService.Update();
+        }
+
+        private void OnDestroy()
+        {
+            _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
+            _eventBus?.Unsubscribe<LevelStartedEvent>(OnLevelStarted);
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+            _eventBus?.Unsubscribe<PlayerDeathEvent>(OnPlayerDied);
+            _eventBus?.Unsubscribe<LevelSelectedEvent>(OnLevelSelected);
+            _eventBus?.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
+
+            _autoSaveService?.ForceSave();
+        }
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (!_isInitialized || _autoSaveService == null) return;
+
+            _autoSaveService.OnApplicationFocus(hasFocus);
+        }
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (!_isInitialized || _autoSaveService == null) return;
+
+            _autoSaveService.OnApplicationPause(pauseStatus);
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (resetGameData)
+            {
+                if (_gameDataService != null)
+                {
+                    _gameDataService.ResetAllData();
+                    Debug.Log("Game data has been reset.");
+                }
+                else
+                {
+                    Debug.LogWarning("GameDataService not available. Cannot reset game data.");
+                }
+
+                resetGameData = false;
+            }
+        }
+#endif
 
         [Inject]
         public void Construct(
@@ -53,61 +105,9 @@ namespace Core
             _eventBus?.Subscribe<LevelNavigationEvent>(OnLevelNavigation);
         }
 
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            if (resetGameData)
-            {
-                if (_gameDataService != null)
-                {
-                    _gameDataService.ResetAllData();
-                    Debug.Log("Game data has been reset.");
-                }
-                else
-                {
-                    Debug.LogWarning("GameDataService not available. Cannot reset game data.");
-                }
-                resetGameData = false;
-            }
-        }
-#endif
-
         private void SaveData()
         {
             _gameDataService?.SaveData();
-        }
-
-        private void Update()
-        {
-            if (!_isInitialized || _autoSaveService == null) return;
-
-            _autoSaveService.Update();
-        }
-
-        private void OnDestroy()
-        {
-            _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
-            _eventBus?.Unsubscribe<LevelStartedEvent>(OnLevelStarted);
-            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
-            _eventBus?.Unsubscribe<PlayerDeathEvent>(OnPlayerDied);
-            _eventBus?.Unsubscribe<LevelSelectedEvent>(OnLevelSelected);
-            _eventBus?.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
-
-            _autoSaveService?.ForceSave();
-        }
-
-        private void OnApplicationPause(bool pauseStatus)
-        {
-            if (!_isInitialized || _autoSaveService == null) return;
-
-            _autoSaveService.OnApplicationPause(pauseStatus);
-        }
-
-        private void OnApplicationFocus(bool hasFocus)
-        {
-            if (!_isInitialized || _autoSaveService == null) return;
-
-            _autoSaveService.OnApplicationFocus(hasFocus);
         }
 
         private void OnPlayerDied(PlayerDeathEvent deathEvent)
@@ -207,13 +207,11 @@ namespace Core
         {
             if (!_isInitialized || _gameDataService == null || _levelDiscoveryService == null)
                 return new List<LevelData>();
+
             return await _gameDataService.GetLevelDataAsync(_levelDiscoveryService);
         }
 
-        public GameData GetCurrentData()
-        {
-            return !_isInitialized ? null : _gameDataService?.CurrentData;
-        }
+        public GameData GetCurrentData() => !_isInitialized ? null : _gameDataService?.CurrentData;
 
         public void ResetAllData()
         {
@@ -228,46 +226,23 @@ namespace Core
         }
 
         // Wrapper methods for GameData operations 
-        public bool IsLevelUnlocked(string levelName)
-        {
-            return GetCurrentData()?.IsLevelUnlocked(levelName) ?? false;
-        }
+        public bool IsLevelUnlocked(string levelName) => GetCurrentData()?.IsLevelUnlocked(levelName) ?? false;
 
-        public bool IsLevelCompleted(string levelName)
-        {
-            return GetCurrentData()?.IsLevelCompleted(levelName) ?? false;
-        }
+        public bool IsLevelCompleted(string levelName) => GetCurrentData()?.IsLevelCompleted(levelName) ?? false;
 
-        public float GetLevelBestTime(string levelName)
-        {
-            return GetCurrentData()?.GetLevelBestTime(levelName) ?? float.MaxValue;
-        }
+        public float GetLevelBestTime(string levelName) =>
+            GetCurrentData()?.GetLevelBestTime(levelName) ?? float.MaxValue;
 
-        public int GetLevelBestScore(string levelName)
-        {
-            return GetCurrentData()?.GetLevelBestScore(levelName) ?? 0;
-        }
+        public int GetLevelBestScore(string levelName) => GetCurrentData()?.GetLevelBestScore(levelName) ?? 0;
 
         // Additional wrapper methods to avoid GetCurrentData() calls
-        public int GetCurrentLives()
-        {
-            return GetCurrentData()?.lives ?? GameData.MaxLives;
-        }
+        public int GetCurrentLives() => GetCurrentData()?.lives ?? GameData.MaxLives;
 
-        public List<string> GetUnlockedLevels()
-        {
-            return GetCurrentData()?.unlockedLevels ?? new List<string> { "Level_01" };
-        }
+        public List<string> GetUnlockedLevels() => GetCurrentData()?.unlockedLevels ?? new List<string> { "Level_01" };
 
-        public List<string> GetCompletedLevels()
-        {
-            return GetCurrentData()?.completedLevels ?? new List<string>();
-        }
+        public List<string> GetCompletedLevels() => GetCurrentData()?.completedLevels ?? new List<string>();
 
-        public int GetSelectedLevelIndex()
-        {
-            return GetCurrentData()?.selectedLevelIndex ?? 0;
-        }
+        public int GetSelectedLevelIndex() => GetCurrentData()?.selectedLevelIndex ?? 0;
 
         public void UnlockLevel(string levelName)
         {
@@ -275,14 +250,8 @@ namespace Core
             _gameDataService?.UnlockLevel(levelName);
         }
 
-        public int GetCurrentScore()
-        {
-            return GetCurrentData()?.score ?? 0;
-        }
+        public int GetCurrentScore() => GetCurrentData()?.score ?? 0;
 
-        public int GetFruitCollectedCount()
-        {
-            return GetCurrentData()?.fruitCollected ?? 0;
-        }
+        public int GetFruitCollectedCount() => GetCurrentData()?.fruitCollected ?? 0;
     }
 }
