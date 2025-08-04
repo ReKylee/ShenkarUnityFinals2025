@@ -22,7 +22,7 @@ namespace Core
         private IGameDataService _gameDataService;
         private bool _isInitialized;
         private ILevelDiscoveryService _levelDiscoveryService;
-
+        
 
         private void Update()
         {
@@ -89,7 +89,6 @@ namespace Core
             _autoSaveService = autoSaveService;
             _levelDiscoveryService = levelDiscoveryService;
             _isInitialized = true;
-
             Initialize();
         }
 
@@ -101,6 +100,8 @@ namespace Core
             _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
             _eventBus?.Subscribe<LevelSelectedEvent>(OnLevelSelected);
             _eventBus?.Subscribe<LevelNavigationEvent>(OnLevelNavigation);
+            Debug.Log("[GameDataCoordinator] Initialized successfully.");
+            
         }
 
         private void SaveData()
@@ -225,6 +226,12 @@ namespace Core
             _gameDataService?.ResetProgressData();
             _gameDataService?.SaveData();
         }
+        public void UnlockLevel(string levelName)
+        {
+            if (!_isInitialized) return;
+            _gameDataService?.UnlockLevel(levelName);
+            _gameDataService?.SaveData();
+        }
 
         // Wrapper methods for GameData operations 
         public bool IsLevelUnlocked(string levelName) => GetCurrentData()?.IsLevelUnlocked(levelName) ?? false;
@@ -243,15 +250,10 @@ namespace Core
 
         public int GetSelectedLevelIndex() => GetCurrentData()?.selectedLevelIndex ?? 0;
 
-        public void UnlockLevel(string levelName)
-        {
-            if (!_isInitialized) return;
-            _gameDataService?.UnlockLevel(levelName);
-            _gameDataService?.SaveData();
-        }
-
         public int GetCurrentScore() => GetCurrentData()?.score ?? 0;
+        public float GetBestTime() => GetCurrentData()?.bestTime ?? 0;
 
         public int GetFruitCollectedCount() => GetCurrentData()?.fruitCollected ?? 0;
+        public int GetBestScore() => GetCurrentData()?.maxScore ?? 0;
     }
 }

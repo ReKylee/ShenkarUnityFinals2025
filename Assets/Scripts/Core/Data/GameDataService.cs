@@ -54,6 +54,7 @@ namespace Core.Data
         {
             CurrentData.currentLevel = levelName;
             NotifyDataChanged();
+            SaveData();
         }
 
         public void UpdateBestTime(string levelName, float time)
@@ -74,6 +75,7 @@ namespace Core.Data
             }
 
             NotifyDataChanged();
+            SaveData();
         }
 
         public void ResetAllData()
