@@ -19,7 +19,10 @@ namespace ModularCharacterController.Core
         public InputContext CurrentInput => _currentInput;
 
         public InputContext FixedInput => _fixedUpdateInput;
-
+        
+        #if UNITY_EDITOR
+        public bool debugMode = false;
+        #endif
         private void Awake()
         {
             _inputActions = new InputSystem_Actions();
@@ -57,6 +60,7 @@ namespace ModularCharacterController.Core
 #if UNITY_EDITOR
         private void OnGUI()
         {
+            if (!debugMode) return;
             string[] labels =
             {
                 $"Walk Input: {_currentInput.WalkInput}",
