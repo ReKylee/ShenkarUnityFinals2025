@@ -22,12 +22,12 @@ namespace LevelSelection.Services
 
         public void MoveToPosition(Vector3 targetPosition)
         {
-            if (_selectorObject == null) return;
+            if (!_selectorObject) return;
 
             float distance = Vector3.Distance(_selectorObject.transform.position, targetPosition);
             if (distance > 0.01f)
             {
-                _targetPosition = targetPosition;
+                _targetPosition = new Vector3(targetPosition.x, targetPosition.y, _selectorObject.transform.position.z);
                 IsMoving = true;
             }
         }
