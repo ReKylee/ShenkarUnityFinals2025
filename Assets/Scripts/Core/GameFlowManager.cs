@@ -98,19 +98,6 @@ namespace Core
                 ChangeState(GameState.Paused);
         }
 
-        public void ResumeGame()
-        {
-            if (CurrentState == GameState.Paused)
-                ChangeState(GameState.Playing);
-        }
-
-        public void RestartLevel()
-        {
-            string currentSceneName = SceneManager.GetActiveScene().name;
-            _sceneLoadService?.LoadLevel(currentSceneName);
-        }
-
-    
 
         public void CompleteLevel(string currentLevelName)
         {
@@ -182,10 +169,12 @@ namespace Core
             _eventBus?.Unsubscribe<PlayerLivesChangedEvent>(OnPlayerLivesChanged);
         }
 
-        private void OnGameOver(GameOverEvent gameOverEvent)
+        private async void OnGameOver(GameOverEvent gameOverEvent)
         {
             ChangeState(GameState.GameOver);
-            RestartLevelAfterDelayAsync(restartDelay);
+            _gameDataCoordinator?.ResetAllData();
+            await Task.Delay(TimeSpan.FromSeconds(restartDelay));
+            _sceneLoadService?.LoadLevel("StartScene");
         }
 
         private async void OnLevelCompleted(LevelCompletedEvent levelEvent)
