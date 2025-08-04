@@ -52,6 +52,7 @@ namespace Core.Events
         public float Timestamp { get; set; }
         public string LevelName;
         public float CompletionTime;
+        public int RemainingHp;
     }
 
     public struct GameOverEvent : IGameEvent

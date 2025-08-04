@@ -2,6 +2,7 @@
 using Core.Data;
 using Core.Events;
 using Core.Services;
+using Health.Damage;
 using LevelSelection;
 using LevelSelection.Services;
 using Player.Components;
@@ -66,6 +67,7 @@ namespace Core.DI
             builder.RegisterComponentInHierarchy<GameFlowManager>();
             builder.RegisterComponentInHierarchy<GameDataCoordinator>();
             builder.RegisterComponentInHierarchy<EndLevelZone>();
+            builder.RegisterComponentInHierarchy<HealthBonusService>();
             // Pooling System
             builder.RegisterComponentInHierarchy<PoolManager>().As<IPoolService>();
 
@@ -77,6 +79,7 @@ namespace Core.DI
             builder.RegisterComponentInHierarchy<PlayerHealthController>();
             builder.RegisterComponentInHierarchy<PlayerLivesUIController>();
             builder.RegisterComponentInHierarchy<PlayerAnimationController>();
+            builder.RegisterComponentInHierarchy<PeriodicBypassDamageDealer>();
 
             // Score System
             builder.RegisterComponentInHierarchy<ScoreController>();

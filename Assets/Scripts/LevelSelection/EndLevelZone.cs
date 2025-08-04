@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Core;
 using ModularCharacterController.Core;
+using Player.Services;
 using UnityEngine;
 using VContainer;
 
@@ -29,6 +30,7 @@ namespace LevelSelection
 
         private AudioSource _audioSource;
         private GameFlowManager _gameFlowManager;
+        private HealthBonusService _healthBonusService;
         private bool _hasTriggered;
 
         private void Awake()
@@ -63,9 +65,10 @@ namespace LevelSelection
         }
 
         [Inject]
-        public void Construct(GameFlowManager gameFlowManager)
+        public void Construct(GameFlowManager gameFlowManager, HealthBonusService healthBonusService)
         {
             _gameFlowManager = gameFlowManager;
+            _healthBonusService = healthBonusService;
         }
 
         private IEnumerator CompleteLevel(Rigidbody2D rb, InputHandler input)
@@ -111,6 +114,18 @@ namespace LevelSelection
                 completionUI.SetActive(true);
                 yield return new WaitForSeconds(uiDisplayDuration);
                 completionUI.SetActive(false);
+            }
+
+            // Calculate health bonus before completing the level
+            bool bonusComplete = false;
+            if (_healthBonusService != null)
+            {
+                Debug.Log("[EndLevelZone] Starting health bonus calculation...");
+                _healthBonusService.CalculateHealthBonus(() => bonusComplete = true);
+                
+                // Wait for bonus calculation to complete
+                yield return new WaitUntil(() => bonusComplete);
+                Debug.Log("[EndLevelZone] Health bonus calculation finished");
             }
 
             // Wait for completion delay

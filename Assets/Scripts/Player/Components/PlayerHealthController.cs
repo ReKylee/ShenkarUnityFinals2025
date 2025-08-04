@@ -12,10 +12,10 @@ namespace Player.Components
     {
         [SerializeField] private BarsHealthView healthView;
         private GameFlowManager _gameFlowManager;
-        private IHealthView _healthView;
         private IInvincibility _invincibility;
         private IPlayerLivesService _livesService;
         private IShield _shield;
+        public IHealthView HealthView { get; private set; }
 
         #region VContainer Injection
 
@@ -33,14 +33,14 @@ namespace Player.Components
         private new void Awake()
         {
             base.Awake();
-            _healthView = healthView;
+            HealthView = healthView;
             _shield = GetComponent<IShield>();
             _invincibility = GetComponent<IInvincibility>();
         }
 
         protected void Start()
         {
-            _healthView.UpdateDisplay(CurrentHp, MaxHp);
+            HealthView.UpdateDisplay(CurrentHp, MaxHp);
             OnHealthChanged += HandleHealthChanged;
             OnDeath += HandleHealthEmpty;
         }
@@ -57,7 +57,7 @@ namespace Player.Components
 
         private void HandleHealthChanged(int hp, int maxHp)
         {
-            _healthView.UpdateDisplay(hp, maxHp);
+            HealthView.UpdateDisplay(hp, maxHp);
             // Health changes are now handled purely as UI updates
             // No need to publish events for every health change
         }
