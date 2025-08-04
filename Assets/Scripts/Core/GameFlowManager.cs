@@ -133,6 +133,19 @@ namespace Core
             });
         }
 
+        public void NavigateToLevelSelection()
+        {
+            try
+            {
+                ChangeState(GameState.LevelSelection);
+                SceneManager.LoadScene("Level Select");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[GameFlowManager] Failed to navigate to level selection: {e}");
+            }
+        }
+
         private void SubscribeToEvents()
         {
             _eventBus?.Subscribe<GameOverEvent>(OnGameOver);
@@ -305,6 +318,7 @@ namespace Core
             try
             {
                 await Task.Delay((int)(2f * 1000));
+                ChangeState(GameState.LevelSelection);
                 SceneManager.LoadScene("Level Select");
             }
             catch (Exception e)
