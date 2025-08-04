@@ -53,7 +53,8 @@ namespace LevelSelection
             _hasTriggered = true;
 
             // Stop all music immediately when level is completed
-            AudioService.Instance?.StopMusic();
+            AudioService.Instance?.StopAll();
+            AudioService.Instance?.PlaySound(completionSound);
 
             // Take control from the player
             if (input)
@@ -82,11 +83,6 @@ namespace LevelSelection
 
             Debug.Log($"[EndLevelZone] Player completed level: {currentLevelName}");
 
-            // Play completion sound using the new audio system
-            if (completionSound?.clip)
-            {
-                AudioService.Instance?.PlaySound(completionSound);
-            }
 
             bool bonusComplete = false;
             if (_healthBonusService)

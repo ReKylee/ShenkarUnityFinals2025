@@ -21,6 +21,7 @@ namespace Player.Components
 
         [SerializeField] private SoundData collectSound;
         [SerializeField] private SoundData deathSound;
+        [SerializeField] private SoundData attackSound;
         private MccGroundCheck _groundCheck;
         private IHealthEvents _health;
         private InputHandler _inputHandler;
@@ -35,10 +36,21 @@ namespace Player.Components
         private void Update()
         {
             InputContext input = _inputHandler.CurrentInput;
+            if (input.AttackPressed)
+            {
+                PlayAttackSound();
+                return;
+            }
+            
             if (input.JumpPressed && _groundCheck.IsGrounded)
             {
                 PlayJumpSound();
             }
+
+        }
+        private void PlayAttackSound()
+        {
+            AudioService.Instance?.PlaySound(attackSound);
         }
 
         private void OnEnable()
@@ -61,7 +73,7 @@ namespace Player.Components
             }
         }
 
-   
+
         #region Event Handlers
 
         private void OnScoreCollected(int score, Vector3 position)

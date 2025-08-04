@@ -482,8 +482,8 @@ MonoBehaviour:
   drainDelay: 0.2
   drainInterval: 0.1
   bonusDrainSound:
-    clip: {fileID: 0}
-    mixerGroup: {fileID: 0}
+    clip: {fileID: 8300000, guid: fc1e67cdc7fb60b428443b919dccbbb8, type: 3}
+    mixerGroup: {fileID: -8890037578601454575, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
     volume: 1
     pitch: 1
     randomVolumeVariance: 0
@@ -502,22 +502,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpSound:
-    clip: {fileID: 0}
-    mixerGroup: {fileID: 0}
+    clip: {fileID: 8300000, guid: ddd2cf8f65c943c47af9f653bf96058f, type: 3}
+    mixerGroup: {fileID: -8890037578601454575, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
     volume: 1
     pitch: 1
     randomVolumeVariance: 0
     randomPitchVariance: 0
     use3D: 0
   collectSound:
-    clip: {fileID: 0}
-    mixerGroup: {fileID: 0}
+    clip: {fileID: 8300000, guid: a20beb762b0bcb640a3956e4df3b4f89, type: 3}
+    mixerGroup: {fileID: -8890037578601454575, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
     volume: 1
     pitch: 1
     randomVolumeVariance: 0
     randomPitchVariance: 0
     use3D: 0
   deathSound:
+    clip: {fileID: 8300000, guid: b326f8b7d8e610a4f9e0092e1817ed37, type: 3}
+    mixerGroup: {fileID: -7120195032064932389, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
+    volume: 1
+    pitch: 1
+    randomVolumeVariance: 0
+    randomPitchVariance: 0
+    use3D: 0
+  attackSound:
     clip: {fileID: 0}
     mixerGroup: {fileID: 0}
     volume: 1

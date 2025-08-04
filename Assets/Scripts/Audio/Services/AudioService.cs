@@ -20,6 +20,7 @@ namespace Audio.Services
 
         private AudioSource _musicSource;
         private List<AudioSource> _sfxSources;
+        private List<AudioSource> _managedAudioSources;
         private int _currentSfxIndex = 0;
 
         private float _masterVolume = 1f;
@@ -38,6 +39,7 @@ namespace Audio.Services
             DontDestroyOnLoad(gameObject);
 
             InitializeAudioSources();
+            InitializeManagedAudioSources();
             LoadVolumeSettings();
         }
 
@@ -105,9 +107,24 @@ namespace Audio.Services
 
         public void StopMusic()
         {
-            if (_musicSource)
+            _musicSource?.Stop();
+        }
+
+        public void StopAll()
+        {
+            // Stop music source
+            _musicSource?.Stop();
+
+            // Stop all SFX sources
+            foreach (AudioSource sfxSource in _sfxSources)
             {
-                _musicSource.Stop();
+                sfxSource.Stop();
+            }
+
+            // Stop all managed audio sources
+            foreach (AudioSource managedSource in _managedAudioSources)
+            {
+                managedSource.Stop();
             }
         }
 
@@ -148,6 +165,19 @@ namespace Audio.Services
                 sfxSource.playOnAwake = false;
                 sfxSource.loop = false;
                 _sfxSources.Add(sfxSource);
+            }
+        }
+
+        private void InitializeManagedAudioSources()
+        {
+            _managedAudioSources = new List<AudioSource>();
+
+            foreach (var audioSource in GetComponentsInChildren<AudioSource>())
+            {
+                if (audioSource != _musicSource && !_sfxSources.Contains(audioSource))
+                {
+                    _managedAudioSources.Add(audioSource);
+                }
             }
         }
 
