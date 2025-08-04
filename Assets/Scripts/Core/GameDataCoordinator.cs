@@ -23,8 +23,6 @@ namespace Core
         private bool _isInitialized;
         private ILevelDiscoveryService _levelDiscoveryService;
 
-        // Track previous values to detect changes
-        private int _previousLives = -1;
 
         private void Update()
         {
@@ -134,24 +132,7 @@ namespace Core
             _gameDataService?.UpdateCurrentLevel(levelEvent.LevelName);
         }
 
-        private void OnGameDataChanged(GameData newData)
-        {
-            // Check if lives changed and publish the appropriate event
-            if (_previousLives != newData.lives)
-            {
-                _eventBus?.Publish(new PlayerLivesChangedEvent
-                {
-                    PreviousLives = _previousLives,
-                    CurrentLives = newData.lives,
-                    MaxLives = GameData.MaxLives,
-                    Timestamp = Time.time
-                });
-
-                _previousLives = newData.lives;
-            }
-
-            _autoSaveService?.RequestSave();
-        }
+      
 
         private void OnLevelSelected(LevelSelectedEvent levelEvent)
         {
@@ -176,6 +157,12 @@ namespace Core
         public void UpdateLives(int lives)
         {
             if (!_isInitialized) return;
+            _eventBus?.Publish(new PlayerLivesChangedEvent
+            {
+                PreviousLives = GetCurrentLives(),
+                CurrentLives = lives,
+                Timestamp = Time.time
+            });
             _gameDataService?.UpdateLives(lives);
         }
 
@@ -194,6 +181,11 @@ namespace Core
         public void UpdateScore(int score)
         {
             if (!_isInitialized) return;
+            _eventBus?.Publish(new ScoreChangedEvent
+            {
+                NewScore = score,
+                Timestamp = Time.time
+            });
             _gameDataService?.UpdateScore(score);
         }
 

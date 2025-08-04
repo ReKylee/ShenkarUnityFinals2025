@@ -502,9 +502,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpSound:
-    clip: {fileID: 8300000, guid: ddd2cf8f65c943c47af9f653bf96058f, type: 3}
+    clip: {fileID: 8300000, guid: f5aa8ca3a67a97f42a328f99c07ab8a8, type: 3}
     mixerGroup: {fileID: -8890037578601454575, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
-    volume: 1
+    volume: 0.5
     pitch: 1
     randomVolumeVariance: 0
     randomPitchVariance: 0
@@ -527,6 +527,14 @@ MonoBehaviour:
     use3D: 0
   attackSound:
     clip: {fileID: 8300000, guid: fc1e67cdc7fb60b428443b919dccbbb8, type: 3}
+    mixerGroup: {fileID: -8890037578601454575, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
+    volume: 1
+    pitch: 1
+    randomVolumeVariance: 0
+    randomPitchVariance: 0
+    use3D: 0
+  transformSound:
+    clip: {fileID: 8300000, guid: e22eee95247348645a0114e891a6d180, type: 3}
     mixerGroup: {fileID: -8890037578601454575, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
     volume: 1
     pitch: 1

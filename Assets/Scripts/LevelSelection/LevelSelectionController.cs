@@ -200,17 +200,11 @@ namespace LevelSelection
         private void OnLevelLoadRequested(LevelLoadRequestedEvent loadEvent)
         {
             _gameDataCoordinator?.UpdateCurrentLevel(loadEvent.LevelName);
-
-            if (_gameFlowManager != null)
-            {
-                // Use StartLevel with the correct level name when loading from level selection
-                _gameFlowManager.StartLevel(loadEvent.LevelName);
-            }
-
-            _sceneLoadService.LoadLevel(loadEvent.SceneName);
+            _gameFlowManager?.StartLevel(loadEvent.LevelName);
+            _sceneLoadService?.LoadLevel(loadEvent.SceneName);
         }
 
-        public void Activate()
+        private void Activate()
         {
             IsActive = true;
             _navigationService?.Activate();

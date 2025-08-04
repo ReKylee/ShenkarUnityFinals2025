@@ -110,14 +110,7 @@ namespace Core
             _sceneLoadService?.LoadLevel(currentSceneName);
         }
 
-        public void HandlePlayerDeath(Vector3 deathPosition)
-        {
-            _eventBus?.Publish(new PlayerDeathEvent
-            {
-                DeathPosition = deathPosition,
-                Timestamp = Time.time
-            });
-        }
+    
 
         public void CompleteLevel(string currentLevelName)
         {

@@ -9,7 +9,6 @@ namespace Collectables.Score
     public class ScoreService : IScoreService
     {
         private const int OneUpThreshold = 30;
-        private IEventBus _eventBus;
         private GameDataCoordinator _gameDataCoordinator;
         private IPlayerLivesService _livesService;
 
@@ -20,13 +19,6 @@ namespace Collectables.Score
             int previousScore = CurrentScore;
             int newScore = previousScore + amount;
             _gameDataCoordinator?.UpdateScore(newScore);
-
-            // Publish score changed event for UI updates
-            _eventBus?.Publish(new ScoreChangedEvent
-            {
-                Timestamp = Time.time,
-                NewScore = newScore
-            });
         }
 
         public void ResetScore()
@@ -43,24 +35,15 @@ namespace Collectables.Score
                 _livesService?.AddLife(collectPosition);
                 Debug.Log("One-up awarded! Player gained an extra life.");
             }
-
-            // Publish event to update UI
-            _eventBus?.Publish(new ScoreChangedEvent
-            {
-                Timestamp = Time.time,
-                NewScore = CurrentScore
-            });
         }
 
         public int FruitCollectedCount => _gameDataCoordinator?.GetFruitCollectedCount() ?? 0;
 
         [Inject]
-        public void Construct(GameDataCoordinator gameDataCoordinator, IPlayerLivesService livesService,
-            IEventBus eventBus)
+        public void Construct(GameDataCoordinator gameDataCoordinator, IPlayerLivesService livesService)
         {
             _gameDataCoordinator = gameDataCoordinator;
             _livesService = livesService;
-            _eventBus = eventBus;
         }
     }
 }

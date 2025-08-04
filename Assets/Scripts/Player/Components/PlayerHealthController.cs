@@ -58,30 +58,15 @@ namespace Player.Components
         private void HandleHealthChanged(int hp, int maxHp)
         {
             HealthView.UpdateDisplay(hp, maxHp);
-            // Health changes are now handled purely as UI updates
-            // No need to publish events for every health change
         }
 
         private void HandleHealthEmpty()
         {
-            if (_livesService == null)
-            {
-                Debug.LogError("[PlayerHealthController] _livesService is null. Ensure it is properly injected.");
-                return;
-            }
-
-            if (!_gameFlowManager)
-            {
-                Debug.LogError("[PlayerHealthController] _gameFlowManager is null. Ensure it is properly injected.");
-                return;
-            }
 
             if (_livesService.TryUseLife())
             {
                 return;
             }
-
-            _gameFlowManager.HandlePlayerDeath(transform.position);
         }
 
         #endregion

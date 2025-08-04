@@ -85,7 +85,7 @@ namespace Player.Components
 
         private void OnScoreCollected(int score, Vector3 position)
         {
-            AudioService.Instance?.PlaySoundAtPosition(collectSound, position);
+            AudioService.Instance?.PlaySound(collectSound);
         }
 
         private void OnDeath()

@@ -28,15 +28,6 @@
             </PendingDiffInfo>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/Assets/Scripts/Core/Data/IGameDataService.cs">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/Assets/Scripts/Core/Data/IGameDataService.cs" />
-              <option name="originalContent" value="using System;&#10;using System.Collections.Generic;&#10;using System.Threading.Tasks;&#10;using LevelSelection;&#10;using LevelSelection.Services;&#10;&#10;namespace Core.Data&#10;{&#10;    public interface IGameDataService&#10;    {&#10;        GameData CurrentData { get; }&#10;        void UpdateLives(int lives);&#10;        void UpdateScore(int score);&#10;        void AddFruitCollected();&#10;        void UpdateBestTime(string levelName, float time);&#10;        void UpdateCurrentLevel(string levelName);&#10;        void UnlockLevel(string levelName);&#10;        void ResetAllData();&#10;        void SaveData();&#10;        &#10;        // Level data operations that should go through GameDataService&#10;        void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime);&#10;        Task&lt;List&lt;LevelData&gt;&gt; GetLevelDataAsync(ILevelDiscoveryService discoveryService);&#10;    }&#10;}&#10;" />
-              <option name="updatedContent" value="using System;&#13;&#10;using System.Collections.Generic;&#13;&#10;using System.Threading.Tasks;&#13;&#10;using LevelSelection;&#13;&#10;using LevelSelection.Services;&#13;&#10;&#13;&#10;namespace Core.Data&#13;&#10;{&#13;&#10;    public interface IGameDataService&#13;&#10;    {&#13;&#10;        GameData CurrentData { get; }&#13;&#10;        void UpdateLives(int lives);&#13;&#10;        void UpdateScore(int score);&#13;&#10;        void AddFruitCollected();&#13;&#10;        void UpdateBestTime(string levelName, float time);&#13;&#10;        void UpdateCurrentLevel(string levelName);&#13;&#10;        void UnlockLevel(string levelName);&#13;&#10;        void ResetAllData();&#13;&#10;        void SaveData();&#13;&#10;        void ResetProgressData(); // New method for selective reset&#13;&#10;        event Action&lt;GameData&gt; OnDataChanged;&#13;&#10;        &#13;&#10;        // Level data operations that should go through GameDataService&#13;&#10;        void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime);&#13;&#10;        Task&lt;List&lt;LevelData&gt;&gt; GetLevelDataAsync(ILevelDiscoveryService discoveryService);&#13;&#10;    }&#13;&#10;}" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/Assets/Scripts/Core/Services/AudioManager.cs">
           <value>
             <PendingDiffInfo>
