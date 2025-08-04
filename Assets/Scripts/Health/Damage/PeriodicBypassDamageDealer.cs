@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Core.Events;
+﻿using Core.Events;
 using Health.Interfaces;
 using UnityEngine;
 using VContainer;
@@ -16,9 +15,7 @@ namespace Health.Damage
         [SerializeField] private int damageAmount = 1;
         [SerializeField] private float interval = 3f;
         private IBypassableDamageable _bypassable;
-        private Coroutine _damageRoutine;
         private IEventBus _eventBus;
-        private bool _isLevelCompleted;
 
         [Inject]
         public void Construct(IEventBus eventBus)
@@ -34,43 +31,29 @@ namespace Health.Damage
         private void OnEnable()
         {
             _eventBus?.Subscribe<LevelCompletedEvent>(OnLevelCompleted);
-            _isLevelCompleted = false;
             
             if (_bypassable != null)
-                _damageRoutine = StartCoroutine(DamageLoop());
+            {
+                InvokeRepeating(nameof(DealDamage), 0f, interval);
+            }
         }
         
         private void OnLevelCompleted(LevelCompletedEvent obj)
         {
-            _isLevelCompleted = true;
-            StopDamageRoutine();
+            StopDamage();
         }
 
         private void OnDisable()
         {
-            _isLevelCompleted = true;
-            StopDamageRoutine();
+            StopDamage();
             _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
         }
 
-        private void StopDamageRoutine()
+        private void StopDamage()
         {
-            if (_damageRoutine != null)
-            {
-                StopCoroutine(_damageRoutine);
-                _damageRoutine = null;
-            }
+            CancelInvoke(nameof(DealDamage));
         }
 
-        private IEnumerator DamageLoop()
-        {
-            while (_bypassable != null && !_isLevelCompleted)
-            {
-                _bypassable.DamageBypass(damageAmount);
-                yield return new WaitForSeconds(interval);
-            }
-            
-            _damageRoutine = null;
-        }
+        private void DealDamage() => _bypassable?.DamageBypass(damageAmount);
     }
 }

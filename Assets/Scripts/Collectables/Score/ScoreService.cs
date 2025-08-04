@@ -26,7 +26,6 @@ namespace Collectables.Score
             {
                 Timestamp = Time.time,
                 NewScore = newScore,
-                ScoreChange = amount
             });
         }
         
@@ -44,6 +43,13 @@ namespace Collectables.Score
                 _livesService?.AddLife(collectPosition);
                 Debug.Log("One-up awarded! Player gained an extra life.");
             }
+            
+            // Publish event to update UI
+            _eventBus?.Publish(new ScoreChangedEvent
+            {
+                Timestamp = Time.time,
+                NewScore = CurrentScore,
+            });
         }
         
         public int FruitCollectedCount => _gameDataCoordinator?.GetFruitCollectedCount() ?? 0;

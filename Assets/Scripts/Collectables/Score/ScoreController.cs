@@ -23,15 +23,9 @@ namespace Collectables.Score
         
         private void Start()
         {
-            if (scoreTextView)
-            {
-                _scoreTextView.UpdateCountDisplay(_scoreService.CurrentScore);
-            }
+            _scoreTextView?.UpdateCountDisplay(_scoreService.CurrentScore);
 
-            if (fruitCountHealthView)
-            {
-                _fruitCountHealthView.UpdateCountDisplay(_scoreService.FruitCollectedCount);
-            }
+            _fruitCountHealthView?.UpdateCountDisplay(_scoreService.FruitCollectedCount);
         }
 
         private void OnEnable()
@@ -48,7 +42,8 @@ namespace Collectables.Score
 
         private void OnScoreChanged(ScoreChangedEvent scoreEvent)
         {
-            _scoreTextView?.UpdateCountDisplay(scoreEvent.NewScore);
+            _scoreTextView.UpdateCountDisplay(scoreEvent.NewScore);
+            _fruitCountHealthView.UpdateCountDisplay(_scoreService.FruitCollectedCount);
         }
 
         #region VContainer Injection

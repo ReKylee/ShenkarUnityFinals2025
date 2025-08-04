@@ -58,7 +58,6 @@ namespace Core.Events
     {
         public float Timestamp { get; set; }
         public int NewScore;
-        public int ScoreChange;
     }
 
     public struct GameOverEvent : IGameEvent
