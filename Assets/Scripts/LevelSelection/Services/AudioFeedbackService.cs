@@ -14,13 +14,6 @@ namespace LevelSelection.Services
             _audioSource = audioSource;
         }
 
-        public void PlayNavigationSound()
-        {
-            if (_audioSource)
-            {
-                _audioSource.PlayOneShot(_audioSource.clip);
-            }
-        }
 
         public void PlaySelectionSound()
         {

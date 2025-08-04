@@ -23,11 +23,6 @@ namespace LevelSelection
         [Header("Audio Feedback")] [SerializeField]
         private AudioClip completionSound;
 
-        [Header("UI Feedback")] [SerializeField]
-        private GameObject completionUI;
-
-        [SerializeField] private float uiDisplayDuration = 3f;
-
         private AudioSource _audioSource;
         private GameFlowManager _gameFlowManager;
         private HealthBonusService _healthBonusService;
@@ -40,16 +35,6 @@ namespace LevelSelection
             if (_audioSource == null)
             {
                 _audioSource = gameObject.AddComponent<AudioSource>();
-            }
-
-            // Ensure trigger is set up correctly
-            Collider2D col = GetComponent<Collider2D>();
-            col.isTrigger = true;
-
-            // Hide completion UI initially
-            if (completionUI != null)
-            {
-                completionUI.SetActive(false);
             }
         }
 
@@ -78,12 +63,12 @@ namespace LevelSelection
             // Take control from the player
             if (input)
             {
-                input.enabled = false; // Disable player input
+                input.enabled = false; 
             }
             
             if (rb)
             {
-                rb.linearVelocity = Vector2.zero; // Reset velocity
+                rb.linearVelocity = Vector2.zero; 
             }
 
             // Make the player walk right
@@ -102,23 +87,13 @@ namespace LevelSelection
 
             Debug.Log($"[EndLevelZone] Player completed level: {currentLevelName}");
 
-            // Play completion sound
             if (completionSound && _audioSource)
-            {
                 _audioSource.PlayOneShot(completionSound);
-            }
 
-            // Show completion UI
-            if (completionUI != null)
-            {
-                completionUI.SetActive(true);
-                yield return new WaitForSeconds(uiDisplayDuration);
-                completionUI.SetActive(false);
-            }
+      
 
-            // Calculate health bonus before completing the level
             bool bonusComplete = false;
-            if (_healthBonusService != null)
+            if (_healthBonusService)
             {
                 Debug.Log("[EndLevelZone] Starting health bonus calculation...");
                 _healthBonusService.CalculateHealthBonus(() => bonusComplete = true);
@@ -128,10 +103,8 @@ namespace LevelSelection
                 Debug.Log("[EndLevelZone] Health bonus calculation finished");
             }
 
-            // Wait for completion delay
             yield return new WaitForSeconds(completionDelay);
 
-            // Notify GameFlowManager, which will handle all subsequent logic.
             _gameFlowManager?.CompleteLevel(currentLevelName);
         }
     }

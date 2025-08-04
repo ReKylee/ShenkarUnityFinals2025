@@ -180,7 +180,6 @@ namespace LevelSelection
 
         private void OnLevelNavigation(LevelNavigationEvent navigationEvent)
         {
-            _audioFeedbackService.PlayNavigationSound();
             _selectorService.MoveToCurrentLevel(_navigationService);
         }
 

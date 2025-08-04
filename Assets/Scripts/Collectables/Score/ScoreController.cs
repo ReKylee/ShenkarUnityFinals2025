@@ -24,7 +24,6 @@ namespace Collectables.Score
         private void Start()
         {
             _scoreTextView?.UpdateCountDisplay(_scoreService.CurrentScore);
-
             _fruitCountHealthView?.UpdateCountDisplay(_scoreService.FruitCollectedCount);
         }
 

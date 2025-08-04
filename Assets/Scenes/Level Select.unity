@@ -314,7 +314,7 @@ MonoBehaviour:
   itemSelectSprite: {fileID: 0}
   displayDuration: 2
   waitForInput: 1
-  confirmSound: {fileID: 0}
+  confirmSound: {fileID: 8300000, guid: 4d7bb1ed085f6614cac84a6fc65759e9, type: 3}
   submitAction: {fileID: 392368643174621059, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!1 &427069344
 GameObject:
@@ -397,7 +397,6 @@ MonoBehaviour:
   restartDelay: 2
   victorySceneName: YouWonScene
   victoryTransitionDelay: 3
-  defaultTransition: {fileID: 0}
 --- !u!4 &826091971
 Transform:
   m_ObjectHideFlags: 0

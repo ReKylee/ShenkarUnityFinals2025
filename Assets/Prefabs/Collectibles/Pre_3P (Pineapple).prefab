@@ -61,6 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreAmount: 200
+  collectSfx: {fileID: 8300000, guid: a20beb762b0bcb640a3956e4df3b4f89, type: 3}
 --- !u!212 &6497709145036405411
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreAmount: 50
+  collectSfx: {fileID: 8300000, guid: a20beb762b0bcb640a3956e4df3b4f89, type: 3}
 --- !u!114 &4369275311915148350
 MonoBehaviour:
   m_ObjectHideFlags: 0

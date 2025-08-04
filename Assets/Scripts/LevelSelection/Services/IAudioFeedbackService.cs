@@ -8,7 +8,6 @@ namespace LevelSelection.Services
     public interface IAudioFeedbackService
     {
         void Initialize(AudioSource audioSource);
-        void PlayNavigationSound();
         void PlaySelectionSound();
         void PlayLockedSound();
     }

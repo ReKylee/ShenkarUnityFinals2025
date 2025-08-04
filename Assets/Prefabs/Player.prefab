@@ -115,6 +115,7 @@ GameObject:
   - component: {fileID: 3105674932958471287}
   - component: {fileID: 3058566569831002630}
   - component: {fileID: 5589473384420491251}
+  - component: {fileID: 1543093979302709432}
   - component: {fileID: 3461606106619103986}
   m_Layer: 6
   m_Name: Player
@@ -286,6 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f6792e3b5094917b6df68c23ccea7f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpSfx: {fileID: 0}
 --- !u!114 &644453172252926475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -482,6 +484,26 @@ MonoBehaviour:
   drainDelay: 0.2
   drainInterval: 0.1
   bonusDrainSfx: {fileID: 8300000, guid: fc1e67cdc7fb60b428443b919dccbbb8, type: 3}
+--- !u!114 &1543093979302709432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926891512402252426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cb28e00ec0a41bc92e9e27c91be5d95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpSound: {fileID: 8300000, guid: ddd2cf8f65c943c47af9f653bf96058f, type: 3}
+  collectSound: {fileID: 8300000, guid: a20beb762b0bcb640a3956e4df3b4f89, type: 3}
+  damageSound: {fileID: 8300000, guid: fc1e67cdc7fb60b428443b919dccbbb8, type: 3}
+  deathSound: {fileID: 8300000, guid: b326f8b7d8e610a4f9e0092e1817ed37, type: 3}
+  jumpVolume: 1
+  collectVolume: 1
+  damageVolume: 1
+  deathVolume: 1
 --- !u!82 &3461606106619103986
 AudioSource:
   m_ObjectHideFlags: 0
@@ -491,7 +513,7 @@ AudioSource:
   m_GameObject: {fileID: 3926891512402252426}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300002, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
+  OutputAudioMixerGroup: {fileID: -8890037578601454575, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
