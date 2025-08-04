@@ -104,10 +104,6 @@ namespace Core
             
         }
 
-        private void SaveData()
-        {
-            _gameDataService?.SaveData();
-        }
 
         private void OnPlayerDied(PlayerDeathEvent deathEvent)
         {

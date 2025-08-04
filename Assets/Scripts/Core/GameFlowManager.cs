@@ -349,6 +349,11 @@ namespace Core
             if (livesEvent.CurrentLives == 0)
             {
                 ChangeState(GameState.GameOver);
+                _eventBus?.Publish(new PlayerDeathEvent
+                {
+                    DeathPosition = PlayerLocator.PlayerTransform.position,
+                    Timestamp = Time.time
+                });
                 _eventBus?.Publish(new GameOverEvent { Timestamp = Time.time });
             }
             else if (livesEvent.PreviousLives > livesEvent.CurrentLives)
