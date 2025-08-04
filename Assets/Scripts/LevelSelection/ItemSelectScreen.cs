@@ -34,10 +34,7 @@ namespace LevelSelection
         private void Awake()
         {
             _audioSource = GetComponent<AudioSource>();
-            if (!_audioSource)
-            {
-                _audioSource = gameObject.AddComponent<AudioSource>();
-            }
+         
 
             // Setup the item select sprite if available
             if (itemSelectSprite && itemSelectImage)

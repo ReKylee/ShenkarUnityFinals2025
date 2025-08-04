@@ -326,6 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882c547d7da387d4db4fe81ebb334bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugMode: 0
 --- !u!114 &3959446506065792497
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -536,7 +537,7 @@ MonoBehaviour:
   transformSound:
     clip: {fileID: 8300000, guid: e22eee95247348645a0114e891a6d180, type: 3}
     mixerGroup: {fileID: -8890037578601454575, guid: 12da9683c55c81b4d87361c4f768ea9d, type: 2}
-    volume: 1
+    volume: 0.6
     pitch: 1
     randomVolumeVariance: 0
     randomPitchVariance: 0

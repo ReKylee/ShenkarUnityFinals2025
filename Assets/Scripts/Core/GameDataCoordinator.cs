@@ -201,6 +201,11 @@ namespace Core
             if (!_isInitialized) return;
             _gameDataService?.AddFruitCollected();
             _gameDataService?.SaveData();
+            _eventBus?.Publish(new ScoreChangedEvent
+            {
+                NewScore = GetCurrentScore(),
+                Timestamp = Time.time
+            });
         }
 
         public async Task<List<LevelData>> DiscoverLevelsAsync()
