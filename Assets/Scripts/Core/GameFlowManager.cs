@@ -160,14 +160,11 @@ namespace Core
             // Update level progress through GameDataCoordinator
             _gameDataCoordinator?.UpdateLevelProgress(levelEvent.LevelName, true, levelEvent.CompletionTime);
             
-            // Also update it in GameData for immediate checking
-            var gameData = _gameDataCoordinator?.GetCurrentData();
-            if (gameData != null && !gameData.completedLevels.Contains(levelEvent.LevelName))
+            // Check if level is already completed to avoid duplicate additions
+            if (_gameDataCoordinator && !_gameDataCoordinator.IsLevelCompleted(levelEvent.LevelName))
             {
-                gameData.completedLevels.Add(levelEvent.LevelName);
-                
                 // Unlock next level if it exists
-                UnlockNextLevel(levelEvent.LevelName, gameData);
+                UnlockNextLevel(levelEvent.LevelName);
             }
             
             if (await IsGameCompletedAsync())
@@ -182,7 +179,7 @@ namespace Core
             }
         }
 
-        private void UnlockNextLevel(string completedLevelName, GameData gameData)
+        private void UnlockNextLevel(string completedLevelName)
         {
             // Simple next level unlocking logic - you can make this more sophisticated
             if (completedLevelName.Contains("Level_"))
@@ -190,9 +187,9 @@ namespace Core
                 var levelNumber = ExtractLevelNumber(completedLevelName);
                 var nextLevelName = $"Level_{levelNumber + 1:D2}";
                 
-                if (!gameData.unlockedLevels.Contains(nextLevelName))
+                if (!_gameDataCoordinator.IsLevelUnlocked(nextLevelName))
                 {
-                    gameData.unlockedLevels.Add(nextLevelName);
+                    _gameDataCoordinator.UnlockLevel(nextLevelName);
                     Debug.Log($"[GameFlowManager] Unlocked next level: {nextLevelName}");
                 }
             }
@@ -213,10 +210,6 @@ namespace Core
         {
             try
             {
-                // Check using GameData completed levels through GameDataCoordinator
-                var gameData = _gameDataCoordinator?.GetCurrentData();
-                if (gameData == null) return false;
-
                 // Get all available levels through GameDataCoordinator
                 var allLevels = await _gameDataCoordinator.DiscoverLevelsAsync();
                 
@@ -226,11 +219,15 @@ namespace Core
                     return false;
                 }
 
+                // Get completed levels using wrapper method
+                var completedLevels = _gameDataCoordinator?.GetCompletedLevels();
+                if (completedLevels == null) return false;
+
                 // Check if all levels are in the completed list
                 var completedCount = 0;
                 foreach (var level in allLevels)
                 {
-                    if (gameData.completedLevels.Contains(level.levelName))
+                    if (completedLevels.Contains(level.levelName))
                     {
                         completedCount++;
                     }
@@ -244,7 +241,7 @@ namespace Core
                     return true;
                 }
 
-                var remainingLevels = allLevels.Where(l => !gameData.completedLevels.Contains(l.levelName)).Select(l => l.levelName);
+                var remainingLevels = allLevels.Where(l => !completedLevels.Contains(l.levelName)).Select(l => l.levelName);
                 Debug.Log($"[GameFlowManager] Remaining levels: {string.Join(", ", remainingLevels)}");
                 return false;
             }

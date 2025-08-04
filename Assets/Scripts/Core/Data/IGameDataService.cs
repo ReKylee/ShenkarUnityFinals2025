@@ -12,7 +12,7 @@ namespace Core.Data
         void UpdateLives(int lives);
         void UpdateScore(int score);
         void AddFruitCollected();
-        void UpdateBestTime(float time);
+        void UpdateBestTime(string levelName, float time);
         void UpdateCurrentLevel(string levelName);
         void ResetAllData();
         void SaveData();

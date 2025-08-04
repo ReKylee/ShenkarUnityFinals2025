@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Core;
+using Core.Data;
 using Core.Events;
 using LevelSelection.Services;
 using UnityEngine;
@@ -185,7 +186,9 @@ namespace LevelSelection
         private void OnLevelSelected(LevelSelectedEvent selectionEvent)
         {
             LevelData levelData = _navigationService.CurrentLevel;
-            if (levelData != null && !levelData.isUnlocked)
+            bool isUnlocked = _gameDataCoordinator?.IsLevelUnlocked(levelData?.levelName) ?? false;
+            
+            if (levelData != null && !isUnlocked)
             {
                 _audioFeedbackService.PlayLockedSound();
                 return;

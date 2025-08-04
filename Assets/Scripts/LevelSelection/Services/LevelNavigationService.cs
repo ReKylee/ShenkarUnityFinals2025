@@ -34,8 +34,7 @@ namespace LevelSelection.Services
             _levelData = levelData;
 
             // Load saved selection from game data coordinator
-            GameData gameData = _gameDataCoordinator?.GetCurrentData();
-            int savedIndex = gameData?.selectedLevelIndex ?? 0;
+            int savedIndex = _gameDataCoordinator?.GetSelectedLevelIndex() ?? 0;
             CurrentIndex = Mathf.Clamp(savedIndex, 0, levelData.Count - 1);
 
             Debug.Log(
@@ -68,10 +67,12 @@ namespace LevelSelection.Services
 
             LevelData selectedLevel = _levelData[CurrentIndex];
 
-            Debug.Log(
-                $"[LevelNavigationService] Attempting to select level: {selectedLevel.levelName} (Unlocked: {selectedLevel.isUnlocked})");
+            bool isUnlocked = _gameDataCoordinator?.IsLevelUnlocked(selectedLevel.levelName) ?? false;
 
-            if (!selectedLevel.isUnlocked)
+            Debug.Log(
+                $"[LevelNavigationService] Attempting to select level: {selectedLevel.levelName} (Unlocked: {isUnlocked})");
+
+            if (!isUnlocked)
             {
                 Debug.Log($"[LevelNavigationService] Level {selectedLevel.levelName} is locked");
                 return;

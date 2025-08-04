@@ -65,8 +65,6 @@ namespace Core.Data
                 score = 0,
                 currentLevel = "Level_01",
                 bestTime = float.MaxValue,
-                hasFireball = false,
-                hasAxe = false,
                 musicVolume = 1.0f,
                 sfxVolume = 1.0f
             };

@@ -61,10 +61,6 @@ namespace LevelSelection
                 sceneName = sceneName,
                 levelIndex = levelIndex,
                 mapPosition = transform.position,
-                // Runtime data will be populated from GameData
-                isUnlocked = false,
-                isCompleted = false,
-                bestTime = float.MaxValue
             };
     }
 }

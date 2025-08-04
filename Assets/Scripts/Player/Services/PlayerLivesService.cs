@@ -13,13 +13,12 @@ namespace Player.Services
         public PlayerLivesService(GameDataCoordinator gameDataCoordinator)
         {
             _gameDataCoordinator = gameDataCoordinator;
-            MaxLives = GameData.MaxLives;
-
             Debug.Log("[PlayerLivesService] Initialized with max lives: " + MaxLives);
         }
 
-        public int CurrentLives => _gameDataCoordinator.GetCurrentData()?.lives ?? MaxLives;
-        public int MaxLives { get; }
+        public int CurrentLives => _gameDataCoordinator.GetCurrentLives();
+
+        public int MaxLives => GameData.MaxLives;
         public bool HasLivesRemaining => CurrentLives > 0;
 
         public event Action<int> OnLivesChanged;

@@ -124,7 +124,7 @@ namespace Core
 
         private void OnLevelCompleted(LevelCompletedEvent levelEvent)
         {
-            _gameDataService?.UpdateBestTime(levelEvent.CompletionTime);
+            _gameDataService?.UpdateBestTime(levelEvent.LevelName, levelEvent.CompletionTime);
             _autoSaveService?.RequestSave();
         }
 
@@ -207,14 +207,65 @@ namespace Core
 
         public GameData GetCurrentData()
         {
-            if (!_isInitialized) return null;
-            return _gameDataService?.CurrentData;
+            return !_isInitialized ? null : _gameDataService?.CurrentData;
         }
 
         public void ResetAllData()
         {
             if (!_isInitialized) return;
             _gameDataService?.ResetAllData();
+        }
+
+        // Wrapper methods for GameData operations 
+        public bool IsLevelUnlocked(string levelName)
+        {
+            return GetCurrentData()?.IsLevelUnlocked(levelName) ?? false;
+        }
+
+        public bool IsLevelCompleted(string levelName)
+        {
+            return GetCurrentData()?.IsLevelCompleted(levelName) ?? false;
+        }
+
+        public float GetLevelBestTime(string levelName)
+        {
+            return GetCurrentData()?.GetLevelBestTime(levelName) ?? float.MaxValue;
+        }
+
+        public int GetLevelBestScore(string levelName)
+        {
+            return GetCurrentData()?.GetLevelBestScore(levelName) ?? 0;
+        }
+
+        // Additional wrapper methods to avoid GetCurrentData() calls
+        public int GetCurrentLives()
+        {
+            return GetCurrentData()?.lives ?? GameData.MaxLives;
+        }
+
+        public List<string> GetUnlockedLevels()
+        {
+            return GetCurrentData()?.unlockedLevels ?? new List<string> { "Level_01" };
+        }
+
+        public List<string> GetCompletedLevels()
+        {
+            return GetCurrentData()?.completedLevels ?? new List<string>();
+        }
+
+        public int GetSelectedLevelIndex()
+        {
+            return GetCurrentData()?.selectedLevelIndex ?? 0;
+        }
+
+        public void UnlockLevel(string levelName)
+        {
+            var gameData = GetCurrentData();
+            if (gameData != null && !string.IsNullOrEmpty(levelName) && !gameData.unlockedLevels.Contains(levelName))
+            {
+                gameData.unlockedLevels.Add(levelName);
+                Debug.Log($"[GameDataCoordinator] Unlocked level: {levelName}");
+            }
         }
     }
 }

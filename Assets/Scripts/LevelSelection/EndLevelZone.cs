@@ -17,7 +17,6 @@ namespace LevelSelection
         private string currentLevelName;
 
         [SerializeField] private string nextLevelName;
-        [SerializeField] private bool autoReturnToLevelSelect = true;
         [SerializeField] private float completionDelay = 2f;
 
         [Header("Audio Feedback")] [SerializeField]

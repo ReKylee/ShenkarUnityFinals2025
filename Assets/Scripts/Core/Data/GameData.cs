@@ -29,10 +29,6 @@ namespace Core.Data
         
         public float bestTime = float.MaxValue; // Overall best time
 
-        [Header("Power-ups")] 
-        public bool hasFireball;
-        public bool hasAxe;
-
         [Header("Settings")] 
         public float musicVolume = 1.0f;
         public float sfxVolume = 1.0f;
@@ -42,7 +38,7 @@ namespace Core.Data
 
         // Cached level discovery data
         public List<LevelData> cachedLevelData = new();
-        public bool levelDataCacheValid = false;
+        public bool levelDataCacheValid;
 
         // Constructor for easy initialization
         public GameData()
@@ -58,8 +54,6 @@ namespace Core.Data
             maxScore = other.maxScore;
             currentLevel = other.currentLevel;
             bestTime = other.bestTime;
-            hasFireball = other.hasFireball;
-            hasAxe = other.hasAxe;
             musicVolume = other.musicVolume;
             sfxVolume = other.sfxVolume;
             fruitCollected = other.fruitCollected;
@@ -81,8 +75,6 @@ namespace Core.Data
             maxScore = 0;
             currentLevel = "Level_01";
             bestTime = float.MaxValue;
-            hasFireball = false;
-            hasAxe = false;
             musicVolume = 1.0f;
             sfxVolume = 1.0f;
             fruitCollected = 0;
@@ -146,7 +138,7 @@ namespace Core.Data
         /// </summary>
         public float GetLevelBestTime(string levelName)
         {
-            return LevelBestTimes.TryGetValue(levelName, out float time) ? time : float.MaxValue;
+            return LevelBestTimes.GetValueOrDefault(levelName, float.MaxValue);
         }
 
         /// <summary>
@@ -154,7 +146,23 @@ namespace Core.Data
         /// </summary>
         public int GetLevelBestScore(string levelName)
         {
-            return LevelBestScores.TryGetValue(levelName, out int score) ? score : 0;
+            return LevelBestScores.GetValueOrDefault(levelName, 0);
+        }
+
+        /// <summary>
+        /// Check if a level is unlocked
+        /// </summary>
+        public bool IsLevelUnlocked(string levelName)
+        {
+            return !string.IsNullOrEmpty(levelName) && unlockedLevels.Contains(levelName);
+        }
+
+        /// <summary>
+        /// Check if a level is completed
+        /// </summary>
+        public bool IsLevelCompleted(string levelName)
+        {
+            return !string.IsNullOrEmpty(levelName) && completedLevels.Contains(levelName);
         }
 
         private static GameData CreateDefaultData() =>
@@ -164,8 +172,6 @@ namespace Core.Data
                 score = 0,
                 currentLevel = "Level_01",
                 bestTime = float.MaxValue,
-                hasFireball = false,
-                hasAxe = false,
                 musicVolume = 1.0f,
                 sfxVolume = 1.0f,
                 fruitCollected = 0,

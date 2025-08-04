@@ -42,13 +42,24 @@ namespace Core.Data
             NotifyDataChanged();
         }
 
-        public void UpdateBestTime(float time)
+        public void UpdateBestTime(string levelName, float time)
         {
-            if (time < CurrentData.bestTime)
+            var gameData = CurrentData;
+            if (gameData == null) return;
+
+            // Update overall best time
+            if (time < gameData.bestTime)
             {
-                CurrentData.bestTime = time;
-                NotifyDataChanged();
+                gameData.bestTime = time;
             }
+
+            // Update per-level best time
+            if (!gameData.LevelBestTimes.ContainsKey(levelName) || time < gameData.LevelBestTimes[levelName])
+            {
+                gameData.LevelBestTimes[levelName] = time;
+            }
+
+            NotifyDataChanged();
         }
 
         public void ResetAllData()
@@ -72,17 +83,20 @@ namespace Core.Data
         public void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime)
         {
             var gameData = CurrentData;
-            if (gameData?.cachedLevelData == null) return;
+            if (gameData == null) return;
 
-            var level = gameData.cachedLevelData.FirstOrDefault(l => l.levelName == levelName);
-            if (level != null)
+            // Update completed levels list
+            if (isCompleted && !gameData.completedLevels.Contains(levelName))
             {
-                level.isCompleted = isCompleted;
-                if (completionTime < level.bestTime)
-                {
-                    level.bestTime = completionTime;
-                }
+                gameData.completedLevels.Add(levelName);
             }
+
+            // Update best time
+            if (!gameData.LevelBestTimes.ContainsKey(levelName) || completionTime < gameData.LevelBestTimes[levelName])
+            {
+                gameData.LevelBestTimes[levelName] = completionTime;
+            }
+
             NotifyDataChanged();
         }
 
@@ -107,26 +121,9 @@ namespace Core.Data
 
         private List<LevelData> ApplyGameStateToLevelData(List<LevelData> baseLevelData)
         {
-            var gameData = CurrentData;
-            if (gameData == null) return baseLevelData;
-
-            var result = new List<LevelData>();
-            foreach (var levelData in baseLevelData)
-            {
-                var copy = new LevelData
-                {
-                    levelName = levelData.levelName,
-                    sceneName = levelData.sceneName,
-                    mapPosition = levelData.mapPosition,
-                    displayName = levelData.displayName,
-                    levelIndex = levelData.levelIndex,
-                    isUnlocked = gameData.unlockedLevels.Contains(levelData.levelName),
-                    isCompleted = gameData.completedLevels.Contains(levelData.levelName),
-                    bestTime = gameData.LevelBestTimes.GetValueOrDefault(levelData.levelName, float.MaxValue)
-                };
-                result.Add(copy);
-            }
-            return result;
+            // No need to modify LevelData anymore since state is stored separately
+            // Just return the base level data as-is
+            return baseLevelData;
         }
 
         private void NotifyDataChanged()
