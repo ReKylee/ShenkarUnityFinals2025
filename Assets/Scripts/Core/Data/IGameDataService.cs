@@ -14,6 +14,7 @@ namespace Core.Data
         void AddFruitCollected();
         void UpdateBestTime(string levelName, float time);
         void UpdateCurrentLevel(string levelName);
+        void UnlockLevel(string levelName);
         void ResetAllData();
         void SaveData();
         event Action<GameData> OnDataChanged;

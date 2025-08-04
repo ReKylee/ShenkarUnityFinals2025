@@ -272,12 +272,8 @@ namespace Core
 
         public void UnlockLevel(string levelName)
         {
-            var gameData = GetCurrentData();
-            if (gameData != null && !string.IsNullOrEmpty(levelName) && !gameData.unlockedLevels.Contains(levelName))
-            {
-                gameData.unlockedLevels.Add(levelName);
-                Debug.Log($"[GameDataCoordinator] Unlocked level: {levelName}");
-            }
+            if (!_isInitialized) return;
+            _gameDataService?.UnlockLevel(levelName);
         }
 
         public int GetCurrentScore()

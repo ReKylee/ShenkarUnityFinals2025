@@ -101,6 +101,15 @@ namespace Core.Data
             NotifyDataChanged();
         }
 
+        public void UnlockLevel(string levelName)
+        {
+            if (CurrentData != null && !string.IsNullOrEmpty(levelName) && !CurrentData.unlockedLevels.Contains(levelName))
+            {
+                CurrentData.unlockedLevels.Add(levelName);
+                NotifyDataChanged();
+            }
+        }
+
         public async Task<List<LevelData>> GetLevelDataAsync(ILevelDiscoveryService discoveryService)
         {
             if (CurrentData.levelDataCacheValid && CurrentData.cachedLevelData.Any())

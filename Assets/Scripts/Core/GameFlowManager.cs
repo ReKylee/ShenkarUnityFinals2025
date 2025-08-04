@@ -156,17 +156,19 @@ namespace Core
         private async void OnLevelCompleted(LevelCompletedEvent levelEvent)
         {
             ChangeState(GameState.Victory);
-            
-            // Update level progress through GameDataCoordinator
-            _gameDataCoordinator?.UpdateLevelProgress(levelEvent.LevelName, true, levelEvent.CompletionTime);
-            
-            // Check if level is already completed to avoid duplicate additions
-            if (_gameDataCoordinator && !_gameDataCoordinator.IsLevelCompleted(levelEvent.LevelName))
+
+            // First, check if the level was already completed
+            bool wasAlreadyCompleted = _gameDataCoordinator.IsLevelCompleted(levelEvent.LevelName);
+
+            // Now, update the progress (marks as complete, updates best time, etc.)
+            _gameDataCoordinator.UpdateLevelProgress(levelEvent.LevelName, true, levelEvent.CompletionTime);
+
+            // If it's the first time completing this level, unlock the next one
+            if (!wasAlreadyCompleted)
             {
-                // Unlock next level if it exists
-                UnlockNextLevel(levelEvent.LevelName);
+                await UnlockNextLevelByIndex(levelEvent.LevelName);
             }
-            
+
             if (await IsGameCompletedAsync())
             {
                 Debug.Log("[GameFlowManager] All levels completed! Transitioning to YouWonScene...");
@@ -179,31 +181,25 @@ namespace Core
             }
         }
 
-        private void UnlockNextLevel(string completedLevelName)
+        private async Task UnlockNextLevelByIndex(string completedLevelName)
         {
-            // Simple next level unlocking logic - you can make this more sophisticated
-            if (completedLevelName.Contains("Level_"))
+            var allLevels = await _gameDataCoordinator.DiscoverLevelsAsync();
+            if (allLevels == null || allLevels.Count == 0) return;
+
+            var completedLevel = allLevels.FirstOrDefault(l => l.levelName == completedLevelName);
+            if (completedLevel == null) return;
+
+            int nextLevelIndex = completedLevel.levelIndex + 1;
+
+            if (nextLevelIndex < allLevels.Count)
             {
-                var levelNumber = ExtractLevelNumber(completedLevelName);
-                var nextLevelName = $"Level_{levelNumber + 1:D2}";
-                
-                if (!_gameDataCoordinator.IsLevelUnlocked(nextLevelName))
+                var nextLevel = allLevels.FirstOrDefault(l => l.levelIndex == nextLevelIndex);
+                if (nextLevel != null && !_gameDataCoordinator.IsLevelUnlocked(nextLevel.levelName))
                 {
-                    _gameDataCoordinator.UnlockLevel(nextLevelName);
-                    Debug.Log($"[GameFlowManager] Unlocked next level: {nextLevelName}");
+                    _gameDataCoordinator.UnlockLevel(nextLevel.levelName);
+                    Debug.Log($"[GameFlowManager] Unlocked next level: {nextLevel.levelName}");
                 }
             }
-        }
-
-        private int ExtractLevelNumber(string levelName)
-        {
-            // Extract number from level name like "Level_01" -> 1
-            var parts = levelName.Split('_');
-            if (parts.Length > 1 && int.TryParse(parts[1], out int levelNum))
-            {
-                return levelNum;
-            }
-            return 0;
         }
 
         private async Task<bool> IsGameCompletedAsync()
