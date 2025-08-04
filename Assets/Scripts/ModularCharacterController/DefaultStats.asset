@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09f7762ca142e944e93a1b5a54eaa5d2, type: 3}
   m_Name: DefaultStats
   m_EditorClassIdentifier: 
-  walkSpeed: 5
-  runSpeed: 6
+  walkSpeed: 6
+  runSpeed: 7
   groundAcceleration: 70
   groundDeceleration: 70
   airAcceleration: 30

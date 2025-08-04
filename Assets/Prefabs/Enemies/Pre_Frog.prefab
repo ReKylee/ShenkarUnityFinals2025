@@ -206,7 +206,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  triggerDistance: 3
+  triggerDistance: 5
   jumpCooldown: 2
   checkEveryNFrames: 1
 --- !u!114 &8784579566725351732
