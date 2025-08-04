@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Audio.Services;
 using Core.Events;
 using LevelSelection;
 using LevelSelection.Services;
@@ -173,6 +174,7 @@ namespace Core
         {
             ChangeState(GameState.GameOver);
             _gameDataCoordinator?.ResetAllData();
+            AudioService.Instance?.StopAll();
             await Task.Delay(TimeSpan.FromSeconds(restartDelay));
             _sceneLoadService?.LoadLevel("StartScene");
         }

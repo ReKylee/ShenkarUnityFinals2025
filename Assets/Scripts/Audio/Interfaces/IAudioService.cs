@@ -11,6 +11,7 @@ namespace Audio.Interfaces
         void PlaySoundAtPosition(AudioClip clip, Vector3 position, float volume = 1f, float pitch = 1f);
         void PlayMusic(AudioClip clip, float volume = 1f, bool loop = true);
         void StopMusic();
+        void StopAll();
         void SetMasterVolume(float volume);
         void SetSFXVolume(float volume);
         void SetMusicVolume(float volume);

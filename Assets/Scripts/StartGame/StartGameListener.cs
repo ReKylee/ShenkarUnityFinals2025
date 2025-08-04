@@ -1,4 +1,6 @@
-﻿using InputSystem;
+﻿using Audio.Interfaces;
+using Audio.Services;
+using InputSystem;
 using LevelSelection.Services;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,6 +15,7 @@ namespace StartGame
 
         public void Start()
         {
+            AudioService.Instance?.StopAll();
             _submitAction = new InputSystem_Actions();
             _submitAction.UI.Submit.performed += StartGame;
             _submitAction.UI.Submit.Enable();
