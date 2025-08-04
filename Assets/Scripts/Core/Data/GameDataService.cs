@@ -32,8 +32,21 @@ namespace Core.Data
 
         public void UpdateScore(int score)
         {
+            int previousScore = CurrentData.score;
             CurrentData.score = score;
+            
+            // Update maxScore if current score is higher
+            if (score > CurrentData.maxScore)
+            {
+                CurrentData.maxScore = score;
+                Debug.Log($"[GameDataService] New high score achieved: {score}");
+            }
+            
+            Debug.Log($"[GameDataService] Score updated: {previousScore} -> {score}, MaxScore: {CurrentData.maxScore}");
             NotifyDataChanged();
+            
+            // Force save on score changes to ensure persistence
+            SaveData();
         }
 
 
@@ -72,11 +85,10 @@ namespace Core.Data
 
         public void ResetProgressData()
         {
-            // Reset only player progress data, preserve score and level progress
-            CurrentData.lives = GameData.MaxLives;
+            // Reset only level-specific progress data, preserve lives, score and fruit count
             CurrentData.currentLevel = "";
             CurrentData.selectedLevelIndex = 0;
-            // Note: Score, maxScore, unlockedLevels, completedLevels, and best times are preserved
+            // Note: Lives, score, maxScore, fruitCollected, unlockedLevels, completedLevels, and best times are preserved
             NotifyDataChanged();
         }
 
