@@ -198,7 +198,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: -913324069
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &280904684
@@ -361,20 +361,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoActivateOnStart: 1
-  config:
-    gridWidth: 4
-    selectorMoveSpeed: 5
-    snapThreshold: 0.1
-    navigationSound: {fileID: 0}
-    selectionSound: {fileID: 0}
-    lockedSound: {fileID: 0}
-    itemSelectDisplayDuration: 2
-    waitForInputOnItemSelect: 1
-    transitionDuration: 1
-    nesTransitionColors:
-    - {r: 0, g: 0, b: 0, a: 1}
-    - {r: 0.2, g: 0.2, b: 0.3, a: 1}
-    - {r: 0.1, g: 0.1, b: 0.2, a: 1}
   selectorObject: {fileID: 1557029093}
   itemSelectScreen: {fileID: 341388796}
   navigateAction: {fileID: -8784545083839296357, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
@@ -410,6 +396,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoStartGame: 1
   restartDelay: 2
+  victorySceneName: YouWonScene
+  victoryTransitionDelay: 3
 --- !u!4 &826091971
 Transform:
   m_ObjectHideFlags: 0
@@ -450,7 +438,7 @@ Transform:
   m_GameObject: {fileID: 945917330}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -764,8 +752,7 @@ MonoBehaviour:
   levelName: l2
   displayName: l2
   sceneName: Level2
-  startUnlocked: 0
-  overrideGameData: 0
+  levelIndex: 1
 --- !u!1 &1557029093
 GameObject:
   m_ObjectHideFlags: 0
@@ -863,7 +850,7 @@ Transform:
   m_GameObject: {fileID: 1557029093}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.4375, y: -4.125, z: 1}
+  m_LocalPosition: {x: -5.4375, y: -4.125, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1126,8 +1113,7 @@ MonoBehaviour:
   levelName: l1
   displayName: l1
   sceneName: Level1
-  startUnlocked: 1
-  overrideGameData: 0
+  levelIndex: 0
 --- !u!1 &2119765251
 GameObject:
   m_ObjectHideFlags: 0
@@ -1157,7 +1143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: decb673581d64d1889a3725d8d3cc9db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoSaveInterval: 30
+  resetGameData: 0
 --- !u!4 &2119765253
 Transform:
   m_ObjectHideFlags: 0

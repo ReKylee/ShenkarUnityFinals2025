@@ -102,16 +102,6 @@ namespace Core
             });
         }
 
-        public void CompleteLevel(float completionTime)
-        {
-            _eventBus?.Publish(new LevelCompletedEvent
-            {
-                LevelName = _currentLevelName,
-                CompletionTime = completionTime,
-                Timestamp = Time.time
-            });
-        }
-
         public void RequestLevelLoad(string levelName, string sceneName)
         {
             _eventBus?.Publish(new LevelLoadRequestedEvent

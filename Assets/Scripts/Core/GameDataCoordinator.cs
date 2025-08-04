@@ -12,7 +12,12 @@ namespace Core
 {
     public class GameDataCoordinator : MonoBehaviour
     {
-        [SerializeField] private float autoSaveInterval = 30;
+        
+#if UNITY_EDITOR
+        [Header("Debug")]
+        [SerializeField] private bool resetGameData;
+#endif
+        
         private IAutoSaveService _autoSaveService;
         private IEventBus _eventBus;
         private IGameDataService _gameDataService;
@@ -46,20 +51,26 @@ namespace Core
             _eventBus?.Subscribe<PlayerDeathEvent>(OnPlayerDied);
             _eventBus?.Subscribe<LevelSelectedEvent>(OnLevelSelected);
             _eventBus?.Subscribe<LevelNavigationEvent>(OnLevelNavigation);
+        }
 
-            if (_gameDataService != null)
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (resetGameData)
             {
-                _gameDataService.OnDataChanged += OnGameDataChanged;
-                _previousLives = _gameDataService.CurrentData.lives;
-            }
-
-            if (_autoSaveService != null)
-            {
-                _autoSaveService.OnSaveRequested += SaveData;
-                _autoSaveService.SaveInterval = autoSaveInterval;
-                _autoSaveService.IsEnabled = true;
+                if (_gameDataService != null)
+                {
+                    _gameDataService.ResetAllData();
+                    Debug.Log("Game data has been reset.");
+                }
+                else
+                {
+                    Debug.LogWarning("GameDataService not available. Cannot reset game data.");
+                }
+                resetGameData = false;
             }
         }
+#endif
 
         private void SaveData()
         {
@@ -75,17 +86,12 @@ namespace Core
 
         private void OnDestroy()
         {
-            if (!_isInitialized) return;
-
-            if (_eventBus != null)
-            {
-                _eventBus.Unsubscribe<PlayerDeathEvent>(OnPlayerDied);
-                _eventBus.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
-                _eventBus.Unsubscribe<LevelStartedEvent>(OnLevelStarted);
-                _eventBus.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
-                _eventBus.Unsubscribe<LevelSelectedEvent>(OnLevelSelected);
-                _eventBus.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
-            }
+            _eventBus?.Unsubscribe<LevelCompletedEvent>(OnLevelCompleted);
+            _eventBus?.Unsubscribe<LevelStartedEvent>(OnLevelStarted);
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+            _eventBus?.Unsubscribe<PlayerDeathEvent>(OnPlayerDied);
+            _eventBus?.Unsubscribe<LevelSelectedEvent>(OnLevelSelected);
+            _eventBus?.Unsubscribe<LevelNavigationEvent>(OnLevelNavigation);
 
             if (_gameDataService != null)
                 _gameDataService.OnDataChanged -= OnGameDataChanged;

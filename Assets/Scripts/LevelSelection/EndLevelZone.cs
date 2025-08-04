@@ -78,6 +78,11 @@ namespace LevelSelection
             {
                 input.enabled = false; // Disable player input
             }
+            
+            if (rb)
+            {
+                rb.linearVelocity = Vector2.zero; // Reset velocity
+            }
 
             // Make the player walk right
             const float walkDuration = 1.3f;
@@ -89,8 +94,8 @@ namespace LevelSelection
                     rb.linearVelocityX = 2f;
                 }
 
-                timer += Time.deltaTime;
-                yield return null;
+                timer += Time.fixedDeltaTime;
+                yield return new WaitForFixedUpdate();
             }
 
             Debug.Log($"[EndLevelZone] Player completed level: {currentLevelName}");

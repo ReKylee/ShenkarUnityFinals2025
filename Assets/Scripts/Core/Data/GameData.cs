@@ -40,7 +40,7 @@ namespace Core.Data
         [Header("Collectables")] 
         public int fruitCollected;
 
-        // Cached level discovery data - now using LevelData instead of LevelPoint
+        // Cached level discovery data
         public List<LevelData> cachedLevelData = new();
         public bool levelDataCacheValid = false;
 
