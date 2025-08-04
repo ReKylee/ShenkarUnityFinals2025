@@ -450,7 +450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1
-  damageInterval: 1
+  interval: 3
 --- !u!114 &3058566569831002630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -479,8 +479,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pointsPerHp: 100
-  drainDelay: 0.5
-  drainInterval: 0.3
+  drainDelay: 0.2
+  drainInterval: 0.1
   bonusDrainSfx: {fileID: 8300000, guid: fc1e67cdc7fb60b428443b919dccbbb8, type: 3}
 --- !u!82 &3461606106619103986
 AudioSource:

@@ -16,7 +16,7 @@ namespace Player.Services
         [Header("Bonus Settings")]
         [SerializeField] private int pointsPerHp = 100;
         [SerializeField] private float drainDelay = 0.2f;
-        [SerializeField] private float drainInterval = 0.05f;
+        [SerializeField] private float drainInterval = 0.1f;
         
         [Header("Audio")]
         [SerializeField] private AudioClip bonusDrainSfx;
@@ -79,19 +79,17 @@ namespace Player.Services
             // Wait before starting the drain
             yield return new WaitForSeconds(drainDelay);
             
-            int totalBonus = remainingHp * pointsPerHp;
-            Debug.Log($"[HealthBonusService] Total bonus to award: {totalBonus} points");
-            
             // Drain each HP point individually
-            for (int i = 0; i <= remainingHp; i++)
+            for (int i = 0; i < remainingHp; i++)
             {
                 // Award points for this HP
                 _scoreService?.AddScore(pointsPerHp);
                 
-                // Reduce health by 1 (visual only)
-                _healthView?.UpdateDisplay(
-                    Mathf.Max(_healthController.CurrentHp - i, 0), 
-                    _healthController.MaxHp);
+                // Calculate remaining health after draining this HP point
+                int healthAfterDrain = remainingHp - (i + 1);
+                
+                // Update health display (visual only)
+                _healthView?.UpdateDisplay(healthAfterDrain, _healthController.MaxHp);
 
                 // Play drain sound effect
                 if (bonusDrainSfx && _audioSource)
