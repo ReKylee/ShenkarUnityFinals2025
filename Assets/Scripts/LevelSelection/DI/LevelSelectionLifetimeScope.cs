@@ -37,7 +37,7 @@ namespace LevelSelection.DI
             builder.Register<IInputFilterService, InputFilterService>(Lifetime.Scoped);
             builder.Register<IAudioFeedbackService, AudioFeedbackService>(Lifetime.Scoped);
             builder.Register<IItemSelectService, ItemSelectService>(Lifetime.Scoped);
-            builder.Register<ISceneLoadService, SceneLoadService>(Lifetime.Scoped);
+            builder.RegisterComponentInHierarchy<SceneLoadService>().As<ISceneLoadService>();
 
             // Register the main controller
             builder.RegisterComponentInHierarchy<LevelSelectionController>();

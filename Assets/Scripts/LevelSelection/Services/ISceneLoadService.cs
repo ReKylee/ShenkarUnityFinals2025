@@ -14,27 +14,15 @@ namespace LevelSelection.Services
     }
 
     /// <summary>
-    ///     Scene loading service that uses EasyTransitions for smooth transitions
+    ///     MonoBehaviour scene loading service that uses EasyTransitions for smooth transitions
+    ///     Should be placed on the same GameObject as the TransitionManager
     /// </summary>
-    public class SceneLoadService : ISceneLoadService
+    public class SceneLoadService : MonoBehaviour, ISceneLoadService
     {
-        private TransitionSettings _defaultTransition;
+        [Header("Transition Settings")]
+        [SerializeField] private TransitionSettings defaultTransition;
+
         private const float DefaultTransitionDelay = 0f;
-
-        public SceneLoadService()
-        {
-        }
-
-        // Constructor with TransitionSettings (for manual instantiation)
-        public SceneLoadService(TransitionSettings transitionSettings)
-        {
-            _defaultTransition = transitionSettings;
-        }
-
-        public void Initialize(TransitionSettings transitionSettings)
-        {
-            _defaultTransition = transitionSettings;
-        }
 
         public void LoadLevel(string sceneName)
         {
@@ -47,10 +35,10 @@ namespace LevelSelection.Services
             try
             {
                 // Use EasyTransitions if available, otherwise fallback to direct scene loading
-                if (_defaultTransition != null && TransitionManager.Instance() != null)
+                if (defaultTransition && TransitionManager.Instance())
                 {
                     Debug.Log($"[SceneLoadService] Loading scene with transition: {sceneName}");
-                    TransitionManager.Instance().Transition(sceneName, _defaultTransition, DefaultTransitionDelay);
+                    TransitionManager.Instance().Transition(sceneName, defaultTransition, DefaultTransitionDelay);
                 }
                 else
                 {
