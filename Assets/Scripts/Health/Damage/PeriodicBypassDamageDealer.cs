@@ -6,18 +6,41 @@ using VContainer;
 
 namespace Health.Damage
 {
+    /// <summary>
+    /// Deals periodic bypass damage to the player automatically
+    /// </summary>
     public class PeriodicBypassDamageDealer : MonoBehaviour
     {
-        [SerializeField] private int damageAmount = 1;
+        [Header("Damage Settings")] [SerializeField]
+        private int damageAmount = 1;
+
         [SerializeField] private float damageInterval = 1f;
 
-        private Coroutine _damageCoroutine;
         private IEventBus _eventBus;
+        private IBypassableDamageable _damagable;
+        private Coroutine _damageCoroutine;
+        private bool _isLevelCompleted;
 
         [Inject]
         public void Construct(IEventBus eventBus)
         {
             _eventBus = eventBus;
+        }
+
+        private void Start()
+        {
+            _damagable = GetComponent<IBypassableDamageable>();
+
+            if (_damagable != null)
+            {
+                StartDamageCoroutine();
+                Debug.Log("[PeriodicBypassDamageDealer] Auto-started periodic damage");
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[PeriodicBypassDamageDealer] No IBypassableDamageable found on player - damage will not start");
+            }
         }
 
         private void OnEnable()
@@ -31,35 +54,19 @@ namespace Health.Damage
             StopDamageCoroutine();
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            if (other.TryGetComponent<IBypassableDamageable>(out _))
-            {
-                StartDamageCoroutine(other.gameObject);
-            }
-        }
-
-        private void OnTriggerExit2D(Collider2D other)
-        {
-            if (other.TryGetComponent<IBypassableDamageable>(out _))
-            {
-                StopDamageCoroutine();
-            }
-        }
-
         private void OnLevelCompleted(LevelCompletedEvent evt)
         {
             Debug.Log("[PeriodicBypassDamageDealer] Level completed, stopping damage.");
+            _isLevelCompleted = true;
             StopDamageCoroutine();
-            // Optionally, disable the component entirely
             enabled = false;
         }
 
-        private void StartDamageCoroutine(GameObject target)
+        private void StartDamageCoroutine()
         {
-            if (_damageCoroutine == null)
+            if (_damageCoroutine == null && !_isLevelCompleted)
             {
-                _damageCoroutine = StartCoroutine(DealDamagePeriodically(target));
+                _damageCoroutine = StartCoroutine(DealDamagePeriodically());
             }
         }
 
@@ -72,16 +79,14 @@ namespace Health.Damage
             }
         }
 
-        private IEnumerator DealDamagePeriodically(GameObject target)
+        private IEnumerator DealDamagePeriodically()
         {
-            while (target != null && target.activeInHierarchy)
+            while (_damagable != null && !_isLevelCompleted)
             {
-                if (target.TryGetComponent<IBypassableDamageable>(out var damageable))
-                {
-                    damageable.DamageBypass(damageAmount);
-                }
+                _damagable.DamageBypass(damageAmount);
                 yield return new WaitForSeconds(damageInterval);
             }
+
             _damageCoroutine = null;
         }
     }

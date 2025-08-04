@@ -20,7 +20,6 @@ namespace Player.Services
         
         [Header("Audio")]
         [SerializeField] private AudioClip bonusDrainSfx;
-        [SerializeField] private AudioClip bonusCompleteSfx;
         
         private IScoreService _scoreService;
         private PlayerHealthController _healthController;
@@ -84,7 +83,7 @@ namespace Player.Services
             Debug.Log($"[HealthBonusService] Total bonus to award: {totalBonus} points");
             
             // Drain each HP point individually
-            for (int i = 0; i < remainingHp; i++)
+            for (int i = 0; i <= remainingHp; i++)
             {
                 // Award points for this HP
                 _scoreService?.AddScore(pointsPerHp);
@@ -106,13 +105,7 @@ namespace Player.Services
                 // Wait before next drain
                 yield return new WaitForSeconds(drainInterval);
             }
-            
-            // Play completion sound
-            if (bonusCompleteSfx && _audioSource)
-            {
-                _audioSource.PlayOneShot(bonusCompleteSfx);
-            }
-            
+
             Debug.Log("[HealthBonusService] Health bonus calculation complete");
             
             // Wait a moment for final sound to play
