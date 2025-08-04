@@ -477,15 +477,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 231d7cabf5194740a21bf4c2dff97d18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useNesEffect: 1
-  fadeInOnSceneStart: 1
-  fadeInDelay: 0.1
   fadeDuration: 1
   fadeColor: {r: 0, g: 0, b: 0, a: 1}
-  nesColors:
-  - {r: 0, g: 0, b: 0, a: 1}
-  - {r: 0.2, g: 0.2, b: 0.3, a: 1}
-  - {r: 0.1, g: 0.1, b: 0.2, a: 1}
+  fadeInOnStart: 0
+  useNesEffect: 1
 --- !u!224 &1009753851
 RectTransform:
   m_ObjectHideFlags: 0
@@ -750,9 +745,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelName: l2
-  displayName: l2
   sceneName: Level2
-  levelIndex: 1
+  displayName: l2
+  unlockedByDefault: 0
 --- !u!1 &1557029093
 GameObject:
   m_ObjectHideFlags: 0
@@ -1111,9 +1106,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelName: l1
-  displayName: l1
   sceneName: Level1
-  levelIndex: 0
+  displayName: l1
+  unlockedByDefault: 1
 --- !u!1 &2119765251
 GameObject:
   m_ObjectHideFlags: 0

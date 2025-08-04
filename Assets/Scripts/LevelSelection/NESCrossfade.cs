@@ -11,107 +11,101 @@ namespace LevelSelection
 
         public float fadeDuration = 1f;
         public Color fadeColor = Color.black;
-        public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
         [Header("NES Style Effect")] public bool useNesEffect = true;
 
-        public Color[] nesColors = { Color.black, new(0.2f, 0.2f, 0.3f), new(0.1f, 0.1f, 0.2f) };
-        public float colorFlickerSpeed = 10f;
+        [SerializeField] private float pixelateScale = 4f;
+        [SerializeField] private float noiseIntensity = 0.1f;
+        [SerializeField] private int frameSkip = 3; // Skip frames for authentic NES feel
+
+        // Authentic NES palette colors for fade effect
+        private readonly Color[] _nesBlackPalette =
+        {
+            new(0.0f, 0.0f, 0.0f, 1f), // Pure black
+            new(0.2f, 0.2f, 0.2f, 1f), // Dark gray
+            new(0.1f, 0.1f, 0.2f, 1f), // Dark blue-gray
+            new(0.15f, 0.1f, 0.25f, 1f) // Purple-gray
+        };
+
+        private Coroutine _currentFade;
+        private int _frameCounter;
 
         private Action _onFadeComplete;
 
-        /// <summary>
-        ///     Check if currently fading
-        /// </summary>
         public bool IsFading { get; private set; }
 
         private void Awake()
         {
-            SetupFadeImage();
-            // Start with image disabled (hidden)
-            if (fadeImage)
+            if (fadeImage == null)
             {
-                fadeImage.enabled = false;
+                SetupFadeImage();
             }
-
-            Debug.Log("[NESCrossfade] Initialized with hidden image");
         }
 
         private void SetupFadeImage()
         {
-            if (fadeImage == null)
+            // Create fade image if not assigned
+            GameObject fadeGO = new("NES_FadeImage");
+            fadeGO.transform.SetParent(transform, false);
+
+            // Ensure we have a Canvas component
+            Canvas canvas = GetComponentInParent<Canvas>();
+            if (canvas == null)
             {
-                // Create fade image if not assigned
-                GameObject fadeGO = new("FadeImage");
-                fadeGO.transform.SetParent(transform, false);
+                canvas = gameObject.AddComponent<Canvas>();
+                canvas.sortingOrder = 10000; // Very high to ensure it's on top
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 
-                // Ensure we have a Canvas component
-                Canvas canvas = GetComponentInParent<Canvas>();
-                if (canvas == null)
-                {
-                    canvas = gameObject.AddComponent<Canvas>();
-                    canvas.sortingOrder = 1000;
-                    canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                // Add CanvasScaler for proper scaling
+                CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(256, 240); // NES resolution!
+                scaler.matchWidthOrHeight = 0.5f;
 
-                    // Add CanvasScaler for proper scaling
-                    CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
-                    scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                    scaler.referenceResolution = new Vector2(1920, 1080);
-
-                    // Add GraphicRaycaster
-                    gameObject.AddComponent<GraphicRaycaster>();
-                }
-
-                fadeImage = fadeGO.AddComponent<Image>();
-                RectTransform rect = fadeImage.rectTransform;
-                rect.anchorMin = Vector2.zero;
-                rect.anchorMax = Vector2.one;
-                rect.sizeDelta = Vector2.zero;
-                rect.anchoredPosition = Vector2.zero;
-
-                // Set initial color with full alpha (but start disabled)
-                fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 1f);
-                fadeImage.enabled = false;
+                // Add GraphicRaycaster
+                gameObject.AddComponent<GraphicRaycaster>();
             }
 
-            // Ensure the image covers the full screen
-            if (fadeImage != null)
-            {
-                RectTransform rect = fadeImage.rectTransform;
-                rect.anchorMin = Vector2.zero;
-                rect.anchorMax = Vector2.one;
-                rect.sizeDelta = Vector2.zero;
-                rect.anchoredPosition = Vector2.zero;
-            }
+            fadeImage = fadeGO.AddComponent<Image>();
+            RectTransform rect = fadeImage.rectTransform;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.sizeDelta = Vector2.zero;
+            rect.anchoredPosition = Vector2.zero;
+
+            // Set initial state
+            fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 0f);
+            fadeImage.enabled = false;
+
+            Debug.Log("[NesCrossfade] Fade image setup complete");
         }
-
 
         public void FadeOut(Action onComplete = null)
         {
-            if (IsFading) return;
+            if (_currentFade != null)
+            {
+                StopCoroutine(_currentFade);
+            }
 
             _onFadeComplete = onComplete;
-            StartCoroutine(FadeCoroutine(0f, 1f));
+            _currentFade = StartCoroutine(FadeCoroutine(0f, 1f));
         }
 
         public void FadeIn(Action onComplete = null)
         {
-            if (IsFading) return;
+            if (_currentFade != null)
+            {
+                StopCoroutine(_currentFade);
+            }
 
             _onFadeComplete = onComplete;
-            StartCoroutine(FadeCoroutine(1f, 0f));
-        }
-
-        public void FadeOutAndIn(Action onMiddle = null, Action onComplete = null)
-        {
-            if (IsFading) return;
-
-            StartCoroutine(FadeOutAndInCoroutine(onMiddle, onComplete));
+            _currentFade = StartCoroutine(FadeCoroutine(1f, 0f));
         }
 
         private IEnumerator FadeCoroutine(float from, float to)
         {
             IsFading = true;
+            _frameCounter = 0;
 
             // Enable image when starting fade
             if (fadeImage != null)
@@ -120,26 +114,43 @@ namespace LevelSelection
             }
 
             float elapsed = 0f;
+            float lastAlpha = from;
 
             while (elapsed < fadeDuration)
             {
-                elapsed += Time.deltaTime;
+                elapsed += Time.unscaledDeltaTime; // Use unscaled time for reliable fades
                 float progress = elapsed / fadeDuration;
-                float curveValue = fadeCurve.Evaluate(progress);
-                float alpha = Mathf.Lerp(from, to, curveValue);
 
+                // Use stepped animation for NES authenticity
                 if (useNesEffect)
                 {
-                    SetNesStyleAlpha(alpha);
+                    progress = StepProgress(progress, 16); // 16 steps like NES
                 }
-                else
+
+                float targetAlpha = Mathf.Lerp(from, to, progress);
+
+                // Only update on certain frames for NES effect
+                _frameCounter++;
+                if (!useNesEffect || _frameCounter >= frameSkip)
                 {
-                    SetAlpha(alpha);
+                    _frameCounter = 0;
+
+                    if (useNesEffect)
+                    {
+                        SetNesStyleAlpha(targetAlpha);
+                    }
+                    else
+                    {
+                        SetAlpha(targetAlpha);
+                    }
+
+                    lastAlpha = targetAlpha;
                 }
 
                 yield return null;
             }
 
+            // Ensure final value is set
             if (useNesEffect)
             {
                 SetNesStyleAlpha(to);
@@ -156,26 +167,12 @@ namespace LevelSelection
             }
 
             IsFading = false;
+            _currentFade = null;
             _onFadeComplete?.Invoke();
             _onFadeComplete = null;
         }
 
-        private IEnumerator FadeOutAndInCoroutine(Action onMiddle, Action onComplete)
-        {
-            // Fade out
-            yield return StartCoroutine(FadeCoroutine(0f, 1f));
-
-            // Middle action (like loading scene)
-            onMiddle?.Invoke();
-
-            // Small delay to ensure scene is loaded
-            yield return new WaitForSeconds(0.1f);
-
-            // Fade in
-            yield return StartCoroutine(FadeCoroutine(1f, 0f));
-
-            onComplete?.Invoke();
-        }
+        private float StepProgress(float progress, int steps) => Mathf.Floor(progress * steps) / steps;
 
         private void SetAlpha(float alpha)
         {
@@ -189,38 +186,56 @@ namespace LevelSelection
 
         private void SetNesStyleAlpha(float alpha)
         {
-            if (fadeImage == null || nesColors == null || nesColors.Length == 0) return;
+            if (fadeImage == null) return;
 
-            // Create NES-style flickering effect
-            int colorIndex = Mathf.FloorToInt(Time.time * colorFlickerSpeed) % nesColors.Length;
-            Color nesColor = nesColors[colorIndex];
-            nesColor.a = alpha;
-            fadeImage.color = nesColor;
+            // Use the NES black palette for authentic fade
+            Color baseColor;
+
+            if (alpha <= 0.25f)
+            {
+                baseColor = Color.Lerp(Color.clear, _nesBlackPalette[0], alpha * 4f);
+            }
+            else if (alpha <= 0.5f)
+            {
+                baseColor = Color.Lerp(_nesBlackPalette[0], _nesBlackPalette[1], (alpha - 0.25f) * 4f);
+            }
+            else if (alpha <= 0.75f)
+            {
+                baseColor = Color.Lerp(_nesBlackPalette[1], _nesBlackPalette[2], (alpha - 0.5f) * 4f);
+            }
+            else
+            {
+                baseColor = Color.Lerp(_nesBlackPalette[2], _nesBlackPalette[3], (alpha - 0.75f) * 4f);
+            }
+
+            // Add subtle noise for CRT effect
+            if (alpha > 0f && alpha < 1f)
+            {
+                float noise = (Mathf.PerlinNoise(Time.time * 10f, 0f) - 0.5f) * noiseIntensity;
+                baseColor.r = Mathf.Clamp01(baseColor.r + noise);
+                baseColor.g = Mathf.Clamp01(baseColor.g + noise);
+                baseColor.b = Mathf.Clamp01(baseColor.b + noise);
+            }
+
+            fadeImage.color = baseColor;
         }
 
-        /// <summary>
-        ///     Set fade color programmatically
-        /// </summary>
-        public void SetFadeColor(Color color)
-        {
-            fadeColor = color;
-        }
-
-        /// <summary>
-        ///     Show the crossfade immediately (useful for scene start)
-        /// </summary>
         public void Show()
         {
             if (fadeImage != null)
             {
                 fadeImage.enabled = true;
-                SetAlpha(1f);
+                if (useNesEffect)
+                {
+                    SetNesStyleAlpha(1f);
+                }
+                else
+                {
+                    SetAlpha(1f);
+                }
             }
         }
 
-        /// <summary>
-        ///     Hide the crossfade immediately
-        /// </summary>
         public void Hide()
         {
             if (fadeImage != null)
@@ -230,24 +245,28 @@ namespace LevelSelection
             }
         }
 
-        /// <summary>
-        ///     Get current fade progress (0 = hidden, 1 = fully visible)
-        /// </summary>
         public float GetFadeProgress() => fadeImage && fadeImage.enabled ? fadeImage.color.a : 0f;
 
-        /// <summary>
-        ///     Instantly set fade to specific alpha without animation
-        /// </summary>
         public void SetInstantFade(float alpha)
         {
-            if (useNesEffect)
+            if (fadeImage != null)
             {
-                SetNesStyleAlpha(alpha);
+                fadeImage.enabled = alpha > 0f;
+
+                if (useNesEffect)
+                {
+                    SetNesStyleAlpha(alpha);
+                }
+                else
+                {
+                    SetAlpha(alpha);
+                }
             }
-            else
-            {
-                SetAlpha(alpha);
-            }
+        }
+
+        public void SetFadeColor(Color color)
+        {
+            fadeColor = color;
         }
     }
 }

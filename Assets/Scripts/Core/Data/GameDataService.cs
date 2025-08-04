@@ -105,6 +105,8 @@ namespace Core.Data
         {
             if (CurrentData.levelDataCacheValid && CurrentData.cachedLevelData.Any())
             {
+                // Always re-apply default unlock status in case settings changed
+                ApplyDefaultUnlockStatus(CurrentData.cachedLevelData);
                 return CurrentData.cachedLevelData;
             }
 
