@@ -346,26 +346,18 @@ namespace Core
 
         private void OnPlayerLivesChanged(PlayerLivesChangedEvent livesEvent)
         {
-            bool lostLife = livesEvent.PreviousLives > livesEvent.CurrentLives;
-            bool isGameOver = livesEvent.CurrentLives == 0;
-
-            if (isGameOver)
+            if (livesEvent.CurrentLives == 0)
             {
                 ChangeState(GameState.GameOver);
                 _eventBus?.Publish(new GameOverEvent { Timestamp = Time.time });
             }
-
-            if (lostLife)
+            else if (livesEvent.PreviousLives > livesEvent.CurrentLives)
             {
                 _eventBus?.Publish(new PlayerDeathEvent
                 {
                     DeathPosition = PlayerLocator.PlayerTransform.position,
                     Timestamp = Time.time
                 });
-            }
-
-            if (lostLife)
-            {
                 Time.timeScale = 0.01f;
                 RestartLevelAfterDelayAsync(restartDelay);
             }
