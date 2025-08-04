@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Audio.Data;
 using Audio.Interfaces;
+using Audio.Services;
 using Core;
 using ModularCharacterController.Core;
 using Player.Services;
@@ -25,7 +26,6 @@ namespace LevelSelection
         [Header("Audio")] [SerializeField] private SoundData completionSound;
 
         private GameFlowManager _gameFlowManager;
-        private IAudioService _audioService;
         private bool _hasTriggered;
         private HealthBonusService _healthBonusService;
 
@@ -42,12 +42,10 @@ namespace LevelSelection
         }
 
         [Inject]
-        public void Construct(GameFlowManager gameFlowManager, HealthBonusService healthBonusService,
-            IAudioService audioService)
+        public void Construct(GameFlowManager gameFlowManager, HealthBonusService healthBonusService)
         {
             _gameFlowManager = gameFlowManager;
             _healthBonusService = healthBonusService;
-            _audioService = audioService;
         }
 
         private IEnumerator CompleteLevel(Rigidbody2D rb, InputHandler input)
@@ -55,7 +53,7 @@ namespace LevelSelection
             _hasTriggered = true;
 
             // Stop all music immediately when level is completed
-            _audioService?.StopMusic();
+            AudioService.Instance?.StopMusic();
 
             // Take control from the player
             if (input)
@@ -85,9 +83,9 @@ namespace LevelSelection
             Debug.Log($"[EndLevelZone] Player completed level: {currentLevelName}");
 
             // Play completion sound using the new audio system
-            if (completionSound?.clip && _audioService != null)
+            if (completionSound?.clip)
             {
-                _audioService.PlaySound(completionSound);
+                AudioService.Instance?.PlaySound(completionSound);
             }
 
             bool bonusComplete = false;

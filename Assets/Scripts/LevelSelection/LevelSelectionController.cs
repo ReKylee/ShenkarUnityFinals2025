@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Audio.Data;
 using Audio.Interfaces;
+using Audio.Services;
 using Core;
 using Core.Events;
 using LevelSelection.Services;
@@ -31,7 +32,6 @@ namespace LevelSelection
 
         [SerializeField] private SoundData lockedSound;
 
-        private IAudioService _audioService;
         private IEventBus _eventBus;
         private GameDataCoordinator _gameDataCoordinator;
         private GameFlowManager _gameFlowManager;
@@ -101,7 +101,6 @@ namespace LevelSelection
             IEventBus eventBus,
             ISelectorService selectorService,
             IInputFilterService inputFilterService,
-            IAudioService audioService,
             IItemSelectService itemSelectService,
             ISceneLoadService sceneLoadService,
             GameFlowManager gameFlowManager,
@@ -111,7 +110,6 @@ namespace LevelSelection
             _eventBus = eventBus;
             _selectorService = selectorService;
             _inputFilterService = inputFilterService;
-            _audioService = audioService;
             _itemSelectService = itemSelectService;
             _sceneLoadService = sceneLoadService;
             _gameFlowManager = gameFlowManager;
@@ -236,18 +234,12 @@ namespace LevelSelection
 
         private void PlaySelectionSound()
         {
-            if (selectionSound?.clip && _audioService != null)
-            {
-                _audioService.PlaySound(selectionSound);
-            }
+                AudioService.Instance?.PlaySound(selectionSound);
         }
 
         private void PlayLockedSound()
         {
-            if (lockedSound?.clip && _audioService != null)
-            {
-                _audioService.PlaySound(lockedSound);
-            }
+                AudioService.Instance?.PlaySound(lockedSound);
         }
     }
 }

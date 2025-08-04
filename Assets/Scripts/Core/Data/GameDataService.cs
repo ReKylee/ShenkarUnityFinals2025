@@ -85,10 +85,11 @@ namespace Core.Data
 
         public void ResetProgressData()
         {
-            // Reset only level-specific progress data, preserve lives, score and fruit count
+            // Reset only player progress data, preserve score and fruit count
+            CurrentData.lives = GameData.MaxLives;
             CurrentData.currentLevel = "";
             CurrentData.selectedLevelIndex = 0;
-            // Note: Lives, score, maxScore, fruitCollected, unlockedLevels, completedLevels, and best times are preserved
+            // Note: Score, maxScore, fruitCollected, unlockedLevels, completedLevels, and best times are preserved
             NotifyDataChanged();
         }
 

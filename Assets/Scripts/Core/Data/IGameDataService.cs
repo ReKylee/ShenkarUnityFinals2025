@@ -19,7 +19,7 @@ namespace Core.Data
         void SaveData();
         void ResetProgressData(); // New method for selective reset
         event Action<GameData> OnDataChanged;
-
+        
         // Level data operations that should go through GameDataService
         void UpdateLevelProgress(string levelName, bool isCompleted, float completionTime);
         Task<List<LevelData>> GetLevelDataAsync(ILevelDiscoveryService discoveryService);

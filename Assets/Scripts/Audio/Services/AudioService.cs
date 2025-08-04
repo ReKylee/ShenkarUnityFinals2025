@@ -14,6 +14,8 @@ namespace Audio.Services
     /// </summary>
     public class AudioService : MonoBehaviour, IAudioService
     {
+        public static AudioService Instance { get; private set; }
+
         [SerializeField] private AudioConfig audioConfig = new AudioConfig();
 
         private AudioSource _musicSource;
@@ -26,7 +28,15 @@ namespace Audio.Services
 
         private void Awake()
         {
-            // Remove DontDestroyOnLoad - VContainer will manage singleton lifecycle
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+
             InitializeAudioSources();
             LoadVolumeSettings();
         }
@@ -44,13 +54,9 @@ namespace Audio.Services
 
         public void PlaySound(SoundData soundData)
         {
-            if (soundData?.clip == null) return;
+            if (!soundData?.clip) return;
 
-            AudioSource availableSource = GetAvailableSfxSource();
-            if (!availableSource) return;
-
-            ConfigureSfxSourceWithSoundData(availableSource, soundData);
-            availableSource.Play();
+            PlaySound(soundData.clip, soundData.volume, soundData.pitch);
         }
 
         public void PlaySoundAtPosition(AudioClip clip, Vector3 position, float volume = 1f, float pitch = 1f)

@@ -66,8 +66,8 @@ namespace Core.DI
             // Game Management
             builder.RegisterComponentInHierarchy<GameFlowManager>();
             builder.RegisterComponentInHierarchy<GameDataCoordinator>();
-            builder.RegisterComponentInHierarchy<EndLevelZone>();
             builder.RegisterComponentInHierarchy<HealthBonusService>();
+            builder.RegisterComponentInHierarchy<EndLevelZone>();
             // Pooling System
             builder.RegisterComponentInHierarchy<PoolManager>().As<IPoolService>();
 

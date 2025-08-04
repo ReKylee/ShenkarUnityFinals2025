@@ -2838,8 +2838,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1094429552}
   - component: {fileID: 1094429551}
-  - component: {fileID: 1094429553}
-  - component: {fileID: 1094429554}
   m_Layer: 0
   m_Name: AudioService
   m_TagString: Untagged
@@ -2878,43 +2876,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 359280866}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1094429553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1094429549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 009485f0d42d4bd494cf7d8e3ea4a624, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioConfig:
-    masterVolume: 1
-    sfxVolume: 1
-    musicVolume: 1
-    maxConcurrentSounds: 10
-    defaultPitch: 1
-    spatialBlend: 0
-    minDistance: 1
-    maxDistance: 500
---- !u!114 &1094429554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1094429549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61d4553e2f4340b3a29a6a4c5f159314, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parentReference:
-    TypeName: 
-  autoRun: 1
-  autoInjectGameObjects: []
 --- !u!4 &1188005389 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3890553521520257432, guid: 4bfc8263212253e44b046ec35f3930ef, type: 3}

@@ -1,5 +1,6 @@
 ﻿using Audio.Data;
 using Audio.Interfaces;
+using Audio.Services;
 using Collectables.Score;
 using Health.Interfaces;
 using ModularCharacterController.Core;
@@ -20,7 +21,6 @@ namespace Player.Components
 
         [SerializeField] private SoundData collectSound;
         [SerializeField] private SoundData deathSound;
-        private IAudioService _audioService;
         private MccGroundCheck _groundCheck;
         private IHealthEvents _health;
         private InputHandler _inputHandler;
@@ -61,12 +61,7 @@ namespace Player.Components
             }
         }
 
-        [Inject]
-        public void Construct(IAudioService audioService)
-        {
-            _audioService = audioService;
-        }
-
+   
         #region Event Handlers
 
         private void OnScoreCollected(int score, Vector3 position)
@@ -83,43 +78,24 @@ namespace Player.Components
 
         #region Public Audio Methods
 
-        public void PlayJumpSound()
+        private void PlayJumpSound()
         {
-            PlaySoundData(jumpSound);
+            AudioService.Instance?.PlaySound(jumpSound);
         }
 
 
         private void PlayDeathSound()
         {
-            PlaySoundData(deathSound);
+            AudioService.Instance?.PlaySound(deathSound);
         }
 
-        public void PlayCollectSoundAtPosition(Vector3 position)
+        private void PlayCollectSoundAtPosition(Vector3 position)
         {
-            PlaySoundDataAtPosition(collectSound, position);
+            AudioService.Instance?.PlaySoundAtPosition(collectSound, position);
         }
 
         #endregion
 
-        #region Private Audio Helpers
-
-        private void PlaySoundData(SoundData soundData)
-        {
-            if (soundData?.clip && _audioService != null)
-            {
-                _audioService.PlaySound(soundData);
-            }
-        }
-
-        private void PlaySoundDataAtPosition(SoundData soundData, Vector3 position)
-        {
-            if (soundData?.clip && _audioService != null)
-            {
-                _audioService.PlaySoundAtPosition(soundData, position);
-            }
-        }
-
-        #endregion
 
     }
 }

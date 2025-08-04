@@ -2,6 +2,7 @@
 using System.Collections;
 using Audio.Data;
 using Audio.Interfaces;
+using Audio.Services;
 using Collectables.Score;
 using Health.Interfaces;
 using Player.Components;
@@ -24,7 +25,6 @@ namespace Player.Services
 
         [Header("Audio")] [SerializeField] private SoundData bonusDrainSound;
 
-        private IAudioService _audioService;
         private PlayerHealthController _healthController;
         private IHealthView _healthView;
 
@@ -41,10 +41,9 @@ namespace Player.Services
         }
 
         [Inject]
-        public void Construct(IScoreService scoreService, IAudioService audioService)
+        public void Construct(IScoreService scoreService)
         {
             _scoreService = scoreService;
-            _audioService = audioService;
         }
 
         /// <summary>
@@ -90,11 +89,7 @@ namespace Player.Services
                 // Update health display (visual only)
                 _healthView?.UpdateDisplay(healthAfterDrain, _healthController.MaxHp);
 
-                // Play drain sound effect using new audio system
-                if (bonusDrainSound?.clip && _audioService != null)
-                {
-                    _audioService.PlaySound(bonusDrainSound);
-                }
+                AudioService.Instance?.PlaySound(bonusDrainSound);
 
                 // Wait before next drain
                 yield return new WaitForSeconds(drainInterval);
