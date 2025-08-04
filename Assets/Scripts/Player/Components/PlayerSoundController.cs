@@ -107,11 +107,7 @@ namespace Player.Components
         {
             if (soundData?.clip && _audioService != null)
             {
-                _audioService.PlaySound(
-                    soundData.clip,
-                    soundData.GetRandomizedVolume(),
-                    soundData.GetRandomizedPitch()
-                );
+                _audioService.PlaySound(soundData);
             }
         }
 
@@ -119,12 +115,7 @@ namespace Player.Components
         {
             if (soundData?.clip && _audioService != null)
             {
-                _audioService.PlaySoundAtPosition(
-                    soundData.clip,
-                    position,
-                    soundData.GetRandomizedVolume(),
-                    soundData.GetRandomizedPitch()
-                );
+                _audioService.PlaySoundAtPosition(soundData, position);
             }
         }
 

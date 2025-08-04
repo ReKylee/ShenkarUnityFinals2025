@@ -238,11 +238,7 @@ namespace LevelSelection
         {
             if (selectionSound?.clip && _audioService != null)
             {
-                _audioService.PlaySound(
-                    selectionSound.clip,
-                    selectionSound.GetRandomizedVolume(),
-                    selectionSound.GetRandomizedPitch()
-                );
+                _audioService.PlaySound(selectionSound);
             }
         }
 
@@ -250,11 +246,7 @@ namespace LevelSelection
         {
             if (lockedSound?.clip && _audioService != null)
             {
-                _audioService.PlaySound(
-                    lockedSound.clip,
-                    lockedSound.GetRandomizedVolume(),
-                    lockedSound.GetRandomizedPitch()
-                );
+                _audioService.PlaySound(lockedSound);
             }
         }
     }

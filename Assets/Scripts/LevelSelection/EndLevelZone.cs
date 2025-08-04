@@ -1,9 +1,10 @@
 ﻿using System.Collections;
+using Audio.Data;
+using Audio.Interfaces;
 using Core;
 using ModularCharacterController.Core;
 using Player.Services;
 using UnityEngine;
-using UnityEngine.Audio;
 using VContainer;
 
 namespace LevelSelection
@@ -21,25 +22,13 @@ namespace LevelSelection
         [SerializeField] private string nextLevelName;
         [SerializeField] private float completionDelay = 2f;
 
-        [Header("Audio Feedback")] [SerializeField]
-        private AudioClip completionSound;
+        [Header("Audio")] [SerializeField] private SoundData completionSound;
 
-        [SerializeField] private AudioMixer audioMixer;
-
-        private AudioSource _audioSource;
         private GameFlowManager _gameFlowManager;
+        private IAudioService _audioService;
         private bool _hasTriggered;
         private HealthBonusService _healthBonusService;
 
-        private void Awake()
-        {
-            // Setup audio component
-            _audioSource = GetComponent<AudioSource>();
-            if (_audioSource == null)
-            {
-                _audioSource = gameObject.AddComponent<AudioSource>();
-            }
-        }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
@@ -53,16 +42,21 @@ namespace LevelSelection
         }
 
         [Inject]
-        public void Construct(GameFlowManager gameFlowManager, HealthBonusService healthBonusService)
+        public void Construct(GameFlowManager gameFlowManager, HealthBonusService healthBonusService,
+            IAudioService audioService)
         {
             _gameFlowManager = gameFlowManager;
             _healthBonusService = healthBonusService;
+            _audioService = audioService;
         }
 
         private IEnumerator CompleteLevel(Rigidbody2D rb, InputHandler input)
         {
             _hasTriggered = true;
-            audioMixer.SetFloat("MusicVolume", 0f);
+
+            // Stop all music immediately when level is completed
+            _audioService?.StopMusic();
+
             // Take control from the player
             if (input)
             {
@@ -90,9 +84,11 @@ namespace LevelSelection
 
             Debug.Log($"[EndLevelZone] Player completed level: {currentLevelName}");
 
-            if (completionSound && _audioSource)
-                _audioSource.PlayOneShot(completionSound);
-
+            // Play completion sound using the new audio system
+            if (completionSound?.clip && _audioService != null)
+            {
+                _audioService.PlaySound(completionSound);
+            }
 
             bool bonusComplete = false;
             if (_healthBonusService)

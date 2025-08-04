@@ -10,24 +10,23 @@ namespace Audio.Services
     ///     Single Responsibility: Manages all audio playback
     ///     Open/Closed: Extensible through interfaces
     ///     Dependency Inversion: Depends on abstractions
+    ///     Now managed as a singleton through VContainer instead of DontDestroyOnLoad
     /// </summary>
     public class AudioService : MonoBehaviour, IAudioService
     {
-        [SerializeField] private AudioConfig audioConfig = new();
-        private int _currentSfxIndex;
-
-        private float _masterVolume = 1f;
+        [SerializeField] private AudioConfig audioConfig = new AudioConfig();
 
         private AudioSource _musicSource;
-        private float _musicVolume = 1f;
         private List<AudioSource> _sfxSources;
+        private int _currentSfxIndex = 0;
+
+        private float _masterVolume = 1f;
         private float _sfxVolume = 1f;
+        private float _musicVolume = 1f;
 
         private void Awake()
         {
-            // Don't destroy on load for persistent audio
-            DontDestroyOnLoad(gameObject);
-
+            // Remove DontDestroyOnLoad - VContainer will manage singleton lifecycle
             InitializeAudioSources();
             LoadVolumeSettings();
         }
@@ -40,6 +39,17 @@ namespace Audio.Services
             if (!availableSource) return;
 
             ConfigureSfxSource(availableSource, clip, volume, pitch);
+            availableSource.Play();
+        }
+
+        public void PlaySound(SoundData soundData)
+        {
+            if (soundData?.clip == null) return;
+
+            AudioSource availableSource = GetAvailableSfxSource();
+            if (!availableSource) return;
+
+            ConfigureSfxSourceWithSoundData(availableSource, soundData);
             availableSource.Play();
         }
 
@@ -58,6 +68,23 @@ namespace Audio.Services
 
             // Destroy after clip finishes
             Destroy(tempAudioObject, clip.length);
+        }
+
+        public void PlaySoundAtPosition(SoundData soundData, Vector3 position)
+        {
+            if (soundData?.clip == null) return;
+
+            // Create temporary audio source at position for 3D audio
+            GameObject tempAudioObject = new($"TempAudio_{soundData.clip.name}");
+            tempAudioObject.transform.position = position;
+
+            AudioSource tempSource = tempAudioObject.AddComponent<AudioSource>();
+            ConfigureSfxSourceWithSoundData(tempSource, soundData, true);
+
+            tempSource.Play();
+
+            // Destroy after clip finishes
+            Destroy(tempAudioObject, soundData.clip.length);
         }
 
         public void PlayMusic(AudioClip clip, float volume = 1f, bool loop = true)
@@ -149,6 +176,24 @@ namespace Audio.Services
             source.volume = volume * _sfxVolume * _masterVolume;
             source.pitch = pitch;
 
+            source.spatialBlend = is3D ? 1f : audioConfig.spatialBlend;
+            source.minDistance = audioConfig.minDistance;
+            source.maxDistance = audioConfig.maxDistance;
+        }
+
+        private void ConfigureSfxSourceWithSoundData(AudioSource source, SoundData soundData, bool forceIs3D = false)
+        {
+            source.clip = soundData.clip;
+            source.volume = soundData.GetRandomizedVolume() * _sfxVolume * _masterVolume;
+            source.pitch = soundData.GetRandomizedPitch();
+            
+            // Set mixer group if provided
+            if (soundData.mixerGroup != null)
+            {
+                source.outputAudioMixerGroup = soundData.mixerGroup;
+            }
+
+            bool is3D = forceIs3D || soundData.use3D;
             source.spatialBlend = is3D ? 1f : audioConfig.spatialBlend;
             source.minDistance = audioConfig.minDistance;
             source.maxDistance = audioConfig.maxDistance;

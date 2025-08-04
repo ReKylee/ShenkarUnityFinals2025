@@ -93,11 +93,7 @@ namespace Player.Services
                 // Play drain sound effect using new audio system
                 if (bonusDrainSound?.clip && _audioService != null)
                 {
-                    _audioService.PlaySound(
-                        bonusDrainSound.clip,
-                        bonusDrainSound.GetRandomizedVolume(),
-                        bonusDrainSound.GetRandomizedPitch()
-                    );
+                    _audioService.PlaySound(bonusDrainSound);
                 }
 
                 // Wait before next drain
