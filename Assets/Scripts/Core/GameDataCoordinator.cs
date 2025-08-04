@@ -198,6 +198,18 @@ namespace Core
             _gameDataService?.UpdateLevelProgress(levelName, isCompleted, completionTime);
         }
 
+        public void UpdateScore(int score)
+        {
+            if (!_isInitialized) return;
+            _gameDataService?.UpdateScore(score);
+        }
+
+        public void AddFruitCollected()
+        {
+            if (!_isInitialized) return;
+            _gameDataService?.AddFruitCollected();
+        }
+
         public async Task<List<LevelData>> DiscoverLevelsAsync()
         {
             if (!_isInitialized || _gameDataService == null || _levelDiscoveryService == null)
@@ -266,6 +278,16 @@ namespace Core
                 gameData.unlockedLevels.Add(levelName);
                 Debug.Log($"[GameDataCoordinator] Unlocked level: {levelName}");
             }
+        }
+
+        public int GetCurrentScore()
+        {
+            return GetCurrentData()?.score ?? 0;
+        }
+
+        public int GetFruitCollectedCount()
+        {
+            return GetCurrentData()?.fruitCollected ?? 0;
         }
     }
 }

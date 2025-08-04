@@ -12,5 +12,4 @@ namespace LevelSelection
         public string displayName;
         public int levelIndex;
     }
-
 }

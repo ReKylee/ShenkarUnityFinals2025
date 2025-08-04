@@ -1,66 +1,72 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace LevelSelection
 {
     /// <summary>
-    ///     Simple Unity GameObject component for level placement in editor.
-    ///     Only contains basic editor-friendly data that gets converted to LevelData at runtime.
+    ///     Simple level placement component for the level select scene.
+    ///     Just drag this onto a GameObject and set the basic info.
     /// </summary>
     public class LevelPoint : MonoBehaviour
     {
-        [Header("Basic Level Info")] [SerializeField]
-        private string levelName;
+        [Header("Level Info")]
+        [SerializeField] private string levelName = "Level_01";
+        [SerializeField] private string sceneName = "Level1";
+        [SerializeField] private string displayName = "Level 1";
 
-        [SerializeField] private string displayName;
-        [SerializeField] private string sceneName;
-        [SerializeField] private int levelIndex;
-
-        // Public properties for easy access during conversion
+        // Auto-calculated index based on position in hierarchy or scene order
+        public int LevelIndex { get; private set; }
         public string LevelName => levelName;
         public string DisplayName => displayName;
         public string SceneName => sceneName;
-        public int LevelIndex => levelIndex;
         public Vector3 Position => transform.position;
-
-        private void OnDrawGizmos()
-        {
-            // Draw a simple gizmo in editor for easy visualization
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, 0.5f);
-
-            // Draw level index
-#if UNITY_EDITOR
-            Handles.Label(transform.position + Vector3.up * 0.7f, levelIndex.ToString());
-#endif
-        }
 
         private void OnValidate()
         {
-            // Auto-generate display name if empty
+            // Auto-generate display name from level name if empty
             if (string.IsNullOrEmpty(displayName) && !string.IsNullOrEmpty(levelName))
             {
-                displayName = levelName.Replace("_", " ");
+                displayName = levelName.Replace("_", " ").Replace("Level", "Level ");
             }
 
-            // Auto-generate scene name if empty
+            // Auto-generate scene name from level name if empty
             if (string.IsNullOrEmpty(sceneName) && !string.IsNullOrEmpty(levelName))
             {
-                sceneName = levelName;
+                // Convert "Level_01" to "Level1"
+                sceneName = levelName.Replace("_", "");
             }
         }
 
+        private void OnDrawGizmos()
+        {
+            // Draw a simple gizmo for easy visualization
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, 0.5f);
+
+            // Draw level index if available
+#if UNITY_EDITOR
+            UnityEditor.Handles.Label(transform.position + Vector3.up * 0.8f, $"{LevelIndex}: {displayName}");
+#endif
+        }
+
         /// <summary>
-        ///     Convert this editor placement object to runtime data
+        ///     Set the automatically calculated index
+        /// </summary>
+        public void SetCalculatedIndex(int index)
+        {
+            LevelIndex = index;
+        }
+
+        /// <summary>
+        ///     Convert to runtime data
         /// </summary>
         public LevelData ToLevelData() =>
             new()
             {
                 levelName = levelName,
-                displayName = displayName,
                 sceneName = sceneName,
-                levelIndex = levelIndex,
                 mapPosition = transform.position,
+                displayName = displayName,
+                levelIndex = LevelIndex
             };
     }
 }

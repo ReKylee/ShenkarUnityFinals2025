@@ -1,4 +1,4 @@
-﻿using Core.Data;
+﻿using Core;
 using Player.Interfaces;
 using UnityEngine;
 using VContainer;
@@ -8,20 +8,25 @@ namespace Collectables.Score
     public class ScoreService : IScoreService
     {
         private const int OneUpThreshold = 30;
-        private IGameDataService _gameDataService;
+        private GameDataCoordinator _gameDataCoordinator;
         private IPlayerLivesService _livesService;
-        public int CurrentScore => _gameDataService?.CurrentData?.score ?? 0;
+        
+        public int CurrentScore => _gameDataCoordinator?.GetCurrentScore() ?? 0;
+        
         public void AddScore(int amount)
         {
-            _gameDataService?.UpdateScore(CurrentScore + amount);
+            int newScore = CurrentScore + amount;
+            _gameDataCoordinator?.UpdateScore(newScore);
         }
+        
         public void ResetScore()
         {
-            _gameDataService?.UpdateScore(0);
+            _gameDataCoordinator?.UpdateScore(0);
         }
+        
         public void AddFruitCollected(Vector3 collectPosition)
         {
-            _gameDataService?.AddFruitCollected();
+            _gameDataCoordinator?.AddFruitCollected();
             int fruitCount = FruitCollectedCount;
             if (fruitCount > 0 && fruitCount % OneUpThreshold == 0)
             {
@@ -29,11 +34,13 @@ namespace Collectables.Score
                 Debug.Log("One-up awarded! Player gained an extra life.");
             }
         }
-        public int FruitCollectedCount => _gameDataService?.CurrentData?.fruitCollected ?? 0;
+        
+        public int FruitCollectedCount => _gameDataCoordinator?.GetFruitCollectedCount() ?? 0;
+        
         [Inject]
-        public void Construct(IGameDataService gameDataService, IPlayerLivesService livesService)
+        public void Construct(GameDataCoordinator gameDataCoordinator, IPlayerLivesService livesService)
         {
-            _gameDataService = gameDataService;
+            _gameDataCoordinator = gameDataCoordinator;
             _livesService = livesService;
         }
     }
