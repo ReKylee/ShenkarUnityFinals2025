@@ -25,6 +25,7 @@ namespace Player.Components
         private MccGroundCheck _groundCheck;
         private IHealthEvents _health;
         private InputHandler _inputHandler;
+        private bool _jumpSoundPlayed;
 
         private void Awake()
         {
@@ -36,22 +37,24 @@ namespace Player.Components
         private void Update()
         {
             InputContext input = _inputHandler.CurrentInput;
-            if (input.AttackPressed)
+
+            if (input.JumpPressed && _groundCheck.IsGrounded && !_jumpSoundPlayed)
             {
-                PlayAttackSound();
-                return;
-            }
-            
-            if (input.JumpPressed && _groundCheck.IsGrounded)
-            {
-                PlayJumpSound();
+                AudioService.Instance?.PlaySound(jumpSound);
+                _jumpSoundPlayed = true;
             }
 
+            if (!input.JumpPressed)
+            {
+                _jumpSoundPlayed = false;
+            }
+
+            if (input.AttackPressed)
+            {
+                AudioService.Instance?.PlaySound(attackSound);
+            }
         }
-        private void PlayAttackSound()
-        {
-            AudioService.Instance?.PlaySound(attackSound);
-        }
+
 
         private void OnEnable()
         {
@@ -78,32 +81,12 @@ namespace Player.Components
 
         private void OnScoreCollected(int score, Vector3 position)
         {
-            PlayCollectSoundAtPosition(position);
+            AudioService.Instance?.PlaySoundAtPosition(collectSound, position);
         }
 
         private void OnDeath()
         {
-            PlayDeathSound();
-        }
-
-        #endregion
-
-        #region Public Audio Methods
-
-        private void PlayJumpSound()
-        {
-            AudioService.Instance?.PlaySound(jumpSound);
-        }
-
-
-        private void PlayDeathSound()
-        {
             AudioService.Instance?.PlaySound(deathSound);
-        }
-
-        private void PlayCollectSoundAtPosition(Vector3 position)
-        {
-            AudioService.Instance?.PlaySoundAtPosition(collectSound, position);
         }
 
         #endregion

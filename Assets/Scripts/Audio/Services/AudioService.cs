@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Audio.Data;
 using Audio.Interfaces;
 using UnityEngine;
@@ -190,16 +191,10 @@ namespace Audio.Services
 
         private AudioSource GetAvailableSfxSource()
         {
-            // Find an available (not playing) source
-            foreach (AudioSource source in _sfxSources)
-            {
-                if (!source.isPlaying)
-                {
-                    return source;
-                }
-            }
-
-            // If all sources are busy, use round-robin
+            // Find an available (not playing) source, otherwise use round-robin
+            AudioSource availableSource = _sfxSources.FirstOrDefault(source => !source.isPlaying);
+            if (availableSource) return availableSource;
+            
             AudioSource roundRobinSource = _sfxSources[_currentSfxIndex];
             _currentSfxIndex = (_currentSfxIndex + 1) % _sfxSources.Count;
             return roundRobinSource;
