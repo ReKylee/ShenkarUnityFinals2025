@@ -15,8 +15,8 @@ namespace Player.Services
     {
         [Header("Bonus Settings")]
         [SerializeField] private int pointsPerHp = 100;
-        [SerializeField] private float drainDelay = 0.5f;
-        [SerializeField] private float drainInterval = 0.3f;
+        [SerializeField] private float drainDelay = 0.2f;
+        [SerializeField] private float drainInterval = 0.05f;
         
         [Header("Audio")]
         [SerializeField] private AudioClip bonusDrainSfx;
@@ -93,24 +93,17 @@ namespace Player.Services
                     Mathf.Max(_healthController.CurrentHp - i, 0), 
                     _healthController.MaxHp);
 
-                Debug.Log("HealthView: " + _healthView);
                 // Play drain sound effect
                 if (bonusDrainSfx && _audioSource)
                 {
                     _audioSource.PlayOneShot(bonusDrainSfx);
                 }
                 
-                Debug.Log($"[HealthBonusService] HP consumed for bonus: {pointsPerHp} points awarded");
                 
                 // Wait before next drain
                 yield return new WaitForSeconds(drainInterval);
             }
 
-            Debug.Log("[HealthBonusService] Health bonus calculation complete");
-            
-            // Wait a moment for final sound to play
-            yield return new WaitForSeconds(0.5f);
-            
             onComplete?.Invoke();
         }
     }
