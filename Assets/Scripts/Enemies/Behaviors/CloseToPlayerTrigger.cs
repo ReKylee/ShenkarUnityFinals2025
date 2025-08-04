@@ -8,7 +8,6 @@ namespace Enemies.Behaviors
     [RequireComponent(typeof(Rigidbody2D))]
     public class CloseToPlayerTrigger : MonoBehaviour, ITrigger
     {
-        [SerializeField] private LayerMask groundLayer;
         [SerializeField] private float triggerDistance = 3f;
         [SerializeField] private float jumpCooldown = 2f;
         [SerializeField] private int checkEveryNFrames = 1;

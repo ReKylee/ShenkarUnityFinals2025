@@ -11,7 +11,6 @@ namespace Player.Components
     public class PlayerHealthController : HealthComponent, IBypassableDamageable
     {
         [SerializeField] private BarsHealthView healthView;
-        private GameFlowManager _gameFlowManager;
         private IInvincibility _invincibility;
         private IPlayerLivesService _livesService;
         private IShield _shield;
@@ -20,10 +19,9 @@ namespace Player.Components
         #region VContainer Injection
 
         [Inject]
-        public void Construct(IPlayerLivesService livesService, GameFlowManager gameFlowManager)
+        public void Construct(IPlayerLivesService livesService)
         {
             _livesService = livesService;
-            _gameFlowManager = gameFlowManager;
         }
 
         #endregion
@@ -62,11 +60,7 @@ namespace Player.Components
 
         private void HandleHealthEmpty()
         {
-
-            if (_livesService.TryUseLife())
-            {
-                return;
-            }
+            _livesService.TryUseLife();
         }
 
         #endregion

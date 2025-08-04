@@ -18,4 +18,3 @@ MonoBehaviour:
   abilityName: Normal
   abilityIcon: {fileID: 1025999236, guid: bbf0bd170a13d514ea8c08c695060b78, type: 3}
   statModifiers: []
-  abilityType: 2

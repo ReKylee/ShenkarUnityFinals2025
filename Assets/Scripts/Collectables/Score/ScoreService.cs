@@ -16,8 +16,7 @@ namespace Collectables.Score
 
         public void AddScore(int amount)
         {
-            int previousScore = CurrentScore;
-            int newScore = previousScore + amount;
+            int newScore = CurrentScore + amount;
             _gameDataCoordinator?.UpdateScore(newScore);
         }
 

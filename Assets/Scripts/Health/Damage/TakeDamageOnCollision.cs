@@ -20,9 +20,12 @@ namespace Health.Damage
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if (!_active) return;
+            
             GameObject source = collision.gameObject;
             if (_damageable is null) return;
+            
             if ((1 << source.layer & sourceLayers) == 0) return;
+            
             if (_damageConditions && !_damageConditions.CanBeDamagedBy(source)) return;
 
             var dealers = source.GetComponents<IDamageDealer>();

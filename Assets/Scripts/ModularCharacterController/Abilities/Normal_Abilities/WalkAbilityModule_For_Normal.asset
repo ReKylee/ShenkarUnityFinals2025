@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WalkAbilityModule_For_Normal
   m_EditorClassIdentifier: 
   abilityDefinedModifiers: []
-  allowMultipleInstances: 1
+  allowMultipleInstances: 0
   abilityID: walkabilitymodule_for_normal
   displayName: WalkAbilityModule_For_Normal
   enablePixelPerfectMovement: 1

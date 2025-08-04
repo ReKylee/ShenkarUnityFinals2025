@@ -20,7 +20,7 @@ namespace PowerUps.Container
         private void OnCollisionEnter2D(Collision2D other)
         {
             // Player collision: damage on first hit
-            if (other.gameObject.CompareTag("Player") && CurrentHp == MaxHp)
+            if (other.gameObject.layer == LayerMask.NameToLayer("Player") && CurrentHp == MaxHp)
             {
                 Damage(1);
             }

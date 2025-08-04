@@ -10,9 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4244fa020b96faf4094bf07ec47f02f2, type: 3}
-  m_Name: HMoveAbilityModule_For_DoubleJump
+  m_Name: HMoveAbilityModule_For_Normal
   m_EditorClassIdentifier: 
   abilityDefinedModifiers: []
   allowMultipleInstances: 0
-  abilityID: hmoveabilitymodule_for_doublejump
-  displayName: HMoveAbilityModule_For_DoubleJump
+  abilityID: hmoveabilitymodule_for_normal
+  displayName: HMoveAbilityModule_For_Normal
+  enablePixelPerfectMovement: 0
+  pixelsPerUnit: 100
+  pixelSnapThreshold: 0.001
