@@ -11,5 +11,6 @@ namespace LevelSelection
         public Vector2 mapPosition;
         public string displayName;
         public int levelIndex;
+        public bool unlockedByDefault;
     }
 }

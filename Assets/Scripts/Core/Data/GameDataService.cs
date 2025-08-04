@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LevelSelection;
 using LevelSelection.Services;
+using UnityEngine;
 using VContainer;
 
 namespace Core.Data
@@ -104,26 +105,36 @@ namespace Core.Data
         {
             if (CurrentData.levelDataCacheValid && CurrentData.cachedLevelData.Any())
             {
-                return ApplyGameStateToLevelData(CurrentData.cachedLevelData);
+                return CurrentData.cachedLevelData;
             }
 
             var discoveredLevels = await discoveryService.DiscoverLevelsFromSceneAsync();
             CacheLevelData(discoveredLevels);
-            return ApplyGameStateToLevelData(discoveredLevels);
+            return discoveredLevels;
         }
 
         private void CacheLevelData(List<LevelData> levelData)
         {
-            CurrentData.cachedLevelData = new List<LevelData>(levelData);
+            CurrentData.cachedLevelData = new List<LevelData>(levelData.OrderBy(l => l.levelIndex));
             CurrentData.levelDataCacheValid = true;
+
+            // Apply default unlock status from level data
+            ApplyDefaultUnlockStatus(levelData);
+
             SaveData();
         }
 
-        private List<LevelData> ApplyGameStateToLevelData(List<LevelData> baseLevelData)
+        /// <summary>
+        /// Apply default unlock status from discovered level data
+        /// </summary>
+        private void ApplyDefaultUnlockStatus(List<LevelData> levelData)
         {
-            // No need to modify LevelData anymore since state is stored separately
-            // Just return the base level data as-is
-            return baseLevelData;
+            foreach (LevelData level in levelData.Where(level =>
+                         level.unlockedByDefault && !CurrentData.unlockedLevels.Contains(level.levelName)))
+            {
+                CurrentData.unlockedLevels.Add(level.levelName);
+                Debug.Log($"[GameDataService] Auto-unlocked level: {level.levelName} (UnlockedByDefault = true)");
+            }
         }
 
         private void NotifyDataChanged()

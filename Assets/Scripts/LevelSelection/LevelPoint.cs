@@ -63,11 +63,12 @@ namespace LevelSelection
         public LevelData ToLevelData() =>
             new()
             {
-                levelName = levelName,
+                levelName = LevelName,
                 sceneName = sceneName,
                 mapPosition = transform.position,
                 displayName = displayName,
-                levelIndex = LevelIndex
+                levelIndex = LevelIndex,
+                unlockedByDefault = UnlockedByDefault
             };
     }
 }
